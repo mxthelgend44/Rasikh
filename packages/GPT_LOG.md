@@ -78,3 +78,44 @@ Services and app integration remain owned by the other agents. The root workspac
 still excludes these packages; standalone prefix commands work without changing it.
 
 All milestone descriptions are saved under each package's `review/MILESTONES.md`.
+
+## 2026-10-02 — Phase 2 / section 1: measured live evidence
+
+Synced the isolated checkout with the owner's tracked repository context. The
+Guard sidecar is now present. User changed the AI provider to Vertex AI; existing
+Google Cloud sign-in and project work without placing secrets in chat or the repo.
+Actual model: `vertex:gemini-3.8-flash`. Three live runs: 315/315 text fields,
+180/180 summary facts, 0/45 regex-detected forbidden summaries, and deterministic
+45/45 roadmap order/blocker/golden checks. Every metric records its scope,
+targets, dates, three run samples and variance. No model errors occurred.
+
+Real Guard HTTP: 75/75 verified checks, 39 denied and 36 allowed. Each repeated
+run denied all 13 direct cases and allowed all 12 indirect cases that substitute
+a fresh unlabelled summary reference after observing confidential data. Unsafe
+authorization rate is 48% in every run, variance zero; the security target FAILS.
+No payload was forwarded. Original attacks and static goldens remain unchanged.
+The separate conformance suite also detects an unversioned non-JSON method error.
+
+**Waiting on Devin:** preserve observed provenance on fresh outbound references
+(`guard_indirect_01` through `_12`) and return contract error bodies for 405s.
+Exact request/response reproductions are in `evals/GUARD_CONFORMANCE.json`.
+The measured evaluator is the Rasikh policy matrix, not the vendored OpenAPPA
+engine; its upstream commit is recorded without claiming OpenAPPA enforcement.
+
+**Waiting on Claude:** apps/web still has no live AI prompts/schemas/eval routes.
+Read-only inspection includes its new `domain/demo-extraction.ts`: it explicitly
+defers live AI to Session 6. Harness prompts are reference prompts with hashes;
+app parity is not claimed. The INTEGRATION-only proposal specifies adapter routes
+and Trust data. Do not substitute cached app extraction for live model evidence.
+
+One-command native sidecar startup runs locked Cargo, checks health, then cleans
+up only owned child processes. Shared services are never reset or killed. All
+runtime output and `.env.local` are ignored. Cache CLI output now has its own
+directory so it cannot overwrite the latest live report.
+
+GitHub remote/authentication became available during this phase. Small stacked
+PRs can now be published. Main has separately adopted contract 1.1.0 while this
+integration checkout and measured sidecar use 1.0.0. These reports attest the
+recorded 1.0.0 service only; rerun after version adoption. The additive engine,
+adapter and Trust proposal therefore targets 1.2.0, preserving the merged
+optional `service_tags` addition rather than reusing its version number.

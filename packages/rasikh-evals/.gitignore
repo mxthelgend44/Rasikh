@@ -1,2 +1,4 @@
 node_modules/
 evals/live/
+.runtime/
+.env.local

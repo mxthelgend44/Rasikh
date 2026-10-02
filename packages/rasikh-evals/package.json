@@ -9,12 +9,15 @@
   },
   "scripts": {
     "eval": "tsx src/cli.ts",
+    "eval:live": "node scripts/with-guard.mjs -- node --import tsx src/cli.ts --mode live --provider vertex --runs 3",
+    "eval:guard": "node scripts/with-guard.mjs",
     "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@rasikh/engine": "file:../rasikh-engine",
-    "@rasikh/shared": "file:../shared"
+    "@rasikh/shared": "file:../shared",
+    "google-auth-library": "^11.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
