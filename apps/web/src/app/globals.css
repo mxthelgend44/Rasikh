@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens. Values are RGB channels so Tailwind can apply alpha (`bg-fg/10`).
+ * Measured from the reference packs at CSS px (captures are ~1.25x); see DESIGN.md.
+ * Rule: chrome is neutral. The accent is used for focus, links, backing and data only.
+ */
+:root {
+  color-scheme: light;
+
+  --canvas: 243 243 243;
+  --surface: 255 255 255;
+  --raised: 255 255 255;
+  --subtle: 249 249 249;
+  --hover: 235 235 235;
+  --selected: 224 224 224;
+  --track: 238 238 238;
+  --line: 235 235 235;
+  --line-strong: 208 208 208;
+  --edge: 235 235 235;
+
+  --fg: 13 13 13;
+  --fg-secondary: 68 68 68;
+  --fg-tertiary: 110 110 110;
+  --fg-placeholder: 118 118 118;
+
+  --solid: 23 23 23;
+  --solid-fg: 255 255 255;
+
+  --accent: 11 107 120;
+  --accent-soft: 227 241 243;
+  --accent-fg: 255 255 255;
+
+  --success: 20 108 62;
+  --success-soft: 232 245 238;
+  --warning: 139 83 16;
+  --warning-soft: 250 241 220;
+  --danger: 185 51 38;
+  --danger-soft: 252 235 233;
+
+  --focus: var(--accent);
+
+  --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.1), 0 0 0 1px rgb(0 0 0 / 0.04);
+  --shadow-dialog: 0 16px 48px rgb(0 0 0 / 0.16), 0 0 0 1px rgb(0 0 0 / 0.04);
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Consolas, monospace;
+
+  --sidebar-width: 13.875rem;
+  --sidebar-rail-width: 3.5rem;
+  --topbar-height: 3.5rem;
+  --sheet-inset: 0.625rem;
+  --sheet-radius: 0.5rem;
+  --icon-stroke: 1.75;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --canvas: 19 19 19;
+  --surface: 33 33 33;
+  --raised: 40 40 40;
+  --subtle: 38 38 38;
+  --hover: 42 42 42;
+  --selected: 48 48 48;
+  --track: 48 48 48;
+  --line: 56 56 56;
+  --line-strong: 87 87 87;
+  --edge: 41 41 41;
+
+  --fg: 252 252 252;
+  --fg-secondary: 201 201 201;
+  --fg-tertiary: 158 158 158;
+  --fg-placeholder: 140 140 143;
+
+  --solid: 250 250 250;
+  --solid-fg: 19 19 19;
+
+  --accent: 98 193 206;
+  --accent-soft: 22 49 58;
+  --accent-fg: 19 19 19;
+
+  --success: 95 211 155;
+  --success-soft: 27 50 39;
+  --warning: 229 184 107;
+  --warning-soft: 52 43 30;
+  --danger: 241 153 146;
+  --danger-soft: 58 36 34;
+
+  --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-dialog: 0 16px 48px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-body text-fg antialiased;
+  }
+
+  :where(svg.lucide) {
+    stroke-width: var(--icon-stroke);
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--focus));
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgb(var(--accent) / 0.2);
+  }
+
+  ::placeholder {
+    color: rgb(var(--fg-placeholder));
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--line-strong)) transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

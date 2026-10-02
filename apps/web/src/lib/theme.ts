@@ -1,10 +1,9 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import { THEME_STORAGE_KEY } from '@/lib/theme-storage';
 
 export type ThemeChoice = 'light' | 'dark' | 'system';
-
-export const THEME_STORAGE_KEY = 'rasikh-theme';
 
 const CHANGE_EVENT = 'rasikh-theme-change';
 const DARK_QUERY = '(prefers-color-scheme: dark)';
