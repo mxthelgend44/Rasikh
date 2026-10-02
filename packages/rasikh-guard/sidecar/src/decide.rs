@@ -60,19 +60,24 @@ pub const NO_DATA_RULE: &str = "no_labelled_data.allowed";
 pub fn flowing_labels(request: &CheckRequest, observed: &HashMap<String, ObservedRef>) -> BTreeMap<DataLabel, Flow> {
     let mut flows: BTreeMap<DataLabel, Flow> = BTreeMap::new();
     let mut carries_agent_content = request.payload_refs.is_empty();
+    // Labels an observed payload ref accounts for. A declared label is covered by such a ref
+    // only when the call carries no agent-written content; otherwise the label could be in that
+    // content, so it is raw. Found by the `observing_more_never_unlocks_agent_content` and
+    // `adding_data_never_unlocks` laws.
+    let mut carried_by_refs: BTreeSet<DataLabel> = BTreeSet::new();
     for payload in &request.payload_refs {
         match observed.get(&payload.r#ref) {
             Some(known) => {
                 for label in payload.labels.iter().chain(&known.labels) {
+                    carried_by_refs.insert(*label);
                     add_flow(&mut flows, *label, !known.derived);
                 }
             }
             None => {
                 carries_agent_content = true;
-                payload
-                    .labels
-                    .iter()
-                    .for_each(|label| add_flow(&mut flows, *label, true));
+                for label in &payload.labels {
+                    add_flow(&mut flows, *label, true);
+                }
             }
         }
     }
@@ -85,7 +90,7 @@ pub fn flowing_labels(request: &CheckRequest, observed: &HashMap<String, Observe
         }
     }
     for label in &request.data_labels {
-        if !flows.contains_key(label) {
+        if carries_agent_content || !carried_by_refs.contains(label) {
             add_flow(&mut flows, *label, true);
         }
     }

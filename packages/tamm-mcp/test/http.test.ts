@@ -8,6 +8,7 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { MockTammBackend } from "../src/backend/mock/mockBackend.js";
 import { CONTRACT_VERSION } from "../src/contract.js";
 import { createHttpApp } from "../src/http.js";
+import { SingleFlight } from "../src/tools/singleFlight.js";
 import { SimulatedUaePass } from "../src/uaepass.js";
 import { FakeGuard } from "./harness.js";
 
@@ -15,7 +16,7 @@ async function serve(demo: boolean): Promise<{ url: string; server: Server }> {
   const backend = new MockTammBackend({ progression: { mode: "demo" } });
   const uaepass = new SimulatedUaePass();
   const app = createHttpApp(
-    { backend, guard: new FakeGuard(), uaepass },
+    { backend, guard: new FakeGuard(), uaepass, flights: new SingleFlight() },
     { host: "127.0.0.1", mcpPath: "/mcp", ...(demo ? { demo: backend, resetSessions: () => uaepass.reset() } : {}) },
   );
   const server = await new Promise<Server>((resolve) => {

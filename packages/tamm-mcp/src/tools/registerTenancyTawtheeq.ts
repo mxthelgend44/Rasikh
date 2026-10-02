@@ -53,6 +53,7 @@ export function registerRegisterTenancyTawtheeq(server: McpServer, ctx: ToolCont
           guardSessionId: args.guard_session_id,
           serviceId: TAWTHEEQ_SERVICE_ID,
           documents: docs,
+          args,
         },
         async (session) => {
           const application = await ctx.backend.registerTenancy({

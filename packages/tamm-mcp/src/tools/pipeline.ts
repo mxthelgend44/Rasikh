@@ -10,11 +10,14 @@ import type { TammBackend } from "../backend/types.js";
 import type { GuardClient } from "../guard/client.js";
 import type { SimulatedUaePass, UaePassSession } from "../uaepass.js";
 import { denied, failure } from "./results.js";
+import { type SingleFlight, stableKey } from "./singleFlight.js";
 
 export interface ToolContext {
   backend: TammBackend;
   guard: GuardClient;
   uaepass: SimulatedUaePass;
+  /** Collapses identical concurrent data-sending calls into one execution. */
+  flights: SingleFlight;
 }
 
 /** Every label carried by the given refs, deduplicated, in first-seen order. */
@@ -38,19 +41,22 @@ export interface GuardedCall {
   guardSessionId: string;
   serviceId: string;
   documents: PayloadRef[];
+  /** The full tool arguments; identical arguments share one execution. */
+  args: Record<string, unknown>;
 }
 
 /**
  * Runs `execute` only if the session is valid, the service exists, and Guard answers
  * `allow` for sending `documents` to TAMM. Otherwise returns an error or a Guard denial,
- * and the backend is never asked to act.
+ * and the backend is never asked to act. Identical calls in flight together run once.
  */
 export async function withGuard(
   ctx: ToolContext,
   call: GuardedCall,
   execute: (session: UaePassSession) => Promise<CallToolResult>,
 ): Promise<CallToolResult> {
-  return withSession(ctx, call.uaepassSession, async (session) => {
+  return ctx.flights.run(`${call.tool}:${stableKey(call.args)}`, () =>
+    withSession(ctx, call.uaepassSession, async (session) => {
     const service = await ctx.backend.getService(call.serviceId);
     if (!service) {
       return failure("unknown_service", `No service with id ${call.serviceId}.`);
@@ -68,5 +74,6 @@ export async function withGuard(
       return failure("guard_unavailable", "The privacy check could not be completed, so nothing was sent.");
     }
     return outcome.verdict.decision === "allow" ? execute(session) : denied(outcome.verdict);
-  });
+    }),
+  );
 }

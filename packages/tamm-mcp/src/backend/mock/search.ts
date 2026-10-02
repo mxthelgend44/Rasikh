@@ -7,6 +7,8 @@
  *   transliteration, to extra terms. "iqama" and "إقامة" both expand to "residence residency".
  * - Typo tolerance: a query word of five or more letters that is not in the vocabulary matches
  *   vocabulary words within edit distance 1, at a reduced weight.
+ * - Prefixes: a query word of three or more letters that is not in the vocabulary also matches
+ *   vocabulary words it begins, so a half-typed "tawth" or "emira" already finds its service.
  */
 import { editDistance, tokenize } from "./text.js";
 
@@ -15,6 +17,8 @@ const B = 0.75;
 const FUZZY_MIN_LENGTH = 5;
 const FUZZY_WEIGHT = 0.7;
 const SYNONYM_WEIGHT = 0.8;
+const PREFIX_MIN_LENGTH = 3;
+const PREFIX_WEIGHT = 0.6;
 
 export interface SearchDocument {
   id: string;
@@ -95,11 +99,14 @@ export class SearchIndex {
       }
     }
     for (const [term, weight] of [...query]) {
-      if (term.length >= FUZZY_MIN_LENGTH && !this.documentFrequency.has(term)) {
-        for (const known of this.documentFrequency.keys()) {
-          if (editDistance(term, known, 1) <= 1) {
-            add(known, weight * FUZZY_WEIGHT);
-          }
+      if (this.documentFrequency.has(term)) {
+        continue;
+      }
+      for (const known of this.documentFrequency.keys()) {
+        if (term.length >= FUZZY_MIN_LENGTH && editDistance(term, known, 1) <= 1) {
+          add(known, weight * FUZZY_WEIGHT);
+        } else if (term.length >= PREFIX_MIN_LENGTH && known.length > term.length && known.startsWith(term)) {
+          add(known, weight * PREFIX_WEIGHT);
         }
       }
     }

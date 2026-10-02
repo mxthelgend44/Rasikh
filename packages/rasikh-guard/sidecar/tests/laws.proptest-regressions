@@ -1,0 +1,9 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc e5f4e7b006ea77fddef381f3b7db0f7bf36aa178f772b2896c2b63ced895408b # shrinks to req = CheckRequest { session_id: "gs_law", tool: "extract_document", destination: Bank, data_labels: [], payload_refs: [], service_tags: [] }, obs = {"doc_a": ObservedRef { labels: {Passport}, derived: false }}, granted = {}
+cc f5f2b919f810b84dc994d689c6d0cf8e3291ff8e07256f3d420fd21b198df363 # shrinks to req = CheckRequest { session_id: "gs_law", tool: "extract_document", destination: Landlord, data_labels: [Salary], payload_refs: [], service_tags: [] }, obs = {}, granted = {}, extra = PayloadRef { ref: "doc_a", labels: [Salary], derived: true }
+cc ab772e34710e5648d3ab824a4fb8e5f231c315c955af93155ee5b506027645ba # shrinks to req = CheckRequest { session_id: "gs_law", tool: "extract_document", destination: Landlord, data_labels: [Salary], payload_refs: [PayloadRef { ref: "doc_b", labels: [], derived: false }], service_tags: [] }, obs = {"doc_a": ObservedRef { labels: {Salary}, derived: true }}, granted = {}, extra = PayloadRef { ref: "doc_a", labels: [], derived: false }

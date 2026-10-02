@@ -6,6 +6,7 @@ import type { Progression } from "../src/backend/mock/stateMachine.js";
 import { CONTRACT_VERSION, type GuardDecision } from "../src/contract.js";
 import type { GuardCheckRequest, GuardClient, GuardOutcome } from "../src/guard/client.js";
 import { createTammServer } from "../src/server.js";
+import { SingleFlight } from "../src/tools/singleFlight.js";
 import { SimulatedUaePass } from "../src/uaepass.js";
 
 /** Guard double that records every request and answers with a fixed or computed outcome. */
@@ -60,7 +61,7 @@ export async function createHarness(options: HarnessOptions = {}): Promise<Harne
     ...(options.now ? { now: options.now } : {}),
   });
   const uaepass = new SimulatedUaePass();
-  const server = createTammServer({ backend, guard, uaepass });
+  const server = createTammServer({ backend, guard, uaepass, flights: new SingleFlight() });
   const client = new Client({ name: "tamm-mcp-test", version: "0.0.0" });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);

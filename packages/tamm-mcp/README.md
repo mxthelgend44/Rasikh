@@ -31,6 +31,10 @@ Every tool needs `uaepass_session`. The two data-sending tools also take `guard_
   called **only on `allow`**:
   - `deny` or `needs_consent` returns `{ denied: true, guard: { decision, reason, policy_rule } }`, and nothing is created.
   - If Guard is unreachable, times out (2 s) or answers badly, the call fails closed with `guard_unavailable`.
+- **Single flight** (`src/tools/singleFlight.ts`): identical data-sending calls (same tool and arguments) that arrive
+  together, or within 5 s of a success, share one execution, so a double click or two racing approvals never create two
+  applications or ask Guard twice. The key is claimed before anything is awaited. Errors and denials are not
+  remembered, so a retry after granting consent runs again. Different applicants or documents are never collapsed.
 
 `register_tenancy_tawtheeq` takes only `lease_ref` and `applicant_ref`. The documents it sends are derived from the
 Tawtheeq requirements: the lease (`address`), plus `doc_<label>_<applicant_ref>` for the tenant's passport and Emirates
@@ -45,7 +49,8 @@ implementation. A real backend can replace it in `src/index.ts` without touching
   entity (1), and returns a `score`. Queries are expanded with the catalogue's `search_synonyms` (English, Arabic and
   common transliterations, e.g. `iqama`, `إقامة`, `ijar`, `هوية`). Arabic is normalised: alef and ta marbuta variants,
   diacritics, tatweel and the `ال` article. A word of five or more letters that is not in the vocabulary matches words
-  one edit away (optimal string alignment, so a swapped pair of letters counts as one edit).
+  one edit away (optimal string alignment, so a swapped pair of letters counts as one edit), and a word of three or more
+  letters also matches the words it begins, so a half-typed `tawth` or `emira` already finds its service.
 - **`get_service_requirements`** also returns `prerequisite_order` (every transitive prerequisite, depth-first
   post-order, so each comes after its own prerequisites; cycles are refused at catalogue load) and, given optional
   `documents_on_file` and `completed_services`, `missing_prerequisites`, `missing_documents` and `ready_to_apply`

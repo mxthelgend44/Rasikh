@@ -30,6 +30,7 @@ export function registerStartApplication(server: McpServer, ctx: ToolContext): v
           guardSessionId: args.guard_session_id,
           serviceId: args.service_id,
           documents: args.documents,
+          args,
         },
         async (session) => {
           const application = await ctx.backend.startApplication({
