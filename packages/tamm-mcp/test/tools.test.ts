@@ -63,13 +63,15 @@ describe("search_services", () => {
     assert.equal(isError, false);
     assertEnvelope(body);
     const results = body.results as Record<string, unknown>[];
-    assert.deepEqual(results[0], {
+    const { score, ...summary } = results[0] as Record<string, unknown> & { score: number };
+    assert.deepEqual(summary, {
       service_id: "svc_tawtheeq_register",
       name: "Register a tenancy contract (Tawtheeq)",
       entity: "Abu Dhabi Municipality",
       audience: "individual",
       tags: ["housing"],
     });
+    assert.ok(score > 0);
     assert.ok(results.every((result) => result.audience === "individual"));
   });
 
