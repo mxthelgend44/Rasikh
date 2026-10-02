@@ -1,6 +1,6 @@
 # Demo-day rehearsal checklist
 
-Use the [three-minute script](pitch-script.md) and [nine-slide outline](deck-outline.md). Suggested split: Firas Aleter opens and closes; Mohammad Alhniidi runs the demo and leads technical answers. Swap if you prefer. The local site has an interactive sample journey. The route recommender, role dashboards and partner actions in the script still need to be built or shown as a clearly labelled storyboard.
+Use the [three-minute script](pitch-script.md) and [nine-slide outline](deck-outline.md). Suggested split: Firas Aleter opens and closes; Mohammad Alhniidi runs the demo and leads technical answers. Swap if you prefer. The checked app commit is a Next.js scaffold with Firebase browser analytics, so any on-screen relocation journey needs to be built or shown as a clearly labelled storyboard.
 
 ## The day before
 
