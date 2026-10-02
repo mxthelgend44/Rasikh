@@ -4,7 +4,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Contract version this sidecar implements.
-pub const CONTRACT_VERSION: &str = "1.1.1";
+pub const CONTRACT_VERSION: &str = "1.2.0";
 
 /// The kinds of personal data Guard tracks.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]

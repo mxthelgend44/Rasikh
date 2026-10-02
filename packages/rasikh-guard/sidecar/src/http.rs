@@ -131,8 +131,12 @@ async fn check(State(app): Shared, body: Result<Json<CheckRequest>, JsonRejectio
         "policy_rule": verdict.policy_rule,
         "blocked_labels": verdict.blocked_labels,
     });
+    response["allowed_destinations"] = json!(verdict.allowed_destinations);
     if let Some(consent_request) = verdict.consent_request {
         response["consent_request"] = json!(consent_request);
+    }
+    if let Some(remedy) = verdict.remedy {
+        response["remedy"] = json!(remedy);
     }
     Ok(Json(response))
 }
