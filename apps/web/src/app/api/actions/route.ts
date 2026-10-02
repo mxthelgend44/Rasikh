@@ -1,4 +1,4 @@
-import { DomainError } from '@/domain/actions';
+import { isDomainError } from '@/domain/actions';
 import { getStore } from '@/server/store';
 import { parseAction } from '@/server/parse-action';
 
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   try {
     return Response.json(getStore().dispatch(action));
   } catch (error) {
-    if (error instanceof DomainError) {
+    if (isDomainError(error)) {
       return Response.json({ error: error.message }, { status: 400 });
     }
     throw error;

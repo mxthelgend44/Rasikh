@@ -261,6 +261,7 @@ export function stepsForSpec(spec: HireSpec, hire: Hire): Step[] {
 }
 
 export function documentsForSpec(spec: HireSpec, hire: Hire): RelocationDocument[] {
+  if (spec.profile === 'new') return [];
   const at = ago(spec.startedAgo, -2);
   const degreeOk = spec.profile !== 'blocked_docs';
   const salary = `AED ${hire.estMonthlySalaryAed.toLocaleString('en-US')} a month (est.)`;
@@ -272,6 +273,9 @@ export function documentsForSpec(spec: HireSpec, hire: Hire): RelocationDocument
       kind: 'passport',
       fileName: 'passport.pdf',
       uploadedAt: at,
+      version: 1,
+      source: 'demo',
+      reviewedAt: at,
       status: 'verified',
       labels: ['passport'],
       fields: [
@@ -295,6 +299,9 @@ export function documentsForSpec(spec: HireSpec, hire: Hire): RelocationDocument
       kind: 'offer_letter',
       fileName: 'offer-letter.pdf',
       uploadedAt: at,
+      version: 1,
+      source: 'demo',
+      reviewedAt: at,
       status: 'verified',
       labels: ['employment', 'salary'],
       fields: [
@@ -316,6 +323,9 @@ export function documentsForSpec(spec: HireSpec, hire: Hire): RelocationDocument
       kind: 'degree',
       fileName: 'degree-certificate.pdf',
       uploadedAt: at,
+      version: 1,
+      source: 'demo',
+      reviewedAt: at,
       status: degreeOk ? 'verified' : 'rejected',
       labels: ['degree'],
       fields: [
@@ -379,6 +389,7 @@ export function actionsForSpec(
       tool: 'extract_document',
     }),
   ];
+  if (spec.profile === 'new') return actions.slice(0, 1);
 
   const extra: Partial<Record<Profile, Omit<AgentAction, 'id' | 'caseId' | 'caseType'>[]>> = {
     blocked_docs: [

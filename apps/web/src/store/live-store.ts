@@ -12,6 +12,7 @@ export class LiveStore {
   private connection: Connection = 'connecting';
   private source: EventSource | null = null;
   private readonly listeners = new Set<() => void>();
+  private readonly retiredEpochs = new Set<string>();
 
   constructor(initial: Snapshot) {
     this.snapshot = initial;
@@ -30,7 +31,13 @@ export class LiveStore {
     if (this.source) return;
     const source = new EventSource('/api/events');
     source.addEventListener('snapshot', (event) => {
-      this.accept(JSON.parse((event as MessageEvent<string>).data) as Snapshot);
+      try {
+        const incoming = JSON.parse((event as MessageEvent<string>).data) as Snapshot;
+        this.accept(incoming);
+        this.setConnection('live');
+      } catch {
+        this.setConnection('offline');
+      }
     });
     source.onopen = () => this.setConnection('live');
     source.onerror = () => this.setConnection('offline');
@@ -64,7 +71,19 @@ export class LiveStore {
   }
 
   private accept(incoming: Snapshot): void {
+    if (
+      !incoming ||
+      typeof incoming.epoch !== 'string' ||
+      !incoming.epoch ||
+      !incoming.state ||
+      !Number.isSafeInteger(incoming.state.rev) ||
+      incoming.state.rev < 0
+    ) {
+      throw new Error('The server returned an invalid state snapshot');
+    }
+    if (this.retiredEpochs.has(incoming.epoch)) return;
     if (!isNewer(incoming, this.snapshot)) return;
+    if (incoming.epoch !== this.snapshot.epoch) this.retiredEpochs.add(this.snapshot.epoch);
     this.snapshot = incoming;
     this.emit();
   }

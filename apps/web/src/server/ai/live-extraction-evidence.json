@@ -1,0 +1,38 @@
+{
+  "endpoint": "/api/ai/extract",
+  "case_id": "hire_seed_08",
+  "http_status": 200,
+  "outcome": "live_response_received",
+  "contract_version": "1.0.0",
+  "scope": "historical_one_local_app_smoke_request",
+  "evidence_source": "relayed_from_release_coordinator",
+  "source_thread_id": "01a0fb17-0591-74e3-b1bd-2d34ee4fff6b",
+  "provider_response_observed_by_this_chat": false,
+  "synthetic_document": true,
+  "document_kind": "passport",
+  "observed_at": null,
+  "observed_at_note": "The coordinator did not provide the request completion timestamp.",
+  "fields": [
+    { "key": "full_name", "value": "Alex Demo", "confidence": null },
+    { "key": "passport_number", "value": "FAKE-P-001", "confidence": null },
+    { "key": "nationality", "value": "Exampleland", "confidence": null },
+    { "key": "date_of_birth", "value": "1994-02-03", "confidence": null },
+    { "key": "expiry_date", "value": "2031-04-05", "confidence": null }
+  ],
+  "verification": {
+    "requested_fields": 5,
+    "exact_fields_reported_by_coordinator": 5,
+    "additional_model_calls_by_this_chat": 0
+  },
+  "provenance": {
+    "provider": "vertex",
+    "model": "gemini-3.8-flash",
+    "live": true,
+    "prompt_sha256": "b92a6331dc28d2e80228a9ad0378ea9e8de8ae34f4c4524ff03faf96011df2f3",
+    "response_schema_sha256": "bf7b0538f6804874c65df6452298a828670dc41c6f26f964ae724bbf45cac7df",
+    "guard_check_id": "chk_3f0042b9",
+    "app_revision": null,
+    "app_prompt_parity": "unverified"
+  },
+  "production_firebase_contract_1_2_verified_by_this_evidence": false
+}

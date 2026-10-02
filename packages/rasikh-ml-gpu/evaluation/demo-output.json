@@ -1,0 +1,133 @@
+{
+  "experimental": true,
+  "model": {
+    "kind": "experimental_gpu_trained_amenity_autoencoder",
+    "architecture": [
+      6,
+      16,
+      3,
+      16,
+      6
+    ],
+    "candidate": {
+      "id": "h16_wd001",
+      "hidden_width": 16,
+      "weight_decay": 0.001
+    },
+    "trained_device": "cuda:0",
+    "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "checkpoint_sha256": "21219e4dabda9a18734974a7478b47be3449262d0c5da6f39e28c6bb46e0d15f",
+    "export_sha256": "688edea11afc5a926b3f5794efd35749ee8ab4d9c2dde5b7957f9a567a9cdf8a",
+    "tensor_sha256": "8e1238174d41842049e251f849412cd768abdd0535ef70be5d20989bb2ab5eef"
+  },
+  "scope": "OSM mapped amenity similarity around place markers",
+  "score_scope": "Heuristic ranking index; not a probability, quality rating or measured satisfaction",
+  "preference_weights": {
+    "schools": 0.8,
+    "healthcare": 0.7,
+    "groceries": 1,
+    "parks": 0.8,
+    "dining": 0,
+    "transit": 0.6
+  },
+  "distance_weight": 0.25,
+  "recommendations": [
+    {
+      "id": "way/873221089",
+      "name": "Hadbat Al Za'faranah",
+      "name_ar": "حدبة الزعفرانة",
+      "latitude": 24.4446068,
+      "longitude": 54.4060058,
+      "score": 90.8,
+      "amenity_matching_index": 95.59,
+      "straight_line_distance_km": 3.08,
+      "mapped_object_counts": {
+        "schools": 12,
+        "healthcare": 16,
+        "groceries": 4,
+        "parks": 6,
+        "dining": 49,
+        "transit": 42
+      },
+      "observation_radius_km": 1.5,
+      "reasons": [
+        "12 mapped schools objects within 1.5 km of the OSM place marker",
+        "16 mapped healthcare objects within 1.5 km of the OSM place marker",
+        "4 mapped groceries objects within 1.5 km of the OSM place marker",
+        "6 mapped parks objects within 1.5 km of the OSM place marker",
+        "42 mapped transit objects within 1.5 km of the OSM place marker",
+        "3.1 km straight-line distance to selected office; journey time is unknown"
+      ]
+    },
+    {
+      "id": "way/873221090",
+      "name": "Al Mushrif",
+      "name_ar": "المشرف",
+      "latitude": 24.4424857,
+      "longitude": 54.3870317,
+      "score": 90.23,
+      "amenity_matching_index": 91.59,
+      "straight_line_distance_km": 1.61,
+      "mapped_object_counts": {
+        "schools": 11,
+        "healthcare": 13,
+        "groceries": 4,
+        "parks": 7,
+        "dining": 27,
+        "transit": 44
+      },
+      "observation_radius_km": 1.5,
+      "reasons": [
+        "11 mapped schools objects within 1.5 km of the OSM place marker",
+        "13 mapped healthcare objects within 1.5 km of the OSM place marker",
+        "4 mapped groceries objects within 1.5 km of the OSM place marker",
+        "7 mapped parks objects within 1.5 km of the OSM place marker",
+        "44 mapped transit objects within 1.5 km of the OSM place marker",
+        "1.6 km straight-line distance to selected office; journey time is unknown"
+      ]
+    },
+    {
+      "id": "node/8131987601",
+      "name": "Hadbat Al Za'faranah",
+      "name_ar": "حدبة الزعفرانة",
+      "latitude": 24.4437116,
+      "longitude": 54.4067859,
+      "score": 86.87,
+      "amenity_matching_index": 90.56,
+      "straight_line_distance_km": 3.19,
+      "mapped_object_counts": {
+        "schools": 11,
+        "healthcare": 16,
+        "groceries": 4,
+        "parks": 5,
+        "dining": 49,
+        "transit": 41
+      },
+      "observation_radius_km": 1.5,
+      "reasons": [
+        "11 mapped schools objects within 1.5 km of the OSM place marker",
+        "16 mapped healthcare objects within 1.5 km of the OSM place marker",
+        "4 mapped groceries objects within 1.5 km of the OSM place marker",
+        "5 mapped parks objects within 1.5 km of the OSM place marker",
+        "41 mapped transit objects within 1.5 km of the OSM place marker",
+        "3.2 km straight-line distance to selected office; journey time is unknown"
+      ]
+    }
+  ],
+  "attribution": "© OpenStreetMap contributors",
+  "source_url": "https://www.openstreetmap.org/copyright",
+  "license": "ODbL-1.0",
+  "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "source_sha256": "a51c67bb5271f238fd034a2e35c5e8685213e5bd6494dfbaabf46241e9af47f4",
+  "derived_dataset_sha256": "af29f47b49fd08995b12854b2c10e9da39f737f691270a07940d8717f21d7ba9",
+  "checkpoint_sha256": "21219e4dabda9a18734974a7478b47be3449262d0c5da6f39e28c6bb46e0d15f",
+  "limitations": [
+    "Experimental amenity matching; no customer preference or satisfaction validation.",
+    "Mapped OSM objects are incomplete and may include multiple representations of one facility.",
+    "Place markers and 1.5 km circles are not official neighborhood boundaries.",
+    "Circle densities differ in spatial support from occupied 1 km training cells; named-area rankings have no holdout validation.",
+    "No rent, available listing, school quality, traffic, journey-time, safety or official housing predictions.",
+    "Preference targets, similarity index and distance tradeoff are explicit heuristics, not learned user outcomes.",
+    "Spatial holdout blocks have no buffer or future-time validation."
+  ]
+}

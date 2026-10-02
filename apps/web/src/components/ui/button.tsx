@@ -1,7 +1,8 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { LoaderCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
+export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -10,12 +11,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Square icon-only button. Requires `aria-label`. */
   iconOnly?: boolean;
   icon?: ReactNode;
+  loading?: boolean;
 }
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'bg-solid text-solid-fg hover:bg-solid/85',
+  primary: 'bg-solid text-solid-fg hover:bg-solid/90',
   secondary: 'border border-line-strong bg-surface text-fg hover:bg-hover',
   ghost: 'text-fg hover:bg-hover',
+  tertiary: 'text-accent hover:bg-accent-soft',
   destructive: 'bg-danger-solid text-white hover:bg-danger-solid/90',
 };
 
@@ -32,15 +35,29 @@ const ICON_ONLY_SIZES: Record<ButtonSize, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'primary', size = 'md', iconOnly = false, icon, className, children, type, ...rest },
+  {
+    variant = 'primary',
+    size = 'md',
+    iconOnly = false,
+    icon,
+    loading = false,
+    disabled,
+    className,
+    children,
+    type,
+    ...rest
+  },
   ref,
 ) {
   return (
     <button
       ref={ref}
       type={type ?? 'button'}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      data-icon-only={iconOnly}
       className={cn(
-        'inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors',
+        'rasikh-button inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors',
         'disabled:pointer-events-none disabled:opacity-40',
         VARIANTS[variant],
         iconOnly ? ICON_ONLY_SIZES[size] : SIZES[size],
@@ -48,9 +65,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       )}
       {...rest}
     >
-      {icon ? (
+      {loading || icon ? (
         <span aria-hidden className="flex size-4 items-center justify-center [&>svg]:size-4">
-          {icon}
+          {loading ? <LoaderCircle className="animate-spin motion-reduce:animate-none" /> : icon}
         </span>
       ) : null}
       {iconOnly ? null : children}

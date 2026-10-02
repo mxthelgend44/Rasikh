@@ -2,6 +2,8 @@ import {
   Activity,
   Building2,
   FileCheck,
+  FileText,
+  CalendarDays,
   Gauge,
   LayoutGrid,
   Palette,
@@ -79,8 +81,16 @@ export const SURFACES: Record<SurfaceId, Surface> = {
       {
         label: 'Leasing',
         items: [
-          { label: 'Applications', href: '/landlord', icon: FileCheck, match: 'prefix' },
+          { label: 'Overview', href: '/landlord', icon: Gauge, match: 'exact' },
+          {
+            label: 'Applications',
+            href: '/landlord/applications',
+            icon: FileCheck,
+            match: 'prefix',
+          },
           { label: 'Properties', href: '/landlord/properties', icon: Building2, match: 'prefix' },
+          { label: 'Leases', href: '/landlord/leases', icon: FileText, match: 'prefix' },
+          { label: 'Viewings', href: '/landlord/viewings', icon: CalendarDays, match: 'prefix' },
         ],
       },
     ],
@@ -95,7 +105,8 @@ export const SURFACES: Record<SurfaceId, Surface> = {
       {
         label: 'Onboarding',
         items: [
-          { label: 'Applications', href: '/bank', icon: Landmark, match: 'prefix' },
+          { label: 'Overview', href: '/bank', icon: Gauge, match: 'exact' },
+          { label: 'Applications', href: '/bank/applications', icon: Landmark, match: 'prefix' },
           { label: 'Employer partners', href: '/bank/partners', icon: Handshake, match: 'prefix' },
         ],
       },

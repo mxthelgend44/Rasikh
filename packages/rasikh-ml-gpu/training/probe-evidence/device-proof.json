@@ -1,0 +1,51 @@
+{
+  "executed_at_utc": "2026-10-02T11:17:16.094724+00:00",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "python_executable": "C:\\Users\\maalh\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "pytorch": "2.5.1+cu121",
+  "pytorch_package_path": "C:\\Users\\maalh\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\torch\\__init__.py",
+  "numpy_version": "1.26.4",
+  "numpy_package_path": "C:\\Users\\maalh\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\numpy\\__init__.py",
+  "environment_choice": "Explicitly authorized reuse of existing CUDA-enabled installation; initial isolated 2.11/cu128 download abandoned",
+  "pytorch_cuda_runtime": "12.1",
+  "cudnn": 90100,
+  "cuda_available": true,
+  "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "gpu_total_memory_bytes": 8585216000,
+  "gpu_compute_capability": [
+    8,
+    9
+  ],
+  "device": "cuda:0",
+  "tensor_devices": {
+    "input": "cuda:0",
+    "multiplier": "cuda:0",
+    "output": "cuda:0",
+    "gradient": "cuda:0",
+    "loss": "cuda:0"
+  },
+  "kernel": "1024x1024 float32 matrix multiplication and squared-mean backward",
+  "max_abs_error_against_twice_input": 0.0,
+  "finite_nonzero_cuda_gradient": true,
+  "loss": 1.3333314657211304,
+  "cuda_event_kernel_and_backward_ms": 206.51724243164062,
+  "synchronized_wall_seconds": 0.7048495999988518,
+  "torch_arch_list": [
+    "sm_50",
+    "sm_60",
+    "sm_61",
+    "sm_70",
+    "sm_75",
+    "sm_80",
+    "sm_86",
+    "sm_90"
+  ],
+  "nvidia_smi": "Fri Oct  2 15:17:16 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 610.62                 KMD Version: 610.62        CUDA UMD Version: 13.3     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GeForce RTX 4060 ...  WDDM  |   00000000:01:00.0 Off |                  N/A |\n| N/A   61C    P0             13W /  110W |     271MiB /   8188MiB |      2%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|    0   N/A  N/A           60840      C   ..._qbz5n2kfra8p0\\python3.11.exe      N/A      |\n+-----------------------------------------------------------------------------------------+\n",
+  "determinism": {
+    "enabled": true,
+    "warn_only": false,
+    "cublas_workspace_config": ":4096:8",
+    "tf32_matmul": false
+  }
+}

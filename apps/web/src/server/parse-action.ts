@@ -1,19 +1,5 @@
 import type { Action } from '@/domain/actions';
-
-const ACTION_TYPES: readonly Action['type'][] = [
-  'hire.create',
-  'hire.back',
-  'step.set_status',
-  'document.add',
-  'agent.log',
-  'approval.decide',
-  'application.create',
-  'application.decide',
-  'grant.set',
-  'guard.record',
-  'company.create',
-  'setup.set_status',
-];
+import { ACTION_TYPES } from '@/domain/validate-action';
 
 /**
  * Accepts only a JSON object with a known action `type`. The shape of the rest is the domain's

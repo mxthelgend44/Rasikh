@@ -136,13 +136,14 @@ describe('approvals and applications', () => {
     });
   });
 
-  it('drops the draft when the newcomer declines', () => {
+  it('retains the declined draft and approval history when the newcomer declines', () => {
     const state = seed();
     const approval = Object.values(state.approvals).find(
       (a) => a.hireId === 'hire_seed_04' && a.status === 'pending',
     );
     const after = run(state, { type: 'approval.decide', approvalId: approval!.id, approve: false });
-    expect(after.applications['app_seed_06']).toBeUndefined();
+    expect(after.applications['app_seed_06']?.state).toBe('declined');
+    expect(after.approvals[approval!.id]?.applicationId).toBe('app_seed_06');
     expect(stepOf(after, 'hire_seed_04', 'housing').status).toBe('ready');
   });
 
@@ -317,7 +318,9 @@ describe('company expansion and team move', () => {
   function completeUpTo(state: AppState, keys: string[]): AppState {
     let current = state;
     for (const key of keys) {
-      const step = Object.values(current.setupSteps).find((s) => s.key === key)!;
+      const step = Object.values(current.setupSteps).find(
+        (s) => s.companyId === DEMO_FIXTURES.company && s.key === key,
+      )!;
       current = run(current, { type: 'setup.set_status', stepId: step.id, status: 'done' });
     }
     return current;
@@ -326,8 +329,14 @@ describe('company expansion and team move', () => {
   it('creates the company under the fixture id with a setup roadmap and a team', () => {
     const after = run(seed(), COMPANY);
     expect(after.companies[DEMO_FIXTURES.company]?.name).toBe('Northwind Analytics');
-    expect(Object.values(after.setupSteps)).toHaveLength(6);
-    expect(Object.values(after.teamMembers)).toHaveLength(3);
+    expect(
+      Object.values(after.setupSteps).filter((step) => step.companyId === DEMO_FIXTURES.company),
+    ).toHaveLength(6);
+    expect(
+      Object.values(after.teamMembers).filter(
+        (member) => member.companyId === DEMO_FIXTURES.company,
+      ),
+    ).toHaveLength(3);
     expect(Object.values(after.hires).some((hire) => hire.companyId)).toBe(false);
   });
 
@@ -335,7 +344,9 @@ describe('company expansion and team move', () => {
     const created = run(seed(), COMPANY);
     const afterName = completeUpTo(created, ['trade_name']);
     const status = (key: string) =>
-      Object.values(afterName.setupSteps).find((s) => s.key === key)?.status;
+      Object.values(afterName.setupSteps).find(
+        (s) => s.companyId === DEMO_FIXTURES.company && s.key === key,
+      )?.status;
     expect(status('license')).toBe('ready');
     expect(status('office_lease')).toBe('ready');
     expect(status('establishment_card')).toBe('locked');
@@ -359,7 +370,11 @@ describe('company expansion and team move', () => {
     }
     const niamh = Object.values(done.hires).find((hire) => hire.fullName === 'Niamh Byrne');
     expect(stepsOf(done, niamh!.id).map((s) => s.key)).toContain('family_sponsorship');
-    expect(Object.values(done.teamMembers).every((member) => member.hireId)).toBe(true);
+    expect(
+      Object.values(done.teamMembers)
+        .filter((member) => member.companyId === DEMO_FIXTURES.company)
+        .every((member) => member.hireId),
+    ).toBe(true);
   });
 
   it('does not move the team twice', () => {
@@ -370,7 +385,9 @@ describe('company expansion and team move', () => {
       'establishment_card',
       'visa_quota',
     ]);
-    const quota = Object.values(done.setupSteps).find((s) => s.key === 'visa_quota')!;
+    const quota = Object.values(done.setupSteps).find(
+      (s) => s.companyId === DEMO_FIXTURES.company && s.key === 'visa_quota',
+    )!;
     const again = run(done, { type: 'setup.set_status', stepId: quota.id, status: 'done' });
     expect(Object.keys(again.hires)).toHaveLength(Object.keys(done.hires).length);
   });

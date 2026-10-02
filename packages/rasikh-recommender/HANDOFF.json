@@ -1,0 +1,133 @@
+{
+  "status": "frozen_cpu_baseline",
+  "frozen_at": "2026-10-02T11:07:48.648792+00:00",
+  "package_root": "C:\\Users\\maalh\\Desktop\\HUB71 COM\\packages\\rasikh-recommender",
+  "content_identity_sha256": "a25a92b77e07d5602db604d6de1ab8b61d5a25acd8eff72605a3572b456ecce1",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "ab2580e78f82f3a3f2a73063b2aaf4dbebd5d2a3e58045e1b3d94c7968ffcfc5",
+      "bytes": 175
+    },
+    {
+      "path": "data/osm-amenities.json",
+      "sha256": "c319b16b3eade4b98ebf1eb4407c65d4e209d9ac659436526e8084f5d8dc5fb7",
+      "bytes": 564226
+    },
+    {
+      "path": "data/osm-places.json",
+      "sha256": "bae1750431ace46d566cdd10cf887b69f07a039484e8c8b7ff29d0e7d35b9adc",
+      "bytes": 39348
+    },
+    {
+      "path": "data/osm-training-cells.json",
+      "sha256": "97ecd83dcd6e1497faa254f7a9bac904eae743a56ae0202b67faea15df701183",
+      "bytes": 188393
+    },
+    {
+      "path": "demo.html",
+      "sha256": "0444b82c032858b8544df4ae62d9c47c9debe9e1291210a9f9911be14a0adca5",
+      "bytes": 7020
+    },
+    {
+      "path": "evidence/browser.json",
+      "sha256": "22c48a2c30b5b632a0903e6de31d7950d3d568035613210086db3d76680eeaeb",
+      "bytes": 463
+    },
+    {
+      "path": "evidence/desktop.png",
+      "sha256": "7f03791e7a4ad47f05b1f3a80c942387d327d92311452f0a902dd1acdb3f4b6f",
+      "bytes": 72618
+    },
+    {
+      "path": "evidence/phone.png",
+      "sha256": "17a7ec10502a03b1cc9d903237b06cdb78e20daa8eeea93ca2a8cedea1099eba",
+      "bytes": 30712
+    },
+    {
+      "path": "index.mjs",
+      "sha256": "a80d0cb5336491c41ada256475abcaa22603eabd2939d082012de2da983ba37a",
+      "bytes": 5699
+    },
+    {
+      "path": "LICENSE-DATA.md",
+      "sha256": "9e5c47592f2b55b667252c47ac3f75aa1784d0b4d79d342d8136873220e29dbf",
+      "bytes": 1027
+    },
+    {
+      "path": "models/osm-areas.json",
+      "sha256": "cc0dd1d98a70006de9756d4f02fcfe886fa4b18efe02986d2e8720410e3af9c9",
+      "bytes": 112247
+    },
+    {
+      "path": "models/osm-clusters.json",
+      "sha256": "3394e0de85878f4b8e8e8ea38f17e02bc96bec9f765042f832b6c9d2b6c325dd",
+      "bytes": 838
+    },
+    {
+      "path": "models/osm-evaluation.json",
+      "sha256": "9868217907c5755d7c757b5b8ce8476c0a6ba2b50dcaff19bc852ad9234e3cc7",
+      "bytes": 7828
+    },
+    {
+      "path": "models/osm-pca.json",
+      "sha256": "2942931fe4ed97bbc0ed41b38722ffe9b51cbcfb637a49558a140d43da2dee54",
+      "bytes": 1310
+    },
+    {
+      "path": "models/osm-provenance.json",
+      "sha256": "caf83d2731e74dad89285768c6267b9a728bbb81d59859cfc273e53d71f28083",
+      "bytes": 1560
+    },
+    {
+      "path": "package.json",
+      "sha256": "9cec846b6725278268459a03e4616717ead1b196b06c793dea6709dbdcff9091",
+      "bytes": 296
+    },
+    {
+      "path": "README.md",
+      "sha256": "80980e39a6ee4726e4f38171f2dbf2274b7ddbb458be3a3054b785bb8e8cc08e",
+      "bytes": 6055
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "7bd6b8946940b79948c548c8048e545684b91c8edc9444d8dfc0c8f76a97c0a7",
+      "bytes": 13
+    },
+    {
+      "path": "server.mjs",
+      "sha256": "12dadc8722cd5dd50eca350ea1c31f7c0d6f174f49d692060c31b787e8b1e399",
+      "bytes": 2004
+    },
+    {
+      "path": "test/browser.mjs",
+      "sha256": "186fc1c05bee2ab03862fd4e64ddbae296c6b45881ef426e77d28eb878ee2fdf",
+      "bytes": 3055
+    },
+    {
+      "path": "test/recommender.test.mjs",
+      "sha256": "ea69902323f90192a25f35d0597650ebbbd9d8f528bc34d6ada4b571fab54011",
+      "bytes": 3516
+    },
+    {
+      "path": "train.py",
+      "sha256": "e44f3066ac6cc5ae348bbea5659dfb68eb58e60163298dc40d35d29e50fb6849",
+      "bytes": 14004
+    },
+    {
+      "path": "train_osm.py",
+      "sha256": "3b6939ed72e1d8b90dca3fcadf77fcefbd493ae34b5ff8c48db1fd1091c5ad0c",
+      "bytes": 13947
+    }
+  ],
+  "training_command": "python packages/rasikh-recommender/train_osm.py",
+  "test_command": "node --test packages/rasikh-recommender/test/recommender.test.mjs",
+  "split_file": "models/osm-evaluation.json",
+  "feature_rows": "data/osm-training-cells.json",
+  "row_id": "cell_id",
+  "group_id": "spatial_block",
+  "license": "ODbL-1.0",
+  "compute": "CPU NumPy 2.3.5; no GPU training claimed",
+  "demo_url": "http://127.0.0.1:8795",
+  "excluded": "data/raw and artifacts (all rental research cache/model outputs); no app/shared/Git/cloud changes"
+}

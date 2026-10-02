@@ -59,6 +59,18 @@ export interface Property {
   chequeOptions: number[];
 }
 
+export interface Viewing {
+  id: Id;
+  landlordId: Id;
+  propertyId: Id;
+  applicationId?: Id;
+  startsAt: IsoDateTime;
+  durationMinutes: number;
+  note: string;
+  status: 'planned' | 'completed' | 'cancelled';
+  createdAt: IsoDateTime;
+}
+
 /* Relocation of one person */
 
 export interface Backing {
@@ -154,7 +166,7 @@ export interface ExtractedField {
   label: string;
   value: string;
   /** 0 to 1. */
-  confidence: number;
+  confidence: number | null;
 }
 
 export interface RelocationDocument {
@@ -163,6 +175,9 @@ export interface RelocationDocument {
   kind: DocumentKind;
   fileName: string;
   uploadedAt: IsoDateTime;
+  version: number;
+  source?: 'demo' | 'vertex';
+  reviewedAt?: IsoDateTime;
   status: 'uploaded' | 'extracted' | 'verified' | 'rejected';
   labels: DataLabel[];
   fields: ExtractedField[];
@@ -196,6 +211,9 @@ export interface AgentAction {
   status: 'done' | 'waiting' | 'needs_approval' | 'blocked';
   stepId?: Id;
   tool?: string;
+  approvalId?: Id;
+  applicationId?: Id;
+  documentId?: Id;
 }
 
 export interface Approval {
@@ -204,6 +222,7 @@ export interface Approval {
   stepId: Id;
   /** The draft application this approval releases. */
   applicationId?: Id;
+  kind?: 'submission' | 'terms';
   title: string;
   detail: string;
   destination: Destination;
@@ -382,6 +401,7 @@ export interface AppState {
   landlords: Record<Id, Landlord>;
   banks: Record<Id, Bank>;
   properties: Record<Id, Property>;
+  viewings: Record<Id, Viewing>;
   hires: Record<Id, Hire>;
   steps: Record<Id, Step>;
   documents: Record<Id, RelocationDocument>;

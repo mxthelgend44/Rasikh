@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-02T08:52:49.2926796Z",
+  "endpoint": "/api/ai/explain",
+  "case_id": "hire_seed_08",
+  "http_status": 200,
+  "outcome": "live_response_received",
+  "contract_version": "1.0.0",
+  "explanation": {
+    "headline": "Relocation Journey Update",
+    "nextAction": "Review relocation documents",
+    "why": "The step 'Review relocation documents' is currently in progress, owned by the newcomer, and has no dependencies.",
+    "stepId": "step_hire_seed_08_documents",
+    "requiresApproval": false,
+    "disclosureNotes": []
+  },
+  "provenance": {
+    "provider": "vertex",
+    "model": "gemini-3.8-flash",
+    "live": true,
+    "prompt_sha256": "7aa811a6922a1e64f13d8b831ee87b747e9a8c52ce43e4111bc5b1d10d0ac63e",
+    "response_schema_sha256": "4cb31aeff86d831a9943de1b5f1755eab852edb7fce172d6d0384b376685893d",
+    "guard_check_id": null,
+    "app_revision": null,
+    "app_prompt_parity": "unverified"
+  },
+  "app_prompt_parity": "unverified",
+  "scope": "one_local_app_smoke_request",
+  "extraction_verified_by_this_probe": false
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@rasikh/ml-gpu-experimental",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./index.mjs",
+  "description": "Experimental GPU-trained OSM amenity representation with portable CPU inference",
+  "scripts": {
+    "test": "node --test index.test.mjs",
+    "demo": "node index.mjs",
+    "evaluate": "python evaluation/evaluate.py --export training/artifacts/model-export.json"
+  },
+  "files": ["index.mjs", "index.test.mjs", "README.txt", "evaluation", "data/*.json", "data/*.txt", "data/*.py", "training/*.json", "training/*.py", "training/*.txt", "training/*.pt", "training/*.log", "training/*.csv", "training/*.md"],
+  "engines": { "node": ">=22" }
+}

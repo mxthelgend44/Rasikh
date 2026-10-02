@@ -40,7 +40,7 @@ const RISK_MARYAH: RiskSummary = {
       label: 'Rent against income',
       effect: 'concern',
       reason:
-        'Rent is about 47% of estimated gross income, which is on the high side for a single applicant.',
+        'Affordability is a yes, but with a narrow margin: the rent is high for the recorded income. Only the yes or no result is shared, not the salary.',
     },
     {
       label: 'Documents',
@@ -56,7 +56,7 @@ const RISK_MARYAH: RiskSummary = {
     {
       label: 'Cheques',
       effect: 'neutral',
-      reason: 'Two cheques were requested. Four would spread the payments and reduce the risk.',
+      reason: 'The property accepts two or four cheques. Four would spread the estimated payments.',
     },
   ],
 };
@@ -74,7 +74,8 @@ const RISK_REEM_APPROVED: RiskSummary = {
     {
       label: 'Rent against income',
       effect: 'positive',
-      reason: 'Rent is about 28% of estimated gross income, which is comfortable.',
+      reason:
+        'Affordability is a yes with a comfortable margin. Only the yes or no result is shared, not the salary.',
     },
     {
       label: 'Documents',
@@ -134,7 +135,7 @@ const APPLICATION_SEEDS: ApplicationSeed[] = [
     state: 'approved',
     submittedAgo: 14,
     risk: RISK_REEM_APPROVED,
-    cheques: 4,
+    cheques: 2,
   },
   {
     id: 'app_seed_02',
@@ -184,6 +185,7 @@ const APPLICATION_SEEDS: ApplicationSeed[] = [
     partyId: 'landlord_al_reem',
     propertyId: 'prop_maryah_1706',
     state: 'awaiting_approval',
+    risk: RISK_REEM_APPROVED,
   },
   {
     id: 'app_seed_07',
@@ -289,6 +291,13 @@ export function seedApplications(counters: Record<string, number>) {
     grant('hire_seed_02', 'passport', 'bank', 2),
     grant('hire_seed_02', 'salary', 'bank', 2),
     grant('hire_seed_05', 'passport', 'landlord', 2),
+    grant('hire_seed_04', 'passport', 'landlord', 1),
+    grant('hire_seed_03', 'passport', 'landlord', 36),
+    grant('hire_seed_07', 'passport', 'landlord', 31),
+    grant('hire_seed_03', 'passport', 'bank', 30),
+    grant('hire_seed_03', 'salary', 'bank', 30),
+    grant('hire_seed_07', 'passport', 'bank', 26),
+    grant('hire_seed_07', 'salary', 'bank', 26),
   ];
 
   const check = (partial: Omit<GuardCheck, 'id'>): GuardCheck => ({

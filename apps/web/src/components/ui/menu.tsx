@@ -20,7 +20,9 @@ export interface MenuItem {
   disabled?: boolean;
 }
 
-type TriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & { 'data-open': boolean };
+type TriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  'data-open': boolean;
+};
 
 export interface MenuProps {
   /** Accessible name of the menu. */
@@ -94,7 +96,7 @@ export function Menu({ label, items, trigger, align = 'start' }: MenuProps) {
           aria-label={label}
           onKeyDown={onListKey}
           className={cn(
-            'absolute top-full z-30 mt-1 min-w-48 animate-pop-in rounded-lg bg-raised p-1 shadow-pop',
+            'absolute top-full z-30 mt-1 min-w-48 rounded-lg bg-raised p-1 shadow-pop motion-safe:animate-pop-in',
             align === 'end' ? 'end-0' : 'start-0',
           )}
         >
@@ -108,7 +110,7 @@ export function Menu({ label, items, trigger, align = 'start' }: MenuProps) {
                 item.onSelect();
                 close(true);
               }}
-              className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-start text-body text-fg hover:bg-hover focus-visible:bg-hover focus-visible:outline-none disabled:opacity-40"
+              className="rasikh-menu-item flex h-8 w-full items-center gap-2 rounded-md px-2 text-start text-body text-fg transition-colors hover:bg-hover focus-visible:bg-selected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:opacity-40"
             >
               <span className="flex-1 truncate">{item.label}</span>
               {item.selected ? <Check aria-hidden className="size-4 text-fg-secondary" /> : null}

@@ -1,6 +1,14 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import type { Locale } from '@/domain/types';
 import { directionOf, LOCALE_COOKIE, translator, type Translate } from './index';
 
@@ -23,8 +31,15 @@ const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 export function I18nProvider({ initial, children }: { initial: Locale; children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(initial);
 
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = directionOf(locale);
+  }, [locale]);
+
   const setLocale = useCallback((next: Locale) => {
     document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=${ONE_YEAR_SECONDS}; samesite=lax`;
+    document.documentElement.lang = next;
+    document.documentElement.dir = directionOf(next);
     setLocaleState(next);
   }, []);
 

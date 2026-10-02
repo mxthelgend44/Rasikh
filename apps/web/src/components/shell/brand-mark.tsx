@@ -2,7 +2,6 @@ import { cn } from '@/lib/cn';
 
 /**
  * Rasikh mark: a doorway arch with a figure standing under it, on a solid tile.
- * Inverts with the theme through the `solid` tokens.
  */
 export function BrandMark({ className }: { className?: string }) {
   return (

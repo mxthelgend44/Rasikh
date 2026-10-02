@@ -1,0 +1,21 @@
+{
+  "base": "http://127.0.0.1:8795",
+  "source_sha256": "a51c67bb5271f238fd034a2e35c5e8685213e5bd6494dfbaabf46241e9af47f4",
+  "checks": [
+    {
+      "name": "desktop",
+      "recommendations": 6,
+      "horizontal_overflow": false
+    },
+    {
+      "name": "phone",
+      "recommendations": 6,
+      "horizontal_overflow": false
+    },
+    {
+      "name": "empty_preferences_error",
+      "passed": true
+    }
+  ],
+  "observed_at": "2026-10-02T11:07:48.190Z"
+}

@@ -3,6 +3,7 @@ import { buildRoadmap, roadmapNarrative } from '../roadmap';
 import type { AppState, Hire } from '../types';
 import {
   allocateHireId,
+  assertOwner,
   DomainError,
   logAction,
   lookup,
@@ -20,6 +21,13 @@ export function createHire(
   fields: Omit<Hire, 'backing'>,
   backedBy?: string,
 ): Hire {
+  lookup(draft.employers, fields.employerId, 'employer');
+  if (fields.companyId) {
+    const company = lookup(draft.companies, fields.companyId, 'company');
+    assertOwner(company.employerId, fields.employerId);
+  }
+  if (Object.hasOwn(draft.hires, fields.id))
+    throw new DomainError(`Hire already exists: ${fields.id}`);
   const hire: Hire = {
     ...fields,
     backing: backedBy ? { status: 'backed', backedAt: context.now, backedBy } : { status: 'none' },
@@ -59,6 +67,7 @@ export function applyHireAction(draft: AppState, action: HireAction, context: Co
 
     case 'hire.back': {
       const hire = lookup(draft.hires, action.hireId, 'hire');
+      assertOwner(hire.employerId, action.employerId);
       hire.backing = action.backed
         ? { status: 'backed', backedAt: context.now, backedBy: action.by }
         : { status: 'none' };
@@ -67,22 +76,28 @@ export function applyHireAction(draft: AppState, action: HireAction, context: Co
           application.employerBacked = action.backed;
         }
       }
-      if (action.backed) {
-        logAction(draft, context, {
-          caseId: hire.id,
-          caseType: 'hire',
-          kind: 'step_updated',
-          summary: `${hire.fullName.split(' ')[0]} is now backed by their employer`,
-          reasoning:
-            'Landlords and banks decide sooner when the employer stands behind an application, so the backing is attached to every application from now on.',
-          status: 'done',
-        });
-      }
+      logAction(draft, context, {
+        caseId: hire.id,
+        caseType: 'hire',
+        kind: 'step_updated',
+        summary: action.backed
+          ? `${hire.fullName.split(' ')[0]} is now backed by their employer`
+          : `Removed employer backing for ${hire.fullName.split(' ')[0]}`,
+        reasoning: action.backed
+          ? 'Employer backing is recorded for open applications in this demo. No external notification was sent.'
+          : 'Open applications now show no employer backing. Existing decisions remain in the history.',
+        status: 'done',
+      });
       return;
     }
 
     case 'step.set_status': {
       const step = lookup(draft.steps, action.stepId, 'step');
+      const hire = lookup(draft.hires, step.hireId, 'hire');
+      assertOwner(hire.employerId, action.employerId);
+      if (step.status === 'locked' && action.status !== 'locked') {
+        throw new DomainError('Complete the dependencies before updating this step');
+      }
       step.status = action.status;
       step.completedAt = action.status === 'done' ? context.now : undefined;
       step.waitingOn = action.status === 'waiting' ? action.waitingOn : undefined;

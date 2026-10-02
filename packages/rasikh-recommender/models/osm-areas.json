@@ -1,0 +1,4977 @@
+[
+  {
+    "osm_id": "node/11765915666",
+    "name": "Al Shahamah",
+    "name_ar": "الشهامة",
+    "latitude": 24.5308624,
+    "longitude": 54.6852432,
+    "mapped_object_counts": {
+      "schools": 6,
+      "healthcare": 1,
+      "groceries": 2,
+      "parks": 2,
+      "dining": 15,
+      "transit": 7
+    },
+    "density_per_km2": [
+      0.8488263631567752,
+      0.1414710605261292,
+      0.2829421210522584,
+      0.2829421210522584,
+      2.1220659078919377,
+      0.9902974236829043
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/12473511258",
+    "name": "Shahamah",
+    "name_ar": null,
+    "latitude": 24.5522413,
+    "longitude": 54.6809868,
+    "mapped_object_counts": {
+      "schools": 5,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 2,
+      "dining": 13,
+      "transit": 5
+    },
+    "density_per_km2": [
+      0.7073553026306459,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.2829421210522584,
+      1.8391237868396795,
+      0.7073553026306459
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/14028959681",
+    "name": "al shamkha 11",
+    "name_ar": null,
+    "latitude": 24.3855518,
+    "longitude": 54.7136372,
+    "mapped_object_counts": {
+      "schools": 4,
+      "healthcare": 2,
+      "groceries": 2,
+      "parks": 5,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.5658842421045168,
+      0.2829421210522584,
+      0.2829421210522584,
+      0.7073553026306459,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/1436121610",
+    "name": "Hills Abu Dhabi",
+    "name_ar": "تلال أبو ظبي",
+    "latitude": 24.4059906,
+    "longitude": 54.4691528,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 12,
+      "dining": 12,
+      "transit": 18
+    },
+    "density_per_km2": [
+      0.0,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.6976527263135504,
+      1.6976527263135504,
+      2.5464790894703255
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/1780446449",
+    "name": "Al Zeina",
+    "name_ar": "الزينة",
+    "latitude": 24.4569809,
+    "longitude": 54.6142115,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 3,
+      "groceries": 6,
+      "parks": 1,
+      "dining": 42,
+      "transit": 4
+    },
+    "density_per_km2": [
+      0.0,
+      0.4244131815783876,
+      0.8488263631567752,
+      0.1414710605261292,
+      5.941784542097426,
+      0.5658842421045168
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/1798002775",
+    "name": "Marina Square",
+    "name_ar": null,
+    "latitude": 24.4913018,
+    "longitude": 54.3944203,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 12,
+      "groceries": 17,
+      "parks": 7,
+      "dining": 113,
+      "transit": 40
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      1.6976527263135504,
+      2.4050080289441964,
+      0.9902974236829043,
+      15.9862298394526,
+      5.6588424210451675
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/1954488723",
+    "name": "Al Gurm Resort",
+    "name_ar": "منتجع القرم",
+    "latitude": 24.4183298,
+    "longitude": 54.4050123,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 3,
+      "groceries": 3,
+      "parks": 2,
+      "dining": 4,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.4244131815783876,
+      0.4244131815783876,
+      0.2829421210522584,
+      0.5658842421045168,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/2013471294",
+    "name": "Al Muneera Island",
+    "name_ar": null,
+    "latitude": 24.4516068,
+    "longitude": 54.6054148,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 6,
+      "groceries": 10,
+      "parks": 1,
+      "dining": 40,
+      "transit": 5
+    },
+    "density_per_km2": [
+      0.0,
+      0.8488263631567752,
+      1.4147106052612919,
+      0.1414710605261292,
+      5.6588424210451675,
+      0.7073553026306459
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/2047980561",
+    "name": "Bain al Jisrain (Between the Bridges)",
+    "name_ar": null,
+    "latitude": 24.4091767,
+    "longitude": 54.4954243,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 7,
+      "groceries": 4,
+      "parks": 0,
+      "dining": 47,
+      "transit": 10
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.9902974236829043,
+      0.5658842421045168,
+      0.0,
+      6.649139844728072,
+      1.4147106052612919
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/2179543665",
+    "name": "Al Markaziyah West",
+    "name_ar": "المركزية غرب",
+    "latitude": 24.4781158,
+    "longitude": 54.3483658,
+    "mapped_object_counts": {
+      "schools": 6,
+      "healthcare": 55,
+      "groceries": 29,
+      "parks": 22,
+      "dining": 178,
+      "transit": 60
+    },
+    "density_per_km2": [
+      0.8488263631567752,
+      7.780908328937105,
+      4.102660755257746,
+      3.1123633315748425,
+      25.181848773650998,
+      8.48826363156775
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/2383895070",
+    "name": "Al Watani",
+    "name_ar": null,
+    "latitude": 24.4151882,
+    "longitude": 54.5425075,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 1,
+      "groceries": 4,
+      "parks": 17,
+      "dining": 1,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.1414710605261292,
+      0.5658842421045168,
+      2.4050080289441964,
+      0.1414710605261292,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/2572909526",
+    "name": "Marina District",
+    "name_ar": "منطقة المرسى",
+    "latitude": 24.5259958,
+    "longitude": 54.4202429,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 2,
+      "groceries": 2,
+      "parks": 0,
+      "dining": 14,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.2829421210522584,
+      0.2829421210522584,
+      0.0,
+      1.9805948473658086,
+      1.1317684842090336
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3172553674",
+    "name": "Al Muneera Mainland",
+    "name_ar": null,
+    "latitude": 24.4498847,
+    "longitude": 54.6052934,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 7,
+      "groceries": 10,
+      "parks": 1,
+      "dining": 40,
+      "transit": 6
+    },
+    "density_per_km2": [
+      0.0,
+      0.9902974236829043,
+      1.4147106052612919,
+      0.1414710605261292,
+      5.6588424210451675,
+      0.8488263631567752
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3207461935",
+    "name": "Al Nahyan Camp",
+    "name_ar": "مخيم آل نهيان",
+    "latitude": 24.4687418,
+    "longitude": 54.3891243,
+    "mapped_object_counts": {
+      "schools": 10,
+      "healthcare": 45,
+      "groceries": 10,
+      "parks": 1,
+      "dining": 119,
+      "transit": 21
+    },
+    "density_per_km2": [
+      1.4147106052612919,
+      6.366197723675814,
+      1.4147106052612919,
+      0.1414710605261292,
+      16.835056202609373,
+      2.970892271048713
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3672599843",
+    "name": "Culture District",
+    "name_ar": "منطقة الثقافة",
+    "latitude": 24.5356945,
+    "longitude": 54.4071758,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 1,
+      "dining": 26,
+      "transit": 6
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      3.678247573679359,
+      0.8488263631567752
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3874533412",
+    "name": "Sports City",
+    "name_ar": "المدينة الرياضية",
+    "latitude": 24.4181859,
+    "longitude": 54.4534769,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 15,
+      "groceries": 6,
+      "parks": 3,
+      "dining": 35,
+      "transit": 28
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      2.1220659078919377,
+      0.8488263631567752,
+      0.4244131815783876,
+      4.951487118414522,
+      3.961189694731617
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3874537957",
+    "name": "Capital Centre",
+    "name_ar": null,
+    "latitude": 24.4191359,
+    "longitude": 54.4400422,
+    "mapped_object_counts": {
+      "schools": 14,
+      "healthcare": 16,
+      "groceries": 5,
+      "parks": 0,
+      "dining": 46,
+      "transit": 22
+    },
+    "density_per_km2": [
+      1.9805948473658086,
+      2.2635369684180673,
+      0.7073553026306459,
+      0.0,
+      6.507668784201943,
+      3.1123633315748425
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3874537958",
+    "name": "Al Safarat",
+    "name_ar": "السفارات",
+    "latitude": 24.4247371,
+    "longitude": 54.4358055,
+    "mapped_object_counts": {
+      "schools": 23,
+      "healthcare": 19,
+      "groceries": 7,
+      "parks": 1,
+      "dining": 81,
+      "transit": 28
+    },
+    "density_per_km2": [
+      3.2538343921009716,
+      2.6879501499964547,
+      0.9902974236829043,
+      0.1414710605261292,
+      11.459155902616464,
+      3.961189694731617
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3888678965",
+    "name": "Rihan Heights",
+    "name_ar": null,
+    "latitude": 24.413497,
+    "longitude": 54.4626721,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 13,
+      "groceries": 3,
+      "parks": 7,
+      "dining": 24,
+      "transit": 28
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      1.8391237868396795,
+      0.4244131815783876,
+      0.9902974236829043,
+      3.3953054526271007,
+      3.961189694731617
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3942184696",
+    "name": "Al Matar",
+    "name_ar": null,
+    "latitude": 24.4352701,
+    "longitude": 54.4406788,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 13,
+      "groceries": 7,
+      "parks": 1,
+      "dining": 77,
+      "transit": 18
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      1.8391237868396795,
+      0.9902974236829043,
+      0.1414710605261292,
+      10.893271660511948,
+      2.5464790894703255
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3946121472",
+    "name": "Saadiyat Beach",
+    "name_ar": "شاطئ السعديات",
+    "latitude": 24.5475392,
+    "longitude": 54.4409572,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 1,
+      "dining": 5,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.7073553026306459,
+      1.1317684842090336
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3947809336",
+    "name": "Abu Dhabi Gate",
+    "name_ar": null,
+    "latitude": 24.3960663,
+    "longitude": 54.49503,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 5,
+      "groceries": 5,
+      "parks": 2,
+      "dining": 26,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.7073553026306459,
+      0.7073553026306459,
+      0.2829421210522584,
+      3.678247573679359,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3948695464",
+    "name": "Fairmont Residences",
+    "name_ar": null,
+    "latitude": 24.4162912,
+    "longitude": 54.4911679,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 2,
+      "groceries": 0,
+      "parks": 4,
+      "dining": 39,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.2829421210522584,
+      0.0,
+      0.5658842421045168,
+      5.517371360519038,
+      1.1317684842090336
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3958499866",
+    "name": "Ministries Complex",
+    "name_ar": null,
+    "latitude": 24.4303745,
+    "longitude": 54.4651528,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 4,
+      "groceries": 3,
+      "parks": 8,
+      "dining": 32,
+      "transit": 5
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.5658842421045168,
+      0.4244131815783876,
+      1.1317684842090336,
+      4.527073936836135,
+      0.7073553026306459
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3972679860",
+    "name": "Al Rawdhat",
+    "name_ar": "الروضات",
+    "latitude": 24.4193462,
+    "longitude": 54.4635713,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 13,
+      "groceries": 4,
+      "parks": 10,
+      "dining": 38,
+      "transit": 27
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      1.8391237868396795,
+      0.5658842421045168,
+      1.4147106052612919,
+      5.375900299992909,
+      3.819718634205488
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3972694784",
+    "name": "Al Mafraq",
+    "name_ar": "المفرق",
+    "latitude": 24.3351909,
+    "longitude": 54.6066467,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 2,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.2829421210522584,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3975290653",
+    "name": "Danat Abu Dhabi",
+    "name_ar": "دانة أبو ظبي",
+    "latitude": 24.4300331,
+    "longitude": 54.4351042,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 20,
+      "groceries": 6,
+      "parks": 0,
+      "dining": 80,
+      "transit": 23
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      2.8294212105225838,
+      0.8488263631567752,
+      0.0,
+      11.317684842090335,
+      3.2538343921009716
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/3977337882",
+    "name": "Al Zahraa",
+    "name_ar": "الزهراء",
+    "latitude": 24.4391653,
+    "longitude": 54.435218,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 14,
+      "groceries": 6,
+      "parks": 1,
+      "dining": 75,
+      "transit": 18
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      1.9805948473658086,
+      0.8488263631567752,
+      0.1414710605261292,
+      10.61032953945969,
+      2.5464790894703255
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/4002018623",
+    "name": "Al Aman",
+    "name_ar": null,
+    "latitude": 24.4319904,
+    "longitude": 54.4265503,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 18,
+      "groceries": 5,
+      "parks": 1,
+      "dining": 87,
+      "transit": 27
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      2.5464790894703255,
+      0.7073553026306459,
+      0.1414710605261292,
+      12.307982265773239,
+      3.819718634205488
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/4011459451",
+    "name": "Al Reehan",
+    "name_ar": "الريحان",
+    "latitude": 24.4316756,
+    "longitude": 54.4366564,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 18,
+      "groceries": 6,
+      "parks": 0,
+      "dining": 76,
+      "transit": 23
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      2.5464790894703255,
+      0.8488263631567752,
+      0.0,
+      10.751800599985819,
+      3.2538343921009716
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/4011465812",
+    "name": "Al Maha Residential Complex",
+    "name_ar": null,
+    "latitude": 24.4287938,
+    "longitude": 54.4484851,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 22,
+      "groceries": 8,
+      "parks": 1,
+      "dining": 80,
+      "transit": 29
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      3.1123633315748425,
+      1.1317684842090336,
+      0.1414710605261292,
+      11.317684842090335,
+      4.102660755257746
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/4012596157",
+    "name": "Officer's Club",
+    "name_ar": "نادي الضباط",
+    "latitude": 24.4039906,
+    "longitude": 54.4735055,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 13,
+      "dining": 6,
+      "transit": 15
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      1.8391237868396795,
+      0.8488263631567752,
+      2.1220659078919377
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/4019830084",
+    "name": "Al Rayhan",
+    "name_ar": "الريحان",
+    "latitude": 24.439446,
+    "longitude": 54.4237984,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 13,
+      "groceries": 3,
+      "parks": 4,
+      "dining": 67,
+      "transit": 24
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      1.8391237868396795,
+      0.4244131815783876,
+      0.5658842421045168,
+      9.478561055250657,
+      3.3953054526271007
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/4056616650",
+    "name": "Al Ma'ared",
+    "name_ar": "المعرض",
+    "latitude": 24.4258242,
+    "longitude": 54.4229336,
+    "mapped_object_counts": {
+      "schools": 23,
+      "healthcare": 7,
+      "groceries": 3,
+      "parks": 1,
+      "dining": 60,
+      "transit": 20
+    },
+    "density_per_km2": [
+      3.2538343921009716,
+      0.9902974236829043,
+      0.4244131815783876,
+      0.1414710605261292,
+      8.48826363156775,
+      2.8294212105225838
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/4732359430",
+    "name": "Al Maqtaa Village",
+    "name_ar": null,
+    "latitude": 24.4345654,
+    "longitude": 54.4543861,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 5,
+      "groceries": 3,
+      "parks": 1,
+      "dining": 25,
+      "transit": 13
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.7073553026306459,
+      0.4244131815783876,
+      0.1414710605261292,
+      3.53677651315323,
+      1.8391237868396795
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/4734501156",
+    "name": "Palms Oasis",
+    "name_ar": "واحة النخيل",
+    "latitude": 24.427313,
+    "longitude": 54.4216419,
+    "mapped_object_counts": {
+      "schools": 23,
+      "healthcare": 10,
+      "groceries": 3,
+      "parks": 1,
+      "dining": 53,
+      "transit": 22
+    },
+    "density_per_km2": [
+      3.2538343921009716,
+      1.4147106052612919,
+      0.4244131815783876,
+      0.1414710605261292,
+      7.497966207884847,
+      3.1123633315748425
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/714725748",
+    "name": "Golf Gardens",
+    "name_ar": "عولف غاردنز",
+    "latitude": 24.420935,
+    "longitude": 54.5317634,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 17,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.1414710605261292,
+      2.4050080289441964,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/745762746",
+    "name": "Al Musalla",
+    "name_ar": "المصلى",
+    "latitude": 24.4561251,
+    "longitude": 54.3761405,
+    "mapped_object_counts": {
+      "schools": 18,
+      "healthcare": 52,
+      "groceries": 10,
+      "parks": 2,
+      "dining": 105,
+      "transit": 33
+    },
+    "density_per_km2": [
+      2.5464790894703255,
+      7.356495147358718,
+      1.4147106052612919,
+      0.2829421210522584,
+      14.854461355243565,
+      4.668544997362264
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/746287814",
+    "name": "Al Khubeirah",
+    "name_ar": "الخبيرة",
+    "latitude": 24.4652473,
+    "longitude": 54.3368301,
+    "mapped_object_counts": {
+      "schools": 9,
+      "healthcare": 26,
+      "groceries": 12,
+      "parks": 19,
+      "dining": 124,
+      "transit": 40
+    },
+    "density_per_km2": [
+      1.2732395447351628,
+      3.678247573679359,
+      1.6976527263135504,
+      2.6879501499964547,
+      17.54241150524002,
+      5.6588424210451675
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/7635846587",
+    "name": "Jawaher Saadiyat",
+    "name_ar": "جواهر السعديات",
+    "latitude": 24.5341662,
+    "longitude": 54.4249019,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 1,
+      "groceries": 2,
+      "parks": 1,
+      "dining": 16,
+      "transit": 11
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.1414710605261292,
+      0.2829421210522584,
+      0.1414710605261292,
+      2.2635369684180673,
+      1.5561816657874212
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/7635846588",
+    "name": "St. Regis Saadiyat Island",
+    "name_ar": null,
+    "latitude": 24.5380966,
+    "longitude": 54.4245505,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 2,
+      "parks": 1,
+      "dining": 10,
+      "transit": 10
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.2829421210522584,
+      0.1414710605261292,
+      1.4147106052612919,
+      1.4147106052612919
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/7651757634",
+    "name": "Al Reem Island",
+    "name_ar": "جزيرة الريم",
+    "latitude": 24.4953701,
+    "longitude": 54.4052431,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 6,
+      "groceries": 9,
+      "parks": 20,
+      "dining": 25,
+      "transit": 25
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.8488263631567752,
+      1.2732395447351628,
+      2.8294212105225838,
+      3.53677651315323,
+      3.53677651315323
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/778115216",
+    "name": "Police Officers City",
+    "name_ar": "مدينة ضباط الشرطة",
+    "latitude": 24.3824016,
+    "longitude": 54.5349721,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 4,
+      "groceries": 4,
+      "parks": 6,
+      "dining": 3,
+      "transit": 3
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.5658842421045168,
+      0.5658842421045168,
+      0.8488263631567752,
+      0.4244131815783876,
+      0.4244131815783876
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/803166689",
+    "name": "Qasr Al Shatie",
+    "name_ar": "قصر الشاطئ",
+    "latitude": 24.4259728,
+    "longitude": 54.3887455,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 3,
+      "dining": 2,
+      "transit": 9
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.4244131815783876,
+      0.2829421210522584,
+      1.2732395447351628
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/804656077",
+    "name": "Al Wahda",
+    "name_ar": "الوحدة",
+    "latitude": 24.4686219,
+    "longitude": 54.3763176,
+    "mapped_object_counts": {
+      "schools": 20,
+      "healthcare": 90,
+      "groceries": 22,
+      "parks": 2,
+      "dining": 194,
+      "transit": 50
+    },
+    "density_per_km2": [
+      2.8294212105225838,
+      12.732395447351628,
+      3.1123633315748425,
+      0.2829421210522584,
+      27.445385742069064,
+      7.07355302630646
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/804656265",
+    "name": "Al Karamah",
+    "name_ar": "الكرامة",
+    "latitude": 24.4653001,
+    "longitude": 54.371509,
+    "mapped_object_counts": {
+      "schools": 23,
+      "healthcare": 70,
+      "groceries": 20,
+      "parks": 1,
+      "dining": 145,
+      "transit": 51
+    },
+    "density_per_km2": [
+      3.2538343921009716,
+      9.902974236829044,
+      2.8294212105225838,
+      0.1414710605261292,
+      20.513303776288733,
+      7.215024086832589
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/804656452",
+    "name": "Al Rawdah",
+    "name_ar": "الروضة",
+    "latitude": 24.4564132,
+    "longitude": 54.359557,
+    "mapped_object_counts": {
+      "schools": 13,
+      "healthcare": 28,
+      "groceries": 2,
+      "parks": 3,
+      "dining": 12,
+      "transit": 31
+    },
+    "density_per_km2": [
+      1.8391237868396795,
+      3.961189694731617,
+      0.2829421210522584,
+      0.4244131815783876,
+      1.6976527263135504,
+      4.385602876310005
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8084096206",
+    "name": "Al Raha",
+    "name_ar": "الراحة",
+    "latitude": 24.4465441,
+    "longitude": 54.5901632,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 3,
+      "groceries": 2,
+      "parks": 0,
+      "dining": 8,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.0,
+      0.4244131815783876,
+      0.2829421210522584,
+      0.0,
+      1.1317684842090336,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8090575513",
+    "name": "Al Forsan Village",
+    "name_ar": null,
+    "latitude": 24.4047296,
+    "longitude": 54.5495063,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 4,
+      "parks": 9,
+      "dining": 3,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.5658842421045168,
+      1.2732395447351628,
+      0.4244131815783876,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987561",
+    "name": "Bani Yas",
+    "name_ar": "بني ياس",
+    "latitude": 24.3089308,
+    "longitude": 54.6377562,
+    "mapped_object_counts": {
+      "schools": 5,
+      "healthcare": 1,
+      "groceries": 0,
+      "parks": 2,
+      "dining": 1,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.7073553026306459,
+      0.1414710605261292,
+      0.0,
+      0.2829421210522584,
+      0.1414710605261292,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987564",
+    "name": "Al Shawamekh",
+    "name_ar": "الشوامخ",
+    "latitude": 24.3422485,
+    "longitude": 54.6609305,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 1,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987565",
+    "name": "Al Shawamekh",
+    "name_ar": "الشوامخ",
+    "latitude": 24.3547599,
+    "longitude": 54.6542357,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 2,
+      "parks": 0,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.2829421210522584,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987566",
+    "name": "Al Shamkha",
+    "name_ar": "الشامخة",
+    "latitude": 24.3866584,
+    "longitude": 54.7074507,
+    "mapped_object_counts": {
+      "schools": 4,
+      "healthcare": 2,
+      "groceries": 2,
+      "parks": 5,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.5658842421045168,
+      0.2829421210522584,
+      0.2829421210522584,
+      0.7073553026306459,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987567",
+    "name": "Shakhbout City",
+    "name_ar": "مدينة شخبوط",
+    "latitude": 24.3728993,
+    "longitude": 54.642391,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 0,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987571",
+    "name": "Al Rahba",
+    "name_ar": "الرحبة",
+    "latitude": 24.6030114,
+    "longitude": 54.6947478,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 1,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 2,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.2829421210522584,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987572",
+    "name": "Hydra Village",
+    "name_ar": "قرية الهيدرا",
+    "latitude": 24.5483725,
+    "longitude": 54.7021292,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 2,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.2829421210522584,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987574",
+    "name": "New Shahama",
+    "name_ar": "الشهامة الجديدة",
+    "latitude": 24.5062062,
+    "longitude": 54.6731185,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 1,
+      "dining": 1,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987575",
+    "name": "Al Falah",
+    "name_ar": "الفلاح",
+    "latitude": 24.4376169,
+    "longitude": 54.7182654,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 8,
+      "dining": 2,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.0,
+      1.1317684842090336,
+      0.2829421210522584,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987577",
+    "name": "Khalifa City",
+    "name_ar": "مدينة خليفة",
+    "latitude": 24.4266766,
+    "longitude": 54.6212767,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 2,
+      "groceries": 4,
+      "parks": 1,
+      "dining": 11,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.2829421210522584,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.5561816657874212,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987579",
+    "name": "Al Raha",
+    "name_ar": "الراحة",
+    "latitude": 24.4478529,
+    "longitude": 54.5963,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 5,
+      "groceries": 6,
+      "parks": 0,
+      "dining": 29,
+      "transit": 4
+    },
+    "density_per_km2": [
+      0.0,
+      0.7073553026306459,
+      0.8488263631567752,
+      0.0,
+      4.102660755257746,
+      0.5658842421045168
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987580",
+    "name": "Khalifa City",
+    "name_ar": "مدينة خليفة",
+    "latitude": 24.4172984,
+    "longitude": 54.5657443,
+    "mapped_object_counts": {
+      "schools": 9,
+      "healthcare": 3,
+      "groceries": 4,
+      "parks": 6,
+      "dining": 7,
+      "transit": 1
+    },
+    "density_per_km2": [
+      1.2732395447351628,
+      0.4244131815783876,
+      0.5658842421045168,
+      0.8488263631567752,
+      0.9902974236829043,
+      0.1414710605261292
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987583",
+    "name": "Mohammed Bin Zayed City",
+    "name_ar": "مدينة محمد بن زايد",
+    "latitude": 24.3339589,
+    "longitude": 54.5535564,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 2,
+      "groceries": 1,
+      "parks": 7,
+      "dining": 2,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.2829421210522584,
+      0.1414710605261292,
+      0.9902974236829043,
+      0.2829421210522584,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987585",
+    "name": "ICAD I",
+    "name_ar": "أبو ظبي الصناعية 1",
+    "latitude": 24.3307524,
+    "longitude": 54.4914149,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 2,
+      "groceries": 1,
+      "parks": 0,
+      "dining": 0,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.0,
+      0.2829421210522584,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987586",
+    "name": "Musaffah",
+    "name_ar": "مصفح",
+    "latitude": 24.3657845,
+    "longitude": 54.4957065,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 8,
+      "groceries": 21,
+      "parks": 0,
+      "dining": 42,
+      "transit": 5
+    },
+    "density_per_km2": [
+      0.0,
+      1.1317684842090336,
+      2.970892271048713,
+      0.0,
+      5.941784542097426,
+      0.7073553026306459
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987587",
+    "name": "Rabdan",
+    "name_ar": "ربدان",
+    "latitude": 24.3955698,
+    "longitude": 54.5024013,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 5,
+      "groceries": 7,
+      "parks": 1,
+      "dining": 9,
+      "transit": 3
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.7073553026306459,
+      0.9902974236829043,
+      0.1414710605261292,
+      1.2732395447351628,
+      0.4244131815783876
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987588",
+    "name": "Rabdan",
+    "name_ar": "ربدان",
+    "latitude": 24.4063564,
+    "longitude": 54.5054912,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 6,
+      "groceries": 3,
+      "parks": 1,
+      "dining": 15,
+      "transit": 5
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.8488263631567752,
+      0.4244131815783876,
+      0.1414710605261292,
+      2.1220659078919377,
+      0.7073553026306459
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987590",
+    "name": "Al Muntazah",
+    "name_ar": "المنتزه",
+    "latitude": 24.4301931,
+    "longitude": 54.4536495,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 13,
+      "groceries": 4,
+      "parks": 5,
+      "dining": 33,
+      "transit": 24
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      1.8391237868396795,
+      0.5658842421045168,
+      0.7073553026306459,
+      4.668544997362264,
+      3.3953054526271007
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987592",
+    "name": "Al Muzoun",
+    "name_ar": "المزون",
+    "latitude": 24.4019402,
+    "longitude": 54.4689273,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 12,
+      "dining": 7,
+      "transit": 14
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      1.6976527263135504,
+      0.9902974236829043,
+      1.9805948473658086
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987594",
+    "name": "Al Rawdah",
+    "name_ar": "الروضة",
+    "latitude": 24.4166341,
+    "longitude": 54.4542503,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 15,
+      "groceries": 6,
+      "parks": 3,
+      "dining": 35,
+      "transit": 28
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      2.1220659078919377,
+      0.8488263631567752,
+      0.4244131815783876,
+      4.951487118414522,
+      3.961189694731617
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987595",
+    "name": "المزون",
+    "name_ar": null,
+    "latitude": 24.4132343,
+    "longitude": 54.4274282,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 4,
+      "groceries": 0,
+      "parks": 1,
+      "dining": 8,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.0,
+      0.5658842421045168,
+      0.0,
+      0.1414710605261292,
+      1.1317684842090336,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987600",
+    "name": "Al Sa' adah",
+    "name_ar": "السعادة",
+    "latitude": 24.4397656,
+    "longitude": 54.4294023,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 15,
+      "groceries": 6,
+      "parks": 1,
+      "dining": 79,
+      "transit": 21
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      2.1220659078919377,
+      0.8488263631567752,
+      0.1414710605261292,
+      11.176213781564206,
+      2.970892271048713
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987601",
+    "name": "Hadbat Al Za'faranah",
+    "name_ar": "حدبة الزعفرانة",
+    "latitude": 24.4437116,
+    "longitude": 54.4067859,
+    "mapped_object_counts": {
+      "schools": 11,
+      "healthcare": 16,
+      "groceries": 4,
+      "parks": 5,
+      "dining": 49,
+      "transit": 41
+    },
+    "density_per_km2": [
+      1.5561816657874212,
+      2.2635369684180673,
+      0.5658842421045168,
+      0.7073553026306459,
+      6.9320819657803305,
+      5.800313481571297
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987603",
+    "name": "Al Mushrif",
+    "name_ar": "المشرف",
+    "latitude": 24.4400391,
+    "longitude": 54.387989,
+    "mapped_object_counts": {
+      "schools": 10,
+      "healthcare": 13,
+      "groceries": 4,
+      "parks": 8,
+      "dining": 18,
+      "transit": 39
+    },
+    "density_per_km2": [
+      1.4147106052612919,
+      1.8391237868396795,
+      0.5658842421045168,
+      1.1317684842090336,
+      2.5464790894703255,
+      5.517371360519038
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987607",
+    "name": "Zayed Port",
+    "name_ar": "ميناء زايد",
+    "latitude": 24.5231134,
+    "longitude": 54.3737411,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 3,
+      "parks": 2,
+      "dining": 21,
+      "transit": 12
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.4244131815783876,
+      0.2829421210522584,
+      2.970892271048713,
+      1.6976527263135504
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987608",
+    "name": "Al Zahiyah",
+    "name_ar": "الزاهية",
+    "latitude": 24.5015592,
+    "longitude": 54.3771958,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 52,
+      "groceries": 54,
+      "parks": 9,
+      "dining": 376,
+      "transit": 63
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      7.356495147358718,
+      7.639437268410976,
+      1.2732395447351628,
+      53.19311875782458,
+      8.91267681314614
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987612",
+    "name": "Qasr Al Bahr",
+    "name_ar": "قصر البحر",
+    "latitude": 24.4751581,
+    "longitude": 54.3968725,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 7,
+      "groceries": 0,
+      "parks": 2,
+      "dining": 8,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.9902974236829043,
+      0.0,
+      0.2829421210522584,
+      1.1317684842090336,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987613",
+    "name": "Al Nahyan",
+    "name_ar": "آل نهيان",
+    "latitude": 24.4648461,
+    "longitude": 54.3909502,
+    "mapped_object_counts": {
+      "schools": 9,
+      "healthcare": 42,
+      "groceries": 8,
+      "parks": 1,
+      "dining": 98,
+      "transit": 24
+    },
+    "density_per_km2": [
+      1.2732395447351628,
+      5.941784542097426,
+      1.1317684842090336,
+      0.1414710605261292,
+      13.864163931560661,
+      3.3953054526271007
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131987614",
+    "name": "Al Wahda",
+    "name_ar": "الوحدة",
+    "latitude": 24.4652757,
+    "longitude": 54.3791699,
+    "mapped_object_counts": {
+      "schools": 22,
+      "healthcare": 69,
+      "groceries": 17,
+      "parks": 3,
+      "dining": 165,
+      "transit": 48
+    },
+    "density_per_km2": [
+      3.1123633315748425,
+      9.761503176302915,
+      2.4050080289441964,
+      0.4244131815783876,
+      23.342724986811316,
+      6.790610905254201
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991917",
+    "name": "Al Qurm",
+    "name_ar": "القرم",
+    "latitude": 24.4263248,
+    "longitude": 54.3849849,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 4,
+      "dining": 2,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.1414710605261292,
+      0.5658842421045168,
+      0.2829421210522584,
+      1.1317684842090336
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991918",
+    "name": "Al Hudayriat Island",
+    "name_ar": "جزيرة الحديريات",
+    "latitude": 24.4170639,
+    "longitude": 54.3602656,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 11,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.5561816657874212,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991919",
+    "name": "Al Danah",
+    "name_ar": "الدانة",
+    "latitude": 24.4885156,
+    "longitude": 54.3696641,
+    "mapped_object_counts": {
+      "schools": 17,
+      "healthcare": 132,
+      "groceries": 88,
+      "parks": 11,
+      "dining": 529,
+      "transit": 112
+    },
+    "density_per_km2": [
+      2.4050080289441964,
+      18.674179989449055,
+      12.44945332629937,
+      1.5561816657874212,
+      74.83819101832235,
+      15.844758778926469
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991921",
+    "name": "Al Hisn",
+    "name_ar": "الحصن",
+    "latitude": 24.4802063,
+    "longitude": 54.3534636,
+    "mapped_object_counts": {
+      "schools": 7,
+      "healthcare": 81,
+      "groceries": 46,
+      "parks": 19,
+      "dining": 223,
+      "transit": 78
+    },
+    "density_per_km2": [
+      0.9902974236829043,
+      11.459155902616464,
+      6.507668784201943,
+      2.6879501499964547,
+      31.54804649732681,
+      11.034742721038077
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991922",
+    "name": "Al Manhal",
+    "name_ar": "المنهل",
+    "latitude": 24.4659397,
+    "longitude": 54.3653941,
+    "mapped_object_counts": {
+      "schools": 20,
+      "healthcare": 50,
+      "groceries": 17,
+      "parks": 1,
+      "dining": 108,
+      "transit": 56
+    },
+    "density_per_km2": [
+      2.8294212105225838,
+      7.07355302630646,
+      2.4050080289441964,
+      0.1414710605261292,
+      15.278874536821952,
+      7.922379389463234
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991923",
+    "name": "Al Bateen",
+    "name_ar": "البطين",
+    "latitude": 24.4539472,
+    "longitude": 54.3523693,
+    "mapped_object_counts": {
+      "schools": 9,
+      "healthcare": 16,
+      "groceries": 3,
+      "parks": 5,
+      "dining": 16,
+      "transit": 19
+    },
+    "density_per_km2": [
+      1.2732395447351628,
+      2.2635369684180673,
+      0.4244131815783876,
+      0.7073553026306459,
+      2.2635369684180673,
+      2.6879501499964547
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991924",
+    "name": "Al Khalidiyah",
+    "name_ar": "الخالدية",
+    "latitude": 24.4707638,
+    "longitude": 54.3411469,
+    "mapped_object_counts": {
+      "schools": 11,
+      "healthcare": 40,
+      "groceries": 20,
+      "parks": 18,
+      "dining": 148,
+      "transit": 51
+    },
+    "density_per_km2": [
+      1.5561816657874212,
+      5.6588424210451675,
+      2.8294212105225838,
+      2.5464790894703255,
+      20.93771695786712,
+      7.215024086832589
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991925",
+    "name": "Al Kasir",
+    "name_ar": "الكاسر",
+    "latitude": 24.47632,
+    "longitude": 54.3219852,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 7,
+      "groceries": 3,
+      "parks": 6,
+      "dining": 27,
+      "transit": 13
+    },
+    "density_per_km2": [
+      0.0,
+      0.9902974236829043,
+      0.4244131815783876,
+      0.8488263631567752,
+      3.819718634205488,
+      1.8391237868396795
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/8131991927",
+    "name": "Al Ras Al Akhdar",
+    "name_ar": "الرأس الأخضر",
+    "latitude": 24.4603733,
+    "longitude": 54.311428,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 17,
+      "dining": 11,
+      "transit": 13
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.1414710605261292,
+      2.4050080289441964,
+      1.5561816657874212,
+      1.8391237868396795
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/9933039664",
+    "name": "Al Maryah Island",
+    "name_ar": "جزيرة المارية",
+    "latitude": 24.5029261,
+    "longitude": 54.3896411,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 21,
+      "groceries": 21,
+      "parks": 1,
+      "dining": 105,
+      "transit": 36
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      2.970892271048713,
+      2.970892271048713,
+      0.1414710605261292,
+      14.854461355243565,
+      5.092958178940651
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/9933039666",
+    "name": "Al Saadiyat Island",
+    "name_ar": "جزيرة السعديات",
+    "latitude": 24.5319761,
+    "longitude": 54.431076,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 2,
+      "groceries": 2,
+      "parks": 9,
+      "dining": 20,
+      "transit": 16
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.2829421210522584,
+      0.2829421210522584,
+      1.2732395447351628,
+      2.8294212105225838,
+      2.2635369684180673
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/9933074135",
+    "name": "Yas Island",
+    "name_ar": "جزيرة ياس",
+    "latitude": 24.4910543,
+    "longitude": 54.5986172,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 5,
+      "groceries": 3,
+      "parks": 4,
+      "dining": 71,
+      "transit": 9
+    },
+    "density_per_km2": [
+      0.0,
+      0.7073553026306459,
+      0.4244131815783876,
+      0.5658842421045168,
+      10.044445297355173,
+      1.2732395447351628
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "node/9979493656",
+    "name": "Al Kheeran",
+    "name_ar": "الخيران",
+    "latitude": 24.4522284,
+    "longitude": 54.4257545,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 0,
+      "parks": 2,
+      "dining": 9,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.2829421210522584,
+      1.2732395447351628,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "relation/12743927",
+    "name": "Al Hudayriyat",
+    "name_ar": "الحديريات",
+    "latitude": 24.4209458,
+    "longitude": 54.3698315,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 1,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "relation/18471685",
+    "name": "West Yas",
+    "name_ar": "ياس غرب",
+    "latitude": 24.4942754,
+    "longitude": 54.5830662,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 7,
+      "dining": 4,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.0,
+      0.1414710605261292,
+      0.9902974236829043,
+      0.5658842421045168,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1083935369",
+    "name": "Yas Island",
+    "name_ar": "جزيرة ياس",
+    "latitude": 24.4883934,
+    "longitude": 54.6030804,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 5,
+      "groceries": 2,
+      "parks": 1,
+      "dining": 69,
+      "transit": 11
+    },
+    "density_per_km2": [
+      0.0,
+      0.7073553026306459,
+      0.2829421210522584,
+      0.1414710605261292,
+      9.761503176302915,
+      1.5561816657874212
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1084155080",
+    "name": "Al Maryah Island",
+    "name_ar": "جزيرة المارية",
+    "latitude": 24.5024372,
+    "longitude": 54.3913686,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 14,
+      "groceries": 12,
+      "parks": 2,
+      "dining": 77,
+      "transit": 35
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      1.9805948473658086,
+      1.6976527263135504,
+      0.2829421210522584,
+      10.893271660511948,
+      4.951487118414522
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1084156806",
+    "name": "Al Reem Island",
+    "name_ar": "جزيرة الريم",
+    "latitude": 24.4941193,
+    "longitude": 54.4079059,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 6,
+      "groceries": 9,
+      "parks": 20,
+      "dining": 25,
+      "transit": 23
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.8488263631567752,
+      1.2732395447351628,
+      2.8294212105225838,
+      3.53677651315323,
+      3.2538343921009716
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156768",
+    "name": "Z26",
+    "name_ar": null,
+    "latitude": 24.3098985,
+    "longitude": 54.5444805,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 2,
+      "dining": 16,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.2829421210522584,
+      2.2635369684180673,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156769",
+    "name": "Z27",
+    "name_ar": null,
+    "latitude": 24.3098766,
+    "longitude": 54.5351148,
+    "mapped_object_counts": {
+      "schools": 5,
+      "healthcare": 3,
+      "groceries": 4,
+      "parks": 1,
+      "dining": 24,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.7073553026306459,
+      0.4244131815783876,
+      0.5658842421045168,
+      0.1414710605261292,
+      3.3953054526271007,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156770",
+    "name": "Z34",
+    "name_ar": null,
+    "latitude": 24.3059217,
+    "longitude": 54.5831686,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 1,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156771",
+    "name": "Z31",
+    "name_ar": null,
+    "latitude": 24.3020989,
+    "longitude": 54.570639,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 1,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156772",
+    "name": "Z25",
+    "name_ar": null,
+    "latitude": 24.3103957,
+    "longitude": 54.5671007,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 2,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.1414710605261292,
+      0.2829421210522584,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156773",
+    "name": "Z24",
+    "name_ar": null,
+    "latitude": 24.3098192,
+    "longitude": 54.5499694,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 2,
+      "dining": 2,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.0,
+      0.0,
+      0.2829421210522584,
+      0.2829421210522584,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156774",
+    "name": "Z29",
+    "name_ar": null,
+    "latitude": 24.301321,
+    "longitude": 54.5544825,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 0,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156775",
+    "name": "Z32",
+    "name_ar": null,
+    "latitude": 24.3127462,
+    "longitude": 54.5791567,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 2,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.2829421210522584,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156776",
+    "name": "Z20",
+    "name_ar": null,
+    "latitude": 24.3201549,
+    "longitude": 54.5457096,
+    "mapped_object_counts": {
+      "schools": 8,
+      "healthcare": 11,
+      "groceries": 12,
+      "parks": 7,
+      "dining": 75,
+      "transit": 2
+    },
+    "density_per_km2": [
+      1.1317684842090336,
+      1.5561816657874212,
+      1.6976527263135504,
+      0.9902974236829043,
+      10.61032953945969,
+      0.2829421210522584
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156779",
+    "name": "Z22",
+    "name_ar": null,
+    "latitude": 24.32104,
+    "longitude": 54.5680886,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 4,
+      "dining": 1,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.1414710605261292,
+      0.5658842421045168,
+      0.1414710605261292,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156780",
+    "name": "Z33",
+    "name_ar": null,
+    "latitude": 24.321348,
+    "longitude": 54.5773424,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 3,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.4244131815783876,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156781",
+    "name": "Z36",
+    "name_ar": null,
+    "latitude": 24.337219,
+    "longitude": 54.5748773,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 6,
+      "dining": 1,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.8488263631567752,
+      0.1414710605261292,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156782",
+    "name": "Z12",
+    "name_ar": null,
+    "latitude": 24.3320651,
+    "longitude": 54.5677024,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 9,
+      "dining": 1,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      1.2732395447351628,
+      0.1414710605261292,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156784",
+    "name": "Z19",
+    "name_ar": null,
+    "latitude": 24.3316708,
+    "longitude": 54.5451542,
+    "mapped_object_counts": {
+      "schools": 9,
+      "healthcare": 30,
+      "groceries": 22,
+      "parks": 9,
+      "dining": 136,
+      "transit": 4
+    },
+    "density_per_km2": [
+      1.2732395447351628,
+      4.244131815783875,
+      3.1123633315748425,
+      1.2732395447351628,
+      19.24006423155357,
+      0.5658842421045168
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156785",
+    "name": "Z14",
+    "name_ar": null,
+    "latitude": 24.3369424,
+    "longitude": 54.5623566,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 2,
+      "groceries": 1,
+      "parks": 9,
+      "dining": 1,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.2829421210522584,
+      0.1414710605261292,
+      1.2732395447351628,
+      0.1414710605261292,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156786",
+    "name": "Z15",
+    "name_ar": null,
+    "latitude": 24.3367864,
+    "longitude": 54.5559264,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 2,
+      "groceries": 1,
+      "parks": 8,
+      "dining": 1,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.2829421210522584,
+      0.1414710605261292,
+      1.1317684842090336,
+      0.1414710605261292,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156787",
+    "name": "Z18",
+    "name_ar": null,
+    "latitude": 24.3366084,
+    "longitude": 54.5513124,
+    "mapped_object_counts": {
+      "schools": 5,
+      "healthcare": 5,
+      "groceries": 4,
+      "parks": 7,
+      "dining": 15,
+      "transit": 3
+    },
+    "density_per_km2": [
+      0.7073553026306459,
+      0.7073553026306459,
+      0.5658842421045168,
+      0.9902974236829043,
+      2.1220659078919377,
+      0.4244131815783876
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156788",
+    "name": "Z17",
+    "name_ar": null,
+    "latitude": 24.3430556,
+    "longitude": 54.5480912,
+    "mapped_object_counts": {
+      "schools": 10,
+      "healthcare": 10,
+      "groceries": 8,
+      "parks": 6,
+      "dining": 33,
+      "transit": 3
+    },
+    "density_per_km2": [
+      1.4147106052612919,
+      1.4147106052612919,
+      1.1317684842090336,
+      0.8488263631567752,
+      4.668544997362264,
+      0.4244131815783876
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156792",
+    "name": "ME12",
+    "name_ar": null,
+    "latitude": 24.3197623,
+    "longitude": 54.5348236,
+    "mapped_object_counts": {
+      "schools": 9,
+      "healthcare": 19,
+      "groceries": 18,
+      "parks": 4,
+      "dining": 111,
+      "transit": 5
+    },
+    "density_per_km2": [
+      1.2732395447351628,
+      2.6879501499964547,
+      2.5464790894703255,
+      0.5658842421045168,
+      15.70328771840034,
+      0.7073553026306459
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156794",
+    "name": "ME10",
+    "name_ar": null,
+    "latitude": 24.3334586,
+    "longitude": 54.5341303,
+    "mapped_object_counts": {
+      "schools": 18,
+      "healthcare": 36,
+      "groceries": 29,
+      "parks": 3,
+      "dining": 181,
+      "transit": 7
+    },
+    "density_per_km2": [
+      2.5464790894703255,
+      5.092958178940651,
+      4.102660755257746,
+      0.4244131815783876,
+      25.606261955229385,
+      0.9902974236829043
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156795",
+    "name": "ME9",
+    "name_ar": null,
+    "latitude": 24.3424812,
+    "longitude": 54.5336598,
+    "mapped_object_counts": {
+      "schools": 18,
+      "healthcare": 25,
+      "groceries": 15,
+      "parks": 2,
+      "dining": 116,
+      "transit": 3
+    },
+    "density_per_km2": [
+      2.5464790894703255,
+      3.53677651315323,
+      2.1220659078919377,
+      0.2829421210522584,
+      16.410643021030985,
+      0.4244131815783876
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156796",
+    "name": "Z8",
+    "name_ar": null,
+    "latitude": 24.3516702,
+    "longitude": 54.5468259,
+    "mapped_object_counts": {
+      "schools": 10,
+      "healthcare": 2,
+      "groceries": 2,
+      "parks": 5,
+      "dining": 6,
+      "transit": 2
+    },
+    "density_per_km2": [
+      1.4147106052612919,
+      0.2829421210522584,
+      0.2829421210522584,
+      0.7073553026306459,
+      0.8488263631567752,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156797",
+    "name": "Z5",
+    "name_ar": null,
+    "latitude": 24.3569355,
+    "longitude": 54.5520537,
+    "mapped_object_counts": {
+      "schools": 4,
+      "healthcare": 1,
+      "groceries": 0,
+      "parks": 8,
+      "dining": 1,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.5658842421045168,
+      0.1414710605261292,
+      0.0,
+      1.1317684842090336,
+      0.1414710605261292,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156798",
+    "name": "Z3",
+    "name_ar": null,
+    "latitude": 24.3620515,
+    "longitude": 54.550016,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 4,
+      "groceries": 0,
+      "parks": 7,
+      "dining": 2,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.5658842421045168,
+      0.0,
+      0.9902974236829043,
+      0.2829421210522584,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156799",
+    "name": "Z6",
+    "name_ar": null,
+    "latitude": 24.3597205,
+    "longitude": 54.5427762,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 5,
+      "groceries": 1,
+      "parks": 6,
+      "dining": 2,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.7073553026306459,
+      0.1414710605261292,
+      0.8488263631567752,
+      0.2829421210522584,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156800",
+    "name": "Z4",
+    "name_ar": null,
+    "latitude": 24.3606198,
+    "longitude": 54.5598594,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 4,
+      "dining": 0,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.0,
+      0.0,
+      0.5658842421045168,
+      0.0,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156801",
+    "name": "Z2",
+    "name_ar": null,
+    "latitude": 24.3659634,
+    "longitude": 54.5516408,
+    "mapped_object_counts": {
+      "schools": 4,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 6,
+      "dining": 1,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.5658842421045168,
+      0.5658842421045168,
+      0.1414710605261292,
+      0.8488263631567752,
+      0.1414710605261292,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/1239156802",
+    "name": "Z1",
+    "name_ar": null,
+    "latitude": 24.3690582,
+    "longitude": 54.5495575,
+    "mapped_object_counts": {
+      "schools": 5,
+      "healthcare": 4,
+      "groceries": 2,
+      "parks": 4,
+      "dining": 2,
+      "transit": 4
+    },
+    "density_per_km2": [
+      0.7073553026306459,
+      0.5658842421045168,
+      0.2829421210522584,
+      0.5658842421045168,
+      0.2829421210522584,
+      0.5658842421045168
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/173012206",
+    "name": "Musaffah Industrial Area",
+    "name_ar": "مصفح الصناعية",
+    "latitude": 24.3491682,
+    "longitude": 54.4882997,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 6,
+      "groceries": 23,
+      "parks": 0,
+      "dining": 33,
+      "transit": 3
+    },
+    "density_per_km2": [
+      0.0,
+      0.8488263631567752,
+      3.2538343921009716,
+      0.0,
+      4.668544997362264,
+      0.4244131815783876
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/229846612",
+    "name": "Al Watani",
+    "name_ar": null,
+    "latitude": 24.4144577,
+    "longitude": 54.5423411,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 1,
+      "groceries": 4,
+      "parks": 17,
+      "dining": 1,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.1414710605261292,
+      0.5658842421045168,
+      2.4050080289441964,
+      0.1414710605261292,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/238976174",
+    "name": "New York University Abu Dhabi",
+    "name_ar": "جامعة نيويورك أبوظبي",
+    "latitude": 24.5238757,
+    "longitude": 54.4345333,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 2,
+      "groceries": 1,
+      "parks": 11,
+      "dining": 15,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.2829421210522584,
+      0.1414710605261292,
+      1.5561816657874212,
+      2.1220659078919377,
+      1.1317684842090336
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/250318362",
+    "name": "Arabian Village",
+    "name_ar": "قرية العرب",
+    "latitude": 24.4589029,
+    "longitude": 54.6700871,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 8,
+      "dining": 14,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.1317684842090336,
+      1.9805948473658086,
+      1.1317684842090336
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/250319533",
+    "name": "Desert Village",
+    "name_ar": null,
+    "latitude": 24.4536138,
+    "longitude": 54.6708743,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 8,
+      "dining": 14,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.1317684842090336,
+      1.9805948473658086,
+      1.1317684842090336
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/250323061",
+    "name": "Mediterranean Village",
+    "name_ar": null,
+    "latitude": 24.4509728,
+    "longitude": 54.6754691,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 8,
+      "dining": 14,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.1317684842090336,
+      1.9805948473658086,
+      1.1317684842090336
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/255246022",
+    "name": "Al Reef Downtown",
+    "name_ar": "وسط مدينة الريف",
+    "latitude": 24.4561298,
+    "longitude": 54.6725622,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 8,
+      "dining": 14,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.1317684842090336,
+      1.9805948473658086,
+      1.1317684842090336
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/318284488",
+    "name": "Contemporary Village",
+    "name_ar": "قرية معاصرة",
+    "latitude": 24.4581276,
+    "longitude": 54.6752369,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 8,
+      "dining": 14,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.1317684842090336,
+      1.9805948473658086,
+      1.1317684842090336
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353986100",
+    "name": "M 5",
+    "name_ar": null,
+    "latitude": 24.3642712,
+    "longitude": 54.5139092,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 18,
+      "groceries": 21,
+      "parks": 0,
+      "dining": 84,
+      "transit": 15
+    },
+    "density_per_km2": [
+      0.0,
+      2.5464790894703255,
+      2.970892271048713,
+      0.0,
+      11.883569084194852,
+      2.1220659078919377
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353987264",
+    "name": "M 32/2",
+    "name_ar": null,
+    "latitude": 24.3575333,
+    "longitude": 54.51423,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 17,
+      "groceries": 22,
+      "parks": 0,
+      "dining": 68,
+      "transit": 9
+    },
+    "density_per_km2": [
+      0.0,
+      2.4050080289441964,
+      3.1123633315748425,
+      0.0,
+      9.620032115776786,
+      1.2732395447351628
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353988578",
+    "name": "M 4",
+    "name_ar": null,
+    "latitude": 24.3661,
+    "longitude": 54.520499,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 16,
+      "groceries": 15,
+      "parks": 0,
+      "dining": 66,
+      "transit": 12
+    },
+    "density_per_km2": [
+      0.0,
+      2.2635369684180673,
+      2.1220659078919377,
+      0.0,
+      9.337089994724527,
+      1.6976527263135504
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353989378",
+    "name": "M 24",
+    "name_ar": null,
+    "latitude": 24.361772,
+    "longitude": 54.5208487,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 10,
+      "groceries": 13,
+      "parks": 0,
+      "dining": 63,
+      "transit": 10
+    },
+    "density_per_km2": [
+      0.0,
+      1.4147106052612919,
+      1.8391237868396795,
+      0.0,
+      8.91267681314614,
+      1.4147106052612919
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353989595",
+    "name": "M 25",
+    "name_ar": null,
+    "latitude": 24.3511076,
+    "longitude": 54.5211797,
+    "mapped_object_counts": {
+      "schools": 4,
+      "healthcare": 13,
+      "groceries": 11,
+      "parks": 0,
+      "dining": 49,
+      "transit": 4
+    },
+    "density_per_km2": [
+      0.5658842421045168,
+      1.8391237868396795,
+      1.5561816657874212,
+      0.0,
+      6.9320819657803305,
+      0.5658842421045168
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353989814",
+    "name": "M 37",
+    "name_ar": null,
+    "latitude": 24.3501016,
+    "longitude": 54.4973397,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 10,
+      "groceries": 26,
+      "parks": 0,
+      "dining": 23,
+      "transit": 4
+    },
+    "density_per_km2": [
+      0.0,
+      1.4147106052612919,
+      3.678247573679359,
+      0.0,
+      3.2538343921009716,
+      0.5658842421045168
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353989887",
+    "name": "M 40",
+    "name_ar": null,
+    "latitude": 24.3497078,
+    "longitude": 54.4874655,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 6,
+      "groceries": 21,
+      "parks": 0,
+      "dining": 34,
+      "transit": 3
+    },
+    "density_per_km2": [
+      0.0,
+      0.8488263631567752,
+      2.970892271048713,
+      0.0,
+      4.810016057888393,
+      0.4244131815783876
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353994918",
+    "name": "M 36",
+    "name_ar": null,
+    "latitude": 24.3410764,
+    "longitude": 54.4977504,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 7,
+      "groceries": 13,
+      "parks": 0,
+      "dining": 9,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.0,
+      0.9902974236829043,
+      1.8391237868396795,
+      0.0,
+      1.2732395447351628,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/353994975",
+    "name": "M 35",
+    "name_ar": null,
+    "latitude": 24.3414727,
+    "longitude": 54.5074554,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 8,
+      "groceries": 8,
+      "parks": 0,
+      "dining": 17,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      1.1317684842090336,
+      1.1317684842090336,
+      0.0,
+      2.4050080289441964,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/396113962",
+    "name": "M 25",
+    "name_ar": null,
+    "latitude": 24.357806,
+    "longitude": 54.5210549,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 14,
+      "groceries": 11,
+      "parks": 0,
+      "dining": 61,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.0,
+      1.9805948473658086,
+      1.5561816657874212,
+      0.0,
+      8.62973469209388,
+      1.1317684842090336
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/396114496",
+    "name": "M 28",
+    "name_ar": null,
+    "latitude": 24.3419367,
+    "longitude": 54.5217561,
+    "mapped_object_counts": {
+      "schools": 10,
+      "healthcare": 23,
+      "groceries": 15,
+      "parks": 0,
+      "dining": 74,
+      "transit": 2
+    },
+    "density_per_km2": [
+      1.4147106052612919,
+      3.2538343921009716,
+      2.1220659078919377,
+      0.0,
+      10.46885847893356,
+      0.2829421210522584
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/442181626",
+    "name": "Z13",
+    "name_ar": null,
+    "latitude": 24.3422411,
+    "longitude": 54.5616895,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 2,
+      "groceries": 1,
+      "parks": 8,
+      "dining": 1,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.2829421210522584,
+      0.1414710605261292,
+      1.1317684842090336,
+      0.1414710605261292,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/442181995",
+    "name": "Z7",
+    "name_ar": null,
+    "latitude": 24.3523023,
+    "longitude": 54.5595473,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 4,
+      "dining": 0,
+      "transit": 3
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.0,
+      0.0,
+      0.5658842421045168,
+      0.0,
+      0.4244131815783876
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/867256267",
+    "name": "Al Reef",
+    "name_ar": "الريف",
+    "latitude": 24.4571599,
+    "longitude": 54.6718885,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 8,
+      "dining": 14,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.1317684842090336,
+      1.9805948473658086,
+      1.1317684842090336
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/867982973",
+    "name": "Al Manhal",
+    "name_ar": "المنهل",
+    "latitude": 24.4604377,
+    "longitude": 54.3689138,
+    "mapped_object_counts": {
+      "schools": 20,
+      "healthcare": 50,
+      "groceries": 10,
+      "parks": 1,
+      "dining": 77,
+      "transit": 42
+    },
+    "density_per_km2": [
+      2.8294212105225838,
+      7.07355302630646,
+      1.4147106052612919,
+      0.1414710605261292,
+      10.893271660511948,
+      5.941784542097426
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/867982975",
+    "name": "Al Forsan Village",
+    "name_ar": null,
+    "latitude": 24.4040521,
+    "longitude": 54.5488894,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 4,
+      "parks": 10,
+      "dining": 3,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.5658842421045168,
+      1.4147106052612919,
+      0.4244131815783876,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/867982976",
+    "name": "Al Gurm Resort",
+    "name_ar": "منتجع القرم",
+    "latitude": 24.4211106,
+    "longitude": 54.4062341,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 3,
+      "groceries": 3,
+      "parks": 2,
+      "dining": 5,
+      "transit": 7
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.4244131815783876,
+      0.4244131815783876,
+      0.2829421210522584,
+      0.7073553026306459,
+      0.9902974236829043
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/867982980",
+    "name": "Hills Abu Dhabi",
+    "name_ar": "تلال أبو ظبي",
+    "latitude": 24.4052919,
+    "longitude": 54.4659133,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 4,
+      "groceries": 1,
+      "parks": 12,
+      "dining": 12,
+      "transit": 17
+    },
+    "density_per_km2": [
+      0.0,
+      0.5658842421045168,
+      0.1414710605261292,
+      1.6976527263135504,
+      1.6976527263135504,
+      2.4050080289441964
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221033",
+    "name": "ICAD I",
+    "name_ar": "أبو ظبي الصناعية 1",
+    "latitude": 24.3301264,
+    "longitude": 54.4887765,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 0,
+      "dining": 0,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221034",
+    "name": "Rabdan",
+    "name_ar": "ربدان",
+    "latitude": 24.3939767,
+    "longitude": 54.5015208,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 5,
+      "groceries": 5,
+      "parks": 1,
+      "dining": 8,
+      "transit": 4
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.7073553026306459,
+      0.7073553026306459,
+      0.1414710605261292,
+      1.1317684842090336,
+      0.5658842421045168
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221035",
+    "name": "Mahwi",
+    "name_ar": "محوي",
+    "latitude": 24.3462015,
+    "longitude": 54.5796937,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 4,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.5658842421045168,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221036",
+    "name": "Hydra Village",
+    "name_ar": "قرية الهيدرا",
+    "latitude": 24.5484251,
+    "longitude": 54.7016862,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 2,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.2829421210522584,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221039",
+    "name": "Al Rahba",
+    "name_ar": "الرحبة",
+    "latitude": 24.5995994,
+    "longitude": 54.6934925,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 1,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 2,
+      "transit": 1
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.2829421210522584,
+      0.1414710605261292
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221041",
+    "name": "New Shahama",
+    "name_ar": "الشهامة الجديدة",
+    "latitude": 24.5071783,
+    "longitude": 54.669168,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 1,
+      "dining": 1,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.1414710605261292,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221044",
+    "name": "Zayed International Airport",
+    "name_ar": "مطار زايد الدولي",
+    "latitude": 24.4482427,
+    "longitude": 54.64768,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 5,
+      "transit": 3
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.7073553026306459,
+      0.4244131815783876
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221046",
+    "name": "Al Shawamekh",
+    "name_ar": "الشوامخ",
+    "latitude": 24.3584734,
+    "longitude": 54.6548864,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 2,
+      "parks": 0,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.2829421210522584,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221047",
+    "name": "Al Shawamekh",
+    "name_ar": "الشوامخ",
+    "latitude": 24.3317038,
+    "longitude": 54.6703959,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 1,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221050",
+    "name": "Al Shamkha",
+    "name_ar": "الشامخة",
+    "latitude": 24.3783136,
+    "longitude": 54.7122491,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 2,
+      "groceries": 3,
+      "parks": 5,
+      "dining": 1,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.2829421210522584,
+      0.4244131815783876,
+      0.7073553026306459,
+      0.1414710605261292,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221055",
+    "name": "Rabdan",
+    "name_ar": "ربدان",
+    "latitude": 24.4066743,
+    "longitude": 54.5053495,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 6,
+      "groceries": 3,
+      "parks": 1,
+      "dining": 23,
+      "transit": 5
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      0.8488263631567752,
+      0.4244131815783876,
+      0.1414710605261292,
+      3.2538343921009716,
+      0.7073553026306459
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221057",
+    "name": "Shakhbout City",
+    "name_ar": "مدينة شخبوط",
+    "latitude": 24.3710786,
+    "longitude": 54.639542,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 0,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.0,
+      0.1414710605261292,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221058",
+    "name": "Al Mafraq",
+    "name_ar": "المفرق",
+    "latitude": 24.328742,
+    "longitude": 54.6078064,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 3,
+      "groceries": 0,
+      "parks": 0,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.0,
+      0.4244131815783876,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221059",
+    "name": "Khalifa City",
+    "name_ar": "مدينة خليفة",
+    "latitude": 24.4182494,
+    "longitude": 54.5500036,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 13,
+      "dining": 0,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.1414710605261292,
+      0.1414710605261292,
+      1.8391237868396795,
+      0.0,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221060",
+    "name": "Masdar City",
+    "name_ar": "مدينة مصدر",
+    "latitude": 24.4275461,
+    "longitude": 54.6375899,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 1,
+      "dining": 14,
+      "transit": 4
+    },
+    "density_per_km2": [
+      0.0,
+      0.0,
+      0.0,
+      0.1414710605261292,
+      1.9805948473658086,
+      0.5658842421045168
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221064",
+    "name": "Al Muzoun",
+    "name_ar": "المزون",
+    "latitude": 24.4141788,
+    "longitude": 54.4259988,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 4,
+      "groceries": 0,
+      "parks": 1,
+      "dining": 4,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.0,
+      0.5658842421045168,
+      0.0,
+      0.1414710605261292,
+      0.5658842421045168,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221065",
+    "name": "Al Etihad",
+    "name_ar": "الاتحاد",
+    "latitude": 24.4542639,
+    "longitude": 54.389746,
+    "mapped_object_counts": {
+      "schools": 10,
+      "healthcare": 38,
+      "groceries": 9,
+      "parks": 6,
+      "dining": 111,
+      "transit": 47
+    },
+    "density_per_km2": [
+      1.4147106052612919,
+      5.375900299992909,
+      1.2732395447351628,
+      0.8488263631567752,
+      15.70328771840034,
+      6.649139844728072
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221066",
+    "name": "Al Qubaisat",
+    "name_ar": "القبيسات",
+    "latitude": 24.4279589,
+    "longitude": 54.414717,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 10,
+      "groceries": 4,
+      "parks": 2,
+      "dining": 29,
+      "transit": 16
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      1.4147106052612919,
+      0.5658842421045168,
+      0.2829421210522584,
+      4.102660755257746,
+      2.2635369684180673
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221067",
+    "name": "Al Markaziyah West",
+    "name_ar": "المركزية غرب",
+    "latitude": 24.4837164,
+    "longitude": 54.3510159,
+    "mapped_object_counts": {
+      "schools": 6,
+      "healthcare": 73,
+      "groceries": 36,
+      "parks": 18,
+      "dining": 192,
+      "transit": 61
+    },
+    "density_per_km2": [
+      0.8488263631567752,
+      10.327387418407431,
+      5.092958178940651,
+      2.5464790894703255,
+      27.162443621016806,
+      8.62973469209388
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221069",
+    "name": "Al Muzoun",
+    "name_ar": "المزون",
+    "latitude": 24.4027708,
+    "longitude": 54.4690818,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 12,
+      "dining": 8,
+      "transit": 14
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      1.6976527263135504,
+      1.1317684842090336,
+      1.9805948473658086
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221072",
+    "name": "Al Falah",
+    "name_ar": "الفلاح",
+    "latitude": 24.43701,
+    "longitude": 54.7194412,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 0,
+      "parks": 8,
+      "dining": 2,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.0,
+      1.1317684842090336,
+      0.2829421210522584,
+      0.0
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221073",
+    "name": "Bani Yas",
+    "name_ar": "بني ياس",
+    "latitude": 24.3064201,
+    "longitude": 54.63467,
+    "mapped_object_counts": {
+      "schools": 4,
+      "healthcare": 2,
+      "groceries": 1,
+      "parks": 2,
+      "dining": 3,
+      "transit": 0
+    },
+    "density_per_km2": [
+      0.5658842421045168,
+      0.2829421210522584,
+      0.1414710605261292,
+      0.2829421210522584,
+      0.4244131815783876,
+      0.0
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221076",
+    "name": "Mohammed Bin Zayed City",
+    "name_ar": "مدينة محمد بن زايد",
+    "latitude": 24.346678,
+    "longitude": 54.5622368,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 1,
+      "groceries": 0,
+      "parks": 8,
+      "dining": 0,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      0.1414710605261292,
+      0.0,
+      1.1317684842090336,
+      0.0,
+      0.2829421210522584
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221077",
+    "name": "Musaffah",
+    "name_ar": "مصفح",
+    "latitude": 24.3647869,
+    "longitude": 54.491474,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 5,
+      "groceries": 18,
+      "parks": 0,
+      "dining": 33,
+      "transit": 4
+    },
+    "density_per_km2": [
+      0.0,
+      0.7073553026306459,
+      2.5464790894703255,
+      0.0,
+      4.668544997362264,
+      0.5658842421045168
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221078",
+    "name": "Al Kasir",
+    "name_ar": "الكاسر",
+    "latitude": 24.4776162,
+    "longitude": 54.3222433,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 7,
+      "groceries": 2,
+      "parks": 5,
+      "dining": 22,
+      "transit": 11
+    },
+    "density_per_km2": [
+      0.0,
+      0.9902974236829043,
+      0.2829421210522584,
+      0.7073553026306459,
+      3.1123633315748425,
+      1.5561816657874212
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221079",
+    "name": "Al Ras Al Akhdar",
+    "name_ar": "الرأس الأخضر",
+    "latitude": 24.4603196,
+    "longitude": 54.3121185,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 1,
+      "parks": 17,
+      "dining": 14,
+      "transit": 13
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.1414710605261292,
+      2.4050080289441964,
+      1.9805948473658086,
+      1.8391237868396795
+    ],
+    "cluster_id": 1,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221080",
+    "name": "Al Rehhan",
+    "name_ar": "الريحان",
+    "latitude": 24.4301093,
+    "longitude": 54.4371468,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 20,
+      "groceries": 7,
+      "parks": 0,
+      "dining": 82,
+      "transit": 26
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      2.8294212105225838,
+      0.9902974236829043,
+      0.0,
+      11.600626963142593,
+      3.678247573679359
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221081",
+    "name": "Al Qurm",
+    "name_ar": "القرم",
+    "latitude": 24.4268404,
+    "longitude": 54.385048,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 0,
+      "groceries": 1,
+      "parks": 4,
+      "dining": 2,
+      "transit": 9
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.0,
+      0.1414710605261292,
+      0.5658842421045168,
+      0.2829421210522584,
+      1.2732395447351628
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221082",
+    "name": "Al Aman",
+    "name_ar": "الأمان",
+    "latitude": 24.4331011,
+    "longitude": 54.4218932,
+    "mapped_object_counts": {
+      "schools": 23,
+      "healthcare": 12,
+      "groceries": 3,
+      "parks": 2,
+      "dining": 65,
+      "transit": 26
+    },
+    "density_per_km2": [
+      3.2538343921009716,
+      1.6976527263135504,
+      0.4244131815783876,
+      0.2829421210522584,
+      9.195618934198398,
+      3.678247573679359
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221083",
+    "name": "Khalifa Park",
+    "name_ar": "حديقة خليفة",
+    "latitude": 24.4312718,
+    "longitude": 54.4618054,
+    "mapped_object_counts": {
+      "schools": 2,
+      "healthcare": 4,
+      "groceries": 5,
+      "parks": 8,
+      "dining": 34,
+      "transit": 12
+    },
+    "density_per_km2": [
+      0.2829421210522584,
+      0.5658842421045168,
+      0.7073553026306459,
+      1.1317684842090336,
+      4.810016057888393,
+      1.6976527263135504
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221084",
+    "name": "Al Sa' adah",
+    "name_ar": "السعادة",
+    "latitude": 24.4399966,
+    "longitude": 54.4283726,
+    "mapped_object_counts": {
+      "schools": 24,
+      "healthcare": 15,
+      "groceries": 6,
+      "parks": 1,
+      "dining": 76,
+      "transit": 20
+    },
+    "density_per_km2": [
+      3.3953054526271007,
+      2.1220659078919377,
+      0.8488263631567752,
+      0.1414710605261292,
+      10.751800599985819,
+      2.8294212105225838
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221085",
+    "name": "Grand Mosque",
+    "name_ar": "الجامع الكبير",
+    "latitude": 24.4124139,
+    "longitude": 54.4713952,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 5,
+      "groceries": 3,
+      "parks": 14,
+      "dining": 20,
+      "transit": 20
+    },
+    "density_per_km2": [
+      0.0,
+      0.7073553026306459,
+      0.4244131815783876,
+      1.9805948473658086,
+      2.8294212105225838,
+      2.8294212105225838
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221086",
+    "name": "Al Rawdah",
+    "name_ar": "الروضة",
+    "latitude": 24.4169108,
+    "longitude": 54.4541106,
+    "mapped_object_counts": {
+      "schools": 1,
+      "healthcare": 15,
+      "groceries": 6,
+      "parks": 3,
+      "dining": 35,
+      "transit": 28
+    },
+    "density_per_km2": [
+      0.1414710605261292,
+      2.1220659078919377,
+      0.8488263631567752,
+      0.4244131815783876,
+      4.951487118414522,
+      3.961189694731617
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221087",
+    "name": "Zayed Port",
+    "name_ar": "ميناء زايد",
+    "latitude": 24.5248904,
+    "longitude": 54.3779823,
+    "mapped_object_counts": {
+      "schools": 0,
+      "healthcare": 1,
+      "groceries": 2,
+      "parks": 0,
+      "dining": 21,
+      "transit": 12
+    },
+    "density_per_km2": [
+      0.0,
+      0.1414710605261292,
+      0.2829421210522584,
+      0.0,
+      2.970892271048713,
+      1.6976527263135504
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221088",
+    "name": "Al Safarrat",
+    "name_ar": "السفارات",
+    "latitude": 24.4212124,
+    "longitude": 54.4361045,
+    "mapped_object_counts": {
+      "schools": 21,
+      "healthcare": 18,
+      "groceries": 7,
+      "parks": 1,
+      "dining": 77,
+      "transit": 25
+    },
+    "density_per_km2": [
+      2.970892271048713,
+      2.5464790894703255,
+      0.9902974236829043,
+      0.1414710605261292,
+      10.893271660511948,
+      3.53677651315323
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221089",
+    "name": "Hadbat Al Za'faranah",
+    "name_ar": "حدبة الزعفرانة",
+    "latitude": 24.4446068,
+    "longitude": 54.4060058,
+    "mapped_object_counts": {
+      "schools": 12,
+      "healthcare": 16,
+      "groceries": 4,
+      "parks": 6,
+      "dining": 49,
+      "transit": 42
+    },
+    "density_per_km2": [
+      1.6976527263135504,
+      2.2635369684180673,
+      0.5658842421045168,
+      0.8488263631567752,
+      6.9320819657803305,
+      5.941784542097426
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221090",
+    "name": "Al Mushrif",
+    "name_ar": "المشرف",
+    "latitude": 24.4424857,
+    "longitude": 54.3870317,
+    "mapped_object_counts": {
+      "schools": 11,
+      "healthcare": 13,
+      "groceries": 4,
+      "parks": 7,
+      "dining": 27,
+      "transit": 44
+    },
+    "density_per_km2": [
+      1.5561816657874212,
+      1.8391237868396795,
+      0.5658842421045168,
+      0.9902974236829043,
+      3.819718634205488,
+      6.224726663149685
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221091",
+    "name": "Al Rawdah",
+    "name_ar": "الروضة",
+    "latitude": 24.4567525,
+    "longitude": 54.3678497,
+    "mapped_object_counts": {
+      "schools": 18,
+      "healthcare": 45,
+      "groceries": 5,
+      "parks": 3,
+      "dining": 38,
+      "transit": 32
+    },
+    "density_per_km2": [
+      2.5464790894703255,
+      6.366197723675814,
+      0.7073553026306459,
+      0.4244131815783876,
+      5.375900299992909,
+      4.527073936836135
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221092",
+    "name": "Al Bateen",
+    "name_ar": "البطين",
+    "latitude": 24.4477123,
+    "longitude": 54.3482492,
+    "mapped_object_counts": {
+      "schools": 6,
+      "healthcare": 5,
+      "groceries": 2,
+      "parks": 5,
+      "dining": 14,
+      "transit": 8
+    },
+    "density_per_km2": [
+      0.8488263631567752,
+      0.7073553026306459,
+      0.2829421210522584,
+      0.7073553026306459,
+      1.9805948473658086,
+      1.1317684842090336
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221093",
+    "name": "Al Khubeirah",
+    "name_ar": "الخبيرة",
+    "latitude": 24.4639871,
+    "longitude": 54.3290576,
+    "mapped_object_counts": {
+      "schools": 4,
+      "healthcare": 17,
+      "groceries": 10,
+      "parks": 31,
+      "dining": 91,
+      "transit": 38
+    },
+    "density_per_km2": [
+      0.5658842421045168,
+      2.4050080289441964,
+      1.4147106052612919,
+      4.385602876310005,
+      12.873866507877757,
+      5.375900299992909
+    ],
+    "cluster_id": 2,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221094",
+    "name": "Al Karamah",
+    "name_ar": "الكرامة",
+    "latitude": 24.4620144,
+    "longitude": 54.3741634,
+    "mapped_object_counts": {
+      "schools": 21,
+      "healthcare": 65,
+      "groceries": 18,
+      "parks": 2,
+      "dining": 147,
+      "transit": 40
+    },
+    "density_per_km2": [
+      2.970892271048713,
+      9.195618934198398,
+      2.5464790894703255,
+      0.2829421210522584,
+      20.79624589734099,
+      5.6588424210451675
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221095",
+    "name": "Al Wahda",
+    "name_ar": "الوحدة",
+    "latitude": 24.4656993,
+    "longitude": 54.3788328,
+    "mapped_object_counts": {
+      "schools": 22,
+      "healthcare": 69,
+      "groceries": 17,
+      "parks": 2,
+      "dining": 167,
+      "transit": 48
+    },
+    "density_per_km2": [
+      3.1123633315748425,
+      9.761503176302915,
+      2.4050080289441964,
+      0.2829421210522584,
+      23.625667107863574,
+      6.790610905254201
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221096",
+    "name": "Al Khalidiyah",
+    "name_ar": "الخالدية",
+    "latitude": 24.4711937,
+    "longitude": 54.3404309,
+    "mapped_object_counts": {
+      "schools": 8,
+      "healthcare": 39,
+      "groceries": 19,
+      "parks": 18,
+      "dining": 144,
+      "transit": 48
+    },
+    "density_per_km2": [
+      1.1317684842090336,
+      5.517371360519038,
+      2.6879501499964547,
+      2.5464790894703255,
+      20.371832715762604,
+      6.790610905254201
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221097",
+    "name": "Al Nahyan",
+    "name_ar": "آل نهيان",
+    "latitude": 24.4656216,
+    "longitude": 54.3892788,
+    "mapped_object_counts": {
+      "schools": 11,
+      "healthcare": 43,
+      "groceries": 10,
+      "parks": 1,
+      "dining": 119,
+      "transit": 26
+    },
+    "density_per_km2": [
+      1.5561816657874212,
+      6.083255602623555,
+      1.4147106052612919,
+      0.1414710605261292,
+      16.835056202609373,
+      3.678247573679359
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221098",
+    "name": "Al Manhal",
+    "name_ar": "المنهل",
+    "latitude": 24.4709338,
+    "longitude": 54.3552253,
+    "mapped_object_counts": {
+      "schools": 13,
+      "healthcare": 63,
+      "groceries": 28,
+      "parks": 9,
+      "dining": 182,
+      "transit": 68
+    },
+    "density_per_km2": [
+      1.8391237868396795,
+      8.91267681314614,
+      3.961189694731617,
+      1.2732395447351628,
+      25.747733015755514,
+      9.620032115776786
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221099",
+    "name": "Al Hisn",
+    "name_ar": "الحصن",
+    "latitude": 24.4798689,
+    "longitude": 54.3531964,
+    "mapped_object_counts": {
+      "schools": 8,
+      "healthcare": 78,
+      "groceries": 45,
+      "parks": 20,
+      "dining": 216,
+      "transit": 75
+    },
+    "density_per_km2": [
+      1.1317684842090336,
+      11.034742721038077,
+      6.366197723675814,
+      2.8294212105225838,
+      30.557749073643905,
+      10.61032953945969
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221102",
+    "name": "Qasr El Bahr",
+    "name_ar": "قصر البحر",
+    "latitude": 24.4746568,
+    "longitude": 54.3963222,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 9,
+      "groceries": 1,
+      "parks": 2,
+      "dining": 18,
+      "transit": 2
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      1.2732395447351628,
+      0.1414710605261292,
+      0.2829421210522584,
+      2.5464790894703255,
+      0.2829421210522584
+    ],
+    "cluster_id": 0,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221104",
+    "name": "Al Zahiyah",
+    "name_ar": "الزاهية",
+    "latitude": 24.4998574,
+    "longitude": 54.3760443,
+    "mapped_object_counts": {
+      "schools": 3,
+      "healthcare": 61,
+      "groceries": 60,
+      "parks": 10,
+      "dining": 410,
+      "transit": 71
+    },
+    "density_per_km2": [
+      0.4244131815783876,
+      8.62973469209388,
+      8.48826363156775,
+      1.4147106052612919,
+      58.00313481571297,
+      10.044445297355173
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  },
+  {
+    "osm_id": "way/873221105",
+    "name": "Al Danah",
+    "name_ar": "الدانة",
+    "latitude": 24.4921026,
+    "longitude": 54.3632203,
+    "mapped_object_counts": {
+      "schools": 10,
+      "healthcare": 105,
+      "groceries": 66,
+      "parks": 20,
+      "dining": 368,
+      "transit": 86
+    },
+    "density_per_km2": [
+      1.4147106052612919,
+      14.854461355243565,
+      9.337089994724527,
+      2.8294212105225838,
+      52.061350273615545,
+      12.16651120524711
+    ],
+    "cluster_id": 3,
+    "observation_radius_km": 1.5
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "freeze_sha256": "382fb0a8deb73a2ae362adb3f29dcb6a135e48f9f7c4d48b74f1927802a61a5a",
+  "frozen_artifacts_verified": 23,
+  "source_hashes_verified": 2,
+  "data_metadata_and_allowed_input_hashes_verified": 5,
+  "checkpoint_export_weights_exact_float32_match": true,
+  "validation_rows": 59,
+  "validation_encoder_max_abs_difference": 3.4240563340226515e-07,
+  "validation_reconstruction_max_abs_difference": 4.945091971464421e-07,
+  "parity_tolerance": 1e-05,
+  "cuda_model_gradient_optimizer_proof_valid": true,
+  "same_seed_cuda_replay_bitwise_match": true,
+  "test_feature_files_opened": 0
+}

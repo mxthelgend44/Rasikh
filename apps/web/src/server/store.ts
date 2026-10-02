@@ -42,7 +42,13 @@ export class Store {
 
   private publish(): Snapshot {
     const snapshot = this.snapshot();
-    for (const listener of this.listeners) listener(snapshot);
+    for (const listener of this.listeners) {
+      try {
+        listener(snapshot);
+      } catch {
+        this.listeners.delete(listener);
+      }
+    }
     return snapshot;
   }
 }

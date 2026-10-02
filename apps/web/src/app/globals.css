@@ -2,35 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * Design tokens. Values are RGB channels so Tailwind can apply alpha (`bg-fg/10`).
- * Measured from the reference packs at CSS px (captures are 1.27x); see DESIGN.md.
- * Rule: chrome is neutral. The accent is used for focus, links, backing and data only.
- */
 :root {
   color-scheme: light;
 
-  --canvas: 243 243 243;
+  --canvas: 245 244 239;
   --surface: 255 255 255;
   --raised: 255 255 255;
-  --subtle: 249 249 249;
-  --hover: 235 235 235;
-  --selected: 224 224 224;
-  --track: 238 238 238;
-  --line: 240 240 240;
-  --line-strong: 213 213 213;
-  --edge: 236 236 236;
+  --subtle: 248 248 245;
+  --hover: 236 240 236;
+  --selected: 224 241 235;
+  --track: 238 240 235;
+  --line: 231 234 228;
+  --line-strong: 127 146 147;
+  --edge: 224 230 224;
 
-  --fg: 13 13 13;
-  --fg-secondary: 68 68 68;
-  --fg-tertiary: 110 110 110;
-  --fg-placeholder: 118 118 118;
+  --fg: 23 60 71;
+  --fg-secondary: 65 86 94;
+  --fg-tertiary: 86 104 110;
+  --fg-placeholder: 95 111 116;
 
-  --solid: 23 23 23;
+  --solid: 11 107 120;
   --solid-fg: 255 255 255;
 
   --accent: 11 107 120;
-  --accent-soft: 227 241 243;
+  --accent-soft: 225 242 237;
   --accent-fg: 255 255 255;
 
   --success: 11 103 43;
@@ -40,7 +35,15 @@
   --warning-soft: 255 232 197;
   --danger: 135 29 27;
   --danger-soft: 255 226 227;
-  --danger-solid: 225 46 42;
+  --danger-solid: 190 38 34;
+
+  --brand-petrol: 11 107 120;
+  --brand-sand: 246 231 205;
+  --brand-seafoam: 165 217 208;
+  --brand-coral: 233 133 101;
+  --brand-saffron: 228 173 66;
+  --brand-ink: 23 60 71;
+  --focus-soft: var(--brand-seafoam);
 
   --focus: var(--accent);
 
@@ -61,28 +64,28 @@
 .dark {
   color-scheme: dark;
 
-  --canvas: 19 19 19;
-  --surface: 33 33 33;
-  --raised: 48 48 48;
-  --subtle: 38 38 38;
-  --hover: 42 42 42;
-  --selected: 48 48 48;
-  --track: 48 48 48;
-  --line: 58 58 58;
-  --line-strong: 85 85 85;
-  --edge: 28 28 28;
+  --canvas: 21 29 32;
+  --surface: 29 40 43;
+  --raised: 39 53 56;
+  --subtle: 34 46 49;
+  --hover: 43 58 60;
+  --selected: 34 65 63;
+  --track: 42 55 58;
+  --line: 53 68 71;
+  --line-strong: 121 145 150;
+  --edge: 53 68 71;
 
-  --fg: 255 255 255;
-  --fg-secondary: 201 201 201;
-  --fg-tertiary: 158 158 158;
-  --fg-placeholder: 140 140 143;
+  --fg: 246 243 237;
+  --fg-secondary: 202 214 215;
+  --fg-tertiary: 166 184 188;
+  --fg-placeholder: 158 178 182;
 
-  --solid: 243 243 243;
-  --solid-fg: 0 0 0;
+  --solid: 11 107 120;
+  --solid-fg: 255 255 255;
 
-  --accent: 98 193 206;
-  --accent-soft: 22 49 58;
-  --accent-fg: 19 19 19;
+  --accent: 165 217 208;
+  --accent-soft: 34 65 63;
+  --accent-fg: 23 60 71;
 
   --success: 53 195 135;
   --success-soft: 30 53 40;
@@ -91,7 +94,7 @@
   --warning-soft: 69 56 35;
   --danger: 255 107 100;
   --danger-soft: 64 36 35;
-  --danger-solid: 223 46 43;
+  --danger-solid: 190 38 34;
 
   --shadow-pop: 0 4px 16px rgb(0 0 0 / 0.3), 0 0 0 1px rgb(255 255 255 / 0.06);
   --shadow-dialog: 0 4px 16px rgb(0 0 0 / 0.25), 0 0 0 1px rgb(255 255 255 / 0.06);
@@ -122,7 +125,7 @@
   }
 
   ::selection {
-    background: rgb(var(--accent) / 0.2);
+    background: rgb(var(--focus-soft) / 0.45);
   }
 
   ::placeholder {
@@ -135,6 +138,116 @@
   }
 }
 
+@layer components {
+  .rasikh-control {
+    @apply w-full min-w-0 rounded-md border border-line-strong bg-surface px-3 text-body text-fg transition-colors;
+    @apply disabled:cursor-not-allowed disabled:bg-subtle disabled:opacity-60;
+    min-height: 2.5rem;
+  }
+
+  .rasikh-control:focus-visible {
+    box-shadow: 0 0 0 4px rgb(var(--focus-soft) / 0.45);
+  }
+
+  .rasikh-control[aria-invalid='true'] {
+    border-color: rgb(var(--danger));
+  }
+
+  .rasikh-dialog::backdrop {
+    background: rgb(10 24 29 / 0.58);
+  }
+
+  .rasikh-dialog {
+    max-height: calc(100dvh - 2rem);
+    color: rgb(var(--fg));
+    background: rgb(var(--raised));
+  }
+
+  .rasikh-dialog[data-presentation='drawer'] {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    margin: 0;
+    max-height: 100dvh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .rasikh-illustration {
+    contain: layout paint;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 1rem;
+  }
+
+  .rasikh-illustration[data-treatment='framed'] {
+    background: rgb(var(--subtle));
+  }
+
+  .rasikh-illustration[data-treatment='bleed'] {
+    border-radius: 0;
+  }
+
+  .rasikh-illustration[data-treatment='cutout'] {
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .rasikh-illustration-image {
+    display: block;
+  }
+
+  .rasikh-illustration[data-fade='edges'] .rasikh-illustration-image {
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 60%, transparent 100%);
+    mask-image: radial-gradient(ellipse at center, #000 60%, transparent 100%);
+  }
+
+  .rasikh-illustration[data-fade='inline-start'] .rasikh-illustration-image {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 24%);
+    mask-image: linear-gradient(to right, transparent, #000 24%);
+  }
+
+  [dir='rtl'] .rasikh-illustration[data-fade='inline-start'] .rasikh-illustration-image {
+    -webkit-mask-image: linear-gradient(to left, transparent, #000 24%);
+    mask-image: linear-gradient(to left, transparent, #000 24%);
+  }
+
+  .rasikh-illustration[data-fade='bottom'] .rasikh-illustration-image {
+    -webkit-mask-image: linear-gradient(to bottom, #000 76%, transparent);
+    mask-image: linear-gradient(to bottom, #000 76%, transparent);
+  }
+}
+
+@media (max-width: 767px) {
+  .rasikh-illustration[data-fade='inline-start'] .rasikh-illustration-image,
+  [dir='rtl'] .rasikh-illustration[data-fade='inline-start'] .rasikh-illustration-image {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 24%);
+    mask-image: linear-gradient(to bottom, transparent, #000 24%);
+  }
+}
+
+@media (max-width: 767px), (pointer: coarse) {
+  .rasikh-button,
+  .rasikh-switch,
+  .rasikh-control,
+  .rasikh-nav-link,
+  .rasikh-menu-item {
+    min-height: 2.75rem;
+  }
+
+  .rasikh-button[data-icon-only='true'] {
+    min-width: 2.75rem;
+  }
+
+  .rasikh-switch {
+    min-width: 2.75rem;
+  }
+
+  .rasikh-control {
+    font-size: 1rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -142,5 +255,6 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

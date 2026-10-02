@@ -10,9 +10,11 @@ import type {
   Hire,
   Id,
   JurisdictionKind,
+  Property,
   SetupRecommendation,
   StepStatus,
   TeamMember,
+  Viewing,
 } from './types';
 import type { DataLabel, Destination } from '@rasikh/shared';
 import { demoNow } from './clock';
@@ -20,9 +22,11 @@ import { applyApplicationAction } from './reducers/applications';
 import { applyCompanyAction } from './reducers/company';
 import { applyHireAction } from './reducers/hire';
 import { applyRecordAction } from './reducers/records';
+import { applyPropertyAction } from './reducers/properties';
 import type { Context } from './reducers/shared';
+import { validateAction } from './validate-action';
 
-export { DomainError } from './reducers/shared';
+export { DomainError, isDomainError } from './reducers/shared';
 
 export type NewHire = Omit<Hire, 'id' | 'startedAt' | 'backing' | 'locale' | 'family'> & {
   locale?: Hire['locale'];
@@ -43,13 +47,14 @@ export interface NewCompany {
 
 export type Action =
   | { type: 'hire.create'; hire: NewHire; id?: Id; backed?: boolean }
-  | { type: 'hire.back'; hireId: Id; backed: boolean; by: string }
+  | { type: 'hire.back'; hireId: Id; employerId?: Id; backed: boolean; by: string }
   | {
       type: 'step.set_status';
       stepId: Id;
       status: StepStatus;
       waitingOn?: string;
       blockedReason?: string;
+      employerId?: Id;
     }
   | {
       type: 'document.add';
@@ -60,9 +65,18 @@ export type Action =
       fields: ExtractedField[];
       reasoning: string;
       status?: 'uploaded' | 'extracted' | 'verified' | 'rejected';
+      source?: 'demo' | 'vertex';
+    }
+  | {
+      type: 'document.review';
+      hireId: Id;
+      documentId: Id;
+      fields?: ExtractedField[];
+      accept: boolean;
+      expectedVersion?: number;
     }
   | { type: 'agent.log'; entry: Omit<AgentAction, 'id' | 'at'> }
-  | { type: 'approval.decide'; approvalId: Id; approve: boolean }
+  | { type: 'approval.decide'; approvalId: Id; hireId?: Id; approve: boolean }
   | {
       type: 'application.create';
       application: Omit<Application, 'id' | 'state'>;
@@ -76,7 +90,10 @@ export type Action =
       terms?: Decision['terms'];
       note: string;
       decidedBy: string;
+      partyId?: Id;
     }
+  | { type: 'application.start_review'; applicationId: Id; partyId: Id }
+  | { type: 'application.accept_terms'; applicationId: Id; hireId: Id }
   | { type: 'grant.set'; hireId: Id; label: DataLabel; destination: Destination; granted: boolean }
   | { type: 'guard.record'; check: Omit<GuardCheck, 'id' | 'at'> }
   | {
@@ -87,7 +104,31 @@ export type Action =
       recommendation?: SetupRecommendation;
       team: NewTeamMember[];
     }
-  | { type: 'setup.set_status'; stepId: Id; status: StepStatus };
+  | { type: 'setup.set_status'; stepId: Id; status: StepStatus; employerId?: Id }
+  | { type: 'team.add'; companyId: Id; employerId: Id; member: NewTeamMember }
+  | {
+      type: 'property.create';
+      landlordId: Id;
+      property: Omit<Property, 'id' | 'landlordId'>;
+      id?: Id;
+    }
+  | {
+      type: 'property.update';
+      landlordId: Id;
+      propertyId: Id;
+      patch: Partial<Omit<Property, 'id' | 'landlordId'>>;
+    }
+  | {
+      type: 'viewing.create';
+      landlordId: Id;
+      viewing: Omit<Viewing, 'id' | 'landlordId' | 'createdAt' | 'status'>;
+    }
+  | {
+      type: 'viewing.update';
+      landlordId: Id;
+      viewingId: Id;
+      patch: Partial<Pick<Viewing, 'startsAt' | 'durationMinutes' | 'note' | 'status'>>;
+    };
 
 /**
  * The single place state changes. Pure: returns a new state and bumps `rev`. `realNowMs` is a
@@ -98,6 +139,7 @@ export function applyAction(
   action: Action,
   realNowMs: number = Date.now(),
 ): AppState {
+  validateAction(action);
   const draft = structuredClone(state);
   const context: Context = { now: demoNow(state, realNowMs) };
 
@@ -110,17 +152,27 @@ export function applyAction(
     case 'application.create':
     case 'application.decide':
     case 'approval.decide':
+    case 'application.start_review':
+    case 'application.accept_terms':
       applyApplicationAction(draft, action, context);
       break;
     case 'company.create':
     case 'setup.set_status':
+    case 'team.add':
       applyCompanyAction(draft, action, context);
       break;
     case 'document.add':
+    case 'document.review':
     case 'agent.log':
     case 'grant.set':
     case 'guard.record':
       applyRecordAction(draft, action, context);
+      break;
+    case 'property.create':
+    case 'property.update':
+    case 'viewing.create':
+    case 'viewing.update':
+      applyPropertyAction(draft, action, context);
       break;
   }
 

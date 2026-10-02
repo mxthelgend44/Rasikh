@@ -13,7 +13,6 @@ export interface SwitchProps extends Omit<
   'aria-label': string;
 }
 
-/** 40x24 track, near-black when on. The knob moves along the inline axis, so it mirrors in RTL. */
 export function Switch({ checked, onChange, className, ...rest }: SwitchProps) {
   return (
     <button
@@ -22,9 +21,8 @@ export function Switch({ checked, onChange, className, ...rest }: SwitchProps) {
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        'relative h-6 w-10 shrink-0 rounded-full transition-colors',
+        'rasikh-switch inline-flex h-6 w-10 shrink-0 items-center justify-center rounded-full',
         'disabled:pointer-events-none disabled:opacity-40',
-        checked ? 'bg-solid' : 'bg-line-strong',
         className,
       )}
       {...rest}
@@ -32,10 +30,17 @@ export function Switch({ checked, onChange, className, ...rest }: SwitchProps) {
       <span
         aria-hidden
         className={cn(
-          'absolute top-0.5 size-5 rounded-full shadow-sm transition-all',
-          checked ? 'start-[1.125rem] bg-solid-fg' : 'start-0.5 bg-surface',
+          'relative block h-6 w-10 shrink-0 rounded-full transition-colors',
+          checked ? 'bg-solid' : 'bg-fg-tertiary',
         )}
-      />
+      >
+        <span
+          className={cn(
+            'absolute top-0.5 size-5 rounded-full bg-solid-fg shadow-sm transition-all',
+            checked ? 'start-[1.125rem]' : 'start-0.5',
+          )}
+        />
+      </span>
     </button>
   );
 }

@@ -1,0 +1,134 @@
+{
+  "kind": "dated_deployed_guard_http_snapshot",
+  "source": {
+    "path": "docs/evidence/guard-current-release-1.2.json",
+    "sha256": "74481d43929d414658abfe9dd96d9ec9122cd509727e27d35c2f211704d49071",
+    "schemaVersion": "current-guard-release-verification-1",
+    "reportSchemaVersion": "1.0.0"
+  },
+  "startedAt": "2026-10-02T09:22:14.429Z",
+  "completedAt": "2026-10-02T09:23:11.117Z",
+  "wireContract": "1.2.0",
+  "upstream": "5060566a0d9fed034a5e68ec782a1b00714c7014",
+  "scope": "live_http",
+  "status": "pass",
+  "deployment": {
+    "revision": "rasikh-guard-00002-ff2",
+    "providedBy": "root deployment handoff",
+    "access": "private Cloud Run through authenticated loopback proxy; process-only identity token managed by root"
+  },
+  "totals": {
+    "attack_attempts": 75,
+    "verified_checks": 75,
+    "verified_denials": 75,
+    "explicit_allows": 0,
+    "non_denials": 0,
+    "attack_errors": 0,
+    "conformance_passed": 99,
+    "conformance_failed": 0,
+    "conformance_errors": 0,
+    "conformance_skipped": 3
+  },
+  "runs": [
+    {
+      "run": 1,
+      "generatedAt": "2026-10-02T09:22:33.379Z",
+      "synthetic": true,
+      "contract": "1.2.0",
+      "status": "pass",
+      "attacks": 25,
+      "verified": 25,
+      "denied": 25,
+      "unsafeAllows": 0,
+      "errors": 0,
+      "conformance": {
+        "passed": 33,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 1,
+        "skippedCases": [
+          "demo_reset_disabled"
+        ]
+      }
+    },
+    {
+      "run": 2,
+      "generatedAt": "2026-10-02T09:22:51.636Z",
+      "synthetic": true,
+      "contract": "1.2.0",
+      "status": "pass",
+      "attacks": 25,
+      "verified": 25,
+      "denied": 25,
+      "unsafeAllows": 0,
+      "errors": 0,
+      "conformance": {
+        "passed": 33,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 1,
+        "skippedCases": [
+          "demo_reset_disabled"
+        ]
+      }
+    },
+    {
+      "run": 3,
+      "generatedAt": "2026-10-02T09:23:10.862Z",
+      "synthetic": true,
+      "contract": "1.2.0",
+      "status": "pass",
+      "attacks": 25,
+      "verified": 25,
+      "denied": 25,
+      "unsafeAllows": 0,
+      "errors": 0,
+      "conformance": {
+        "passed": 33,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 1,
+        "skippedCases": [
+          "demo_reset_disabled"
+        ]
+      }
+    }
+  ],
+  "execution": {
+    "modelOrVertexCalls": 0,
+    "resetRequests": 0,
+    "excludedAncillaryIncluded": false
+  },
+  "archivedEvidence": {
+    "fileCount": 22,
+    "allUnchanged": true,
+    "sources": [
+      {
+        "path": "packages/rasikh-evals/evals/GUARD_CONFORMANCE.json",
+        "sha256": "26b36084b9b63f6cf0df46baf1263aa5a4337913c4a9043ebbe3c6c6ef72a8e4",
+        "unchanged": true
+      },
+      {
+        "path": "packages/rasikh-evals/evals/REPORT.json",
+        "sha256": "0bdf7f6a76d65cf08c33b5fe1b92f0d6bab5b81f4d0427115720d25e108f62d6",
+        "unchanged": true
+      },
+      {
+        "path": "packages/rasikh-evals/evals/trust.json",
+        "sha256": "84ae50d0efce0f33ac51d29cd7819053c791bd17c253db4300324849dcdade5f",
+        "unchanged": true
+      }
+    ]
+  },
+  "limitations": [
+    "This verifies actual HTTP behavior of the 25 unchanged synthetic Guard attack cases and the existing conformance suite only.",
+    "No model or Vertex calls were made; model obedience, current-app full security and end-to-end exfiltration were not measured.",
+    "No payload was forwarded to a recipient; explicit forbidden authorization is the attack metric.",
+    "The reused private Cloud Run service was not reset. The destructive/reset conformance probe is skipped by the unchanged suite.",
+    "The unchanged suite does not exercise the 1.2 service-tag or remedies extensions. A historical suite note refers to the 1.0 contract limitation.",
+    "The legacy launcher expects wire contract 1.0.0 and writes beside previous evidence; it was not used or modified.",
+    "Deployment project/revision metadata was provided by the root handoff; observed health proves the wire contract and upstream OpenAPPA commit, not an independent Cloud Run revision lookup.",
+    "The release tsx loader attempts failed because of mismatched/removing local dependency files. The measured runs used the native bundled harness; the earlier loader explanation in aggregate.json is superseded by this final manifest.",
+    "An ancillary direct-entry CLI invocation against the unavailable default origin is preserved as excluded/unmeasured evidence. It is not one of the three measured current-release runs."
+  ]
+}

@@ -1,0 +1,75 @@
+/*
+ * Open animation for dialogs and drawers. Entrance only (the native dialog closes at once), short and
+ * eased, and wrapped in prefers-reduced-motion: no-preference so nothing moves for people who ask
+ * for less. Direction comes from --rasikh-dir so a drawer enters from its own side in RTL as well.
+ */
+
+/* A side drawer can be anchored to either edge. The default stays the inline-end edge. */
+.rasikh-dialog[data-presentation='drawer'][data-side='start'] {
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+}
+
+.rasikh-dialog[data-presentation='drawer'] {
+  --rasikh-dir: 1;
+}
+
+[dir='rtl'] .rasikh-dialog[data-presentation='drawer'] {
+  --rasikh-dir: -1;
+}
+
+@keyframes rasikh-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rasikh-drawer-in-end {
+  from {
+    transform: translateX(calc(var(--rasikh-dir, 1) * 100%));
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes rasikh-drawer-in-start {
+  from {
+    transform: translateX(calc(var(--rasikh-dir, 1) * -100%));
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes rasikh-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rasikh-dialog[open] {
+    animation: rasikh-dialog-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .rasikh-dialog[open][data-presentation='drawer'] {
+    animation: rasikh-drawer-in-end 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .rasikh-dialog[open][data-presentation='drawer'][data-side='start'] {
+    animation-name: rasikh-drawer-in-start;
+  }
+
+  .rasikh-dialog[open]::backdrop {
+    animation: rasikh-backdrop-in 200ms ease-out;
+  }
+}

@@ -1,16 +1,8 @@
 import type { Metadata } from 'next';
-import { Landmark } from 'lucide-react';
-import { EmptyPage } from '@/components/shell/empty-page';
+import { BankOverview } from '@/components/bank/bank-overview';
 
-export const metadata: Metadata = { title: 'Applications' };
+export const metadata: Metadata = { title: 'Bank overview' };
 
-export default function BankApplicationsPage() {
-  return (
-    <EmptyPage
-      title="Applications"
-      icon={Landmark}
-      emptyTitle="No pending applications"
-      emptyDescription="New account applications arrive here with a plain-language risk summary."
-    />
-  );
+export default function BankPage() {
+  return <BankOverview />;
 }

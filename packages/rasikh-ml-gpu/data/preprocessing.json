@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "feature_names": [
+    "schools",
+    "healthcare",
+    "groceries",
+    "parks",
+    "dining",
+    "transit"
+  ],
+  "formula": "z=(log1p(counts)-mean)/scale",
+  "fitted_split": "train",
+  "fitted_cell_count": 251,
+  "fit_cell_ids_sha256": "7230521c5869e3d71f442322576fed2b33676658e81ed9c22426ff2011e4d9c7",
+  "statistics_dtype": "float64",
+  "std_ddof": 0,
+  "mean": [
+    0.34990022797464876,
+    0.4665045201147916,
+    0.38747603801062724,
+    0.4505168024907572,
+    0.9426215758597344,
+    0.5533378523312501
+  ],
+  "scale": [
+    0.532122822788025,
+    0.78148568341298,
+    0.5989826992322378,
+    0.5769689510677505,
+    1.1342767599374077,
+    0.7967219243580816
+  ],
+  "zero_variance_features": [],
+  "clipping": null,
+  "missing_value_imputation": null,
+  "validation_or_test_fit": false,
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors"
+}

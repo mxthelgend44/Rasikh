@@ -1,0 +1,60 @@
+{
+  "status": "actual_local_cuda_training_evidence_verified",
+  "gpu_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "pytorch": "2.5.1+cu121",
+  "cuda_runtime": "12.1",
+  "actual_matrix_and_backward_device": "cuda:0",
+  "kernel_and_backward_ms": 72.30770874023438,
+  "candidate_traces": [
+    {
+      "id": "h8_wd0",
+      "best_epoch": 620,
+      "validation_mse": 0.1566675901412964,
+      "first_gradient_l2_norm": 0.4671480655670166,
+      "maximum_first_step_parameter_change": 0.004999995231628418,
+      "all_parameter_gradient_optimizer_tensor_devices": "cuda:0"
+    },
+    {
+      "id": "h8_wd001",
+      "best_epoch": 680,
+      "validation_mse": 0.1595950424671173,
+      "first_gradient_l2_norm": 0.4671480655670166,
+      "maximum_first_step_parameter_change": 0.004999995231628418,
+      "all_parameter_gradient_optimizer_tensor_devices": "cuda:0"
+    },
+    {
+      "id": "h16_wd0",
+      "best_epoch": 820,
+      "validation_mse": 0.11303925514221191,
+      "first_gradient_l2_norm": 0.45486101508140564,
+      "maximum_first_step_parameter_change": 0.00499996542930603,
+      "all_parameter_gradient_optimizer_tensor_devices": "cuda:0"
+    },
+    {
+      "id": "h16_wd001",
+      "best_epoch": 1080,
+      "validation_mse": 0.10422197729349136,
+      "first_gradient_l2_norm": 0.45486101508140564,
+      "maximum_first_step_parameter_change": 0.00499996542930603,
+      "all_parameter_gradient_optimizer_tensor_devices": "cuda:0"
+    }
+  ],
+  "selected_candidate": {
+    "id": "h16_wd001",
+    "hidden_width": 16,
+    "weight_decay": 0.001
+  },
+  "selected_epoch": 1080,
+  "checkpoint_sha256": "21219e4dabda9a18734974a7478b47be3449262d0c5da6f39e28c6bb46e0d15f",
+  "export_sha256": "688edea11afc5a926b3f5794efd35749ee8ab4d9c2dde5b7957f9a567a9cdf8a",
+  "canonical_tensor_sha256": "8e1238174d41842049e251f849412cd768abdd0535ef70be5d20989bb2ab5eef",
+  "trainer_freeze_sha256": "382fb0a8deb73a2ae362adb3f29dcb6a135e48f9f7c4d48b74f1927802a61a5a",
+  "device_proof_sha256": "13567b6f30dcc0c980f5b94c334f51a7cbb00d6dda4c22d29459bf69d56d2659",
+  "replay_bitwise_tensor_hash_match": true,
+  "train_rows": 251,
+  "validation_rows": 59,
+  "trainer_test_feature_rows_read": 0,
+  "training_replay_and_export_wall_seconds": 42.63082639999993,
+  "peak_cuda_allocated_bytes": 68280832,
+  "proof_scope": "Executed CUDA matrix/backprop check, candidate training device assertions/traces and parameter changes, frozen hashes and deterministic selected-weight replay; no CPU fallback. Source inspected for explicit train/validation-only file reads. No performance-speed or recommendation-quality claim."
+}

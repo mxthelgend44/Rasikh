@@ -39,13 +39,13 @@ export function StepMarker({ status, current }: StepMarkerProps) {
   const base = 'flex size-7 shrink-0 items-center justify-center rounded-full';
   if (status === 'done') {
     return (
-      <span className={`${base} bg-solid text-solid-fg`}>
+      <span className={`${base} bg-accent text-accent-fg`}>
         {Glyph ? <Glyph aria-hidden className="size-4" /> : null}
       </span>
     );
   }
   const ring = current
-    ? 'border-2 border-accent bg-surface text-fg'
+    ? 'border-2 border-accent bg-surface text-fg ring-4 ring-accent-soft'
     : 'border border-line-strong bg-surface text-fg-tertiary';
   return (
     <span className={`${base} ${ring}`}>

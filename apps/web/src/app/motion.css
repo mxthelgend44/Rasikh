@@ -1,0 +1,270 @@
+/*
+ * Shared motion. Additive and structural: no component knows about it.
+ *
+ * Rules that keep it safe:
+ *  - Everything sits inside prefers-reduced-motion: no-preference, so reduced motion gets none of it.
+ *  - Keyframes only say where an element starts ("from"). The end state is the element's own style,
+ *    and fill-mode is "backwards", so if an animation never runs the content is simply there.
+ *  - Only opacity, transform and a clipped progress width move: nothing shifts the layout.
+ *  - Animations play when an element is inserted, not when its data changes, so a live update that
+ *    re-renders a row in place stays still. The :where() wrappers keep specificity at zero, so a
+ *    component's own animation class (skeleton pulse, menu pop-in) always wins over these.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    --rasikh-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    /* 1 in left-to-right, -1 in right-to-left: slides run from the inline edge. */
+    --rasikh-dir: 1;
+    --rasikh-lift-shadow: 0 6px 16px rgb(23 60 71 / 0.1);
+  }
+
+  :root[dir='rtl'] {
+    --rasikh-dir: -1;
+  }
+
+  .dark {
+    --rasikh-lift-shadow: 0 6px 16px rgb(0 0 0 / 0.4);
+  }
+
+  @keyframes rasikh-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  @keyframes rasikh-rise-small {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+  }
+
+  @keyframes rasikh-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rasikh-fill {
+    from {
+      width: 0;
+    }
+  }
+
+  @keyframes rasikh-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  @keyframes rasikh-drawer-in {
+    from {
+      opacity: 0;
+      transform: translateX(calc(var(--rasikh-dir) * 24px));
+    }
+  }
+
+  @keyframes rasikh-toast-in {
+    from {
+      opacity: 0;
+      transform: translateX(calc(var(--rasikh-dir) * -16px));
+    }
+  }
+
+  /* Page enter: the content region rises and fades in once per route. */
+  :where(main > :not(dialog)) {
+    animation: rasikh-rise 320ms var(--rasikh-ease) backwards;
+  }
+
+  /*
+   * Reveal: the first ten children of a page block, section, grid, list or table body arrive in
+   * 40 ms steps. Later children are already below the first screen and need no ceremony.
+   */
+  :where(
+    main > div > *:nth-child(-n + 10),
+    main section > *:nth-child(-n + 10),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(-n + 10),
+    main tbody > *:nth-child(-n + 10),
+    main .grid > *:nth-child(-n + 10)
+  ) {
+    animation: rasikh-rise-small 280ms var(--rasikh-ease) backwards;
+  }
+
+  :where(
+    main > div > *:nth-child(2),
+    main section > *:nth-child(2),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(2),
+    main tbody > *:nth-child(2),
+    main .grid > *:nth-child(2)
+  ) {
+    animation-delay: 40ms;
+  }
+
+  :where(
+    main > div > *:nth-child(3),
+    main section > *:nth-child(3),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(3),
+    main tbody > *:nth-child(3),
+    main .grid > *:nth-child(3)
+  ) {
+    animation-delay: 80ms;
+  }
+
+  :where(
+    main > div > *:nth-child(4),
+    main section > *:nth-child(4),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(4),
+    main tbody > *:nth-child(4),
+    main .grid > *:nth-child(4)
+  ) {
+    animation-delay: 120ms;
+  }
+
+  :where(
+    main > div > *:nth-child(5),
+    main section > *:nth-child(5),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(5),
+    main tbody > *:nth-child(5),
+    main .grid > *:nth-child(5)
+  ) {
+    animation-delay: 160ms;
+  }
+
+  :where(
+    main > div > *:nth-child(6),
+    main section > *:nth-child(6),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(6),
+    main tbody > *:nth-child(6),
+    main .grid > *:nth-child(6)
+  ) {
+    animation-delay: 200ms;
+  }
+
+  :where(
+    main > div > *:nth-child(7),
+    main section > *:nth-child(7),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(7),
+    main tbody > *:nth-child(7),
+    main .grid > *:nth-child(7)
+  ) {
+    animation-delay: 240ms;
+  }
+
+  :where(
+    main > div > *:nth-child(8),
+    main section > *:nth-child(8),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(8),
+    main tbody > *:nth-child(8),
+    main .grid > *:nth-child(8)
+  ) {
+    animation-delay: 280ms;
+  }
+
+  :where(
+    main > div > *:nth-child(9),
+    main section > *:nth-child(9),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(9),
+    main tbody > *:nth-child(9),
+    main .grid > *:nth-child(9)
+  ) {
+    animation-delay: 320ms;
+  }
+
+  :where(
+    main > div > *:nth-child(10),
+    main section > *:nth-child(10),
+    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(10),
+    main tbody > *:nth-child(10),
+    main .grid > *:nth-child(10)
+  ) {
+    animation-delay: 360ms;
+  }
+
+  /* Progress bars fill from empty on first paint. Later changes use the component's own transition. */
+  :where([role='progressbar'] > div) {
+    animation: rasikh-fill 450ms var(--rasikh-ease) 120ms backwards;
+  }
+
+  /* Dialogs and drawers. The page behind fades in with them. */
+  dialog[open] {
+    animation: rasikh-dialog-in 220ms var(--rasikh-ease) backwards;
+  }
+
+  dialog[open][data-presentation='drawer'] {
+    animation-name: rasikh-drawer-in;
+  }
+
+  dialog[open]::backdrop {
+    animation: rasikh-fade 200ms ease-out backwards;
+  }
+
+  /* Live toasts slide in from the inline-start edge. */
+  .rasikh-toast {
+    animation: rasikh-toast-in 200ms var(--rasikh-ease) backwards;
+  }
+
+  /* The focus ring grows out from the control instead of snapping on. */
+  :focus-visible {
+    transition-property:
+      color, background-color, border-color, text-decoration-color, box-shadow, opacity, transform,
+      outline-color, outline-offset;
+    transition-duration: 150ms;
+    transition-timing-function: ease;
+  }
+
+  /* Switch knob and segmented plate ease rather than jump. */
+  .rasikh-switch > span,
+  .rasikh-switch > span > span {
+    transition-duration: 200ms;
+    transition-timing-function: var(--rasikh-ease);
+  }
+
+  [role='radiogroup'] > [role='radio'] {
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: var(--rasikh-ease);
+  }
+
+  /* Rows that are links or buttons settle their fill smoothly. */
+  :where(main tbody tr) {
+    transition: background-color 150ms ease;
+  }
+
+  /* Hover lift. Pointer devices only, a 2px rise, never a scale. */
+  @media (hover: hover) and (pointer: fine) {
+    main
+      :is(a, button):is(
+        [class*='rounded-lg'],
+        [class*='rounded-xl'],
+        [class*='rounded-2xl']
+      )[class*='border'],
+    main
+      :is(li, article):is(
+        [class*='rounded-lg'],
+        [class*='rounded-xl'],
+        [class*='rounded-2xl']
+      )[class*='border']:has(a[href], button) {
+      transition-property: color, background-color, border-color, transform, box-shadow;
+      transition-duration: 150ms;
+      transition-timing-function: ease;
+    }
+
+    main
+      :is(a, button):is(
+        [class*='rounded-lg'],
+        [class*='rounded-xl'],
+        [class*='rounded-2xl']
+      )[class*='border']:hover,
+    main
+      :is(li, article):is(
+        [class*='rounded-lg'],
+        [class*='rounded-xl'],
+        [class*='rounded-2xl']
+      )[class*='border']:has(a[href], button):hover {
+      transform: translateY(-2px);
+      box-shadow: var(--rasikh-lift-shadow);
+    }
+  }
+}

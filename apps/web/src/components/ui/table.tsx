@@ -4,6 +4,22 @@ import { cn } from '@/lib/cn';
 
 export type SortDirection = 'asc' | 'desc';
 
+export function TableContainer({
+  label,
+  className,
+  ...rest
+}: HTMLAttributes<HTMLDivElement> & { label?: string }) {
+  return (
+    <div
+      role={label ? 'region' : undefined}
+      aria-label={label}
+      tabIndex={label ? 0 : undefined}
+      className={cn('max-w-full overflow-x-auto rounded-lg border border-edge', className)}
+      {...rest}
+    />
+  );
+}
+
 /** Band-header table. Scrolls with the page sheet, so the header sticks to its top. */
 export function Table({ className, ...rest }: HTMLAttributes<HTMLTableElement>) {
   return <table className={cn('w-full border-collapse text-body', className)} {...rest} />;
@@ -33,7 +49,14 @@ export interface ThProps extends Omit<ThHTMLAttributes<HTMLTableCellElement>, 'a
 }
 
 export function Th({ align = 'start', sort, onSort, className, children, ...rest }: ThProps) {
-  const ariaSort = sort === 'asc' ? 'ascending' : sort === 'desc' ? 'descending' : undefined;
+  const ariaSort =
+    sort === 'asc'
+      ? 'ascending'
+      : sort === 'desc'
+        ? 'descending'
+        : sort === 'none'
+          ? 'none'
+          : undefined;
   const Icon = sort === 'asc' ? ArrowUp : sort === 'desc' ? ArrowDown : ChevronsUpDown;
   return (
     <th

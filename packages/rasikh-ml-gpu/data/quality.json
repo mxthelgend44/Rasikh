@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "checks_passed": [
+    "pinned source byte hashes",
+    "authoritative baseline HANDOFF allowlist",
+    "canonical normalized source hash",
+    "public-object-to-cell reconstruction",
+    "exact seeded block membership/order",
+    "no cross-split cells/blocks/OSM IDs",
+    "train-only fitted normalization",
+    "finite outputs"
+  ],
+  "amenity_objects": 3958,
+  "occupied_cells": 366,
+  "source_place_markers": 222,
+  "inference_named_areas": 199,
+  "split_cells": {
+    "train": 251,
+    "validation": 59,
+    "test": 56
+  },
+  "split_blocks": {
+    "train": 59,
+    "validation": 13,
+    "test": 13
+  },
+  "split_osm_objects": {
+    "train": 2693,
+    "validation": 822,
+    "test": 443
+  },
+  "labels_collected": 0,
+  "source_derived_sha256": "af29f47b49fd08995b12854b2c10e9da39f737f691270a07940d8717f21d7ba9",
+  "raw_source_hash_scope": "Upstream provenance records raw response hash; baseline data/raw is intentionally excluded and not redistributed.",
+  "limitations": [
+    "Mapped objects may contain node/way duplicates of the same facility.",
+    "Incomplete mapping; zero mapped objects is not verified facility absence.",
+    "Spatially disjoint blocks can be adjacent; no spatial buffer or future-time holdout.",
+    "Only occupied cells are modeled; features do not measure neighborhood or rental quality.",
+    "Named-area density uses marker-centered circles, not neighborhood boundaries; inference geometry differs from training.",
+    "No customer preference, recommendation success, traffic, quality or journey-time labels.",
+    "Baseline final deployed PCA/KMeans were refitted on all cells; evaluation must refit baseline using only training cells."
+  ]
+}

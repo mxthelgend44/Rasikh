@@ -1,0 +1,9 @@
+data/raw/
+__pycache__/
+.deps/
+demo-output.log
+artifacts/rent-model.json
+artifacts/price-clusters.json
+artifacts/zones.json
+artifacts/provenance.json
+artifacts/evaluation.json

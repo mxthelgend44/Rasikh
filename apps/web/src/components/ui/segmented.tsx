@@ -37,7 +37,10 @@ export function Segmented<V extends string>({
     <div
       role="radiogroup"
       aria-label={label}
-      className={cn('inline-flex h-8 items-center gap-0.5 rounded-md bg-track p-0.5', className)}
+      className={cn(
+        'inline-flex h-8 items-center gap-0.5 rounded-md bg-track p-0.5 max-md:h-11',
+        className,
+      )}
     >
       {options.map((option, index) => {
         const isSelected = index === selected;
@@ -49,9 +52,9 @@ export function Segmented<V extends string>({
             aria-checked={isSelected}
             onClick={() => onChange(option.value)}
             className={cn(
-              'h-full rounded-[0.375rem] border px-3 text-body font-medium transition-colors',
+              'h-full whitespace-nowrap rounded-[0.375rem] border px-3 text-body font-medium transition-colors max-md:min-h-10',
               isSelected
-                ? 'border-line bg-surface text-fg shadow-sm'
+                ? 'border-line-strong bg-selected text-fg'
                 : 'border-transparent text-fg-secondary hover:text-fg',
             )}
             {...itemProps(index)}

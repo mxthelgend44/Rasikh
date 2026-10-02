@@ -3,7 +3,8 @@ import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 export interface EmptyStateProps {
-  icon: LucideIcon;
+  icon?: LucideIcon;
+  illustration?: ReactNode;
   title: string;
   description?: string;
   /** At most one primary action. */
@@ -11,12 +12,23 @@ export interface EmptyStateProps {
   className?: string;
 }
 
-export function EmptyState({ icon: Icon, title, description, action, className }: EmptyStateProps) {
+export function EmptyState({
+  icon: Icon,
+  illustration,
+  title,
+  description,
+  action,
+  className,
+}: EmptyStateProps) {
   return (
     <div className={cn('flex flex-col items-center px-6 py-16 text-center', className)}>
-      <span className="flex size-10 items-center justify-center rounded-lg bg-track text-fg-secondary">
-        <Icon aria-hidden className="size-5" />
-      </span>
+      {illustration ? (
+        <div className="w-48 max-w-full">{illustration}</div>
+      ) : Icon ? (
+        <span className="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
+          <Icon aria-hidden className="size-5" />
+        </span>
+      ) : null}
       <h2 className="mt-4 text-title font-medium text-fg">{title}</h2>
       {description ? (
         <p className="mt-1 max-w-sm text-body text-fg-tertiary">{description}</p>

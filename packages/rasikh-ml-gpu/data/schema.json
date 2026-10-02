@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "dataset_id": "rasikh-osm-amenities-20261002-v1",
+  "feature_names": [
+    "schools",
+    "healthcare",
+    "groceries",
+    "parks",
+    "dining",
+    "transit"
+  ],
+  "feature_count": 6,
+  "source_categories": {
+    "schools": [
+      "amenity=school",
+      "amenity=kindergarten"
+    ],
+    "healthcare": [
+      "amenity=clinic",
+      "amenity=hospital",
+      "amenity=pharmacy"
+    ],
+    "groceries": [
+      "shop=supermarket"
+    ],
+    "parks": [
+      "leisure=park"
+    ],
+    "dining": [
+      "amenity=cafe",
+      "amenity=restaurant"
+    ],
+    "transit": [
+      "amenity=bus_station",
+      "highway=bus_stop"
+    ]
+  },
+  "category_precedence": [
+    "schools",
+    "healthcare",
+    "groceries",
+    "parks",
+    "dining",
+    "transit"
+  ],
+  "split_json_fields": {
+    "cell_ids": "Ordered unique strings n:e",
+    "spatial_blocks": "Parallel block IDs floor(n/3):floor(e/3)",
+    "counts": "N by 6 nonnegative integer-valued float64 mapped object counts",
+    "log_features": "N by 6 float64 log1p(counts)",
+    "standardized_features": "N by 6 float64 using frozen train mean/std"
+  },
+  "npy_files": {
+    "dtype": "little-endian float32",
+    "shape": "N by 6",
+    "order": "C",
+    "content": "standardized_features rounded to float32",
+    "pickle": false
+  },
+  "cell_geometry": {
+    "cell_size_km_approx": 1,
+    "block_size_km_approx": 3,
+    "north_formula": "floor((latitude-24.30)*111.32)",
+    "east_formula": "floor((longitude-54.28)*111.32*cos(radians(24.46)))",
+    "bbox": [
+      24.3,
+      54.28,
+      24.62,
+      54.72
+    ]
+  },
+  "sample_unit": "Occupied approximate 1km² cell; no unoccupied coverage mask",
+  "named_area_role": "Inference only after model selection; 1.5km circles may overlap split boundaries",
+  "named_area_input": "log1p(mapped object density/km²), normalized with same train-only mean/scale; geometry differs from occupied-cell training",
+  "task": "Unsupervised amenity representation/reconstruction; input features are reconstruction targets",
+  "labels": null,
+  "prohibited_sources": [
+    "rental-index.json",
+    "rental predictions",
+    "invented preferences",
+    "facility quality",
+    "traffic",
+    "travel-time outcomes"
+  ],
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors"
+}

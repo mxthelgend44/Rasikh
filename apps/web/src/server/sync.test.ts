@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST as postAction } from '@/app/api/actions/route';
 import { GET as getEvents } from '@/app/api/events/route';
 import { GET as getState } from '@/app/api/state/route';
@@ -132,5 +132,113 @@ describe('live sync', () => {
   it('serves the same snapshot over plain GET', async () => {
     const body = (await getState().json()) as Snapshot;
     expect(body).toEqual(getStore().snapshot());
+  });
+
+  it('rejects malformed known actions and wrong organisation scope without publishing', async () => {
+    const store = getStore();
+    const before = store.snapshot();
+    const notified = vi.fn();
+    const unsubscribe = store.subscribe(notified);
+    try {
+      for (const body of [
+        { type: 'company.create' },
+        {
+          type: 'application.decide',
+          applicationId: 'app_seed_07',
+          partyId: 'landlord_al_reem',
+          outcome: 'approved',
+          note: 'Demo decision',
+          decidedBy: 'Reviewer',
+        },
+      ]) {
+        const response = await send(body);
+        expect(response.status).toBe(400);
+      }
+      expect(store.snapshot()).toEqual(before);
+      expect(notified).not.toHaveBeenCalled();
+    } finally {
+      unsubscribe();
+    }
+  });
+
+  it('propagates information request, review, and approval to both connected surfaces', async () => {
+    const tabA = open();
+    const tabB = open();
+    await tabA.next();
+    await tabB.next();
+    for (const action of [
+      {
+        type: 'application.decide',
+        applicationId: 'app_seed_07',
+        partyId: 'bank_saadiyat',
+        outcome: 'info_requested',
+        note: 'Please confirm the application reference.',
+        decidedBy: 'Reviewer',
+      },
+      { type: 'application.start_review', applicationId: 'app_seed_07', partyId: 'bank_saadiyat' },
+      {
+        type: 'application.decide',
+        applicationId: 'app_seed_07',
+        partyId: 'bank_saadiyat',
+        outcome: 'approved',
+        note: 'Demo account approved.',
+        decidedBy: 'Reviewer',
+      },
+    ]) {
+      const response = await send(action);
+      expect(response.status).toBe(200);
+      const posted = (await response.json()) as Snapshot;
+      for (const tab of [tabA, tabB]) expect(await tab.next()).toEqual(posted);
+    }
+    const state = getStore().snapshot().state;
+    expect(state.applications.app_seed_07.state).toBe('approved');
+    expect(state.steps.step_hire_seed_02_bank_account.blockedReason).toBeUndefined();
+  });
+
+  it('keeps valid updates successful when a disconnected subscriber throws', async () => {
+    const store = getStore();
+    const unsubscribeBroken = store.subscribe(() => {
+      throw new Error('Closed stream');
+    });
+    const received = vi.fn();
+    const unsubscribeActive = store.subscribe(received);
+    try {
+      expect((await send(HIRE_ACTION)).status).toBe(200);
+      expect(received).toHaveBeenCalledOnce();
+      expect(store.snapshot().state.hires.hire_demo_001).toBeDefined();
+    } finally {
+      unsubscribeBroken();
+      unsubscribeActive();
+    }
+  });
+
+  it('returns clear 400 JSON for domain errors raised by another bundled reducer', async () => {
+    class BundledDomainError extends Error {
+      readonly name = 'DomainError';
+      readonly code = 'rasikh_domain_error';
+    }
+    const dispatch = vi.spyOn(getStore(), 'dispatch').mockImplementationOnce(() => {
+      throw new BundledDomainError('This document was replaced. Review the latest fields');
+    });
+    try {
+      const response = await send(HIRE_ACTION);
+      expect(response.status).toBe(400);
+      expect(await response.json()).toEqual({
+        error: 'This document was replaced. Review the latest fields',
+      });
+    } finally {
+      dispatch.mockRestore();
+    }
+  });
+
+  it('lets unrelated programming errors escape the validation handler', async () => {
+    const dispatch = vi.spyOn(getStore(), 'dispatch').mockImplementationOnce(() => {
+      throw new TypeError('Unexpected reducer failure');
+    });
+    try {
+      await expect(send(HIRE_ACTION)).rejects.toThrow(TypeError);
+    } finally {
+      dispatch.mockRestore();
+    }
   });
 });

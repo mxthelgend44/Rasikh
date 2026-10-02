@@ -40,23 +40,31 @@ export function BottomTabs() {
           const active = isActive(tab);
           const Icon = tab.icon;
           return (
-            <li key={tab.href}>
+            <li key={tab.href} className="min-w-0">
               <Link
                 href={tab.href}
                 aria-current={active ? 'page' : undefined}
-                className="flex min-h-14 flex-col items-center justify-center gap-0.5 px-1 py-1.5"
+                className="group flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 px-1 py-1.5"
               >
-                <span
-                  className={cn(
-                    'flex h-7 w-12 items-center justify-center rounded-full transition-colors',
-                    active ? 'bg-selected text-fg' : 'text-fg-tertiary',
-                  )}
-                >
-                  <Icon aria-hidden className="size-5" />
+                <span className="relative flex h-7 w-14 items-center justify-center">
+                  <span
+                    aria-hidden
+                    className={cn(
+                      'absolute inset-0 rounded-full bg-selected ease-out motion-safe:transition-[transform,opacity] motion-safe:duration-200 group-active:scale-x-100 group-active:bg-hover group-active:opacity-100',
+                      active ? 'scale-x-100 opacity-100' : 'scale-x-50 opacity-0',
+                    )}
+                  />
+                  <Icon
+                    aria-hidden
+                    className={cn(
+                      'relative size-5 transition-colors',
+                      active ? 'text-fg' : 'text-fg-tertiary',
+                    )}
+                  />
                 </span>
                 <span
                   className={cn(
-                    'text-caption',
+                    'max-w-full whitespace-normal break-words text-center text-caption leading-tight',
                     active ? 'font-medium text-fg' : 'text-fg-tertiary',
                   )}
                 >
@@ -87,7 +95,9 @@ export function TopTabs() {
                 aria-current={active ? 'page' : undefined}
                 className={cn(
                   'inline-flex h-8 items-center rounded-md px-3 text-body transition-colors',
-                  active ? 'bg-selected font-medium text-fg' : 'text-fg-secondary hover:bg-hover',
+                  active
+                    ? 'bg-selected font-medium text-fg'
+                    : 'text-fg-secondary hover:bg-hover active:bg-selected',
                 )}
               >
                 {t(tab.label)}

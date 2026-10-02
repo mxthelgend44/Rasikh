@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "purpose": "Experimental reconstruction of licensed public OSM amenity counts; no preference or rental outcome prediction",
+  "seed": 7102026,
+  "features": ["schools", "healthcare", "groceries", "parks", "dining", "transit"],
+  "input": "log1p occupied approximate 1km cell object counts, standardized with training-only population mean/std",
+  "latent_dim": 3,
+  "hidden_activation": "tanh",
+  "bottleneck_activation": "linear",
+  "output_activation": "linear",
+  "optimizer": "Adam",
+  "learning_rate": 0.005,
+  "full_batch": true,
+  "max_epochs": 2500,
+  "validation_interval": 10,
+  "early_stop_patience_checks": 40,
+  "early_stop_min_delta": 0.000001,
+  "candidates": [
+    {"id": "h8_wd0", "hidden_width": 8, "weight_decay": 0.0},
+    {"id": "h8_wd001", "hidden_width": 8, "weight_decay": 0.001},
+    {"id": "h16_wd0", "hidden_width": 16, "weight_decay": 0.0},
+    {"id": "h16_wd001", "hidden_width": 16, "weight_decay": 0.001}
+  ],
+  "selection": "Minimum validation mean squared standardized reconstruction error over rows x six features; exact ties follow candidate order. Within a run retain first epoch achieving minimum observed validation error.",
+  "checkpoint": "Training-only fitted weights; no all-cell refit",
+  "holdout_policy": "Trainer never opens test feature file. Independent evaluator scores frozen export once; no retuning afterward.",
+  "determinism": {"algorithms": true, "warn_only": false, "tf32": false, "cublas_workspace_config": ":4096:8"},
+  "replay": "Repeat selected candidate from the same seed to selected epoch and compare canonical model tensor SHA256"
+}

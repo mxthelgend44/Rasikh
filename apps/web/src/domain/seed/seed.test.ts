@@ -21,7 +21,9 @@ describe('seed integrity', () => {
     for (const step of Object.values(state.steps)) expect(state.hires[step.hireId]).toBeDefined();
     for (const doc of Object.values(state.documents)) expect(state.hires[doc.hireId]).toBeDefined();
     for (const action of Object.values(state.agentActions))
-      expect(state.hires[action.caseId]).toBeDefined();
+      expect(
+        action.caseType === 'hire' ? state.hires[action.caseId] : state.companies[action.caseId],
+      ).toBeDefined();
     for (const grant of Object.values(state.grants))
       expect(state.hires[grant.hireId]).toBeDefined();
     for (const approval of Object.values(state.approvals)) {
@@ -88,6 +90,48 @@ describe('seed integrity', () => {
       const step = stepsOf(state, application.hireId).find((s) => s.key === key);
       expect(step?.status, `${application.id}`).toBe('done');
     }
+  });
+
+  it('keeps approved rental units unique and payment schedules accepted by the property', () => {
+    const approved = Object.values(state.applications).filter(
+      (application) => application.kind === 'rental' && application.state === 'approved',
+    );
+    expect(new Set(approved.map((application) => application.propertyId)).size).toBe(
+      approved.length,
+    );
+    for (const decision of Object.values(state.decisions)) {
+      const application = state.applications[decision.applicationId];
+      if (application.kind !== 'rental' || decision.terms?.cheques === undefined) continue;
+      expect(state.properties[application.propertyId!].chequeOptions).toContain(
+        decision.terms.cheques,
+      );
+    }
+  });
+
+  it('populates expansion and viewing records under their existing organisations', () => {
+    const company = state.companies.company_seed_gulf_meridian;
+    expect(company.employerId).toBe('emp_gulf_meridian');
+    expect(
+      Object.values(state.teamMembers).filter((member) => member.companyId === company.id),
+    ).toHaveLength(company.teamSize);
+    for (const step of Object.values(state.setupSteps))
+      expect(state.companies[step.companyId]).toBeDefined();
+    for (const viewing of Object.values(state.viewings)) {
+      expect(state.properties[viewing.propertyId].landlordId).toBe(viewing.landlordId);
+      if (viewing.applicationId)
+        expect(state.applications[viewing.applicationId].propertyId).toBe(viewing.propertyId);
+    }
+  });
+
+  it('creates isolated snapshots so editing one seed does not alter the next reset', () => {
+    const first = createSeed(0);
+    first.properties.prop_reem_2207.name = 'Changed';
+    first.applications.app_seed_05.disclosed.push({ label: 'health', derived: false });
+    const second = createSeed(0);
+    expect(second.properties.prop_reem_2207.name).not.toBe('Changed');
+    expect(second.applications.app_seed_05.disclosed.some((item) => item.label === 'health')).toBe(
+      false,
+    );
   });
 });
 

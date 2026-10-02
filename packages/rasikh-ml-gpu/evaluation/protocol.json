@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "frozen_before_gpu_holdout_scoring": true,
+  "created_at": "2026-10-02T11:09:00Z",
+  "task": "Six-feature unsupervised reconstruction of occupied OSM amenity cells",
+  "authoritative_cpu_split": "../rasikh-recommender/models/osm-evaluation.json",
+  "features": ["schools", "healthcare", "groceries", "parks", "dining", "transit"],
+  "preprocessing": "log1p raw mapped-object counts; population mean and standard deviation fit only on 251 training cells; zero standard deviations replaced by one",
+  "heldout_rows": 56,
+  "heldout_spatial_blocks": 13,
+  "primary_metric": "Mean squared reconstruction error averaged over heldout cells and all six standardized features",
+  "comparators": ["Train-mean constant predictor", "Three-component train-only PCA", "Frozen validation-selected GPU autoencoder"],
+  "secondary_metric": "Train-only four-centroid KMeans mean minimum squared Euclidean distance in same six standardized features versus train-only single centroid; this is not comparable to reconstruction MSE",
+  "uncertainty": "10000 paired spatial-block bootstrap resamples, seed 7102026; cell-weighted differences by resampling complete blocks; percentile 95% intervals. Also report equally weighted block differences separately.",
+  "gpu_selection": "Frozen four candidates: symmetric 6->hidden->3->hidden->6 autoencoder; tanh hidden layers, linear bottleneck/output; hidden width8 or16 and Adam weight_decay0 or0.001; seed7102026, lr0.005, full batch251 rows, max2500 epochs, validation every10 epochs, early stop after40 checks without >=1e-6 improvement. Select checkpoint with lowest validation cells-times-six mean MSE, ties in candidate order. No extra candidates, retraining, all-cell refit or selection after evaluator scores test rows. Hash selected checkpoint/config/export before test evaluation.",
+  "inference_parity": "Independent NumPy/double-precision JSON-export forward pass; compare supplied validation export fixtures if available. No fitting or checkpoint modification during evaluation.",
+  "leakage_checks": ["Exact authoritative ordered cell IDs", "Pairwise disjoint spatial blocks and cell IDs", "Pairwise disjoint OSM object IDs", "All 366 occupied cells assigned once", "Training-only fitted transform", "Train-only CPU baseline fit", "Training and checkpoint/export hash references"],
+  "interpretation": "Metrics describe representation of this one mapped snapshot. They cannot establish preference satisfaction, recommendation quality, rent accuracy, official endorsement, facility quality, coverage completeness or travel time. Spatial blocks can remain correlated across boundaries; no buffer or future-time holdout.",
+  "data_license": "ODbL-1.0; © OpenStreetMap contributors; retain attribution and license links",
+  "excluded": ["Unverified rental-index dataset", "Rental predictions", "Customer outcome labels", "Official housing and journey-time claims"]
+}

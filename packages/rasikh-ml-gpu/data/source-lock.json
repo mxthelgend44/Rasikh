@@ -1,0 +1,14 @@
+{
+  "dataset_id": "rasikh-osm-amenities-20261002-v1",
+  "baseline_relative_path": "../../rasikh-recommender",
+  "seed": 7102026,
+  "files": {
+    "HANDOFF.json": "5ef48ea6981f99a228067a25231d84842b901f5cd030ef7fd12411e420536921",
+    "data/osm-amenities.json": "c319b16b3eade4b98ebf1eb4407c65d4e209d9ac659436526e8084f5d8dc5fb7",
+    "data/osm-places.json": "bae1750431ace46d566cdd10cf887b69f07a039484e8c8b7ff29d0e7d35b9adc",
+    "data/osm-training-cells.json": "97ecd83dcd6e1497faa254f7a9bac904eae743a56ae0202b67faea15df701183",
+    "models/osm-provenance.json": "caf83d2731e74dad89285768c6267b9a728bbb81d59859cfc273e53d71f28083",
+    "models/osm-evaluation.json": "9868217907c5755d7c757b5b8ce8476c0a6ba2b50dcaff19bc852ad9234e3cc7",
+    "train_osm.py": "3b6939ed72e1d8b90dca3fcadf77fcefbd493ae34b5ff8c48db1fd1091c5ad0c"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "audit": "Independent read-only source and CPU baseline audit",
+  "applicable_agents_files_found": 0,
+  "raw_elements": 4229,
+  "unique_amenity_osm_ids": 3958,
+  "normalized_named_place_markers": 222,
+  "named_area_candidates_with_mapped_objects": 199,
+  "occupied_cells": 366,
+  "split_cells": {"train": 251, "validation": 59, "test": 56},
+  "split_blocks": {"train": 59, "validation": 13, "test": 13},
+  "split_object_ids": {"train": 2693, "validation": 822, "test": 443},
+  "checks": {
+    "raw_overpass_response_has_no_error_remark": true,
+    "raw_to_normalized_amenity_and_place_records_match": true,
+    "counts_reconstructed_from_all_amenity_ids": true,
+    "all_cells_assigned_once": true,
+    "disjoint_cell_ids": true,
+    "disjoint_spatial_blocks": true,
+    "disjoint_osm_object_ids": true,
+    "canonical_raw_hash_matches_provenance": true,
+    "canonical_derived_hash_matches_provenance": true,
+    "cpu_report_independently_reproduced": true
+  },
+  "canonical_raw_response_sha256": "a51c67bb5271f238fd034a2e35c5e8685213e5bd6494dfbaabf46241e9af47f4",
+  "canonical_amenities_and_places_sha256": "af29f47b49fd08995b12854b2c10e9da39f737f691270a07940d8717f21d7ba9",
+  "cpu_training_cells_file_sha256": "97ecd83dcd6e1497faa254f7a9bac904eae743a56ae0202b67faea15df701183",
+  "findings": [
+    "CPU models/osm-pca.json and osm-clusters.json are all-cell deployment refits. Evaluator independently fits train-only PCA and KMeans instead.",
+    "CPU bootstrap interval averages blocks equally whereas headline MSE averages cells. Independent report labels both estimands and resamples complete spatial blocks.",
+    "Training cell log1p count features differ in spatial support from 1.5km-circle named-place density inference features.",
+    "Spatial blocks have no buffer, mapping coverage is incomplete, and OSM IDs need not identify distinct physical facilities.",
+    "Unverified rental data and predictions are excluded from the experimental package."
+  ],
+  "attribution": "© OpenStreetMap contributors",
+  "license": "ODbL-1.0",
+  "source_url": "https://www.openstreetmap.org/copyright",
+  "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "license_guidance_verified_from_official_sources_on": "2026-10-02"
+}

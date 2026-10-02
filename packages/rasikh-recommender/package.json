@@ -1,0 +1,13 @@
+{
+  "name": "@rasikh/recommender",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./index.mjs",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "demo": "node server.mjs",
+    "test:browser": "node test/browser.mjs"
+  },
+  "engines": { "node": ">=22" }
+}

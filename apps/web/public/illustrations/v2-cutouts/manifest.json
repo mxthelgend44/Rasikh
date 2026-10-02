@@ -1,0 +1,75 @@
+{
+  "version": "v2-cutouts",
+  "purpose": "Transparent illustration cutouts for Rasikh cards",
+  "tool": "built-in image_gen",
+  "originals_preserved": true,
+  "prompt": "Preserve the existing characters, poses, clothing, colors, texture and story. Remove the empty beige backdrop and exterior rectangular sky, wall and floor. Keep the principal figures, foliage and architecture inside a deliberate irregular silhouette, with a curved ground platform. Use genuinely transparent alpha outside the cutout. No colored rectangle, checkerboard, border, glow or blurry fade.",
+  "company_edge_cleanup_prompt": "Remove the colored halo outside the people, plants, arch and round platforms. Keep the interior artwork unchanged and use a crisp anti-aliased transparent boundary.",
+  "company_presentation_note": "The generated company asset retained a halo; a proportional SVG silhouette mask in the shared Illustration component removes it in the rendered card.",
+  "assets": [
+    {
+      "file": "company-setup.png",
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 618689,
+        "partial": 954175,
+        "opaque": 0
+      },
+      "sha256": "68e17d66d455c94062b7f54b4773b63e74401c9af373e8e8ec594428294cb4f8",
+      "id": "company-setup",
+      "source": "../v1/company-setup.png",
+      "transparent_background": true,
+      "display_fit": "contain"
+    },
+    {
+      "file": "welcoming-hire.png",
+      "width": 1448,
+      "height": 1086,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 500428,
+        "partial": 1070535,
+        "opaque": 1565
+      },
+      "sha256": "ab1eae9104cbb585c95adb8fc6f6331b99242993e100574ab770ef4188dc3d39",
+      "id": "welcoming-hire",
+      "source": "../v1/welcoming-hire.png",
+      "transparent_background": true,
+      "display_fit": "contain"
+    },
+    {
+      "file": "team-move.png",
+      "width": 1448,
+      "height": 1086,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 440602,
+        "partial": 1130651,
+        "opaque": 1275
+      },
+      "sha256": "727c11356e6a3c4efab97a0f6aa2cda46113e07df7c08f5b561996f99a2f3a8d",
+      "id": "team-move",
+      "source": "../v1/team-move.png",
+      "transparent_background": true,
+      "display_fit": "contain"
+    },
+    {
+      "file": "privacy-consent.png",
+      "width": 1448,
+      "height": 1086,
+      "hasAlpha": true,
+      "alpha": {
+        "transparent": 577208,
+        "partial": 993713,
+        "opaque": 1607
+      },
+      "sha256": "011d8036f8ec756072c08fbd3eed4f1efc4f37440eed98dffa6e41e703c93f16",
+      "id": "privacy-consent",
+      "source": "../v1/privacy-consent.png",
+      "transparent_background": true,
+      "display_fit": "contain"
+    }
+  ]
+}
