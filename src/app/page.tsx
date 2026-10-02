@@ -1,483 +1,1114 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   ArrowRight,
   ArrowUpRight,
   Check,
-  ChevronRight,
-  Compass,
+  ClipboardList,
+  FileText,
+  Home,
+  LayoutDashboard,
   MapPin,
-  Menu,
+  Plus,
+  Trash2,
   X,
 } from 'lucide-react';
 
+type View = 'overview' | 'steps' | 'documents' | 'places';
 type Route = 'new-hire' | 'family' | 'team';
-type Step = { title: string; summary: string; detail: string; people: string[]; help: string };
-const routes: Record<Route, { label: string; intro: string; steps: Step[] }> = {
-  'new-hire': {
-    label: 'A new job',
-    intro: 'A sample route for someone joining an Abu Dhabi employer.',
-    steps: [
-      {
-        title: 'Start with your offer',
-        summary: 'Know the route and gather the essentials.',
-        detail:
-          'Your employer confirms the route for your work and residence process. You can gather the documents they actually need before the move begins.',
-        people: ['You', 'Employer'],
-        help: 'Shows who owns each action and which documents are ready, missing, or waiting for review.',
-      },
-      {
-        title: 'Prepare your arrival',
-        summary: 'Keep official steps in view.',
-        detail:
-          'Work authorisation, medical checks, residence and Emirates ID follow the official route that applies to you. Some stages are already joined through UAE government services.',
-        people: ['Employer', 'Official services'],
-        help: 'Keeps the next prerequisite visible without pretending to replace an official service.',
-      },
-      {
-        title: 'Find your place',
-        summary: 'Get ready for a landlord decision.',
-        detail:
-          'Explore where you might live, prepare the evidence a chosen landlord asks for, and understand the tenancy steps for that property.',
-        people: ['You', 'Landlord'],
-        help: 'Makes the housing handoff clear and shows what can be prepared while another document is pending.',
-      },
-      {
-        title: 'Get connected',
-        summary: 'Move through banking and utilities.',
-        detail:
-          'A bank decides which account you can open under its own rules. Utility setup can follow a registered tenancy, depending on the property and provider.',
-        people: ['Bank', 'Utility provider'],
-        help: 'Keeps separate provider requirements in one view so you know what to ask for next.',
-      },
-    ],
-  },
-  family: {
-    label: 'Moving with family',
-    intro: 'A sample route with a few more people and decisions to consider.',
-    steps: [
-      {
-        title: 'Plan the move together',
-        summary: 'Make one list for the household.',
-        detail:
-          'Start with your work route and note which family documents, insurance details and school records may matter to your household.',
-        people: ['You', 'Family', 'Employer'],
-        help: 'Gives the household one shared view of what is ready and what still needs an answer.',
-      },
-      {
-        title: 'Sort a place to live',
-        summary: 'Prepare housing evidence early.',
-        detail:
-          'Look at the areas that fit daily life, then confirm a property and the landlord’s actual tenancy requirements. Housing evidence can matter for family residence.',
-        people: ['You', 'Landlord'],
-        help: 'Connects housing to later family steps without assuming every landlord has the same rules.',
-      },
-      {
-        title: 'Arrange family residence',
-        summary: 'Follow the route that applies to you.',
-        detail:
-          'The sponsor’s residence, housing, kinship documents and health coverage may all be relevant. The official authority decides which conditions apply.',
-        people: ['You', 'Official services'],
-        help: 'Shows dependencies and the source of each requirement before you submit anything.',
-      },
-      {
-        title: 'Make room for school',
-        summary: 'Keep enrollment records visible.',
-        detail:
-          'A chosen school may need identity, residence and previous school records. Some steps can start while an Emirates ID is pending, subject to the school’s rules.',
-        people: ['Family', 'School'],
-        help: 'Keeps school questions alongside the rest of the move so they do not get lost in email.',
-      },
-    ],
-  },
-  team: {
-    label: 'Bringing a team',
-    intro: 'A sample route for a company opening or expanding in Abu Dhabi.',
-    steps: [
-      {
-        title: 'Choose your setup route',
-        summary: 'Start with your activity and needs.',
-        detail:
-          'Mainland and Abu Dhabi’s free zones serve different activities. The right route depends on the business, its approvals, premises and where it will operate.',
-        people: ['Founder', 'Setup authority'],
-        help: 'Places the route decision before the hiring steps it may affect.',
-      },
-      {
-        title: 'Get sponsor-ready',
-        summary: 'Complete company prerequisites.',
-        detail:
-          'A new entity generally needs its licence and the relevant establishment or immigration setup before it can sponsor its own employees.',
-        people: ['Company', 'Official services'],
-        help: 'Shows which company action unlocks a team member’s next step.',
-      },
-      {
-        title: 'Bring people over',
-        summary: 'See each hire’s route and owner.',
-        detail:
-          'Every hire has a work and residence path, but not every person moves with the same documents or family needs.',
-        people: ['HR', 'New hires'],
-        help: 'Gives HR and each hire a clear, appropriately shared view of the journey.',
-      },
-      {
-        title: 'Help them settle',
-        summary: 'Look beyond the permit.',
-        detail:
-          'Housing, banking and family arrangements involve separate providers and decisions after the government steps.',
-        people: ['New hires', 'Private providers'],
-        help: 'Keeps those handoffs visible so the arrival feels coordinated, not fragmented.',
-      },
-    ],
-  },
+type Filter = 'all' | 'todo' | 'done';
+type Task = {
+  id: string;
+  title: string;
+  summary: string;
+  phase: string;
+  owner: string;
+  checklist: string[];
 };
-const routeIds: Route[] = ['new-hire', 'family', 'team'];
+type CustomTask = { id: string; route: Route; title: string };
+type SavedData = {
+  route: Route;
+  completed: string[];
+  checkedItems: string[];
+  documents: string[];
+  savedPlaces: string[];
+  notes: Record<string, string>;
+  customTasks: CustomTask[];
+};
+
+const routeOptions: { id: Route; label: string; arabic: string }[] = [
+  { id: 'new-hire', label: 'Starting a new job', arabic: 'عمل جديد' },
+  { id: 'family', label: 'Moving with family', arabic: 'مع العائلة' },
+  { id: 'team', label: 'Bringing a team', arabic: 'فريق عمل' },
+];
+
+const tasksByRoute: Record<Route, Task[]> = {
+  'new-hire': [
+    {
+      id: 'hire-offer',
+      title: 'Confirm your arrival route',
+      summary: 'Ask your employer which work and residence path applies.',
+      phase: 'Before arrival',
+      owner: 'You + employer',
+      checklist: [
+        'Confirm the route with your employer',
+        'Keep your offer letter handy',
+        'Note your expected arrival date',
+      ],
+    },
+    {
+      id: 'hire-docs',
+      title: 'Get your documents ready',
+      summary: 'Make one list of the records you may need.',
+      phase: 'Before arrival',
+      owner: 'You',
+      checklist: [
+        'Check your passport validity',
+        'Keep an offer letter copy',
+        'Ask if qualifications need recognition',
+      ],
+    },
+    {
+      id: 'hire-residence',
+      title: 'Follow your official steps',
+      summary: 'Track work, residence and Emirates ID milestones.',
+      phase: 'Arrival',
+      owner: 'Employer + official services',
+      checklist: [
+        'Ask for the application reference',
+        'Confirm the next medical or biometrics step',
+        'Save the official status link',
+      ],
+    },
+    {
+      id: 'hire-home',
+      title: 'Prepare for a home',
+      summary: 'Shortlist an area and ask landlords what they need.',
+      phase: 'Settling in',
+      owner: 'You + landlord',
+      checklist: [
+        'Save an area to explore',
+        'Ask the chosen landlord for their checklist',
+        'Review the tenancy details',
+      ],
+    },
+    {
+      id: 'hire-bank',
+      title: 'Check your banking options',
+      summary: 'Compare account requirements before applying.',
+      phase: 'Settling in',
+      owner: 'You + bank',
+      checklist: [
+        'Choose a bank product to ask about',
+        'Check its ID and salary requirements',
+        'Keep the bank’s decision separate from your plan',
+      ],
+    },
+    {
+      id: 'hire-utilities',
+      title: 'Get the essentials connected',
+      summary: 'Confirm tenancy and utility account status.',
+      phase: 'Settling in',
+      owner: 'You + utility provider',
+      checklist: [
+        'Confirm your tenancy registration',
+        'Check how the utility account is created',
+        'Save your account reference when issued',
+      ],
+    },
+  ],
+  family: [
+    {
+      id: 'family-route',
+      title: 'Map your household move',
+      summary: 'Put work and family steps in one place.',
+      phase: 'Before arrival',
+      owner: 'You + family',
+      checklist: [
+        'Confirm the work route',
+        'List family members moving',
+        'Ask which documents need attestation',
+      ],
+    },
+    {
+      id: 'family-docs',
+      title: 'Gather family records',
+      summary: 'Keep identity, kinship and school records ready.',
+      phase: 'Before arrival',
+      owner: 'Family',
+      checklist: [
+        'Check passports',
+        'Gather kinship documents',
+        'Request school transfer records if needed',
+      ],
+    },
+    {
+      id: 'family-home',
+      title: 'Sort your housing plan',
+      summary: 'Find a place that fits everyday life.',
+      phase: 'Settling in',
+      owner: 'You + landlord',
+      checklist: [
+        'Save areas to explore',
+        'Ask the landlord for actual requirements',
+        'Keep the registered tenancy record',
+      ],
+    },
+    {
+      id: 'family-residence',
+      title: 'Arrange family residence',
+      summary: 'Check the official sponsor and housing conditions.',
+      phase: 'After arrival',
+      owner: 'You + official services',
+      checklist: [
+        'Confirm sponsor residence status',
+        'Check housing and insurance evidence',
+        'Follow the official application route',
+      ],
+    },
+    {
+      id: 'family-school',
+      title: 'Prepare for school',
+      summary: 'Ask a chosen school about places and documents.',
+      phase: 'After arrival',
+      owner: 'Family + school',
+      checklist: [
+        'Contact a chosen school',
+        'Ask about identity and transfer records',
+        'Confirm any temporary ID arrangement',
+      ],
+    },
+  ],
+  team: [
+    {
+      id: 'team-route',
+      title: 'Choose the right setup route',
+      summary: 'Match the company activity to the right authority.',
+      phase: 'Company setup',
+      owner: 'Founder + setup authority',
+      checklist: [
+        'Describe the business activity',
+        'Compare mainland and relevant zones',
+        'Confirm any sector approvals',
+      ],
+    },
+    {
+      id: 'team-license',
+      title: 'Get the company ready',
+      summary: 'Track licensing and establishment prerequisites.',
+      phase: 'Company setup',
+      owner: 'Company + official services',
+      checklist: [
+        'Confirm the licensing path',
+        'Prepare the company file',
+        'Check when the entity can sponsor hires',
+      ],
+    },
+    {
+      id: 'team-hires',
+      title: 'Plan each hire’s arrival',
+      summary: 'Give each person an owner and a route.',
+      phase: 'Team move',
+      owner: 'HR + new hires',
+      checklist: [
+        'List incoming hires',
+        'Confirm each work route',
+        'Share the next action with each hire',
+      ],
+    },
+    {
+      id: 'team-homes',
+      title: 'Support the first weeks',
+      summary: 'Keep housing and banking handoffs visible.',
+      phase: 'Team move',
+      owner: 'HR + new hires',
+      checklist: [
+        'Ask hires what support they need',
+        'Track housing handoffs',
+        'Track account setup questions',
+      ],
+    },
+  ],
+};
+
+const navItems: { id: View; label: string; arabic: string; icon: typeof LayoutDashboard }[] = [
+  { id: 'overview', label: 'Overview', arabic: 'نظرة عامة', icon: LayoutDashboard },
+  { id: 'steps', label: 'My steps', arabic: 'خطواتي', icon: ClipboardList },
+  { id: 'documents', label: 'Documents', arabic: 'مستنداتي', icon: FileText },
+  { id: 'places', label: 'Places', arabic: 'الأماكن', icon: MapPin },
+];
+
+const places = [
+  {
+    id: 'corniche',
+    title: 'The Corniche',
+    type: 'Waterfront walks',
+    detail: 'A familiar first stop by the sea, with room to walk, cycle and take in the city.',
+    image: '/images/corniche-arrival.webp',
+  },
+  {
+    id: 'heritage',
+    title: 'Heritage courtyards',
+    type: 'Culture & gathering',
+    detail: 'A reminder that a move is also about finding people and a sense of place.',
+    image: '/images/heritage-courtyard.webp',
+  },
+  {
+    id: 'mangroves',
+    title: 'The mangroves',
+    type: 'Nature nearby',
+    detail: 'Quiet coastal green space close to Abu Dhabi’s city rhythm.',
+    image: '/images/mangroves.webp',
+  },
+];
+
+const suggestedDocuments = [
+  'Passport copy',
+  'Offer letter',
+  'Salary certificate',
+  'School records',
+];
+const storageKey = 'rasikh-local-preview-v1';
+const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
+
+function arabicIndex(index: number) {
+  return String(index + 1)
+    .padStart(2, '0')
+    .replace(/\d/g, (digit) => arabicDigits[Number(digit)]);
+}
 
 export default function HomePage() {
+  const [view, setView] = useState<View>('overview');
   const [route, setRoute] = useState<Route>('new-hire');
-  const [selected, setSelected] = useState(0);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const current = routes[route];
-  const step = current.steps[selected];
-  function changeRoute(next: Route) {
-    setRoute(next);
-    setSelected(0);
+  const [filter, setFilter] = useState<Filter>('all');
+  const [completed, setCompleted] = useState<string[]>([]);
+  const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  const [documents, setDocuments] = useState<string[]>([]);
+  const [savedPlaces, setSavedPlaces] = useState<string[]>([]);
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [customTasks, setCustomTasks] = useState<CustomTask[]>([]);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const [newTask, setNewTask] = useState('');
+  const [newDocument, setNewDocument] = useState('');
+  const [noteDraft, setNoteDraft] = useState('');
+  const [loaded, setLoaded] = useState(false);
+  const dialogCloseButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (raw) {
+        const saved = JSON.parse(raw) as Partial<SavedData>;
+        if (saved.route && routeOptions.some((item) => item.id === saved.route))
+          setRoute(saved.route);
+        if (Array.isArray(saved.completed))
+          setCompleted(saved.completed.filter((item) => typeof item === 'string'));
+        if (Array.isArray(saved.checkedItems))
+          setCheckedItems(saved.checkedItems.filter((item) => typeof item === 'string'));
+        if (Array.isArray(saved.documents))
+          setDocuments(saved.documents.filter((item) => typeof item === 'string'));
+        if (Array.isArray(saved.savedPlaces))
+          setSavedPlaces(saved.savedPlaces.filter((item) => typeof item === 'string'));
+        if (saved.notes && typeof saved.notes === 'object' && !Array.isArray(saved.notes)) {
+          setNotes(
+            Object.fromEntries(
+              Object.entries(saved.notes).filter((entry) => typeof entry[1] === 'string'),
+            ),
+          );
+        }
+        if (Array.isArray(saved.customTasks)) {
+          setCustomTasks(
+            saved.customTasks.filter(
+              (item) =>
+                item &&
+                typeof item.id === 'string' &&
+                typeof item.title === 'string' &&
+                routeOptions.some((option) => option.id === item.route),
+            ),
+          );
+        }
+      }
+    } catch {
+      // The preview remains usable if local storage is unavailable.
+    }
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    const data: SavedData = {
+      route,
+      completed,
+      checkedItems,
+      documents,
+      savedPlaces,
+      notes,
+      customTasks,
+    };
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(data));
+    } catch {
+      /* Local storage can be disabled. */
+    }
+  }, [loaded, route, completed, checkedItems, documents, savedPlaces, notes, customTasks]);
+
+  useEffect(() => {
+    if (!activeTaskId) return;
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialogCloseButtonRef.current?.focus();
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') setActiveTaskId(null);
+      if (event.key !== 'Tab') return;
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), textarea',
+      );
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      window.removeEventListener('keydown', closeOnEscape);
+      previouslyFocused?.focus();
+    };
+  }, [activeTaskId]);
+
+  const tasks: Task[] = [
+    ...tasksByRoute[route],
+    ...customTasks
+      .filter((task) => task.route === route)
+      .map((task) => ({
+        id: task.id,
+        title: task.title,
+        summary: 'A step you added to your plan.',
+        phase: 'Your own step',
+        owner: 'You',
+        checklist: [],
+      })),
+  ];
+  const completedCount = tasks.filter((task) => completed.includes(task.id)).length;
+  const progress = Math.round((completedCount / tasks.length) * 100);
+  const nextTasks = tasks.filter((task) => !completed.includes(task.id)).slice(0, 3);
+  const visibleTasks = tasks.filter(
+    (task) =>
+      filter === 'all' ||
+      (filter === 'done' ? completed.includes(task.id) : !completed.includes(task.id)),
+  );
+  const activeTask = tasks.find((task) => task.id === activeTaskId);
+
+  function toggleCompleted(id: string) {
+    setCompleted((previous) =>
+      previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id],
+    );
+  }
+  function toggleCheck(key: string) {
+    setCheckedItems((previous) =>
+      previous.includes(key) ? previous.filter((item) => item !== key) : [...previous, key],
+    );
+  }
+  function openTask(task: Task) {
+    setActiveTaskId(task.id);
+    setNoteDraft(notes[task.id] || '');
+  }
+  function addCustomTask(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const title = newTask.trim().slice(0, 90);
+    if (!title) return;
+    setCustomTasks((previous) => [
+      ...previous,
+      { id: 'custom-' + crypto.randomUUID(), route, title },
+    ]);
+    setNewTask('');
+    setFilter('all');
+  }
+  function addDocument(name: string) {
+    const clean = name.trim().slice(0, 80);
+    if (!clean || hasDocument(clean)) return;
+    setDocuments((previous) => [...previous, clean]);
+    setNewDocument('');
+  }
+  function hasDocument(name: string) {
+    return documents.some((item) => item.toLowerCase() === name.toLowerCase());
+  }
+  function removeCustomTask(id: string) {
+    setCustomTasks((previous) => previous.filter((item) => item.id !== id));
+    setCompleted((previous) => previous.filter((item) => item !== id));
+    setCheckedItems((previous) => previous.filter((item) => !item.startsWith(id + '::')));
+    setNotes((previous) => {
+      const next = { ...previous };
+      delete next[id];
+      return next;
+    });
+    if (activeTaskId === id) setActiveTaskId(null);
+  }
+  function togglePlace(id: string) {
+    setSavedPlaces((previous) =>
+      previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id],
+    );
+  }
+  function changeView(next: View) {
+    setView(next);
+    setActiveTaskId(null);
+  }
+
+  function taskRow(task: Task) {
+    const done = completed.includes(task.id);
+    return (
+      <article className={done ? 'app-task-row is-done' : 'app-task-row'} key={task.id}>
+        <button
+          type="button"
+          className="app-task-check"
+          aria-label={done ? 'Mark ' + task.title + ' to do' : 'Mark ' + task.title + ' done'}
+          aria-pressed={done}
+          onClick={() => toggleCompleted(task.id)}
+        >
+          {done && <Check size={17} strokeWidth={2.3} />}
+        </button>
+        <div className="app-task-number" aria-hidden="true">
+          {arabicIndex(tasks.findIndex((item) => item.id === task.id))}
+        </div>
+        <div className="app-task-copy">
+          <span className="app-task-phase">
+            {task.phase} · {task.owner}
+          </span>
+          <h3>{task.title}</h3>
+          <p>{task.summary}</p>
+        </div>
+        <div className="app-task-actions">
+          <button type="button" className="app-open-step" onClick={() => openTask(task)}>
+            Open step{' '}
+            <span lang="ar" dir="rtl">
+              عرض الخطوة
+            </span>
+            <ArrowUpRight size={17} />
+          </button>
+          {task.id.startsWith('custom-') && (
+            <button
+              type="button"
+              className="app-remove-step"
+              aria-label={'Remove ' + task.title}
+              onClick={() => removeCustomTask(task.id)}
+            >
+              <Trash2 size={16} /> Remove
+            </button>
+          )}
+        </div>
+      </article>
+    );
+  }
+
+  function navigation() {
+    return navItems.map(({ id, label, arabic, icon: Icon }) => (
+      <button
+        type="button"
+        key={id}
+        className={view === id ? 'app-nav-item is-active' : 'app-nav-item'}
+        aria-current={view === id ? 'page' : undefined}
+        onClick={() => changeView(id)}
+      >
+        <Icon size={19} strokeWidth={1.75} />
+        <span>
+          <strong>{label}</strong>
+          <small lang="ar" dir="rtl">
+            {arabic}
+          </small>
+        </span>
+      </button>
+    ));
   }
 
   return (
-    <main id="top">
-      <div className="site-shell">
-        <header className="site-header">
-          <a className="brand" href="#top" aria-label="Rasikh, back to top">
-            <span className="brand-mark" aria-hidden="true">
-              <span />
-            </span>
-            <span className="brand-word">
-              Rasikh <small lang="ar">راسخ</small>
-            </span>
+    <div className="app-page">
+      <header className="app-topbar">
+        <Link className="app-brand" href="/" aria-label="Rasikh dashboard">
+          <span className="app-brand-mark" aria-hidden="true">
+            <span />
+          </span>
+          <span>
+            Rasikh{' '}
+            <small lang="ar" dir="rtl">
+              راسخ
+            </small>
+          </span>
+        </Link>
+        <div className="app-topbar-right">
+          <span className="app-location">
+            <MapPin size={16} /> Abu Dhabi, UAE
+          </span>
+          <span className="app-preview-badge">LOCAL PREVIEW</span>
+          <a href="/welcome" className="app-about-link">
+            About Rasikh <ArrowUpRight size={16} />
           </a>
-          <nav
-            className={menuOpen ? 'nav-links is-open' : 'nav-links'}
-            aria-label="Main navigation"
-          >
-            <a href="#how-it-works" onClick={() => setMenuOpen(false)}>
-              How it works
-            </a>
-            <a href="#journey" onClick={() => setMenuOpen(false)}>
-              Your journey
-            </a>
-            <a href="#abu-dhabi" onClick={() => setMenuOpen(false)}>
-              Abu Dhabi
-            </a>
-          </nav>
-          <a className="header-action" href="#journey">
-            Explore the journey <ArrowUpRight size={16} strokeWidth={1.8} />
-          </a>
-          <button
-            className="menu-toggle"
-            type="button"
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </header>
-
-        <section className="hero" aria-labelledby="hero-title">
-          <div className="hero-copy">
-            <div className="eyebrow">
-              <span className="eyebrow-line" /> A WARMER WELCOME TO ABU DHABI
-            </div>
-            <h1 id="hero-title">
-              A clearer way to make Abu Dhabi <em>home.</em>
-            </h1>
-            <p className="hero-description">
-              A new job brings a lot of firsts. Rasikh is being designed to help you and the people
-              supporting your move see what comes next, from the offer to the everyday details of
-              settling in.
-            </p>
-            <div className="hero-actions">
-              <a className="button button-primary" href="#journey">
-                See the journey <ArrowRight size={18} strokeWidth={1.8} />
-              </a>
-              <a className="text-link" href="#how-it-works">
-                How Rasikh helps <ArrowUpRight size={17} strokeWidth={1.7} />
-              </a>
-            </div>
-            <div className="hero-footnote">
-              <span className="footnote-symbol" aria-hidden="true">
-                ✳
-              </span>
-              <span>One move. Many people. A plan everyone can follow.</span>
-            </div>
-          </div>
-          <div className="hero-visual">
-            <div className="hero-image-frame">
-              <Image
-                src="/images/corniche-arrival.webp"
-                alt="Illustrative scene of people walking by Abu Dhabi's Corniche and skyline"
-                fill
-                priority
-                sizes="(max-width: 900px) 100vw, 52vw"
-                className="hero-image"
-              />
-            </div>
-            <div className="location-note">
-              <span className="location-icon">
-                <MapPin size={17} strokeWidth={1.7} />
-              </span>
-              <span>
-                <strong>The Corniche</strong>
-                <small>Abu Dhabi, UAE</small>
-              </span>
-            </div>
-            <span className="hero-image-index">01 / A PLACE TO BEGIN</span>
-          </div>
-        </section>
-
-        <div className="intro-rule" aria-hidden="true">
-          <span lang="ar">راسخ</span>
-          <span className="rule-line" />
-          <span>ROOTED IN WHAT COMES NEXT</span>
         </div>
-
-        <section className="section how-section" id="how-it-works" aria-labelledby="how-title">
-          <div className="section-lead">
-            <span className="section-kicker">THE IDEA</span>
-            <h2 id="how-title">
-              Moving is more than <em>arriving.</em>
-            </h2>
+      </header>
+      <div className="app-layout">
+        <aside className="app-sidebar">
+          <div className="app-sidebar-label">
+            YOUR SPACE{' '}
+            <span lang="ar" dir="rtl">
+              مساحتك
+            </span>
           </div>
-          <div className="how-content">
-            <p className="section-intro">
-              A work permit, a home, an account, a school place. Each has a different person behind
-              it. Rasikh is designed to make the handoffs between them feel simpler.
-            </p>
-            <div className="principles">
-              <article className="principle">
-                <span className="principle-number">01</span>
-                <div>
-                  <h3>See the whole picture</h3>
-                  <p>Know what is ready, what is next, and who is responsible.</p>
-                </div>
-                <ChevronRight size={18} strokeWidth={1.6} aria-hidden="true" />
-              </article>
-              <article className="principle">
-                <span className="principle-number">02</span>
-                <div>
-                  <h3>Prepare at the right time</h3>
-                  <p>Gather what a chosen provider needs before the handoff.</p>
-                </div>
-                <ChevronRight size={18} strokeWidth={1.6} aria-hidden="true" />
-              </article>
-              <article className="principle">
-                <span className="principle-number">03</span>
-                <div>
-                  <h3>Share with care</h3>
-                  <p>Keep personal details with the people you choose.</p>
-                </div>
-                <ChevronRight size={18} strokeWidth={1.6} aria-hidden="true" />
-              </article>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <section className="journey-section" id="journey" aria-labelledby="journey-title">
-        <div className="site-shell journey-shell">
-          <div className="journey-heading">
-            <div>
-              <span className="section-kicker">AN INTERACTIVE PREVIEW</span>
-              <h2 id="journey-title">
-                What happens <em>next?</em>
-              </h2>
-            </div>
+          <nav className="app-side-nav" aria-label="Dashboard navigation">
+            {navigation()}
+          </nav>
+          <div className="app-sidebar-note">
+            <span className="app-sidebar-motif" aria-hidden="true">
+              ✳
+            </span>
+            <strong>A place to begin.</strong>
             <p>
-              Every move is different. Choose a starting point to see how a clear plan could bring
-              people and tasks together.
+              Your changes stay on this device. Nothing here is sent to an authority or provider.
             </p>
           </div>
-          <div className="journey-tabs" role="tablist" aria-label="Type of move">
-            {routeIds.map((id) => (
-              <button
-                key={id}
-                type="button"
-                role="tab"
-                aria-selected={route === id}
-                aria-controls="journey-panel"
-                className={route === id ? 'journey-tab is-active' : 'journey-tab'}
-                onClick={() => changeRoute(id)}
-              >
-                {routes[id].label}
-              </button>
-            ))}
-          </div>
-          <div
-            className="journey-workspace"
-            id="journey-panel"
-            role="tabpanel"
-            aria-label={current.label}
-          >
-            <div className="workspace-sidebar">
-              <div className="workspace-label">
-                <Compass size={17} strokeWidth={1.7} />
-                <span>YOUR PATH</span>
-              </div>
-              <p>{current.intro}</p>
-              <div className="step-list">
-                {current.steps.map((item, index) => (
+        </aside>
+        <main className="app-main">
+          <nav className="app-mobile-nav" aria-label="Dashboard sections">
+            {navigation()}
+          </nav>
+          {view === 'overview' && (
+            <>
+              <section className="app-welcome" aria-labelledby="app-welcome-title">
+                <div className="app-welcome-copy">
+                  <span className="app-kicker">
+                    <span lang="ar" dir="rtl">
+                      مرحباً
+                    </span>{' '}
+                    · MARHABA
+                  </span>
+                  <h1 id="app-welcome-title">
+                    Let&apos;s make one thing <em>easier today.</em>
+                  </h1>
+                  <p>
+                    Your move has many parts. Start with the next clear step and keep the rest in
+                    view.
+                  </p>
                   <button
                     type="button"
-                    key={item.title}
-                    aria-pressed={selected === index}
-                    className={selected === index ? 'step-button is-active' : 'step-button'}
-                    onClick={() => setSelected(index)}
+                    className="app-primary-button"
+                    onClick={() => changeView('steps')}
                   >
-                    <span className="step-index">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="step-title">{item.title}</span>
-                    {selected === index ? (
-                      <ArrowUpRight size={17} strokeWidth={1.7} />
-                    ) : (
-                      <ChevronRight size={17} strokeWidth={1.7} />
-                    )}
+                    Open my steps{' '}
+                    <span lang="ar" dir="rtl">
+                      خطواتي
+                    </span>
+                    <ArrowRight size={18} />
+                  </button>
+                </div>
+                <div className="app-welcome-image">
+                  <Image
+                    src="/images/corniche-arrival.webp"
+                    alt="Illustrative Abu Dhabi Corniche scene"
+                    fill
+                    priority
+                    sizes="(max-width: 800px) 100vw, 35vw"
+                  />
+                  <span>
+                    <MapPin size={14} /> THE CORNICHE
+                  </span>
+                </div>
+              </section>
+              <div className="app-page-heading app-overview-heading">
+                <div>
+                  <span className="app-kicker">
+                    YOUR PLAN{' '}
+                    <span lang="ar" dir="rtl">
+                      خطتك
+                    </span>
+                  </span>
+                  <h2>At a glance</h2>
+                </div>
+                <button
+                  type="button"
+                  className="app-text-button"
+                  onClick={() => changeView('steps')}
+                >
+                  View all steps <ArrowUpRight size={17} />
+                </button>
+              </div>
+              <div className="app-route-picker" role="group" aria-label="Choose your type of move">
+                {routeOptions.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    aria-pressed={route === item.id}
+                    className={
+                      route === item.id ? 'app-route-button is-active' : 'app-route-button'
+                    }
+                    onClick={() => setRoute(item.id)}
+                  >
+                    <span>{item.label}</span>
+                    <small lang="ar" dir="rtl">
+                      {item.arabic}
+                    </small>
                   </button>
                 ))}
               </div>
-              <span className="sample-note">Sample journey · steps vary by route and provider</span>
-            </div>
-            <div className="workspace-detail" key={route + selected}>
-              <div className="detail-topline">
-                <span>
-                  STEP {String(selected + 1).padStart(2, '0')} /{' '}
-                  {String(current.steps.length).padStart(2, '0')}
-                </span>
-                <span className="concept-pill">CONCEPT PREVIEW</span>
+              <div className="app-stats">
+                <div>
+                  <strong>
+                    {completedCount}
+                    <span>/{tasks.length}</span>
+                  </strong>
+                  <small>steps completed</small>
+                </div>
+                <div>
+                  <strong>{documents.length}</strong>
+                  <small>documents tracked</small>
+                </div>
+                <div>
+                  <strong>{savedPlaces.length}</strong>
+                  <small>places saved</small>
+                </div>
+                <div className="app-progress-stat">
+                  <strong>{progress}%</strong>
+                  <small>of your sample plan</small>
+                  <span className="app-progress-track">
+                    <span style={{ width: progress + '%' }} />
+                  </span>
+                </div>
               </div>
-              <div className="detail-main">
-                <span className="detail-overline">A LITTLE MORE CLARITY</span>
-                <h3>{step.title}</h3>
-                <p className="detail-short">{step.summary}</p>
-                <p className="detail-description">{step.detail}</p>
-                <div className="detail-people">
-                  <span>PEOPLE INVOLVED</span>
-                  <div>
-                    {step.people.map((person) => (
-                      <span className="person-tag" key={person}>
-                        {person}
+              <div className="app-content-grid">
+                <section className="app-panel" aria-labelledby="next-steps-title">
+                  <div className="app-panel-heading">
+                    <div>
+                      <span className="app-kicker">
+                        NEXT UP{' '}
+                        <span lang="ar" dir="rtl">
+                          التالي
+                        </span>
                       </span>
-                    ))}
+                      <h2 id="next-steps-title">Your next steps</h2>
+                    </div>
+                    <button
+                      type="button"
+                      className="app-icon-link"
+                      aria-label="View all steps"
+                      onClick={() => changeView('steps')}
+                    >
+                      <ArrowUpRight size={20} />
+                    </button>
+                  </div>
+                  {nextTasks.length ? (
+                    <div className="app-task-list">{nextTasks.map(taskRow)}</div>
+                  ) : (
+                    <div className="app-empty">
+                      <Check size={27} />
+                      <h3>All caught up.</h3>
+                      <p>
+                        You have completed every step in this sample route. You can still add your
+                        own.
+                      </p>
+                      <button type="button" onClick={() => changeView('steps')}>
+                        Add a step <ArrowRight size={15} />
+                      </button>
+                    </div>
+                  )}
+                </section>
+                <aside className="app-quick-panel">
+                  <span className="app-kicker">
+                    QUICK ACTIONS{' '}
+                    <span lang="ar" dir="rtl">
+                      إجراءات سريعة
+                    </span>
+                  </span>
+                  <h2>Keep moving.</h2>
+                  <button type="button" onClick={() => changeView('documents')}>
+                    <FileText size={20} />
+                    <span>
+                      Track a document
+                      <small lang="ar" dir="rtl">
+                        أضف مستنداً
+                      </small>
+                    </span>
+                    <ArrowUpRight size={17} />
+                  </button>
+                  <button type="button" onClick={() => changeView('places')}>
+                    <Home size={20} />
+                    <span>
+                      Save a place
+                      <small lang="ar" dir="rtl">
+                        احفظ مكاناً
+                      </small>
+                    </span>
+                    <ArrowUpRight size={17} />
+                  </button>
+                  <a href="/welcome">
+                    <span className="app-quick-ornament" aria-hidden="true">
+                      ✳
+                    </span>
+                    <span>
+                      Get to know Rasikh<small>Our idea and the city behind it</small>
+                    </span>
+                    <ArrowUpRight size={17} />
+                  </a>
+                </aside>
+              </div>
+            </>
+          )}
+
+          {view === 'steps' && (
+            <section className="app-view-section" aria-labelledby="steps-title">
+              <div className="app-page-heading">
+                <div>
+                  <span className="app-kicker">
+                    YOUR JOURNEY{' '}
+                    <span lang="ar" dir="rtl">
+                      رحلتك
+                    </span>
+                  </span>
+                  <h1 id="steps-title">My steps</h1>
+                  <p>
+                    Pick one thing to move forward. This is a sample plan you can edit on this
+                    device.
+                  </p>
+                </div>
+                <div className="app-heading-symbol" aria-hidden="true">
+                  ✳
+                </div>
+              </div>
+              <div className="app-route-picker" role="group" aria-label="Choose your type of move">
+                {routeOptions.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    aria-pressed={route === item.id}
+                    className={
+                      route === item.id ? 'app-route-button is-active' : 'app-route-button'
+                    }
+                    onClick={() => setRoute(item.id)}
+                  >
+                    <span>{item.label}</span>
+                    <small lang="ar" dir="rtl">
+                      {item.arabic}
+                    </small>
+                  </button>
+                ))}
+              </div>
+              <div className="app-steps-toolbar">
+                <span>
+                  {completedCount} of {tasks.length} complete
+                </span>
+                <div className="app-filters" role="group" aria-label="Filter steps">
+                  {(['all', 'todo', 'done'] as Filter[]).map((item) => (
+                    <button
+                      type="button"
+                      key={item}
+                      aria-pressed={filter === item}
+                      className={filter === item ? 'is-active' : ''}
+                      onClick={() => setFilter(item)}
+                    >
+                      {item === 'all' ? 'All' : item === 'todo' ? 'To do' : 'Done'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="app-full-task-list">
+                {visibleTasks.length ? (
+                  visibleTasks.map(taskRow)
+                ) : (
+                  <p className="app-list-empty">No steps in this view yet.</p>
+                )}
+              </div>
+              <form className="app-add-form" onSubmit={addCustomTask}>
+                <label htmlFor="new-task">
+                  Add your own step{' '}
+                  <span lang="ar" dir="rtl">
+                    أضف خطوة
+                  </span>
+                </label>
+                <div>
+                  <input
+                    id="new-task"
+                    value={newTask}
+                    onChange={(event) => setNewTask(event.target.value)}
+                    maxLength={90}
+                    placeholder="e.g. Call my new school"
+                  />
+                  <button type="submit">
+                    <Plus size={17} /> Add step
+                  </button>
+                </div>
+              </form>
+            </section>
+          )}
+
+          {view === 'documents' && (
+            <section className="app-view-section" aria-labelledby="documents-title">
+              <div className="app-page-heading">
+                <div>
+                  <span className="app-kicker">
+                    KEEP IT TOGETHER{' '}
+                    <span lang="ar" dir="rtl">
+                      مستنداتك
+                    </span>
+                  </span>
+                  <h1 id="documents-title">Documents</h1>
+                  <p>
+                    Track the names of the documents you have ready. No files are uploaded or
+                    shared.
+                  </p>
+                </div>
+                <FileText className="app-heading-icon" size={42} strokeWidth={1.2} />
+              </div>
+              <div className="app-document-layout">
+                <div className="app-document-main">
+                  <form
+                    className="app-add-form"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      addDocument(newDocument);
+                    }}
+                  >
+                    <label htmlFor="new-document">
+                      Track a document{' '}
+                      <span lang="ar" dir="rtl">
+                        أضف مستنداً
+                      </span>
+                    </label>
+                    <div>
+                      <input
+                        id="new-document"
+                        value={newDocument}
+                        onChange={(event) => setNewDocument(event.target.value)}
+                        maxLength={80}
+                        placeholder="Document name"
+                      />
+                      <button type="submit">
+                        <Plus size={17} /> Add
+                      </button>
+                    </div>
+                  </form>
+                  <div className="app-document-list">
+                    <div className="app-panel-heading">
+                      <div>
+                        <span className="app-kicker">YOUR LIST</span>
+                        <h2>Ready to hand</h2>
+                      </div>
+                      <span className="app-count-pill">{documents.length} tracked</span>
+                    </div>
+                    {documents.length ? (
+                      <ul>
+                        {documents.map((name, index) => (
+                          <li key={name}>
+                            <span className="app-list-number">{arabicIndex(index)}</span>
+                            <FileText size={18} />
+                            <strong>{name}</strong>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setDocuments((previous) => previous.filter((item) => item !== name))
+                              }
+                              aria-label={'Remove ' + name}
+                            >
+                              <Trash2 size={17} />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="app-empty">
+                        <FileText size={27} />
+                        <h3>Start with one document.</h3>
+                        <p>Add a name so you can keep track of what is ready.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
+                <aside className="app-suggestions">
+                  <span className="app-kicker">COMMON STARTING POINTS</span>
+                  <h2>Useful to check</h2>
+                  <p>
+                    These are examples, not a universal requirement list. Ask your employer or
+                    chosen provider what applies.
+                  </p>
+                  {suggestedDocuments.map((name) => (
+                    <button
+                      type="button"
+                      key={name}
+                      disabled={hasDocument(name)}
+                      onClick={() => addDocument(name)}
+                    >
+                      <span>{name}</span>
+                      {hasDocument(name) ? <Check size={17} /> : <Plus size={17} />}
+                    </button>
+                  ))}
+                </aside>
               </div>
-              <div className="detail-bottom">
-                <div className="detail-check">
-                  <Check size={18} strokeWidth={2} />
-                </div>
-                <div>
-                  <strong>Where Rasikh could help</strong>
-                  <p>{step.help}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="journey-disclaimer">
-            This preview shows a possible journey, not a live government, bank, landlord or school
-            connection. Requirements depend on your route and the provider you choose.
-          </p>
-        </div>
-      </section>
+            </section>
+          )}
 
-      <div className="site-shell">
-        <section className="section place-section" id="abu-dhabi" aria-labelledby="place-title">
-          <div className="place-header">
-            <div>
-              <span className="section-kicker">LIFE BEYOND THE CHECKLIST</span>
-              <h2 id="place-title">
-                Settle into a city,
-                <br /> not just a process.
-              </h2>
-            </div>
-            <p>
-              Waterfront mornings. Coffee in a shaded courtyard. A quiet path through the mangroves.
-              Abu Dhabi has room for the life you are coming here to build.
-            </p>
-          </div>
-          <div className="place-grid">
-            <article className="place-card">
-              <div className="place-image">
-                <Image
-                  src="/images/heritage-courtyard.webp"
-                  alt="Illustrative Abu Dhabi heritage courtyard gathering with Arabic coffee"
-                  fill
-                  loading="eager"
-                  sizes="(max-width: 700px) 100vw, 50vw"
-                />
-              </div>
-              <div className="place-caption">
+          {view === 'places' && (
+            <section className="app-view-section" aria-labelledby="places-title">
+              <div className="app-page-heading">
                 <div>
-                  <span>HERITAGE & HOSPITALITY</span>
-                  <h3>Find your people.</h3>
+                  <span className="app-kicker">
+                    EXPLORE ABU DHABI{' '}
+                    <span lang="ar" dir="rtl">
+                      اكتشف أبوظبي
+                    </span>
+                  </span>
+                  <h1 id="places-title">Places to know</h1>
+                  <p>Save a few places you would like to explore as you settle in.</p>
                 </div>
-                <ArrowUpRight size={23} strokeWidth={1.4} aria-hidden="true" />
+                <span className="app-count-pill">{savedPlaces.length} saved</span>
               </div>
-            </article>
-            <article className="place-card">
-              <div className="place-image">
-                <Image
-                  src="/images/mangroves.webp"
-                  alt="Illustrative scene of a family on an Abu Dhabi mangrove boardwalk"
-                  fill
-                  loading="eager"
-                  sizes="(max-width: 700px) 100vw, 50vw"
-                />
+              <div className="app-place-grid">
+                {places.map((place) => {
+                  const saved = savedPlaces.includes(place.id);
+                  return (
+                    <article className="app-place-card" key={place.id}>
+                      <div className="app-place-image">
+                        <Image
+                          src={place.image}
+                          alt={'Illustrative scene of ' + place.title + ' in Abu Dhabi'}
+                          fill
+                          sizes="(max-width: 700px) 100vw, 33vw"
+                        />
+                      </div>
+                      <div className="app-place-body">
+                        <span className="app-kicker">{place.type}</span>
+                        <h2>{place.title}</h2>
+                        <p>{place.detail}</p>
+                        <button
+                          type="button"
+                          className={saved ? 'is-saved' : ''}
+                          aria-pressed={saved}
+                          onClick={() => togglePlace(place.id)}
+                        >
+                          {saved ? <Check size={17} /> : <Plus size={17} />}
+                          {saved ? 'Saved' : 'Save place'}{' '}
+                          <span lang="ar" dir="rtl">
+                            {saved ? 'محفوظ' : 'حفظ المكان'}
+                          </span>
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
-              <div className="place-caption">
-                <div>
-                  <span>THE COAST & MANGROVES</span>
-                  <h3>Make space to breathe.</h3>
-                </div>
-                <ArrowUpRight size={23} strokeWidth={1.4} aria-hidden="true" />
-              </div>
-            </article>
-          </div>
-          <p className="image-note">Imagery is illustrative and inspired by Abu Dhabi.</p>
-        </section>
-
-        <section className="closing-section" aria-labelledby="closing-title">
-          <div className="closing-symbol" aria-hidden="true">
-            <span />
-          </div>
-          <div>
-            <span className="section-kicker">RASIKH · راسخ</span>
-            <h2 id="closing-title">
-              Feel at home <em>sooner.</em>
-            </h2>
-            <p>
-              A simpler beginning starts with knowing what happens next. Explore a sample journey
-              and tell us where your own move would need more help.
-            </p>
-          </div>
-          <a className="button button-light" href="#journey">
-            Explore the journey <ArrowRight size={18} strokeWidth={1.8} />
-          </a>
-        </section>
-        <footer className="site-footer">
-          <div className="footer-brand">
-            <span className="brand-mark brand-mark-small" aria-hidden="true">
-              <span />
-            </span>
-            <span>Rasikh</span>
-          </div>
-          <p>For a clearer start in Abu Dhabi.</p>
-          <div className="footer-links">
-            <a href="#top">Back to top</a>
-            <a href="https://github.com/mxthelgend44/Rasikh/blob/main/docs/problem-evidence.md">
-              Our research <ArrowUpRight size={14} />
-            </a>
-          </div>
-        </footer>
+              <p className="app-image-note">
+                Images are illustrative and inspired by Abu Dhabi. Saved places stay on this device.
+              </p>
+            </section>
+          )}
+        </main>
       </div>
-    </main>
+      {activeTask && (
+        <div className="app-modal-backdrop" onClick={() => setActiveTaskId(null)}>
+          <section
+            ref={dialogRef}
+            className="app-task-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dialog-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="app-dialog-top">
+              <span className="app-kicker">
+                YOUR NEXT ACTION{' '}
+                <span lang="ar" dir="rtl">
+                  خطوتك التالية
+                </span>
+              </span>
+              <button
+                ref={dialogCloseButtonRef}
+                type="button"
+                aria-label="Close step"
+                onClick={() => setActiveTaskId(null)}
+              >
+                <X size={21} />
+              </button>
+            </div>
+            <div className="app-dialog-content">
+              <span className="app-task-phase">
+                {activeTask.phase} · {activeTask.owner}
+              </span>
+              <h2 id="dialog-title">{activeTask.title}</h2>
+              <p>{activeTask.summary}</p>
+              <h3>
+                A simple checklist{' '}
+                <span lang="ar" dir="rtl">
+                  قائمة بسيطة
+                </span>
+              </h3>
+              {activeTask.checklist.length ? (
+                <div className="app-checklist">
+                  {activeTask.checklist.map((item) => {
+                    const key = activeTask.id + '::' + item;
+                    const checked = checkedItems.includes(key);
+                    return (
+                      <button
+                        type="button"
+                        key={key}
+                        aria-pressed={checked}
+                        className={checked ? 'is-checked' : ''}
+                        onClick={() => toggleCheck(key)}
+                      >
+                        <span className="app-small-check">{checked && <Check size={14} />}</span>
+                        {item}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="app-custom-hint">
+                  Use the note below to record what this step needs.
+                </p>
+              )}
+              <label className="app-note-label" htmlFor="task-note">
+                A note for yourself{' '}
+                <span lang="ar" dir="rtl">
+                  ملاحظة لك
+                </span>
+              </label>
+              <textarea
+                id="task-note"
+                rows={3}
+                value={noteDraft}
+                onChange={(event) => setNoteDraft(event.target.value)}
+                maxLength={500}
+                placeholder="What should you remember?"
+              />
+              <button
+                type="button"
+                className="app-save-note"
+                onClick={() =>
+                  setNotes((previous) => ({ ...previous, [activeTask.id]: noteDraft }))
+                }
+              >
+                Save note <Check size={16} />
+              </button>
+            </div>
+            <div className="app-dialog-footer">
+              <span>Saved on this device · No application is submitted</span>
+              <button
+                type="button"
+                className="app-primary-button"
+                onClick={() => toggleCompleted(activeTask.id)}
+              >
+                {completed.includes(activeTask.id) ? 'Mark to do' : 'Mark done'}{' '}
+                <span lang="ar" dir="rtl">
+                  {completed.includes(activeTask.id) ? 'قيد التنفيذ' : 'تحديد كمكتملة'}
+                </span>
+                <Check size={17} />
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+    </div>
   );
 }
