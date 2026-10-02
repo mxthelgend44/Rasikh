@@ -1,0 +1,124 @@
+rules_version = '2';
+
+// Rasikh Firestore security rules.
+//
+// Clients (newcomer and employer apps) get least privilege. The Rasikh server writes through
+// the Admin SDK, which bypasses these rules: it owns companies, case creation, Guard checks,
+// TAMM applications, and the observed_at / guard_consent_id fields.
+//
+// Defense in depth: the employer may read a case document only if every label on it is one
+// the Guard policy (INTEGRATION.md 3.4) allows to the employer. Raw bank statements and health
+// data never leave Firestore to an employer client, even if the app has a bug.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function caseData(caseId) {
+      return get(/databases/$(database)/documents/cases/$(caseId)).data;
+    }
+
+    function isNewcomer(caseId) {
+      return signedIn() && caseData(caseId).newcomer_uid == request.auth.uid;
+    }
+
+    function isEmployer(caseId) {
+      return signedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/companies/$(caseData(caseId).company_id)).data.member_uids;
+    }
+
+    function isParty(caseId) {
+      return isNewcomer(caseId) || isEmployer(caseId);
+    }
+
+    function labels() {
+      return ['passport', 'emirates_id', 'salary', 'bank_statement', 'employment', 'family', 'address', 'degree', 'health'];
+    }
+
+    // Labels the 3.4 matrix allows to the employer.
+    function employerLabels() {
+      return ['passport', 'emirates_id', 'salary', 'employment', 'family', 'address', 'degree'];
+    }
+
+    // The 3.4 cells whose effect is "consent": the only pairs a newcomer can grant.
+    function consentablePairs() {
+      return ['passport__landlord', 'passport__bank', 'emirates_id__landlord', 'emirates_id__bank', 'salary__bank',
+              'bank_statement__bank', 'family__landlord', 'family__school', 'address__bank', 'address__school'];
+    }
+
+    function changedOnly(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow create: if signedIn() && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['role', 'subject_ref', 'company_id', 'display_name', 'created_at'])
+        && request.resource.data.role in ['newcomer', 'employer']
+        && request.resource.data.company_id == null;
+      allow update: if signedIn() && request.auth.uid == userId && changedOnly(['display_name']);
+      allow delete: if false;
+    }
+
+    match /companies/{companyId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.member_uids;
+      allow write: if false;
+    }
+
+    match /cases/{caseId} {
+      allow read: if signedIn() && (resource.data.newcomer_uid == request.auth.uid
+        || request.auth.uid in get(/databases/$(database)/documents/companies/$(resource.data.company_id)).data.member_uids);
+      allow create, delete: if false;
+      allow update: if isEmployer(caseId)
+        && changedOnly(['status', 'updated_at'])
+        && request.resource.data.status in ['intake', 'active', 'settled', 'closed'];
+
+      match /documents/{ref} {
+        allow read: if isNewcomer(caseId)
+          || (isEmployer(caseId) && resource.data.labels.hasOnly(employerLabels()));
+        allow create: if isNewcomer(caseId)
+          && request.resource.data.keys().hasOnly(['ref', 'kind', 'labels', 'derived', 'source_ref', 'storage_path', 'observed_at', 'created_at'])
+          && request.resource.data.ref == ref
+          && request.resource.data.labels is list
+          && request.resource.data.labels.hasOnly(labels())
+          && request.resource.data.derived is bool
+          && request.resource.data.observed_at == null;
+        allow update: if isNewcomer(caseId) && changedOnly(['kind', 'storage_path']);
+        allow delete: if isNewcomer(caseId);
+      }
+
+      match /consents/{consentId} {
+        allow read: if isParty(caseId);
+        allow create: if isNewcomer(caseId)
+          && request.resource.data.keys().hasOnly(['label', 'destination', 'granted_by', 'guard_consent_id', 'active', 'expires_at', 'granted_at', 'revoked_at'])
+          && consentId == request.resource.data.label + '__' + request.resource.data.destination
+          && consentId in consentablePairs()
+          && request.resource.data.granted_by == 'newcomer'
+          && request.resource.data.guard_consent_id == null
+          && request.resource.data.active == true
+          && request.resource.data.revoked_at == null;
+        // Revoke or re-grant by toggling `active`; the document is kept as the audit trail.
+        allow update: if isNewcomer(caseId) && changedOnly(['active', 'expires_at', 'granted_at', 'revoked_at'])
+          && request.resource.data.active is bool;
+        allow delete: if false;
+      }
+
+      match /guard_checks/{checkId} {
+        allow read: if isParty(caseId);
+        allow write: if false;
+      }
+
+      match /applications/{applicationId} {
+        allow read: if isParty(caseId);
+        allow write: if false;
+      }
+    }
+
+    match /trust_passports/{userId} {
+      allow read, write: if signedIn() && request.auth.uid == userId;
+    }
+  }
+}

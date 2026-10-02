@@ -1,0 +1,30 @@
+{
+  "name": "@rasikh/data",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rasikh Firestore data layer: typed schema, validating converters, security rules and indexes.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test --test-reporter=spec \"test/unit/*.test.ts\"",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-rasikh \"node --import tsx --test --test-reporter=spec test/rules/*.test.ts\""
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "12.19.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "@types/node": "22.20.3",
+    "firebase-tools": "15.31.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}
