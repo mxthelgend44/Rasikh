@@ -1,0 +1,78 @@
+{
+  "synthetic": true,
+  "purpose": "Standalone authoring metadata, not an app import or replacement of existing fixtures.",
+  "notice": "FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY",
+  "case_id": "hire_demo_maya_001",
+  "snapshot_date": "2026-10-02",
+  "person": {
+    "full_name": "Maya Khalil",
+    "date_of_birth": "1996-04-16",
+    "nationality": "Jordanian",
+    "current_city": "Amman, Jordan",
+    "destination": "Abu Dhabi, UAE",
+    "email": "maya.khalil@example.com",
+    "passport_number": "FAKE-P-MAYA-001",
+    "passport_expiry_date": "2032-06-01"
+  },
+  "employment": {
+    "employer": "Demo Harbor AI",
+    "employer_is_fictional": true,
+    "role": "Machine Learning Engineer",
+    "offered_monthly_salary_aed": 18000,
+    "start_date": "2026-11-01",
+    "offer_date": "2026-09-15",
+    "accepted_date": "2026-09-18",
+    "projected_income_not_payroll": true
+  },
+  "relocation": {
+    "planned_arrival": "2026-10-18",
+    "temporary_housing_nights": 14,
+    "temporary_housing_from": "2026-10-18",
+    "temporary_housing_checkout": "2026-11-01",
+    "one_time_allowance_aed": 10000,
+    "allowance_status": "Promised, not paid",
+    "residence_and_emirates_id_status": "Pending; no official status asserted",
+    "local_bank_account_status": "Not opened; draft only"
+  },
+  "housing": {
+    "listing_id": "lease_demo_maya_reem_2207",
+    "building": "Demo Haven Tower (fictional)",
+    "unit": "2207",
+    "area": "Al Reem Island, Abu Dhabi",
+    "bedrooms": 1,
+    "requested_move_in": "2026-11-01",
+    "annual_rent_aed": 84000,
+    "monthly_rent_equivalent_aed": 7000,
+    "requested_instalments": 4,
+    "instalment_amount_aed": 21000,
+    "monthly_budget_ceiling_aed": 8000,
+    "landlord_decision": "Pending; terms are a request, not an approved lease"
+  },
+  "savings": {
+    "issuer": "Demo Meridian Bank (fictional, outside UAE)",
+    "account_identifier": "FAKE-ACCT-MAYA-001",
+    "currency_note": "Illustrative AED equivalents, no real account or exchange rate",
+    "opening_balance_aed_equivalent": 48000,
+    "closing_balance_aed_equivalent": 52000
+  },
+  "degree": {
+    "institution": "Demo Cedar Institute of Technology (fictional)",
+    "degree_title": "BSc Computer Science",
+    "award_date": "2018-06-30"
+  },
+  "privacy_demo": {
+    "raw_salary_to_landlord": "Denied by demo policy, even with consent",
+    "raw_bank_balance_to_landlord": "Denied by demo policy",
+    "newcomer_approved_landlord_packet": [
+      "name",
+      "role",
+      "employer relocation support",
+      "housing request",
+      "derived budget-fit result"
+    ],
+    "passport_to_landlord": "Not shared; would need separate scoped consent",
+    "passport_to_bank": "Not shared; would need separate scoped consent",
+    "budget_fit": "Illustrative: requested rent is within stated housing budget",
+    "real_partner_verification": false
+  }
+}

@@ -1,0 +1,20 @@
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
+Passport details
+A fictional identity record for document extraction. Not a government-issued passport.
+Document id: doc_passport_demo_maya_001
+Case id: hire_demo_maya_001
+Status: INVALID FOR TRAVEL OR IDENTITY CHECKS
+
+Full name: Maya Khalil
+Passport number: FAKE-P-MAYA-001
+Nationality: Jordanian
+Date of birth: 1996-04-16
+Expiry date: 2032-06-01
+Issue date: 2022-06-02
+
+What the demo shows: Extract these five core fields, show their source text, and ask Maya to confirm them. Parsing does not authenticate a document.
+Sharing boundary: Keep the raw identity document private by default. Any landlord or bank disclosure needs its own destination-specific consent.
+Visible fabrication: This page deliberately has no national crest, official seal, photo, MRZ, barcode or signature. The passport identifier is invalid.
+
+Intended demo recipient: Private newcomer workspace; no external sharing granted
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY

@@ -1,0 +1,63 @@
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
+
+MAYA KHALIL / RASIKH DEMO PACK
+All people, issuers, identifiers, amounts, quote and events are invented.
+Jordan, Amman, Abu Dhabi and Al Reem Island are real story settings.
+No official crests, real signatures, valid passport numbers, MRZ, IBANs or
+bank accounts are used. This is not evidence about a real customer or pilot.
+
+OPEN: output/pdf/maya-khalil-demo-pack.pdf
+The nine-page pack includes a character, a 90-second presenter guide,
+and seven supporting fake documents. Every page has a FAKE banner,
+watermark and footer. documents/ contains standalone PNGs and text copies.
+character.json and document-manifest.json are editable authoring metadata.
+Manifest tags are narrative categories, not Guard payload data labels.
+
+WHY MAYA FITS
+An employer-sponsored newcomer has an accepted offer and foreign documents,
+but must coordinate different next actions with HR, a landlord and a bank.
+The privacy moment denies raw salary to the landlord and shares only a
+separate derived budget-fit result with an approved minimal packet.
+Partner decisions remain pending. No real submissions have happened.
+
+USING THE INSPECTED PROTOTYPE
+The separately inspected agent-runtime branch (local friend-release-qa checkout)
+accepts text for passport, bank_statement, emirates_id and degree. This does
+not establish that the runtime is on main or deployed. This pack supplies
+text companions for the first, second and fourth document kinds.
+Paste the complete .txt companion for those kinds into a text-based extraction
+demo. Do not claim image/PDF upload or offer extraction is implemented.
+All five passport fields, both bank fields, and all three degree
+fields have expected values in document-manifest.json.
+The bank's closing balance is explicitly an invented AED equivalent.
+
+The remaining documents support a staged/manual presentation. The pack has
+distinct Maya ids and does not replace Alex Demo / hire_demo_001, caches,
+Firestore seeds or evaluation documents on the separate runtime/eval branches.
+Metadata is not app-import
+JSON. Before app integration, map the story into actual app schemas and
+preserve its visible synthetic labels and recipient-specific Guard checks.
+
+The mixed offer needs employment AND salary labels. Raw salary and raw bank
+data cannot reach the landlord under the demo policy, even with consent.
+Actual bank-statement and degree payload labels are bank_statement and degree.
+Housing/property data uses address. Keep budget_fit as an authoring tag; map
+the financial lineage into a separate derived payload under the actual Guard
+contract when integrating the storyboard, not an unknown data label.
+Create and observe a new derived reference for the summary before checking
+it. Never turn the raw offer into a derived document by changing a flag.
+Passport consent is separate for landlord and bank. This scripted housing
+approval shares neither the passport nor a bank packet.
+
+The budget-fit result compares AED7,000 monthly rent with Maya's invented
+AED8,000 budget. It is not a verified affordability score. There is no
+claim that a provider accepts this evidence or agrees to four instalments.
+Deposits, fees and payment method remain to be agreed. The support letter
+is not a guarantee. The job offer is projected income, not a payslip.
+
+REBUILD
+Install Python 3.10+, the packages in requirements.txt, and Poppler (pdftoppm).
+Run python3 rebuild_assets.py from this folder to rebuild the PDF, text, JSON,
+document PNGs at 120 dpi, and ZIP bundle. See README.md for full instructions.
+The source script includes the character values and page content. The rebuild
+does not modify application fixtures or make any external provider requests.
