@@ -1,0 +1,20 @@
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
+Employer relocation support
+A shareable fictional HR statement that deliberately excludes Maya's salary.
+Document id: doc_support_demo_maya_001
+Case id: hire_demo_maya_001
+Status: FICTIONAL HR SUPPORT - NOT A RENT GUARANTEE
+
+Employee: Maya Khalil
+Employer: Demo Harbor AI
+Role: Machine Learning Engineer
+Planned start date: 2026-11-01
+Planned arrival: 2026-10-18
+Support reference: FAKE-SUPPORT-MAYA-001
+
+Support in this story: Demo Harbor AI plans to coordinate onboarding and the work/residence process, provide 14 nights of temporary housing from 18 October (checkout 1 November), and help Maya gather the chosen providers' required documents.
+Scope of employer backing: HR confirms the invented offer and planned start. This letter is not a rent guarantee, a co-signed lease, bank approval, official immigration status, or proof that Maya has begun work.
+Salary removed: Monthly salary, bank balance and the amount of the private relocation allowance are absent. The full offer stays private; this separate statement is the employer evidence in the landlord packet.
+
+Intended demo recipient: Demo Haven Rentals, for the single housing request only
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY

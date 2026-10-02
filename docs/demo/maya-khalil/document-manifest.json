@@ -1,0 +1,476 @@
+{
+  "synthetic": true,
+  "notice": "FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY",
+  "purpose": "Authoring metadata, not an application import schema. Tags are narrative categories, not Guard data labels.",
+  "documents": [
+    {
+      "slug": "01-passport-specimen",
+      "title": "Passport details",
+      "eyebrow": "IDENTITY / TRAINING SPECIMEN",
+      "subtitle": "A fictional identity record for document extraction. Not a government-issued passport.",
+      "id": "doc_passport_demo_maya_001",
+      "kind": "passport",
+      "tags": [
+        "identity"
+      ],
+      "status": "INVALID FOR TRAVEL OR IDENTITY CHECKS",
+      "fields": [
+        [
+          "Full name",
+          "Maya Khalil"
+        ],
+        [
+          "Passport number",
+          "FAKE-P-MAYA-001"
+        ],
+        [
+          "Nationality",
+          "Jordanian"
+        ],
+        [
+          "Date of birth",
+          "1996-04-16"
+        ],
+        [
+          "Expiry date",
+          "2032-06-01"
+        ],
+        [
+          "Issue date",
+          "2022-06-02"
+        ]
+      ],
+      "expected": {
+        "full_name": "Maya Khalil",
+        "passport_number": "FAKE-P-MAYA-001",
+        "nationality": "Jordanian",
+        "date_of_birth": "1996-04-16",
+        "expiry_date": "2032-06-01"
+      },
+      "notes": [
+        [
+          "What the demo shows",
+          "Extract these five core fields, show their source text, and ask Maya to confirm them. Parsing does not authenticate a document."
+        ],
+        [
+          "Sharing boundary",
+          "Keep the raw identity document private by default. Any landlord or bank disclosure needs its own destination-specific consent."
+        ],
+        [
+          "Visible fabrication",
+          "This page deliberately has no national crest, official seal, photo, MRZ, barcode or signature. The passport identifier is invalid."
+        ]
+      ],
+      "recipient": "Private newcomer workspace; no external sharing granted",
+      "synthetic": true,
+      "case_id": "hire_demo_maya_001",
+      "pdf_page": 3,
+      "png": "documents/01-passport-specimen.png",
+      "text": "documents/01-passport-specimen.txt"
+    },
+    {
+      "slug": "02-employment-offer",
+      "title": "Employment offer",
+      "eyebrow": "EMPLOYMENT / FICTIONAL OFFER",
+      "subtitle": "Issued by Demo Harbor AI, an imaginary employer used only in the Rasikh demo.",
+      "id": "doc_offer_demo_maya_001",
+      "kind": "offer_letter",
+      "tags": [
+        "employment",
+        "salary"
+      ],
+      "status": "FICTIONAL OFFER - PROJECTED INCOME ONLY",
+      "fields": [
+        [
+          "Employee",
+          "Maya Khalil"
+        ],
+        [
+          "Employer",
+          "Demo Harbor AI"
+        ],
+        [
+          "Role",
+          "Machine Learning Engineer"
+        ],
+        [
+          "Work location",
+          "Abu Dhabi, UAE"
+        ],
+        [
+          "Start date",
+          "2026-11-01"
+        ],
+        [
+          "Monthly base salary",
+          "AED 18,000"
+        ],
+        [
+          "Offer date",
+          "2026-09-15"
+        ],
+        [
+          "Accepted date",
+          "2026-09-18"
+        ]
+      ],
+      "notes": [
+        [
+          "Offer narrative",
+          "In this invented story, Maya accepts a full-time engineering role. The employer plans to coordinate her work and residence process through its HR team. The start remains subject to the applicable onboarding checks."
+        ],
+        [
+          "Relocation support",
+          "This private offer also promises 14 nights of temporary housing and a one-time AED 10,000 relocation allowance. That allowance is not recurring salary and has not been paid. The separate shareable support letter omits the allowance amount."
+        ],
+        [
+          "Private salary evidence",
+          "Maya has not started this role, so this is an offer, not a payslip or proof of received salary. Do not send this mixed employment-and-salary document to the landlord."
+        ]
+      ],
+      "recipient": "Private newcomer workspace and fictional employer only",
+      "synthetic": true,
+      "case_id": "hire_demo_maya_001",
+      "pdf_page": 4,
+      "png": "documents/02-employment-offer.png",
+      "text": "documents/02-employment-offer.txt"
+    },
+    {
+      "slug": "03-prior-bank-statement",
+      "title": "Prior-bank statement",
+      "eyebrow": "FINANCIAL / SYNTHETIC STATEMENT",
+      "subtitle": "Demo Meridian Bank is imaginary. This is a mock prior account outside the UAE.",
+      "id": "doc_bank_demo_maya_001",
+      "kind": "bank_statement",
+      "tags": [
+        "financial",
+        "prior_bank"
+      ],
+      "status": "NO REAL ACCOUNT - ILLUSTRATIVE AED EQUIVALENTS",
+      "fields": [
+        [
+          "Account holder",
+          "Maya Khalil"
+        ],
+        [
+          "Account identifier",
+          "FAKE-ACCT-MAYA-001"
+        ],
+        [
+          "Statement period",
+          "2026-09-01 to 2026-09-30"
+        ],
+        [
+          "Closing balance",
+          "AED 52,000"
+        ]
+      ],
+      "table": {
+        "headers": [
+          "Date",
+          "Invented activity",
+          "Change (AED equiv.)",
+          "Balance (AED equiv.)"
+        ],
+        "rows": [
+          [
+            "2026-09-01",
+            "Opening balance",
+            "-",
+            "48,000"
+          ],
+          [
+            "2026-09-02",
+            "Transfer in from savings",
+            "+8,000",
+            "56,000"
+          ],
+          [
+            "2026-09-09",
+            "Living expenses",
+            "-3,500",
+            "52,500"
+          ],
+          [
+            "2026-09-21",
+            "Travel preparation",
+            "-500",
+            "52,000"
+          ]
+        ]
+      },
+      "expected": {
+        "account_holder": "Maya Khalil",
+        "closing_balance_aed": 52000
+      },
+      "notes": [
+        [
+          "Currency and authenticity",
+          "Every figure is an invented AED equivalent for simple demo arithmetic. No real foreign-currency statement, conversion rate, bank account, IBAN or financial verification is represented."
+        ],
+        [
+          "Sharing boundary",
+          "Keep this statement out of the landlord packet. A future bank application is a separate, consented flow; this pack records no bank submission or approval."
+        ]
+      ],
+      "recipient": "Private newcomer workspace; bank sharing not yet authorised",
+      "synthetic": true,
+      "case_id": "hire_demo_maya_001",
+      "pdf_page": 5,
+      "png": "documents/03-prior-bank-statement.png",
+      "text": "documents/03-prior-bank-statement.txt"
+    },
+    {
+      "slug": "04-degree-record",
+      "title": "Degree record",
+      "eyebrow": "EDUCATION / FICTIONAL RECORD",
+      "subtitle": "Demo Cedar Institute of Technology is an imaginary institution.",
+      "id": "doc_degree_demo_maya_001",
+      "kind": "degree",
+      "tags": [
+        "education"
+      ],
+      "status": "NOT AN ACCREDITED OR ATTESTED CERTIFICATE",
+      "fields": [
+        [
+          "Holder name",
+          "Maya Khalil"
+        ],
+        [
+          "Institution",
+          "Demo Cedar Institute of Technology"
+        ],
+        [
+          "Degree title",
+          "BSc Computer Science"
+        ],
+        [
+          "Award date",
+          "2018-06-30"
+        ],
+        [
+          "Record number",
+          "FAKE-DEG-MAYA-001"
+        ],
+        [
+          "Issuer location",
+          "Amman, Jordan (story setting)"
+        ]
+      ],
+      "expected": {
+        "holder_name": "Maya Khalil",
+        "institution": "Demo Cedar Institute of Technology",
+        "degree_title": "BSc Computer Science"
+      },
+      "notes": [
+        [
+          "Character background",
+          "Maya has eight years of imagined software and machine-learning experience. This record makes her engineering offer coherent and gives the demo an additional reusable document."
+        ],
+        [
+          "What the demo shows",
+          "Extract the holder, institution and degree title; then ask the newcomer to confirm the text. Any real qualification verification or attestation would be a separate process."
+        ],
+        [
+          "Visible fabrication",
+          "No university seal, registrar signature, official accreditation claim or attestation mark appears on this page."
+        ]
+      ],
+      "recipient": "Private newcomer workspace; fictional employer review only",
+      "synthetic": true,
+      "case_id": "hire_demo_maya_001",
+      "pdf_page": 6,
+      "png": "documents/04-degree-record.png",
+      "text": "documents/04-degree-record.txt"
+    },
+    {
+      "slug": "05-employer-support",
+      "title": "Employer relocation support",
+      "eyebrow": "EMPLOYER / NON-FINANCIAL SUPPORT PACKET",
+      "subtitle": "A shareable fictional HR statement that deliberately excludes Maya's salary.",
+      "id": "doc_support_demo_maya_001",
+      "kind": "employer_support",
+      "tags": [
+        "employment"
+      ],
+      "status": "FICTIONAL HR SUPPORT - NOT A RENT GUARANTEE",
+      "fields": [
+        [
+          "Employee",
+          "Maya Khalil"
+        ],
+        [
+          "Employer",
+          "Demo Harbor AI"
+        ],
+        [
+          "Role",
+          "Machine Learning Engineer"
+        ],
+        [
+          "Planned start date",
+          "2026-11-01"
+        ],
+        [
+          "Planned arrival",
+          "2026-10-18"
+        ],
+        [
+          "Support reference",
+          "FAKE-SUPPORT-MAYA-001"
+        ]
+      ],
+      "notes": [
+        [
+          "Support in this story",
+          "Demo Harbor AI plans to coordinate onboarding and the work/residence process, provide 14 nights of temporary housing from 18 October (checkout 1 November), and help Maya gather the chosen providers' required documents."
+        ],
+        [
+          "Scope of employer backing",
+          "HR confirms the invented offer and planned start. This letter is not a rent guarantee, a co-signed lease, bank approval, official immigration status, or proof that Maya has begun work."
+        ],
+        [
+          "Salary removed",
+          "Monthly salary, bank balance and the amount of the private relocation allowance are absent. The full offer stays private; this separate statement is the employer evidence in the landlord packet."
+        ]
+      ],
+      "recipient": "Demo Haven Rentals, for the single housing request only",
+      "synthetic": true,
+      "case_id": "hire_demo_maya_001",
+      "pdf_page": 7,
+      "png": "documents/05-employer-support.png",
+      "text": "documents/05-employer-support.txt"
+    },
+    {
+      "slug": "06-housing-request",
+      "title": "Housing request",
+      "eyebrow": "HOUSING / APPLICATION DRAFT",
+      "subtitle": "Demo Haven Rentals and Demo Haven Tower are imaginary. The location is a real area.",
+      "id": "doc_housing_demo_maya_001",
+      "kind": "housing_request",
+      "tags": [
+        "housing"
+      ],
+      "status": "PENDING LANDLORD REVIEW - NOT A LEASE",
+      "fields": [
+        [
+          "Applicant",
+          "Maya Khalil"
+        ],
+        [
+          "Area",
+          "Al Reem Island, Abu Dhabi"
+        ],
+        [
+          "Fictional property",
+          "Demo Haven Tower / Unit 2207"
+        ],
+        [
+          "Bedrooms",
+          "1"
+        ],
+        [
+          "Requested move-in",
+          "2026-11-01"
+        ],
+        [
+          "Proposed annual rent",
+          "AED 84,000"
+        ],
+        [
+          "Requested payment terms",
+          "4 instalments of AED 21,000"
+        ],
+        [
+          "Listing reference",
+          "lease_demo_maya_reem_2207"
+        ]
+      ],
+      "notes": [
+        [
+          "Why this home",
+          "Maya wants her own home after employer-provided temporary housing ends. She prefers a one-bedroom apartment and needs the landlord to review her request while HR coordinates the move."
+        ],
+        [
+          "Terms still to agree",
+          "Four instalments are Maya's request. Payment method, deposit, fees, required documents, lease eligibility and registration steps must be confirmed with the chosen landlord. No payment or signature is represented."
+        ],
+        [
+          "Minimal application packet",
+          "Share her name, this request, the employer support statement and the separately created budget-fit signal after Maya approves this exact packet. The landlord keeps the final decision."
+        ]
+      ],
+      "recipient": "Demo Haven Rentals; simulated handoff after Maya approval",
+      "synthetic": true,
+      "case_id": "hire_demo_maya_001",
+      "pdf_page": 8,
+      "png": "documents/06-housing-request.png",
+      "text": "documents/06-housing-request.txt"
+    },
+    {
+      "slug": "07-landlord-summary-and-consent",
+      "title": "Landlord summary & consent",
+      "eyebrow": "PRIVACY / MINIMAL DISCLOSURE",
+      "subtitle": "A new derived summary, separate from the raw offer and bank statement.",
+      "id": "doc_summary_demo_maya_001",
+      "kind": "derived_housing_summary",
+      "tags": [
+        "employment",
+        "housing",
+        "budget_fit",
+        "simulated_consent"
+      ],
+      "status": "SIMULATED CONSENT RECEIPT - NO EXTERNAL DISCLOSURE",
+      "fields": [
+        [
+          "Applicant",
+          "Maya Khalil"
+        ],
+        [
+          "Employer / role",
+          "Demo Harbor AI / ML Engineer"
+        ],
+        [
+          "Proposed rent",
+          "AED 84,000 per year"
+        ],
+        [
+          "Requested terms",
+          "4 instalments"
+        ],
+        [
+          "Budget-fit result",
+          "Within stated housing budget"
+        ],
+        [
+          "Partner decision",
+          "Pending landlord review"
+        ]
+      ],
+      "notes": [
+        [
+          "Limited meaning of the result",
+          "The invented rent fits Maya's stated housing budget. This is a demo calculation, not a verified income assessment, credit score, ability-to-pay guarantee or partner recommendation. Her proposed job has not started."
+        ],
+        [
+          "Simulated approval record",
+          "On 2 October 2026, Maya is scripted to approve her name, housing request, employer support and this derived result for Demo Haven Rentals, for this one housing review. This receipt records a fictional scene; no real consent or transmission occurred."
+        ],
+        [
+          "Excluded from this packet",
+          "Raw salary, full offer, raw savings figures, bank statement, passport number and passport image. The demo policy denies raw salary and raw bank data to the landlord; additional consent does not bypass that denial."
+        ],
+        [
+          "Destination scope",
+          "No bank sharing is authorised by this housing approval. Any future identity or bank packet needs its own checks and consent. The landlord may request more information and decides whether to accept the packet."
+        ]
+      ],
+      "recipient": "Demo Haven Rentals only; one fictional housing review",
+      "synthetic": true,
+      "case_id": "hire_demo_maya_001",
+      "pdf_page": 9,
+      "png": "documents/07-landlord-summary-and-consent.png",
+      "text": "documents/07-landlord-summary-and-consent.txt"
+    }
+  ]
+}

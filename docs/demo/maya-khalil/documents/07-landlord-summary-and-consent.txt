@@ -1,0 +1,21 @@
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
+Landlord summary & consent
+A new derived summary, separate from the raw offer and bank statement.
+Document id: doc_summary_demo_maya_001
+Case id: hire_demo_maya_001
+Status: SIMULATED CONSENT RECEIPT - NO EXTERNAL DISCLOSURE
+
+Applicant: Maya Khalil
+Employer / role: Demo Harbor AI / ML Engineer
+Proposed rent: AED 84,000 per year
+Requested terms: 4 instalments
+Budget-fit result: Within stated housing budget
+Partner decision: Pending landlord review
+
+Limited meaning of the result: The invented rent fits Maya's stated housing budget. This is a demo calculation, not a verified income assessment, credit score, ability-to-pay guarantee or partner recommendation. Her proposed job has not started.
+Simulated approval record: On 2 October 2026, Maya is scripted to approve her name, housing request, employer support and this derived result for Demo Haven Rentals, for this one housing review. This receipt records a fictional scene; no real consent or transmission occurred.
+Excluded from this packet: Raw salary, full offer, raw savings figures, bank statement, passport number and passport image. The demo policy denies raw salary and raw bank data to the landlord; additional consent does not bypass that denial.
+Destination scope: No bank sharing is authorised by this housing approval. Any future identity or bank packet needs its own checks and consent. The landlord may request more information and decides whether to accept the packet.
+
+Intended demo recipient: Demo Haven Rentals only; one fictional housing review
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY

@@ -4,3 +4,6 @@ node_modules
 artifacts
 package-lock.json
 next-env.d.ts
+# Generated authoring data; keep the Python builder's JSON formatting.
+docs/demo/maya-khalil/character.json
+docs/demo/maya-khalil/document-manifest.json

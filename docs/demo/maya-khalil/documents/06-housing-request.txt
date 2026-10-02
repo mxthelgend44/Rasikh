@@ -1,0 +1,22 @@
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
+Housing request
+Demo Haven Rentals and Demo Haven Tower are imaginary. The location is a real area.
+Document id: doc_housing_demo_maya_001
+Case id: hire_demo_maya_001
+Status: PENDING LANDLORD REVIEW - NOT A LEASE
+
+Applicant: Maya Khalil
+Area: Al Reem Island, Abu Dhabi
+Fictional property: Demo Haven Tower / Unit 2207
+Bedrooms: 1
+Requested move-in: 2026-11-01
+Proposed annual rent: AED 84,000
+Requested payment terms: 4 instalments of AED 21,000
+Listing reference: lease_demo_maya_reem_2207
+
+Why this home: Maya wants her own home after employer-provided temporary housing ends. She prefers a one-bedroom apartment and needs the landlord to review her request while HR coordinates the move.
+Terms still to agree: Four instalments are Maya's request. Payment method, deposit, fees, required documents, lease eligibility and registration steps must be confirmed with the chosen landlord. No payment or signature is represented.
+Minimal application packet: Share her name, this request, the employer support statement and the separately created budget-fit signal after Maya approves this exact packet. The landlord keeps the final decision.
+
+Intended demo recipient: Demo Haven Rentals; simulated handoff after Maya approval
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY

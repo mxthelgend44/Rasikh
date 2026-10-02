@@ -12,6 +12,7 @@ Rasikh is an early-stage hackathon concept for making an employer-led move to Ab
 6. [Deck outline](docs/deck-outline.md): nine visual slides
 7. [Judge Q&A](docs/judge-qa.md): fifteen difficult questions and honest answers
 8. [Demo rehearsal](docs/demo-rehearsal.md): timing, roles and failure switches
+9. [Maya Khalil fictional demo pack](docs/demo/maya-khalil/README.md): a newcomer profile, seven visibly fake supporting documents, and a 90-second presenter guide
 
 ## Status
 

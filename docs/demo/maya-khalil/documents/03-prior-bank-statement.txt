@@ -1,0 +1,23 @@
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
+Prior-bank statement
+Demo Meridian Bank is imaginary. This is a mock prior account outside the UAE.
+Document id: doc_bank_demo_maya_001
+Case id: hire_demo_maya_001
+Status: NO REAL ACCOUNT - ILLUSTRATIVE AED EQUIVALENTS
+
+Account holder: Maya Khalil
+Account identifier: FAKE-ACCT-MAYA-001
+Statement period: 2026-09-01 to 2026-09-30
+Closing balance: AED 52,000
+
+Date | Invented activity | Change (AED equiv.) | Balance (AED equiv.)
+2026-09-01 | Opening balance | - | 48,000
+2026-09-02 | Transfer in from savings | +8,000 | 56,000
+2026-09-09 | Living expenses | -3,500 | 52,500
+2026-09-21 | Travel preparation | -500 | 52,000
+
+Currency and authenticity: Every figure is an invented AED equivalent for simple demo arithmetic. No real foreign-currency statement, conversion rate, bank account, IBAN or financial verification is represented.
+Sharing boundary: Keep this statement out of the landlord packet. A future bank application is a separate, consented flow; this pack records no bank submission or approval.
+
+Intended demo recipient: Private newcomer workspace; bank sharing not yet authorised
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY

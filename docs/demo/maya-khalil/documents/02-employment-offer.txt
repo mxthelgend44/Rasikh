@@ -1,0 +1,22 @@
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
+Employment offer
+Issued by Demo Harbor AI, an imaginary employer used only in the Rasikh demo.
+Document id: doc_offer_demo_maya_001
+Case id: hire_demo_maya_001
+Status: FICTIONAL OFFER - PROJECTED INCOME ONLY
+
+Employee: Maya Khalil
+Employer: Demo Harbor AI
+Role: Machine Learning Engineer
+Work location: Abu Dhabi, UAE
+Start date: 2026-11-01
+Monthly base salary: AED 18,000
+Offer date: 2026-09-15
+Accepted date: 2026-09-18
+
+Offer narrative: In this invented story, Maya accepts a full-time engineering role. The employer plans to coordinate her work and residence process through its HR team. The start remains subject to the applicable onboarding checks.
+Relocation support: This private offer also promises 14 nights of temporary housing and a one-time AED 10,000 relocation allowance. That allowance is not recurring salary and has not been paid. The separate shareable support letter omits the allowance amount.
+Private salary evidence: Maya has not started this role, so this is an offer, not a payslip or proof of received salary. Do not send this mixed employment-and-salary document to the landlord.
+
+Intended demo recipient: Private newcomer workspace and fictional employer only
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY

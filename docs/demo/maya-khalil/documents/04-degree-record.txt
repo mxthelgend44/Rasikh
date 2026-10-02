@@ -1,0 +1,20 @@
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
+Degree record
+Demo Cedar Institute of Technology is an imaginary institution.
+Document id: doc_degree_demo_maya_001
+Case id: hire_demo_maya_001
+Status: NOT AN ACCREDITED OR ATTESTED CERTIFICATE
+
+Holder name: Maya Khalil
+Institution: Demo Cedar Institute of Technology
+Degree title: BSc Computer Science
+Award date: 2018-06-30
+Record number: FAKE-DEG-MAYA-001
+Issuer location: Amman, Jordan (story setting)
+
+Character background: Maya has eight years of imagined software and machine-learning experience. This record makes her engineering offer coherent and gives the demo an additional reusable document.
+What the demo shows: Extract the holder, institution and degree title; then ask the newcomer to confirm the text. Any real qualification verification or attestation would be a separate process.
+Visible fabrication: No university seal, registrar signature, official accreditation claim or attestation mark appears on this page.
+
+Intended demo recipient: Private newcomer workspace; fictional employer review only
+FAKE / FICTIONAL DEMO - NO OFFICIAL VALIDITY
