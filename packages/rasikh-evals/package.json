@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Synthetic regression and privacy evaluations for Rasikh",
+  "description": "Synthetic and live quality, privacy and scheduling evidence for Rasikh",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./trust-schema.json": "./src/trust-schema.json"
   },
   "scripts": {
     "eval": "tsx src/cli.ts",
@@ -15,6 +16,8 @@
     "eval:documents": "tsx src/documents/cli.ts",
     "eval:judge": "tsx src/judge/cli.ts",
     "eval:simulation": "tsx src/simulation.ts",
+    "eval:trust": "tsx src/trust.ts",
+    "eval:all": "node scripts/with-guard.mjs -- node --import tsx src/pipeline.ts",
     "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },

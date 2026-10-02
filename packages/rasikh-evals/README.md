@@ -174,3 +174,33 @@ and `.json` show settlement/operational day distributions, medians, p10–p90,
 min/max, paired savings and assumption sensitivity. Seed and run count reproduce
 the model. It does not measure customers or accelerate modeled authority
 processing. Honest pitch phrasing: “In our simulation, under these assumptions…”
+
+## Trust export and complete pipeline
+
+```powershell
+npm --prefix packages/rasikh-evals run eval:trust
+npm --prefix packages/rasikh-evals run eval:all
+```
+
+`eval:trust` reads the six fixed reports and writes `evals/trust.json`. Its strict
+schema is exported as `@rasikh/evals/trust-schema.json`; typed builders are also
+public. It publishes safe aggregates, source hashes, dates, models, run counts,
+scopes and target results. Raw case bodies, summaries, identifiers and credentials
+are excluded. Unique attacks differ from repeated checks, and local external
+blocks differ from real HTTP Guard denials. Failures remain failures.
+
+Sources must be compatible live evidence and at most 24 hours old by default.
+Missing, malformed, stale or incompatible observations produce unavailable/null
+metrics. A current live primary is required before secondary data can be presented
+as current live results. The judge must match the primary report's exact hash.
+The configured main version is an explicitly recorded merged snapshot; evaluated
+runtime versions remain separate. Simulation data stays illustrative and is
+never measured customer performance. Claude owns the app's Trust screen.
+
+`eval:all` starts/reuses Guard, then runs conformance, core live, injections,
+image extraction, judge, simulation and Trust in that order. It continues after
+a failure so later reports are generated, records stage exit codes in
+`evals/PIPELINE.json`, and exits nonzero if any stage fails. A run-start timestamp
+rejects old evidence after a failed current attempt. Each model suite repeats
+three times; each saved source summary is judged once. This complete command
+makes live provider calls; `eval` is the independent cache regression command.
