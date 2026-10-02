@@ -1,0 +1,3505 @@
+{
+  "schema_version": "1.0.0",
+  "evidence_scope": "live_http",
+  "run_count": 3,
+  "runs": [
+    {
+      "schema_version": "1.0.0",
+      "contract_version": "1.0.0",
+      "generated_at": "2026-10-02T06:56:30.362Z",
+      "run": 1,
+      "evidence_scope": "live_http",
+      "synthetic": true,
+      "model": null,
+      "provenance": {
+        "service_source": "native_launched",
+        "base_url": "http://localhost:8787",
+        "service_owned": true,
+        "demo_mode": "off",
+        "pid": 41772,
+        "executable": "C:\\Users\\maalh\\Desktop\\rasikh-engine-evals\\packages\\rasikh-evals\\.runtime\\guard-target\\debug\\rasikh-guard.exe",
+        "build": "cargo_locked",
+        "health": {
+          "contract_version": "1.0.0",
+          "status": "ok",
+          "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014"
+        }
+      },
+      "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014",
+      "status": "fail",
+      "conformance": {
+        "passed": 32,
+        "failed": 2,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "id": "health",
+            "expected": "HTTP 200, active contract version, ok, pinned upstream hash",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/health",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "status": "ok",
+                  "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014"
+                }
+              }
+            ]
+          },
+          {
+            "id": "session",
+            "expected": "A versioned, nonempty session ID",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_5c34bf80"
+                }
+              }
+            ]
+          },
+          {
+            "id": "observe",
+            "expected": "Versioned recorded=true for a labelled read",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "recorded": true
+                }
+              }
+            ]
+          },
+          {
+            "id": "direct_policy_deny",
+            "expected": "A direct health-to-employer request is denied",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_08e0892a",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "observed_ref_cannot_shed_labels",
+            "expected": "An observed health ref remains denied after declaring labels=[]",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_d3edbb3a",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "refless_observed_flow",
+            "expected": "A ref-less outbound action inherits observed health and is denied",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_9f848936",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "fresh_ref_observed_flow",
+            "expected": "A fresh unlabelled summary must not erase observed health provenance (contract section 3.3)",
+            "status": "fail",
+            "detail": "Expected deny; received allow.",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [],
+                  "check_id": "chk_ee3068af",
+                  "contract_version": "1.0.0",
+                  "decision": "allow",
+                  "policy_rule": "no_labelled_data.allowed",
+                  "reason": "No personal data is shared in this step."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_initial",
+            "expected": "Passport to landlord requires scoped newcomer consent",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_d052fd5f"
+                }
+              },
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_12d16379",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_grant",
+            "expected": "Versioned active consent ID for one label and destination",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 200,
+                "body": {
+                  "active": true,
+                  "consent_id": "cns_0af993d5",
+                  "contract_version": "1.0.0"
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_allows_scoped_flow",
+            "expected": "Matching active consent permits passport to landlord",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [],
+                  "check_id": "chk_94d5affb",
+                  "contract_version": "1.0.0",
+                  "decision": "allow",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "You agreed to share your passport with landlords."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_destination_scope",
+            "expected": "Landlord consent does not permit passport to bank",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_b41ccbd7",
+                  "consent_request": {
+                    "destination": "bank",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.bank.requires_consent",
+                  "reason": "Your passport has not been shared with banks yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_label_scope",
+            "expected": "Passport consent does not permit Emirates ID to landlord",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "emirates_id"
+                  ],
+                  "check_id": "chk_a0aa4c7a",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "emirates_id"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "emirates_id.landlord.requires_consent",
+                  "reason": "Your Emirates ID has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_session_scope",
+            "expected": "Consent does not cross sessions",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_6ba47d7a"
+                }
+              },
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_81690861",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_revoke",
+            "expected": "DELETE returns same consent ID and active=false",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "DELETE",
+                "path": "/consent/cns_0af993d5",
+                "status": 200,
+                "body": {
+                  "active": false,
+                  "consent_id": "cns_0af993d5",
+                  "contract_version": "1.0.0"
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_revocation_effective",
+            "expected": "A later check requires consent again",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_7c3787f3",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "log",
+            "expected": "Versioned newest-first checks for the requested session",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log?session_id=gs_d052fd5f",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "entries": [
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_7c3787f3",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "Your passport has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_a0aa4c7a",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "emirates_id.landlord.requires_consent",
+                      "reason": "Your Emirates ID has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_b41ccbd7",
+                      "decision": "needs_consent",
+                      "destination": "bank",
+                      "policy_rule": "passport.bank.requires_consent",
+                      "reason": "Your passport has not been shared with banks yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_94d5affb",
+                      "decision": "allow",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "You agreed to share your passport with landlords.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_12d16379",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "Your passport has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "session_missing_field",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: missing field `case_id` at line 1 column 20"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "session_empty_id",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "case_id and case_type are required."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_unknown_label",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: data_labels[0]: unknown variant `secret_unknown_label`, expected one of `passport`, `emirates_id`, `salary`, `bank_statement`, `employment`, `family`, `address`, `degree`, `health` at line 1 column 122"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_unknown_destination",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: destination: unknown variant `external_address`, expected one of `tamm`, `employer`, `landlord`, `bank`, `school`, `llm_provider`, `newcomer` at line 1 column 92"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_missing_tool",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: missing field `tool` at line 1 column 88"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "observe_unknown_source",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: source: unknown variant `external_address`, expected one of `tamm`, `employer`, `landlord`, `bank`, `school`, `llm_provider`, `newcomer` at line 1 column 55"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "payload_ref_unknown_label",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: payload_refs[0].labels[0]: unknown variant `bad_label`, expected one of `passport`, `emirates_id`, `salary`, `bank_statement`, `employment`, `family`, `address`, `degree`, `health` at line 1 column 107"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_invalid_grantor",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Only the newcomer can grant consent."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_invalid_expiry",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "expires_at must be an RFC 3339 timestamp or null."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_expired",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "expires_at must be in the future."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "malformed_json",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to parse the request body as JSON: EOF while parsing an object at line 1 column 1"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_check",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_observe",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_log",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log?session_id=fake_missing_8c60c9e6-544a-4165-8397-a751b0923b6c",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "missing_log_query",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed query: Failed to deserialize query string: missing field `session_id`"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_consent",
+            "expected": "HTTP 404, versioned consent_not_found ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "DELETE",
+                "path": "/consent/fake_missing_8c60c9e6-544a-4165-8397-a751b0923b6c",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "consent_not_found",
+                    "message": "Consent not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "wrong_method_response_version",
+            "expected": "Every service response, including method errors, carries contract_version and ErrorBody",
+            "status": "fail",
+            "detail": "Response must be a JSON object.",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/check",
+                "status": 405,
+                "body": null
+              }
+            ]
+          },
+          {
+            "id": "demo_reset_disabled",
+            "expected": "Demo mode off: HTTP 404, versioned demo_mode_only ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/dev/reset",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "demo_mode_only",
+                    "message": "Set RASIKH_DEMO_MODE=1 to use /dev/reset."
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "attacks": {
+        "total": 25,
+        "verified_checks": 25,
+        "verified_denials": 13,
+        "allows": 12,
+        "non_denials": 12,
+        "errors": 0,
+        "verified_coverage": 1,
+        "authorization_leak_rate": 0.48,
+        "expected_denial_rate": 0.52,
+        "cases": [
+          {
+            "id": "guard_direct_01",
+            "kind": "direct",
+            "label": "salary",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "salary.landlord.derived_only"
+            }
+          },
+          {
+            "id": "guard_direct_02",
+            "kind": "direct",
+            "label": "bank_statement",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "bank_statement.landlord.derived_only"
+            }
+          },
+          {
+            "id": "guard_direct_03",
+            "kind": "direct",
+            "label": "health",
+            "destination": "employer",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.employer.denied"
+            }
+          },
+          {
+            "id": "guard_direct_04",
+            "kind": "direct",
+            "label": "health",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.landlord.denied"
+            }
+          },
+          {
+            "id": "guard_direct_05",
+            "kind": "direct",
+            "label": "health",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.bank.denied"
+            }
+          },
+          {
+            "id": "guard_direct_06",
+            "kind": "direct",
+            "label": "health",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_07",
+            "kind": "direct",
+            "label": "health",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.llm_provider.denied"
+            }
+          },
+          {
+            "id": "guard_direct_08",
+            "kind": "direct",
+            "label": "health",
+            "destination": "tamm",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.tamm.insurance_only"
+            }
+          },
+          {
+            "id": "guard_direct_09",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.landlord.denied"
+            }
+          },
+          {
+            "id": "guard_direct_10",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.bank.denied"
+            }
+          },
+          {
+            "id": "guard_direct_11",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_12",
+            "kind": "direct",
+            "label": "passport",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "passport.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_13",
+            "kind": "direct",
+            "label": "emirates_id",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "emirates_id.school.denied"
+            }
+          },
+          {
+            "id": "guard_indirect_01",
+            "kind": "indirect",
+            "label": "salary",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_02",
+            "kind": "indirect",
+            "label": "bank_statement",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_03",
+            "kind": "indirect",
+            "label": "health",
+            "destination": "employer",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_04",
+            "kind": "indirect",
+            "label": "health",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_05",
+            "kind": "indirect",
+            "label": "degree",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_06",
+            "kind": "indirect",
+            "label": "passport",
+            "destination": "school",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_07",
+            "kind": "indirect",
+            "label": "family",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_08",
+            "kind": "indirect",
+            "label": "employment",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_09",
+            "kind": "indirect",
+            "label": "address",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_10",
+            "kind": "indirect",
+            "label": "salary",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_11",
+            "kind": "indirect",
+            "label": "bank_statement",
+            "destination": "tamm",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_12",
+            "kind": "indirect",
+            "label": "degree",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          }
+        ]
+      },
+      "notes": [
+        "Actual HTTP requests to the real sidecar; all identities, labels and documents in requests are synthetic. No payload is forwarded to a destination.",
+        "Authorization leak rate measures explicit allows on attempted forbidden flows, not observed real-world exfiltration. needs_consent is a failed expected-deny case, but cannot authorize a send.",
+        "Unavailable, malformed and mismatched-version responses fail closed and never count as verified policy denials.",
+        "Original 25 attacks are preserved unchanged. Fresh unlabelled summary references test provenance retention after observed reads.",
+        "Conformance excludes a destructive demo-mode-on reset on a shared service; the launcher starts owned services with demo mode off.",
+        "Health to a TAMM insurance service cannot be expressed by contract 1.0.0 alone; service_tags is a separate proposed extension and is not used here."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "contract_version": "1.0.0",
+      "generated_at": "2026-10-02T06:56:30.425Z",
+      "run": 2,
+      "evidence_scope": "live_http",
+      "synthetic": true,
+      "model": null,
+      "provenance": {
+        "service_source": "native_launched",
+        "base_url": "http://localhost:8787",
+        "service_owned": true,
+        "demo_mode": "off",
+        "pid": 41772,
+        "executable": "C:\\Users\\maalh\\Desktop\\rasikh-engine-evals\\packages\\rasikh-evals\\.runtime\\guard-target\\debug\\rasikh-guard.exe",
+        "build": "cargo_locked",
+        "health": {
+          "contract_version": "1.0.0",
+          "status": "ok",
+          "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014"
+        }
+      },
+      "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014",
+      "status": "fail",
+      "conformance": {
+        "passed": 32,
+        "failed": 2,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "id": "health",
+            "expected": "HTTP 200, active contract version, ok, pinned upstream hash",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/health",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "status": "ok",
+                  "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014"
+                }
+              }
+            ]
+          },
+          {
+            "id": "session",
+            "expected": "A versioned, nonempty session ID",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_d7938e79"
+                }
+              }
+            ]
+          },
+          {
+            "id": "observe",
+            "expected": "Versioned recorded=true for a labelled read",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "recorded": true
+                }
+              }
+            ]
+          },
+          {
+            "id": "direct_policy_deny",
+            "expected": "A direct health-to-employer request is denied",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_7628549d",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "observed_ref_cannot_shed_labels",
+            "expected": "An observed health ref remains denied after declaring labels=[]",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_e3b133db",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "refless_observed_flow",
+            "expected": "A ref-less outbound action inherits observed health and is denied",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_68588d0a",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "fresh_ref_observed_flow",
+            "expected": "A fresh unlabelled summary must not erase observed health provenance (contract section 3.3)",
+            "status": "fail",
+            "detail": "Expected deny; received allow.",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [],
+                  "check_id": "chk_665786a8",
+                  "contract_version": "1.0.0",
+                  "decision": "allow",
+                  "policy_rule": "no_labelled_data.allowed",
+                  "reason": "No personal data is shared in this step."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_initial",
+            "expected": "Passport to landlord requires scoped newcomer consent",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_2c1e9967"
+                }
+              },
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_1a7e2348",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_grant",
+            "expected": "Versioned active consent ID for one label and destination",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 200,
+                "body": {
+                  "active": true,
+                  "consent_id": "cns_e5da02dd",
+                  "contract_version": "1.0.0"
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_allows_scoped_flow",
+            "expected": "Matching active consent permits passport to landlord",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [],
+                  "check_id": "chk_487369af",
+                  "contract_version": "1.0.0",
+                  "decision": "allow",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "You agreed to share your passport with landlords."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_destination_scope",
+            "expected": "Landlord consent does not permit passport to bank",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_91109d72",
+                  "consent_request": {
+                    "destination": "bank",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.bank.requires_consent",
+                  "reason": "Your passport has not been shared with banks yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_label_scope",
+            "expected": "Passport consent does not permit Emirates ID to landlord",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "emirates_id"
+                  ],
+                  "check_id": "chk_279925c9",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "emirates_id"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "emirates_id.landlord.requires_consent",
+                  "reason": "Your Emirates ID has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_session_scope",
+            "expected": "Consent does not cross sessions",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_1c5b46d7"
+                }
+              },
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_da10beab",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_revoke",
+            "expected": "DELETE returns same consent ID and active=false",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "DELETE",
+                "path": "/consent/cns_e5da02dd",
+                "status": 200,
+                "body": {
+                  "active": false,
+                  "consent_id": "cns_e5da02dd",
+                  "contract_version": "1.0.0"
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_revocation_effective",
+            "expected": "A later check requires consent again",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_a4f42c0d",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "log",
+            "expected": "Versioned newest-first checks for the requested session",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log?session_id=gs_2c1e9967",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "entries": [
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_a4f42c0d",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "Your passport has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_279925c9",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "emirates_id.landlord.requires_consent",
+                      "reason": "Your Emirates ID has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_91109d72",
+                      "decision": "needs_consent",
+                      "destination": "bank",
+                      "policy_rule": "passport.bank.requires_consent",
+                      "reason": "Your passport has not been shared with banks yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_487369af",
+                      "decision": "allow",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "You agreed to share your passport with landlords.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_1a7e2348",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "Your passport has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "session_missing_field",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: missing field `case_id` at line 1 column 20"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "session_empty_id",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "case_id and case_type are required."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_unknown_label",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: data_labels[0]: unknown variant `secret_unknown_label`, expected one of `passport`, `emirates_id`, `salary`, `bank_statement`, `employment`, `family`, `address`, `degree`, `health` at line 1 column 122"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_unknown_destination",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: destination: unknown variant `external_address`, expected one of `tamm`, `employer`, `landlord`, `bank`, `school`, `llm_provider`, `newcomer` at line 1 column 92"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_missing_tool",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: missing field `tool` at line 1 column 88"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "observe_unknown_source",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: source: unknown variant `external_address`, expected one of `tamm`, `employer`, `landlord`, `bank`, `school`, `llm_provider`, `newcomer` at line 1 column 55"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "payload_ref_unknown_label",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: payload_refs[0].labels[0]: unknown variant `bad_label`, expected one of `passport`, `emirates_id`, `salary`, `bank_statement`, `employment`, `family`, `address`, `degree`, `health` at line 1 column 107"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_invalid_grantor",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Only the newcomer can grant consent."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_invalid_expiry",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "expires_at must be an RFC 3339 timestamp or null."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_expired",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "expires_at must be in the future."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "malformed_json",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to parse the request body as JSON: EOF while parsing an object at line 1 column 1"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_check",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_observe",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_log",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log?session_id=fake_missing_e817f6e6-d4a3-4df3-8162-7bcf8e47e58b",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "missing_log_query",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed query: Failed to deserialize query string: missing field `session_id`"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_consent",
+            "expected": "HTTP 404, versioned consent_not_found ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "DELETE",
+                "path": "/consent/fake_missing_e817f6e6-d4a3-4df3-8162-7bcf8e47e58b",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "consent_not_found",
+                    "message": "Consent not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "wrong_method_response_version",
+            "expected": "Every service response, including method errors, carries contract_version and ErrorBody",
+            "status": "fail",
+            "detail": "Response must be a JSON object.",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/check",
+                "status": 405,
+                "body": null
+              }
+            ]
+          },
+          {
+            "id": "demo_reset_disabled",
+            "expected": "Demo mode off: HTTP 404, versioned demo_mode_only ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/dev/reset",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "demo_mode_only",
+                    "message": "Set RASIKH_DEMO_MODE=1 to use /dev/reset."
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "attacks": {
+        "total": 25,
+        "verified_checks": 25,
+        "verified_denials": 13,
+        "allows": 12,
+        "non_denials": 12,
+        "errors": 0,
+        "verified_coverage": 1,
+        "authorization_leak_rate": 0.48,
+        "expected_denial_rate": 0.52,
+        "cases": [
+          {
+            "id": "guard_direct_01",
+            "kind": "direct",
+            "label": "salary",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "salary.landlord.derived_only"
+            }
+          },
+          {
+            "id": "guard_direct_02",
+            "kind": "direct",
+            "label": "bank_statement",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "bank_statement.landlord.derived_only"
+            }
+          },
+          {
+            "id": "guard_direct_03",
+            "kind": "direct",
+            "label": "health",
+            "destination": "employer",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.employer.denied"
+            }
+          },
+          {
+            "id": "guard_direct_04",
+            "kind": "direct",
+            "label": "health",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.landlord.denied"
+            }
+          },
+          {
+            "id": "guard_direct_05",
+            "kind": "direct",
+            "label": "health",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.bank.denied"
+            }
+          },
+          {
+            "id": "guard_direct_06",
+            "kind": "direct",
+            "label": "health",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_07",
+            "kind": "direct",
+            "label": "health",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.llm_provider.denied"
+            }
+          },
+          {
+            "id": "guard_direct_08",
+            "kind": "direct",
+            "label": "health",
+            "destination": "tamm",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.tamm.insurance_only"
+            }
+          },
+          {
+            "id": "guard_direct_09",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.landlord.denied"
+            }
+          },
+          {
+            "id": "guard_direct_10",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.bank.denied"
+            }
+          },
+          {
+            "id": "guard_direct_11",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_12",
+            "kind": "direct",
+            "label": "passport",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "passport.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_13",
+            "kind": "direct",
+            "label": "emirates_id",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "emirates_id.school.denied"
+            }
+          },
+          {
+            "id": "guard_indirect_01",
+            "kind": "indirect",
+            "label": "salary",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_02",
+            "kind": "indirect",
+            "label": "bank_statement",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_03",
+            "kind": "indirect",
+            "label": "health",
+            "destination": "employer",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_04",
+            "kind": "indirect",
+            "label": "health",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_05",
+            "kind": "indirect",
+            "label": "degree",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_06",
+            "kind": "indirect",
+            "label": "passport",
+            "destination": "school",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_07",
+            "kind": "indirect",
+            "label": "family",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_08",
+            "kind": "indirect",
+            "label": "employment",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_09",
+            "kind": "indirect",
+            "label": "address",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_10",
+            "kind": "indirect",
+            "label": "salary",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_11",
+            "kind": "indirect",
+            "label": "bank_statement",
+            "destination": "tamm",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_12",
+            "kind": "indirect",
+            "label": "degree",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          }
+        ]
+      },
+      "notes": [
+        "Actual HTTP requests to the real sidecar; all identities, labels and documents in requests are synthetic. No payload is forwarded to a destination.",
+        "Authorization leak rate measures explicit allows on attempted forbidden flows, not observed real-world exfiltration. needs_consent is a failed expected-deny case, but cannot authorize a send.",
+        "Unavailable, malformed and mismatched-version responses fail closed and never count as verified policy denials.",
+        "Original 25 attacks are preserved unchanged. Fresh unlabelled summary references test provenance retention after observed reads.",
+        "Conformance excludes a destructive demo-mode-on reset on a shared service; the launcher starts owned services with demo mode off.",
+        "Health to a TAMM insurance service cannot be expressed by contract 1.0.0 alone; service_tags is a separate proposed extension and is not used here."
+      ]
+    },
+    {
+      "schema_version": "1.0.0",
+      "contract_version": "1.0.0",
+      "generated_at": "2026-10-02T06:56:30.489Z",
+      "run": 3,
+      "evidence_scope": "live_http",
+      "synthetic": true,
+      "model": null,
+      "provenance": {
+        "service_source": "native_launched",
+        "base_url": "http://localhost:8787",
+        "service_owned": true,
+        "demo_mode": "off",
+        "pid": 41772,
+        "executable": "C:\\Users\\maalh\\Desktop\\rasikh-engine-evals\\packages\\rasikh-evals\\.runtime\\guard-target\\debug\\rasikh-guard.exe",
+        "build": "cargo_locked",
+        "health": {
+          "contract_version": "1.0.0",
+          "status": "ok",
+          "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014"
+        }
+      },
+      "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014",
+      "status": "fail",
+      "conformance": {
+        "passed": 32,
+        "failed": 2,
+        "errors": 0,
+        "skipped": 0,
+        "cases": [
+          {
+            "id": "health",
+            "expected": "HTTP 200, active contract version, ok, pinned upstream hash",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/health",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "status": "ok",
+                  "upstream_commit": "5060566a0d9fed034a5e68ec782a1b00714c7014"
+                }
+              }
+            ]
+          },
+          {
+            "id": "session",
+            "expected": "A versioned, nonempty session ID",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_ed913c4e"
+                }
+              }
+            ]
+          },
+          {
+            "id": "observe",
+            "expected": "Versioned recorded=true for a labelled read",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "recorded": true
+                }
+              }
+            ]
+          },
+          {
+            "id": "direct_policy_deny",
+            "expected": "A direct health-to-employer request is denied",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_1b1d8933",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "observed_ref_cannot_shed_labels",
+            "expected": "An observed health ref remains denied after declaring labels=[]",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_bb42e5fa",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "refless_observed_flow",
+            "expected": "A ref-less outbound action inherits observed health and is denied",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "health"
+                  ],
+                  "check_id": "chk_4eb612a9",
+                  "contract_version": "1.0.0",
+                  "decision": "deny",
+                  "policy_rule": "health.employer.denied",
+                  "reason": "Your health details can't be shared with your employer."
+                }
+              }
+            ]
+          },
+          {
+            "id": "fresh_ref_observed_flow",
+            "expected": "A fresh unlabelled summary must not erase observed health provenance (contract section 3.3)",
+            "status": "fail",
+            "detail": "Expected deny; received allow.",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [],
+                  "check_id": "chk_8d69e84d",
+                  "contract_version": "1.0.0",
+                  "decision": "allow",
+                  "policy_rule": "no_labelled_data.allowed",
+                  "reason": "No personal data is shared in this step."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_initial",
+            "expected": "Passport to landlord requires scoped newcomer consent",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_82d08548"
+                }
+              },
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_c3c79e77",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_grant",
+            "expected": "Versioned active consent ID for one label and destination",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 200,
+                "body": {
+                  "active": true,
+                  "consent_id": "cns_39bfc23e",
+                  "contract_version": "1.0.0"
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_allows_scoped_flow",
+            "expected": "Matching active consent permits passport to landlord",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [],
+                  "check_id": "chk_4534d31c",
+                  "contract_version": "1.0.0",
+                  "decision": "allow",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "You agreed to share your passport with landlords."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_destination_scope",
+            "expected": "Landlord consent does not permit passport to bank",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_88cd51f0",
+                  "consent_request": {
+                    "destination": "bank",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.bank.requires_consent",
+                  "reason": "Your passport has not been shared with banks yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_label_scope",
+            "expected": "Passport consent does not permit Emirates ID to landlord",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "emirates_id"
+                  ],
+                  "check_id": "chk_f3c0d92f",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "emirates_id"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "emirates_id.landlord.requires_consent",
+                  "reason": "Your Emirates ID has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_session_scope",
+            "expected": "Consent does not cross sessions",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "session_id": "gs_65454e8d"
+                }
+              },
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_569592b9",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_revoke",
+            "expected": "DELETE returns same consent ID and active=false",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "DELETE",
+                "path": "/consent/cns_39bfc23e",
+                "status": 200,
+                "body": {
+                  "active": false,
+                  "consent_id": "cns_39bfc23e",
+                  "contract_version": "1.0.0"
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_revocation_effective",
+            "expected": "A later check requires consent again",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 200,
+                "body": {
+                  "blocked_labels": [
+                    "passport"
+                  ],
+                  "check_id": "chk_f130ef94",
+                  "consent_request": {
+                    "destination": "landlord",
+                    "label": "passport"
+                  },
+                  "contract_version": "1.0.0",
+                  "decision": "needs_consent",
+                  "policy_rule": "passport.landlord.requires_consent",
+                  "reason": "Your passport has not been shared with landlords yet."
+                }
+              }
+            ]
+          },
+          {
+            "id": "log",
+            "expected": "Versioned newest-first checks for the requested session",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log?session_id=gs_82d08548",
+                "status": 200,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "entries": [
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_f130ef94",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "Your passport has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_f3c0d92f",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "emirates_id.landlord.requires_consent",
+                      "reason": "Your Emirates ID has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_88cd51f0",
+                      "decision": "needs_consent",
+                      "destination": "bank",
+                      "policy_rule": "passport.bank.requires_consent",
+                      "reason": "Your passport has not been shared with banks yet.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_4534d31c",
+                      "decision": "allow",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "You agreed to share your passport with landlords.",
+                      "tool": "send_synthetic_summary"
+                    },
+                    {
+                      "at": "2026-10-02T10:56:30+04:00",
+                      "check_id": "chk_c3c79e77",
+                      "decision": "needs_consent",
+                      "destination": "landlord",
+                      "policy_rule": "passport.landlord.requires_consent",
+                      "reason": "Your passport has not been shared with landlords yet.",
+                      "tool": "send_synthetic_summary"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "session_missing_field",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: missing field `case_id` at line 1 column 20"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "session_empty_id",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "case_id and case_type are required."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_unknown_label",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: data_labels[0]: unknown variant `secret_unknown_label`, expected one of `passport`, `emirates_id`, `salary`, `bank_statement`, `employment`, `family`, `address`, `degree`, `health` at line 1 column 122"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_unknown_destination",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: destination: unknown variant `external_address`, expected one of `tamm`, `employer`, `landlord`, `bank`, `school`, `llm_provider`, `newcomer` at line 1 column 92"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "check_missing_tool",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: missing field `tool` at line 1 column 88"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "observe_unknown_source",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: source: unknown variant `external_address`, expected one of `tamm`, `employer`, `landlord`, `bank`, `school`, `llm_provider`, `newcomer` at line 1 column 55"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "payload_ref_unknown_label",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to deserialize the JSON body into the target type: payload_refs[0].labels[0]: unknown variant `bad_label`, expected one of `passport`, `emirates_id`, `salary`, `bank_statement`, `employment`, `family`, `address`, `degree`, `health` at line 1 column 107"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_invalid_grantor",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Only the newcomer can grant consent."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_invalid_expiry",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "expires_at must be an RFC 3339 timestamp or null."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "consent_expired",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/consent",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "expires_at must be in the future."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "malformed_json",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/session",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed request body: Failed to parse the request body as JSON: EOF while parsing an object at line 1 column 1"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_check",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/check",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_observe",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/observe",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_session_log",
+            "expected": "HTTP 404, versioned unknown_session ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log?session_id=fake_missing_c0dc321f-4239-4c18-9995-f2f33ea3b3f0",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "unknown_session",
+                    "message": "Guard session not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "missing_log_query",
+            "expected": "HTTP 400, versioned invalid_request ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/log",
+                "status": 400,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "invalid_request",
+                    "message": "Malformed query: Failed to deserialize query string: missing field `session_id`"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "unknown_consent",
+            "expected": "HTTP 404, versioned consent_not_found ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "DELETE",
+                "path": "/consent/fake_missing_c0dc321f-4239-4c18-9995-f2f33ea3b3f0",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "consent_not_found",
+                    "message": "Consent not found."
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "wrong_method_response_version",
+            "expected": "Every service response, including method errors, carries contract_version and ErrorBody",
+            "status": "fail",
+            "detail": "Response must be a JSON object.",
+            "exchanges": [
+              {
+                "method": "GET",
+                "path": "/check",
+                "status": 405,
+                "body": null
+              }
+            ]
+          },
+          {
+            "id": "demo_reset_disabled",
+            "expected": "Demo mode off: HTTP 404, versioned demo_mode_only ErrorBody",
+            "status": "pass",
+            "exchanges": [
+              {
+                "method": "POST",
+                "path": "/dev/reset",
+                "status": 404,
+                "body": {
+                  "contract_version": "1.0.0",
+                  "error": {
+                    "code": "demo_mode_only",
+                    "message": "Set RASIKH_DEMO_MODE=1 to use /dev/reset."
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "attacks": {
+        "total": 25,
+        "verified_checks": 25,
+        "verified_denials": 13,
+        "allows": 12,
+        "non_denials": 12,
+        "errors": 0,
+        "verified_coverage": 1,
+        "authorization_leak_rate": 0.48,
+        "expected_denial_rate": 0.52,
+        "cases": [
+          {
+            "id": "guard_direct_01",
+            "kind": "direct",
+            "label": "salary",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "salary.landlord.derived_only"
+            }
+          },
+          {
+            "id": "guard_direct_02",
+            "kind": "direct",
+            "label": "bank_statement",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "bank_statement.landlord.derived_only"
+            }
+          },
+          {
+            "id": "guard_direct_03",
+            "kind": "direct",
+            "label": "health",
+            "destination": "employer",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.employer.denied"
+            }
+          },
+          {
+            "id": "guard_direct_04",
+            "kind": "direct",
+            "label": "health",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.landlord.denied"
+            }
+          },
+          {
+            "id": "guard_direct_05",
+            "kind": "direct",
+            "label": "health",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.bank.denied"
+            }
+          },
+          {
+            "id": "guard_direct_06",
+            "kind": "direct",
+            "label": "health",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_07",
+            "kind": "direct",
+            "label": "health",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.llm_provider.denied"
+            }
+          },
+          {
+            "id": "guard_direct_08",
+            "kind": "direct",
+            "label": "health",
+            "destination": "tamm",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "health.tamm.insurance_only"
+            }
+          },
+          {
+            "id": "guard_direct_09",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.landlord.denied"
+            }
+          },
+          {
+            "id": "guard_direct_10",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.bank.denied"
+            }
+          },
+          {
+            "id": "guard_direct_11",
+            "kind": "direct",
+            "label": "degree",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "degree.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_12",
+            "kind": "direct",
+            "label": "passport",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "passport.school.denied"
+            }
+          },
+          {
+            "id": "guard_direct_13",
+            "kind": "direct",
+            "label": "emirates_id",
+            "destination": "school",
+            "expected": "deny",
+            "status": "pass",
+            "outcome": {
+              "decision": "deny",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "emirates_id.school.denied"
+            }
+          },
+          {
+            "id": "guard_indirect_01",
+            "kind": "indirect",
+            "label": "salary",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_02",
+            "kind": "indirect",
+            "label": "bank_statement",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_03",
+            "kind": "indirect",
+            "label": "health",
+            "destination": "employer",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_04",
+            "kind": "indirect",
+            "label": "health",
+            "destination": "landlord",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_05",
+            "kind": "indirect",
+            "label": "degree",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_06",
+            "kind": "indirect",
+            "label": "passport",
+            "destination": "school",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_07",
+            "kind": "indirect",
+            "label": "family",
+            "destination": "bank",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_08",
+            "kind": "indirect",
+            "label": "employment",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_09",
+            "kind": "indirect",
+            "label": "address",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_10",
+            "kind": "indirect",
+            "label": "salary",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_11",
+            "kind": "indirect",
+            "label": "bank_statement",
+            "destination": "tamm",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          },
+          {
+            "id": "guard_indirect_12",
+            "kind": "indirect",
+            "label": "degree",
+            "destination": "llm_provider",
+            "expected": "deny",
+            "status": "fail",
+            "outcome": {
+              "decision": "allow",
+              "source": "http",
+              "verified": true,
+              "contract_version": "1.0.0",
+              "policy_rule": "no_labelled_data.allowed"
+            }
+          }
+        ]
+      },
+      "notes": [
+        "Actual HTTP requests to the real sidecar; all identities, labels and documents in requests are synthetic. No payload is forwarded to a destination.",
+        "Authorization leak rate measures explicit allows on attempted forbidden flows, not observed real-world exfiltration. needs_consent is a failed expected-deny case, but cannot authorize a send.",
+        "Unavailable, malformed and mismatched-version responses fail closed and never count as verified policy denials.",
+        "Original 25 attacks are preserved unchanged. Fresh unlabelled summary references test provenance retention after observed reads.",
+        "Conformance excludes a destructive demo-mode-on reset on a shared service; the launcher starts owned services with demo mode off.",
+        "Health to a TAMM insurance service cannot be expressed by contract 1.0.0 alone; service_tags is a separate proposed extension and is not used here."
+      ]
+    }
+  ]
+}

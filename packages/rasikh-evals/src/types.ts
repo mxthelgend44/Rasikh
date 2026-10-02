@@ -87,7 +87,9 @@ export interface CaseResult {
   status: 'pass' | 'fail' | 'error';
   evidence: Record<string, unknown>;
   error?: string;
+  run_index?: number;
 }
+export type EvidenceScope = 'cache' | 'live' | 'deterministic' | 'custom' | 'unavailable' | 'mixed';
 export interface Metric {
   value: number | null;
   numerator: number;
@@ -95,14 +97,32 @@ export interface Metric {
   unit: 'ratio';
   target: number;
   higher_is_better: boolean;
+  scope?: EvidenceScope;
+  target_explanation?: string;
 }
 export interface EvalReport {
-  schema_version: '1.0.0';
+  schema_version: '1.0.0' | '2.0.0';
   contract_version: string;
   generated_at: string;
   mode: Mode;
   synthetic: true;
   adapters: { ai: string; guard: string };
+  model_name?: string;
+  run_count?: number;
+  run_dates?: string[];
+  prompt_provenance?: Record<string, unknown>;
+  variance?: Record<
+    string,
+    {
+      values: Array<number | null>;
+      mean: number | null;
+      minimum: number | null;
+      maximum: number | null;
+      population_variance: number | null;
+      standard_deviation: number | null;
+      eligible_runs: number;
+    }
+  >;
   validation_scope: {
     ai: 'synthetic_cache' | 'reference_model' | 'app_transport' | 'custom_adapter';
     engine: 'static_golden_regression';
