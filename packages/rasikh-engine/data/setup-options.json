@@ -1,0 +1,306 @@
+{
+  "schema_version": "1.0.0",
+  "illustrative": true,
+  "scope_key": "setup.illustrative_fit_not_legal_eligibility",
+  "source_scope_key": "sources.entity_and_ecosystem_only_not_scores_or_requirements",
+  "activity_aliases": {
+    "technology": [
+      "technology",
+      "tech",
+      "software",
+      "software development",
+      "saas",
+      "ai",
+      "artificial intelligence",
+      "data analytics",
+      "fintech",
+      "climate tech",
+      "climatetech",
+      "edtech",
+      "medtech"
+    ],
+    "financial": [
+      "finance",
+      "financial",
+      "financial services",
+      "banking",
+      "asset management",
+      "investment management",
+      "insurance"
+    ],
+    "industrial": [
+      "industrial",
+      "manufacturing",
+      "production",
+      "logistics",
+      "warehousing",
+      "warehouse",
+      "distribution",
+      "import export"
+    ],
+    "media": [
+      "media",
+      "creative",
+      "film",
+      "video production",
+      "gaming",
+      "entertainment",
+      "content production",
+      "advertising"
+    ],
+    "sustainability": [
+      "sustainability",
+      "clean energy",
+      "renewable energy",
+      "cleantech",
+      "clean tech",
+      "energy",
+      "environmental consulting"
+    ],
+    "professional_services": [
+      "consulting",
+      "consultancy",
+      "professional services",
+      "business services",
+      "retail",
+      "trading",
+      "commerce"
+    ],
+    "healthcare": [
+      "healthcare",
+      "health care",
+      "health",
+      "life sciences",
+      "biotechnology",
+      "medical services"
+    ]
+  },
+  "hub71_sources": [
+    "https://www.hub71.com/faqs",
+    "https://www.hub71.com/program/access-programme/apply"
+  ],
+  "options": [
+    {
+      "id": "mainland",
+      "name": "Abu Dhabi mainland",
+      "entity": "Abu Dhabi Department of Economic Development",
+      "sources": ["https://www.added.gov.ae/en/set-up/establish-your-business"],
+      "illustrative": true,
+      "activity_fit": {
+        "technology": 0.8,
+        "financial": 0.6,
+        "industrial": 0.85,
+        "media": 0.7,
+        "sustainability": 0.8,
+        "professional_services": 1,
+        "healthcare": 0.9
+      },
+      "industry_fit": {
+        "technology": 0.8,
+        "financial": 0.6,
+        "industrial": 0.85,
+        "media": 0.7,
+        "sustainability": 0.8,
+        "professional_services": 1,
+        "healthcare": 0.9
+      },
+      "team_size_fit": { "micro": 0.8, "small": 0.9, "growing": 1 },
+      "physical_space_fit": { "none": 0.65, "office": 0.95, "warehouse": 0.9 },
+      "client_base_fit": { "uae": 1, "international": 0.75, "mixed": 0.9 },
+      "regulatory_profile_fit": {
+        "standard": 0.9,
+        "financial": 0.6,
+        "industrial": 0.9,
+        "media": 0.7,
+        "healthcare": 0.9
+      },
+      "requirements": {
+        "value": [
+          "confirm_permitted_activities",
+          "confirm_activity_specific_approvals",
+          "confirm_premises_and_sponsorship"
+        ],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "adgm",
+      "name": "ADGM",
+      "entity": "Abu Dhabi Global Market",
+      "sources": [
+        "https://www.adgm.com/setting-up",
+        "https://www.adgm.com/business-areas/tech-startup"
+      ],
+      "illustrative": true,
+      "activity_fit": {
+        "technology": 1,
+        "financial": 1,
+        "industrial": 0.2,
+        "media": 0.4,
+        "sustainability": 0.65,
+        "professional_services": 0.85,
+        "healthcare": 0.45
+      },
+      "industry_fit": {
+        "technology": 1,
+        "financial": 1,
+        "industrial": 0.2,
+        "media": 0.4,
+        "sustainability": 0.65,
+        "professional_services": 0.85,
+        "healthcare": 0.45
+      },
+      "team_size_fit": { "micro": 0.9, "small": 0.95, "growing": 0.9 },
+      "physical_space_fit": { "none": 0.85, "office": 1, "warehouse": 0.1 },
+      "client_base_fit": { "uae": 0.65, "international": 1, "mixed": 0.85 },
+      "regulatory_profile_fit": {
+        "standard": 0.9,
+        "financial": 1,
+        "industrial": 0.2,
+        "media": 0.4,
+        "healthcare": 0.4
+      },
+      "requirements": {
+        "value": [
+          "confirm_permitted_activities",
+          "review_regulated_activity_authorisation",
+          "review_tech_licence_separately",
+          "confirm_premises_and_sponsorship"
+        ],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "kezad",
+      "name": "KEZAD free zone",
+      "entity": "Khalifa Economic Zones Abu Dhabi Group",
+      "sources": [
+        "https://www.kezadgroup.com/",
+        "https://www.kezadgroup.com/business-setup/company-legal-type/"
+      ],
+      "illustrative": true,
+      "activity_fit": {
+        "technology": 0.6,
+        "financial": 0.25,
+        "industrial": 1,
+        "media": 0.35,
+        "sustainability": 0.8,
+        "professional_services": 0.7,
+        "healthcare": 0.65
+      },
+      "industry_fit": {
+        "technology": 0.6,
+        "financial": 0.25,
+        "industrial": 1,
+        "media": 0.35,
+        "sustainability": 0.8,
+        "professional_services": 0.7,
+        "healthcare": 0.65
+      },
+      "team_size_fit": { "micro": 0.8, "small": 0.9, "growing": 1 },
+      "physical_space_fit": { "none": 0.8, "office": 0.9, "warehouse": 1 },
+      "client_base_fit": { "uae": 0.65, "international": 1, "mixed": 0.9 },
+      "regulatory_profile_fit": {
+        "standard": 0.85,
+        "financial": 0.2,
+        "industrial": 1,
+        "media": 0.4,
+        "healthcare": 0.6
+      },
+      "requirements": {
+        "value": [
+          "confirm_free_zone_or_domestic_zone",
+          "confirm_permitted_activities",
+          "confirm_facilities_and_sponsorship"
+        ],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "masdar",
+      "name": "Masdar City Free Zone",
+      "entity": "Masdar City Free Zone",
+      "sources": ["https://masdarcityfreezone.com/", "https://startup.masdarcityfreezone.com/"],
+      "illustrative": true,
+      "activity_fit": {
+        "technology": 0.95,
+        "financial": 0.4,
+        "industrial": 0.6,
+        "media": 0.6,
+        "sustainability": 1,
+        "professional_services": 0.85,
+        "healthcare": 0.85
+      },
+      "industry_fit": {
+        "technology": 0.95,
+        "financial": 0.4,
+        "industrial": 0.6,
+        "media": 0.6,
+        "sustainability": 1,
+        "professional_services": 0.85,
+        "healthcare": 0.85
+      },
+      "team_size_fit": { "micro": 1, "small": 0.95, "growing": 0.8 },
+      "physical_space_fit": { "none": 1, "office": 0.95, "warehouse": 0.35 },
+      "client_base_fit": { "uae": 0.65, "international": 0.95, "mixed": 0.85 },
+      "regulatory_profile_fit": {
+        "standard": 0.95,
+        "financial": 0.35,
+        "industrial": 0.6,
+        "media": 0.6,
+        "healthcare": 0.8
+      },
+      "requirements": {
+        "value": [
+          "confirm_permitted_activities",
+          "confirm_workspace_and_sponsorship",
+          "confirm_activity_specific_approvals"
+        ],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "twofour54",
+      "name": "twofour54",
+      "entity": "twofour54 / Creative Media Authority",
+      "sources": ["https://www.twofour54.com/en/business-setup/"],
+      "illustrative": true,
+      "activity_fit": {
+        "technology": 0.6,
+        "financial": 0.15,
+        "industrial": 0.2,
+        "media": 1,
+        "sustainability": 0.3,
+        "professional_services": 0.4,
+        "healthcare": 0.2
+      },
+      "industry_fit": {
+        "technology": 0.6,
+        "financial": 0.15,
+        "industrial": 0.2,
+        "media": 1,
+        "sustainability": 0.3,
+        "professional_services": 0.4,
+        "healthcare": 0.2
+      },
+      "team_size_fit": { "micro": 1, "small": 0.95, "growing": 0.85 },
+      "physical_space_fit": { "none": 0.95, "office": 1, "warehouse": 0.1 },
+      "client_base_fit": { "uae": 0.7, "international": 0.95, "mixed": 0.9 },
+      "regulatory_profile_fit": {
+        "standard": 0.7,
+        "financial": 0.15,
+        "industrial": 0.2,
+        "media": 1,
+        "healthcare": 0.2
+      },
+      "requirements": {
+        "value": [
+          "confirm_creative_media_activity_fit",
+          "confirm_licensing_with_creative_media_authority",
+          "confirm_workspace_and_sponsorship"
+        ],
+        "illustrative": true
+      }
+    }
+  ]
+}

@@ -13,30 +13,140 @@
     "Department of Health – Abu Dhabi": "https://www.doh.gov.ae/en/about"
   },
   "individual": [
-    { "id": "collect_documents", "depends_on": [], "required_documents": ["passport", "employment"], "parties": ["newcomer", "employer"], "estimated_duration_days": {"value": 2, "illustrative": true} },
-    { "id": "residency_visa", "depends_on": ["collect_documents"], "required_documents": ["passport", "employment"], "parties": ["ICP", "employer"], "estimated_duration_days": {"value": 5, "illustrative": true} },
-    { "id": "health_insurance", "depends_on": ["collect_documents"], "required_documents": ["passport"], "parties": ["Department of Health – Abu Dhabi", "insurer"], "estimated_duration_days": {"value": 2, "illustrative": true} },
-    { "id": "emirates_id", "depends_on": ["residency_visa"], "required_documents": ["passport"], "parties": ["ICP"], "estimated_duration_days": {"value": 4, "illustrative": true} },
-    { "id": "housing_search", "depends_on": ["collect_documents"], "required_documents": [], "parties": ["newcomer", "landlord"], "estimated_duration_days": {"value": 3, "illustrative": true} },
-    { "id": "tawtheeq_register", "depends_on": ["residency_visa", "housing_search"], "required_documents": ["passport", "emirates_id"], "parties": ["Abu Dhabi City Municipality (Tawtheeq)", "landlord"], "estimated_duration_days": {"value": 2, "illustrative": true} },
-    { "id": "bank_account", "depends_on": ["emirates_id"], "required_documents": ["emirates_id", "employment"], "parties": ["newcomer", "bank"], "estimated_duration_days": {"value": 3, "illustrative": true} }
+    {
+      "id": "collect_documents",
+      "depends_on": [],
+      "required_documents": ["passport", "employment"],
+      "parties": ["newcomer", "employer"],
+      "estimated_duration_days": { "value": 2, "illustrative": true }
+    },
+    {
+      "id": "residency_visa",
+      "depends_on": ["collect_documents"],
+      "required_documents": ["passport", "employment"],
+      "parties": ["ICP", "employer"],
+      "estimated_duration_days": { "value": 5, "illustrative": true }
+    },
+    {
+      "id": "health_insurance",
+      "depends_on": ["collect_documents"],
+      "required_documents": ["passport"],
+      "parties": ["Department of Health – Abu Dhabi", "insurer"],
+      "estimated_duration_days": { "value": 2, "illustrative": true }
+    },
+    {
+      "id": "emirates_id",
+      "depends_on": ["residency_visa"],
+      "required_documents": ["passport"],
+      "parties": ["ICP"],
+      "estimated_duration_days": { "value": 4, "illustrative": true }
+    },
+    {
+      "id": "housing_search",
+      "depends_on": ["collect_documents"],
+      "required_documents": [],
+      "parties": ["newcomer", "landlord"],
+      "estimated_duration_days": { "value": 3, "illustrative": true }
+    },
+    {
+      "id": "tawtheeq_register",
+      "depends_on": ["residency_visa", "housing_search"],
+      "required_documents": ["passport", "emirates_id"],
+      "parties": ["Abu Dhabi City Municipality (Tawtheeq)", "landlord"],
+      "estimated_duration_days": { "value": 2, "illustrative": true }
+    },
+    {
+      "id": "bank_account",
+      "depends_on": ["emirates_id"],
+      "required_documents": ["emirates_id", "employment"],
+      "parties": ["newcomer", "bank"],
+      "estimated_duration_days": { "value": 3, "illustrative": true }
+    }
   ],
   "family": [
-    { "id": "family_residency", "depends_on": ["residency_visa", "health_insurance"], "required_documents": ["family", "passport"], "parties": ["ICP", "newcomer"], "estimated_duration_days": {"value": 5, "illustrative": true} },
-    { "id": "school_registration", "depends_on": ["family_residency", "tawtheeq_register"], "required_documents": ["family", "address"], "parties": ["ADEK", "school", "newcomer"], "estimated_duration_days": {"value": 3, "illustrative": true} }
+    {
+      "id": "family_residency",
+      "depends_on": ["residency_visa", "health_insurance"],
+      "required_documents": ["family", "passport"],
+      "parties": ["ICP", "newcomer"],
+      "estimated_duration_days": { "value": 5, "illustrative": true }
+    },
+    {
+      "id": "school_registration",
+      "depends_on": ["family_residency", "tawtheeq_register"],
+      "required_documents": ["family", "address"],
+      "parties": ["ADEK", "school", "newcomer"],
+      "estimated_duration_days": { "value": 3, "illustrative": true }
+    }
   ],
   "company": [
-    { "id": "company_profile", "depends_on": [], "required_documents": [], "parties": ["company"], "estimated_duration_days": {"value": 1, "illustrative": true} },
-    { "id": "trade_name", "depends_on": ["company_profile"], "required_documents": [], "parties": ["licensing_authority"], "estimated_duration_days": {"value": 2, "illustrative": true} },
-    { "id": "economic_license", "depends_on": ["trade_name"], "required_documents": [], "parties": ["licensing_authority"], "estimated_duration_days": {"value": 7, "illustrative": true} },
-    { "id": "establishment_card", "depends_on": ["economic_license"], "required_documents": [], "parties": ["ICP", "company"], "estimated_duration_days": {"value": 3, "illustrative": true} },
-    { "id": "visa_quota", "depends_on": ["establishment_card"], "required_documents": [], "parties": ["ICP", "company"], "estimated_duration_days": {"value": 3, "illustrative": true} },
-    { "id": "entity_can_sponsor", "depends_on": ["visa_quota"], "required_documents": [], "parties": ["company"], "estimated_duration_days": {"value": 0, "illustrative": true} },
-    { "id": "corporate_bank", "depends_on": ["economic_license"], "required_documents": [], "parties": ["company", "bank"], "estimated_duration_days": {"value": 5, "illustrative": true} }
+    {
+      "id": "company_profile",
+      "depends_on": [],
+      "required_documents": [],
+      "parties": ["company"],
+      "estimated_duration_days": { "value": 1, "illustrative": true }
+    },
+    {
+      "id": "trade_name",
+      "depends_on": ["company_profile"],
+      "required_documents": [],
+      "parties": ["licensing_authority"],
+      "estimated_duration_days": { "value": 2, "illustrative": true }
+    },
+    {
+      "id": "economic_license",
+      "depends_on": ["trade_name"],
+      "required_documents": [],
+      "parties": ["licensing_authority"],
+      "estimated_duration_days": { "value": 7, "illustrative": true }
+    },
+    {
+      "id": "establishment_card",
+      "depends_on": ["economic_license"],
+      "required_documents": [],
+      "parties": ["ICP", "company"],
+      "estimated_duration_days": { "value": 3, "illustrative": true }
+    },
+    {
+      "id": "visa_quota",
+      "depends_on": ["establishment_card"],
+      "required_documents": [],
+      "parties": ["ICP", "company"],
+      "estimated_duration_days": { "value": 3, "illustrative": true }
+    },
+    {
+      "id": "entity_can_sponsor",
+      "depends_on": ["visa_quota"],
+      "required_documents": [],
+      "parties": ["company"],
+      "estimated_duration_days": { "value": 0, "illustrative": true }
+    },
+    {
+      "id": "corporate_bank",
+      "depends_on": ["economic_license"],
+      "required_documents": [],
+      "parties": ["company", "bank"],
+      "estimated_duration_days": { "value": 5, "illustrative": true }
+    }
   ],
   "terminals": {
-    "fully_settled": { "id": "fully_settled", "depends_on": ["tawtheeq_register", "health_insurance", "bank_account"], "required_documents": [], "parties": ["newcomer"], "estimated_duration_days": {"value": 0, "illustrative": true}, "terminal": true },
-    "fully_operational": { "id": "fully_operational", "depends_on": ["entity_can_sponsor", "corporate_bank"], "required_documents": [], "parties": ["company"], "estimated_duration_days": {"value": 0, "illustrative": true}, "terminal": true }
+    "fully_settled": {
+      "id": "fully_settled",
+      "depends_on": ["tawtheeq_register", "health_insurance", "bank_account"],
+      "required_documents": [],
+      "parties": ["newcomer"],
+      "estimated_duration_days": { "value": 0, "illustrative": true },
+      "terminal": true
+    },
+    "fully_operational": {
+      "id": "fully_operational",
+      "depends_on": ["entity_can_sponsor", "corporate_bank"],
+      "required_documents": [],
+      "parties": ["company"],
+      "estimated_duration_days": { "value": 0, "illustrative": true },
+      "terminal": true
+    }
   },
   "licensing_authorities": {
     "mainland": "Abu Dhabi Department of Economic Development (ADDED)",

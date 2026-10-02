@@ -26,3 +26,17 @@ was edited. Additional recommendation and eval modules are developed independent
   until a remote is configured. No remote repository is guessed or created.
 - App AI functions and the Guard HTTP sidecar do not exist in the inspected baseline;
   cached eval evidence must be distinguished from live-service evidence.
+
+## 2026-10-02 — Milestone 2: recommendations and document isolation
+
+Added setup-path rankings for five routes and neighborhood rankings for nine areas.
+JSON data and relative weight configs produce per-criterion contributions and reasons.
+Hub71 technology candidates remain subject to programme review. Official entity/area
+sources establish identity only; fit scores, commutes and planning checklists are illustrative.
+
+Peer review found and fixed team document fallback: employee steps now use only their
+own `documents_by_subject` entry. Global/inherited documents cannot satisfy an employee.
+Sparse ids/labels and malformed states are rejected; default unlocks infer the correct
+template context and include employee residency for the company sponsorship gate.
+Verification: 43 roadmap/recommendation tests, including 100 seeded scoring scenarios,
+passed. Strict TypeScript checks pass under both package and eval consumer settings.

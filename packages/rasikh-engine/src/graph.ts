@@ -15,7 +15,9 @@ export function orderGraph(steps: StepDefinition[]): StepDefinition[] {
   const ordered: StepDefinition[] = [];
   const visited = new Set<string>();
   while (ordered.length < steps.length) {
-    const next = steps.find((step) => !visited.has(step.id) && step.depends_on.every((id) => visited.has(id)));
+    const next = steps.find(
+      (step) => !visited.has(step.id) && step.depends_on.every((id) => visited.has(id)),
+    );
     if (!next) throw new TypeError('cyclic_dependency_graph');
     visited.add(next.id);
     ordered.push(next);
