@@ -14,3 +14,17 @@ five licensing authorities, demo ids, missing/derived/per-person documents, inva
 graphs, immutable outputs and remaining critical paths.
 
 Git has no remote; this is the local PR description pending remote configuration.
+
+## 2. Setup and neighborhood recommendations
+
+Suggested PR title: `Add explained setup and neighborhood rankings with tunable weights`
+
+Compare five setup routes and nine Abu Dhabi areas with deterministic criterion scores,
+JSON data and configurable relative weights. Flag technology companies for Hub71 review.
+Keep every numeric fit and planning checklist illustrative; unknown input tokens produce
+neutral scores with explicit reasons. Fix team documents to require an own per-person
+entry, preventing global or inherited documents satisfying another employee's requirements.
+
+Validation: 43 roadmap/recommendation tests pass, including 100 seeded ranking/rounding
+scenarios, sensitivity to meaningful inputs, weight rescaling, malformed inputs, immutable
+outputs, prototype-safe document lookup and sparse-input regressions. TypeScript passes.

@@ -1,13 +1,23 @@
 import type { DataLabel, IllustrativeNumber, PayloadRef } from '@rasikh/shared';
 
-export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
+export type JsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | JsonValue[]
+  | { [key: string]: JsonValue };
 export interface StructuredReason {
   criterion: string;
   value: JsonValue;
   effect: number | string;
   explanation_key: string;
 }
-export type Journey = 'individual_relocation' | 'family_relocation' | 'company_setup' | 'team_transfer';
+export type Journey =
+  | 'individual_relocation'
+  | 'family_relocation'
+  | 'company_setup'
+  | 'team_transfer';
 export type SetupPath = 'mainland' | 'adgm' | 'kezad' | 'masdar' | 'twofour54';
 export interface CaseInput {
   case_id: string;
@@ -41,7 +51,7 @@ export interface CaseState {
   input: CaseInput;
   completed_step_ids: string[];
   documents: PayloadRef[];
-  /** For a team, these override case-level documents per person when present. */
+  /** Team employee steps use only their own entry; absent entries mean no documents. */
   documents_by_subject?: Record<string, PayloadRef[]>;
   step_states?: StepState[];
   as_of?: string;

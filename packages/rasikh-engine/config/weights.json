@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "illustrative": true,
+  "setup": {
+    "activities": 25,
+    "industry": 20,
+    "team_size": 10,
+    "physical_space": 20,
+    "client_base": 15,
+    "regulatory_profile": 10
+  },
+  "neighborhood": {
+    "commute": 30,
+    "budget": 25,
+    "household": 20,
+    "mobility": 15,
+    "preferences": 10
+  }
+}

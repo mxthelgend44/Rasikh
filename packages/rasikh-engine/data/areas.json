@@ -1,0 +1,403 @@
+{
+  "schema_version": "1.0.0",
+  "illustrative": true,
+  "scope_key": "neighborhood.illustrative_rents_commutes_and_household_fit",
+  "source_scope_key": "sources.area_identity_only_not_scores_or_requirements",
+  "commute_model": {
+    "illustrative": true,
+    "same_area_car_minutes": 5,
+    "same_area_no_car_minutes": 12,
+    "no_car_multiplier": 1.8,
+    "score_zero_minutes": 90
+  },
+  "office_locations": [
+    {
+      "id": "adgm",
+      "zone": "central_islands",
+      "aliases": ["ADGM", "Hub71", "Abu Dhabi Global Market"]
+    },
+    { "id": "twofour54", "zone": "yas", "aliases": ["twofour54", "Yas Creative Hub"] },
+    {
+      "id": "kezad",
+      "zone": "industrial",
+      "aliases": ["KEZAD", "KIZAD", "Khalifa Economic Zones Abu Dhabi"]
+    },
+    {
+      "id": "downtown",
+      "zone": "city_center",
+      "aliases": ["downtown", "Abu Dhabi city centre", "city center"]
+    }
+  ],
+  "preference_aliases": {
+    "waterfront": ["waterfront", "waterfront living", "sea views"],
+    "beach": ["beach", "beaches", "beach access"],
+    "schools": ["schools", "school", "school access", "school age kids"],
+    "quiet": ["quiet", "peaceful"],
+    "nightlife": ["nightlife", "dining", "restaurants"],
+    "parks": ["parks", "green space", "green spaces"],
+    "walkability": ["walkability", "walkable", "walking"],
+    "space": ["space", "larger homes", "villa", "villas"],
+    "airport": ["airport", "airport access"],
+    "sustainability": ["sustainability", "sustainable"],
+    "city_life": ["city life", "urban", "city"],
+    "culture": ["culture", "museums", "arts"]
+  },
+  "areas": [
+    {
+      "id": "al_reem_island",
+      "name": "Al Reem Island",
+      "aliases": ["Al Reem Island", "Reem", "Reem Island"],
+      "office_zone": "central_islands",
+      "sources": [
+        "https://www.dmt.gov.ae/en/Media-Centre/News/New_News_25_EN_AR",
+        "https://www.aldar.com/en/blog/how-to-choose-between-different-waterfront-locations"
+      ],
+      "illustrative": true,
+      "budget_fit": { "low": 0.45, "medium": 1, "high": 0.95 },
+      "household_fit": { "single": 1, "couple": 0.95, "family": 0.75 },
+      "mobility_fit": { "car": 0.85, "no_car": 0.9 },
+      "commute_car_minutes": {
+        "central_islands": 12,
+        "city_center": 18,
+        "saadiyat": 20,
+        "yas": 35,
+        "airport": 35,
+        "suburbs": 35,
+        "industrial": 55
+      },
+      "preference_fit": {
+        "waterfront": 1,
+        "beach": 0.5,
+        "schools": 0.75,
+        "quiet": 0.55,
+        "nightlife": 0.8,
+        "parks": 0.8,
+        "walkability": 0.9,
+        "space": 0.45,
+        "airport": 0.5,
+        "sustainability": 0.5,
+        "city_life": 1,
+        "culture": 0.6
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "al_raha_beach",
+      "name": "Al Raha Beach",
+      "aliases": ["Al Raha Beach", "Al Raha", "Raha Beach"],
+      "office_zone": "airport",
+      "sources": [
+        "https://visitabudhabi.ae/en/where-to-go/marinas-and-plazas/al-raha-beach-plazas/",
+        "https://www.aldar.com/en/blog/how-to-choose-between-different-waterfront-locations"
+      ],
+      "illustrative": true,
+      "budget_fit": { "low": 0.3, "medium": 0.85, "high": 1 },
+      "household_fit": { "single": 0.75, "couple": 0.95, "family": 0.95 },
+      "mobility_fit": { "car": 0.95, "no_car": 0.6 },
+      "commute_car_minutes": {
+        "central_islands": 35,
+        "city_center": 35,
+        "saadiyat": 40,
+        "yas": 15,
+        "airport": 12,
+        "suburbs": 18,
+        "industrial": 40
+      },
+      "preference_fit": {
+        "waterfront": 1,
+        "beach": 0.9,
+        "schools": 0.85,
+        "quiet": 0.85,
+        "nightlife": 0.65,
+        "parks": 0.8,
+        "walkability": 0.7,
+        "space": 0.7,
+        "airport": 0.95,
+        "sustainability": 0.5,
+        "city_life": 0.5,
+        "culture": 0.45
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "khalifa_city",
+      "name": "Khalifa City",
+      "aliases": ["Khalifa City", "Khalifa City A"],
+      "office_zone": "suburbs",
+      "sources": ["https://www.dmt.gov.ae/en/Media-Centre/News/New_News_25_EN_AR"],
+      "illustrative": true,
+      "budget_fit": { "low": 0.9, "medium": 1, "high": 0.9 },
+      "household_fit": { "single": 0.5, "couple": 0.75, "family": 1 },
+      "mobility_fit": { "car": 1, "no_car": 0.3 },
+      "commute_car_minutes": {
+        "central_islands": 35,
+        "city_center": 35,
+        "saadiyat": 40,
+        "yas": 18,
+        "airport": 12,
+        "suburbs": 12,
+        "industrial": 40
+      },
+      "preference_fit": {
+        "waterfront": 0.2,
+        "beach": 0.25,
+        "schools": 1,
+        "quiet": 1,
+        "nightlife": 0.35,
+        "parks": 0.8,
+        "walkability": 0.35,
+        "space": 1,
+        "airport": 0.9,
+        "sustainability": 0.5,
+        "city_life": 0.3,
+        "culture": 0.3
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "mohammed_bin_zayed_city",
+      "name": "Mohammed Bin Zayed City",
+      "aliases": ["Mohammed Bin Zayed City", "Mohamed Bin Zayed City", "MBZ", "MBZ City"],
+      "office_zone": "suburbs",
+      "sources": [
+        "https://www.aldar.com/en/news-and-media/aldar-and-department-of-municipalities-and-transport-announce-strategic-partnership-to-shape-abu-dhabi-s-next-phase-of-urban-growth"
+      ],
+      "illustrative": true,
+      "budget_fit": { "low": 1, "medium": 0.95, "high": 0.85 },
+      "household_fit": { "single": 0.5, "couple": 0.75, "family": 0.95 },
+      "mobility_fit": { "car": 1, "no_car": 0.25 },
+      "commute_car_minutes": {
+        "central_islands": 40,
+        "city_center": 35,
+        "saadiyat": 45,
+        "yas": 25,
+        "airport": 22,
+        "suburbs": 15,
+        "industrial": 50
+      },
+      "preference_fit": {
+        "waterfront": 0.1,
+        "beach": 0.2,
+        "schools": 0.9,
+        "quiet": 0.95,
+        "nightlife": 0.25,
+        "parks": 0.65,
+        "walkability": 0.3,
+        "space": 1,
+        "airport": 0.7,
+        "sustainability": 0.4,
+        "city_life": 0.25,
+        "culture": 0.25
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "saadiyat_island",
+      "name": "Saadiyat Island",
+      "aliases": ["Saadiyat", "Saadiyat Island"],
+      "office_zone": "saadiyat",
+      "sources": [
+        "https://www.dmt.gov.ae/en/Media-Centre/News/New_News_25_EN_AR",
+        "https://www.aldar.com/en/blog/how-to-choose-between-different-waterfront-locations"
+      ],
+      "illustrative": true,
+      "budget_fit": { "low": 0.1, "medium": 0.4, "high": 1 },
+      "household_fit": { "single": 0.7, "couple": 0.9, "family": 0.95 },
+      "mobility_fit": { "car": 0.95, "no_car": 0.45 },
+      "commute_car_minutes": {
+        "central_islands": 20,
+        "city_center": 25,
+        "saadiyat": 10,
+        "yas": 25,
+        "airport": 35,
+        "suburbs": 40,
+        "industrial": 45
+      },
+      "preference_fit": {
+        "waterfront": 1,
+        "beach": 1,
+        "schools": 0.85,
+        "quiet": 0.95,
+        "nightlife": 0.65,
+        "parks": 0.85,
+        "walkability": 0.6,
+        "space": 0.9,
+        "airport": 0.5,
+        "sustainability": 0.6,
+        "city_life": 0.4,
+        "culture": 1
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "yas_island",
+      "name": "Yas Island",
+      "aliases": ["Yas", "Yas Island"],
+      "office_zone": "yas",
+      "sources": [
+        "https://www.dmt.gov.ae/en/Media-Centre/News/New_News_25_EN_AR",
+        "https://www.aldar.com/en/blog/how-to-choose-between-different-waterfront-locations"
+      ],
+      "illustrative": true,
+      "budget_fit": { "low": 0.25, "medium": 0.75, "high": 1 },
+      "household_fit": { "single": 0.8, "couple": 0.95, "family": 0.95 },
+      "mobility_fit": { "car": 0.95, "no_car": 0.6 },
+      "commute_car_minutes": {
+        "central_islands": 35,
+        "city_center": 35,
+        "saadiyat": 25,
+        "yas": 10,
+        "airport": 15,
+        "suburbs": 20,
+        "industrial": 30
+      },
+      "preference_fit": {
+        "waterfront": 0.85,
+        "beach": 0.9,
+        "schools": 0.8,
+        "quiet": 0.65,
+        "nightlife": 1,
+        "parks": 0.9,
+        "walkability": 0.65,
+        "space": 0.75,
+        "airport": 0.85,
+        "sustainability": 0.5,
+        "city_life": 0.55,
+        "culture": 0.6
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "al_maryah_island",
+      "name": "Al Maryah Island",
+      "aliases": ["Al Maryah Island", "Maryah", "Maryah Island"],
+      "office_zone": "central_islands",
+      "sources": ["https://almaryahisland.ae/", "https://almaryahisland.ae/plan-your-visit/"],
+      "illustrative": true,
+      "budget_fit": { "low": 0.15, "medium": 0.55, "high": 1 },
+      "household_fit": { "single": 1, "couple": 0.95, "family": 0.65 },
+      "mobility_fit": { "car": 0.85, "no_car": 1 },
+      "commute_car_minutes": {
+        "central_islands": 10,
+        "city_center": 15,
+        "saadiyat": 20,
+        "yas": 35,
+        "airport": 35,
+        "suburbs": 35,
+        "industrial": 55
+      },
+      "preference_fit": {
+        "waterfront": 1,
+        "beach": 0.3,
+        "schools": 0.55,
+        "quiet": 0.5,
+        "nightlife": 0.95,
+        "parks": 0.7,
+        "walkability": 1,
+        "space": 0.4,
+        "airport": 0.5,
+        "sustainability": 0.5,
+        "city_life": 1,
+        "culture": 0.65
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "corniche",
+      "name": "Abu Dhabi Corniche",
+      "aliases": ["Corniche", "Abu Dhabi Corniche", "Corniche Road"],
+      "office_zone": "city_center",
+      "sources": ["https://visitabudhabi.ae/en/where-to-go/beaches/abu-dhabi-corniche"],
+      "illustrative": true,
+      "budget_fit": { "low": 0.65, "medium": 0.95, "high": 1 },
+      "household_fit": { "single": 0.95, "couple": 0.95, "family": 0.8 },
+      "mobility_fit": { "car": 0.8, "no_car": 0.95 },
+      "commute_car_minutes": {
+        "central_islands": 18,
+        "city_center": 10,
+        "saadiyat": 25,
+        "yas": 40,
+        "airport": 40,
+        "suburbs": 35,
+        "industrial": 60
+      },
+      "preference_fit": {
+        "waterfront": 1,
+        "beach": 1,
+        "schools": 0.7,
+        "quiet": 0.55,
+        "nightlife": 0.85,
+        "parks": 0.95,
+        "walkability": 1,
+        "space": 0.5,
+        "airport": 0.4,
+        "sustainability": 0.5,
+        "city_life": 1,
+        "culture": 0.85
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    },
+    {
+      "id": "masdar_city",
+      "name": "Masdar City",
+      "aliases": ["Masdar", "Masdar City", "Masdar City Free Zone"],
+      "office_zone": "airport",
+      "sources": ["https://masdarcityfreezone.com/", "https://startup.masdarcityfreezone.com/"],
+      "illustrative": true,
+      "budget_fit": { "low": 0.85, "medium": 1, "high": 0.9 },
+      "household_fit": { "single": 0.85, "couple": 0.8, "family": 0.7 },
+      "mobility_fit": { "car": 0.95, "no_car": 0.55 },
+      "commute_car_minutes": {
+        "central_islands": 35,
+        "city_center": 40,
+        "saadiyat": 40,
+        "yas": 15,
+        "airport": 10,
+        "suburbs": 15,
+        "industrial": 40
+      },
+      "preference_fit": {
+        "waterfront": 0.1,
+        "beach": 0.2,
+        "schools": 0.6,
+        "quiet": 0.95,
+        "nightlife": 0.3,
+        "parks": 0.8,
+        "walkability": 0.7,
+        "space": 0.5,
+        "airport": 1,
+        "sustainability": 1,
+        "city_life": 0.35,
+        "culture": 0.3
+      },
+      "requirements": {
+        "value": ["verify_current_rent", "verify_commute_route", "verify_property_and_tenancy"],
+        "illustrative": true
+      }
+    }
+  ]
+}
