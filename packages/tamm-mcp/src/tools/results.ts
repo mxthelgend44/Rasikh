@@ -1,6 +1,7 @@
 /**
  * Shapes every MCP tool result. All results carry `contract_version` and `mock: true`
- * (INTEGRATION.md 4.1, 4.4); denials and errors set `isError: true`.
+ * (INTEGRATION.md 4.1, 4.4). Errors set `isError: true`; a Guard denial is a normal
+ * contract output (`denied: true`), not an error.
  */
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { CONTRACT_VERSION, type ErrorCode } from "../contract.js";
@@ -15,25 +16,16 @@ function result(body: Record<string, unknown>, isError: boolean): CallToolResult
 }
 
 /** A successful tool result. */
-export function ok(payload: Record<string, unknown>): CallToolResult {
+export function ok(payload: object): CallToolResult {
   return result({ contract_version: CONTRACT_VERSION, mock: true, ...payload }, false);
 }
 
-/** A structured Guard denial: the tool did not execute. */
+/** A Guard denial (INTEGRATION.md 4.4 `start_application`): the tool did not execute. */
 export function denied(verdict: GuardVerdict): CallToolResult {
+  const { decision, reason, policy_rule } = verdict;
   return result(
-    {
-      contract_version: CONTRACT_VERSION,
-      mock: true,
-      denied: true,
-      decision: verdict.decision,
-      reason: verdict.reason,
-      policy_rule: verdict.policy_rule,
-      blocked_labels: verdict.blocked_labels,
-      ...(verdict.consent_request ? { consent_request: verdict.consent_request } : {}),
-      guard_check_id: verdict.check_id,
-    },
-    true,
+    { contract_version: CONTRACT_VERSION, mock: true, denied: true, guard: { decision, reason, policy_rule } },
+    false,
   );
 }
 

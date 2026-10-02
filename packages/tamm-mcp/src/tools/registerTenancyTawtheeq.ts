@@ -1,59 +1,66 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { TAWTHEEQ_SERVICE_ID } from "../backend/types.js";
-import { type ToolContext, runGuarded } from "./pipeline.js";
+import type { PayloadRef } from "../contract.js";
+import { type RequiredDocument, TAWTHEEQ_SERVICE_ID } from "../backend/types.js";
+import { type ToolContext, withGuard } from "./pipeline.js";
 import { failure, ok } from "./results.js";
-import { guardSessionId, payloadRefs, uaepassSession } from "./schemas.js";
+import { applicantRef, guardSessionId, uaepassSession } from "./schemas.js";
 
 const NAME = "register_tenancy_tawtheeq";
-const isoDate = z.iso.date().describe("Calendar date, YYYY-MM-DD.");
 
-/** Registers `register_tenancy_tawtheeq`: registers a tenancy contract, after a Guard check. */
+/**
+ * The documents a Tawtheeq registration sends, by Rasikh's ref convention: the lease itself
+ * for the `address` requirement, and `doc_<label>_<applicant_ref>` (for example
+ * `doc_passport_hire_demo_001`, INTEGRATION.md 5) for every other required label.
+ */
+export function tenancyDocuments(
+  required: readonly RequiredDocument[],
+  leaseRef: string,
+  applicant: string,
+): PayloadRef[] {
+  return required.map(({ label }) => ({
+    ref: label === "address" ? leaseRef : `doc_${label}_${applicant}`,
+    labels: [label],
+  }));
+}
+
+/** Registers `register_tenancy_tawtheeq`: the demo shortcut for `start_application` on Tawtheeq. */
 export function registerRegisterTenancyTawtheeq(server: McpServer, ctx: ToolContext): void {
   server.registerTool(
     NAME,
     {
       title: "Register a tenancy contract (Tawtheeq)",
       description:
-        "Register a residential tenancy contract through Tawtheeq. Rasikh Guard must allow sending the documents to TAMM.",
+        "Register a residential lease through Tawtheeq. Sends the lease and the tenant's ID documents, so Rasikh Guard must allow it.",
       inputSchema: {
+        lease_ref: z.string().min(1).describe("Lease id, e.g. lease_reem_2207."),
+        applicant_ref: applicantRef,
         uaepass_session: uaepassSession,
         guard_session_id: guardSessionId,
-        property_ref: z.string().min(1),
-        landlord_name: z.string().min(1),
-        annual_rent_aed: z.number().positive(),
-        start_date: isoDate,
-        end_date: isoDate,
-        payload_refs: payloadRefs,
       },
     },
     async (args) => {
-      if (args.end_date <= args.start_date) {
-        return failure("invalid_request", "end_date must be after start_date.");
+      const requirements = await ctx.backend.getServiceRequirements(TAWTHEEQ_SERVICE_ID);
+      if (!requirements) {
+        return failure("internal", "The Tawtheeq service is missing from the catalogue.");
       }
-      return runGuarded(
+      const docs = tenancyDocuments(requirements.required_documents, args.lease_ref, args.applicant_ref);
+      return withGuard(
         ctx,
         {
           tool: NAME,
           uaepassSession: args.uaepass_session,
           guardSessionId: args.guard_session_id,
           serviceId: TAWTHEEQ_SERVICE_ID,
-          requiredAudience: "service",
-          payloadRefs: args.payload_refs,
+          documents: docs,
         },
-        async ({ session, guardCheckId }) => {
-          const { property_ref, landlord_name, annual_rent_aed, start_date, end_date } = args;
-          const application = await ctx.backend.registerTenancy(
-            { service_id: TAWTHEEQ_SERVICE_ID, subject_ref: session.subject_ref, payload_refs: args.payload_refs },
-            { property_ref, landlord_name, annual_rent_aed, start_date, end_date },
-          );
-          return ok({
-            application_id: application.application_id,
-            service_id: application.service_id,
-            status: application.status,
-            submitted_at: application.submitted_at,
-            guard_check_id: guardCheckId,
+        async () => {
+          const application = await ctx.backend.registerTenancy({
+            lease_ref: args.lease_ref,
+            applicant_ref: args.applicant_ref,
+            documents: docs,
           });
+          return ok({ application_id: application.application_id, status: application.status });
         },
       );
     },

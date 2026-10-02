@@ -1,8 +1,8 @@
 /**
  * Loads and validates the mock TAMM catalogue (`data/catalogue.json`).
  *
- * The catalogue is MOCK data: fees, processing times, requirements and review scripts are
- * illustrative, and the schema forces every such field to carry `illustrative: true`.
+ * The catalogue is MOCK data. Fees, durations, documents and review scripts are
+ * illustrative, and the schema forces every number and document to carry `illustrative: true`.
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -10,7 +10,7 @@ import { z } from "zod";
 import { applicationStatusSchema, audienceSchema, dataLabelSchema } from "../../contract.js";
 import { validateScript } from "./stateMachine.js";
 
-const illustrative = z.literal(true);
+const illustrativeNumber = z.object({ value: z.number().nonnegative(), illustrative: z.literal(true) });
 
 const serviceSchema = z.object({
   service_id: z.string().regex(/^svc_[a-z0-9_]+$/),
@@ -19,20 +19,21 @@ const serviceSchema = z.object({
   audience: audienceSchema,
   tags: z.array(z.string()),
   keywords: z.array(z.string()),
-  summary: z.string().min(1),
-  channel: z.enum(["tamm", "entity_portal"]),
-  requirements: z.array(
-    z.object({
-      requirement_id: z.string(),
-      description: z.string(),
-      labels: z.array(dataLabelSchema),
-      mandatory: z.boolean(),
-      illustrative,
-    }),
+  application_prefix: z.string().regex(/^[a-z0-9]+$/),
+  depends_on: z.array(z.string()),
+  required_documents: z.array(
+    z.object({ label: dataLabelSchema, description: z.string().min(1), illustrative: z.literal(true) }),
   ),
-  fee: z.object({ amount_aed: z.number().nonnegative().nullable(), note: z.string(), illustrative }),
-  processing_time: z.object({ text: z.string(), illustrative }),
-  review_script: z.array(z.object({ status: applicationStatusSchema, note: z.string() })).min(1),
+  est_fee_aed: illustrativeNumber,
+  est_duration_days: illustrativeNumber,
+  review_script: z
+    .array(
+      z.object({
+        status: applicationStatusSchema,
+        needs_info: z.object({ message: z.string().min(1), required_labels: z.array(dataLabelSchema) }).optional(),
+      }),
+    )
+    .min(1),
 });
 
 const catalogueSchema = z
@@ -43,15 +44,17 @@ const catalogueSchema = z
     restricted_trade_name_terms: z.array(z.string()),
   })
   .superRefine((catalogue, ctx) => {
-    const seen = new Set<string>();
+    const ids = new Set(catalogue.services.map((service) => service.service_id));
+    if (ids.size !== catalogue.services.length) {
+      ctx.addIssue({ code: "custom", message: "service_id values must be unique" });
+    }
     for (const service of catalogue.services) {
-      if (seen.has(service.service_id)) {
-        ctx.addIssue({ code: "custom", message: `duplicate service_id ${service.service_id}` });
-      }
-      seen.add(service.service_id);
       const problem = validateScript(service.review_script);
       if (problem) {
         ctx.addIssue({ code: "custom", message: `${service.service_id} review_script: ${problem}` });
+      }
+      for (const dependency of service.depends_on.filter((id) => !ids.has(id))) {
+        ctx.addIssue({ code: "custom", message: `${service.service_id} depends on unknown ${dependency}` });
       }
     }
   });

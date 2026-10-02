@@ -1,13 +1,15 @@
 /**
- * Application lifecycle for the mock backend.
+ * Application lifecycle for the mock backend (INTEGRATION.md 4.5).
  *
- * Every application follows its service's review script (illustrative). How far along the
- * script it is depends on the progression mode:
- * - `demo`: one step per status read, so a scripted demo is fully repeatable.
- * - `clock`: one step per `stepMs` of elapsed time since submission.
+ * Every application follows its service's illustrative review script. How it moves along
+ * the script depends on the progression mode:
+ * - `demo`: only an explicit `advance` (from `POST /dev/advance`) moves it, so a scripted
+ *   demo is fully deterministic.
+ * - `timed`: each step becomes due a small random delay after the previous one and is
+ *   applied the next time the application is read.
  */
 import type { ApplicationStatus } from "../../contract.js";
-import type { Application, StatusEvent } from "../types.js";
+import type { Application, NeedsInfo } from "../types.js";
 
 /** Legal next states for each status. `approved` and `rejected` are final. */
 export const TRANSITIONS: Readonly<Record<ApplicationStatus, readonly ApplicationStatus[]>> = {
@@ -20,10 +22,21 @@ export const TRANSITIONS: Readonly<Record<ApplicationStatus, readonly Applicatio
 
 export interface ScriptStep {
   status: ApplicationStatus;
-  note: string;
+  /** Required when `status` is `needs_info`, absent otherwise. */
+  needs_info?: NeedsInfo;
 }
 
-export type Progression = { mode: "demo" } | { mode: "clock"; stepMs: number };
+export type Progression =
+  | { mode: "demo" }
+  | {
+      mode: "timed";
+      /** Minimum delay before each step. */
+      baseDelayMs: number;
+      /** Up to this much extra random delay per step. */
+      jitterMs: number;
+      /** Uniform random number in [0, 1); injectable for tests. */
+      random?: () => number;
+    };
 
 /** True if moving from `from` to `to` is a legal transition. */
 export function canTransition(from: ApplicationStatus, to: ApplicationStatus): boolean {
@@ -36,8 +49,8 @@ export function isFinal(status: ApplicationStatus): boolean {
 }
 
 /**
- * Checks that a review script is a legal path from `submitted` that ends in a final state.
- * Returns a description of the first problem, or `undefined` if the script is valid.
+ * Checks that a review script is a legal path from `submitted` to a final state, with
+ * `needs_info` details exactly on `needs_info` steps. Returns the first problem found.
  */
 export function validateScript(script: readonly ScriptStep[]): string | undefined {
   let current: ApplicationStatus = "submitted";
@@ -45,18 +58,22 @@ export function validateScript(script: readonly ScriptStep[]): string | undefine
     if (!canTransition(current, step.status)) {
       return `step ${index}: ${current} -> ${step.status} is not a legal transition`;
     }
+    if ((step.status === "needs_info") !== (step.needs_info !== undefined)) {
+      return `step ${index}: needs_info details must be present exactly on needs_info steps`;
+    }
     current = step.status;
   }
   return isFinal(current) ? undefined : `script ends in non-final status ${current}`;
 }
 
-/** Mutable lifecycle record kept by the mock backend for one application. */
+/** Lifecycle record the mock backend keeps for one application. */
 export interface TrackedApplication {
   application: Application;
   script: readonly ScriptStep[];
   /** Number of script steps already applied. */
   applied: number;
-  submittedAtMs: number;
+  /** When the next step becomes due in timed mode (ms since epoch). */
+  nextDueMs: number;
 }
 
 /** Creates a freshly submitted application. */
@@ -64,44 +81,54 @@ export function submit(
   applicationId: string,
   serviceId: string,
   script: readonly ScriptStep[],
+  progression: Progression,
   nowMs: number,
 ): TrackedApplication {
-  const at = new Date(nowMs).toISOString();
   return {
     application: {
       application_id: applicationId,
       service_id: serviceId,
       status: "submitted",
-      submitted_at: at,
-      history: [{ status: "submitted", at, note: "Application received." }],
+      history: [{ status: "submitted", at: new Date(nowMs).toISOString() }],
+      needs_info: null,
     },
     script,
     applied: 0,
-    submittedAtMs: nowMs,
+    nextDueMs: nowMs + stepDelay(progression),
   };
 }
 
-/**
- * Advances `tracked` according to `progression` as of `nowMs`, called once per status read.
- * Never skips a step and never moves past a final state.
- */
-export function advance(tracked: TrackedApplication, progression: Progression, nowMs: number): void {
-  const target =
-    progression.mode === "demo"
-      ? tracked.applied + 1
-      : Math.floor((nowMs - tracked.submittedAtMs) / progression.stepMs);
-  while (tracked.applied < Math.min(target, tracked.script.length)) {
-    const step = tracked.script[tracked.applied] as ScriptStep;
-    applyStep(tracked.application, step, nowMs);
-    tracked.applied += 1;
+/** Applies the next scripted step. Returns false if the application is already final. */
+export function advance(tracked: TrackedApplication, nowMs: number): boolean {
+  const step = tracked.script[tracked.applied];
+  if (!step) {
+    return false;
   }
-}
-
-function applyStep(application: Application, step: ScriptStep, nowMs: number): void {
+  const { application } = tracked;
   if (!canTransition(application.status, step.status)) {
     throw new Error(`illegal transition ${application.status} -> ${step.status} for ${application.application_id}`);
   }
-  const event: StatusEvent = { status: step.status, at: new Date(nowMs).toISOString(), note: step.note };
   application.status = step.status;
-  application.history.push(event);
+  application.needs_info = step.needs_info ?? null;
+  application.history.push({ status: step.status, at: new Date(nowMs).toISOString() });
+  tracked.applied += 1;
+  return true;
+}
+
+/** In timed mode, applies every step that has come due by `nowMs`. No-op in demo mode. */
+export function catchUp(tracked: TrackedApplication, progression: Progression, nowMs: number): void {
+  if (progression.mode === "demo") {
+    return;
+  }
+  while (tracked.nextDueMs <= nowMs && advance(tracked, tracked.nextDueMs)) {
+    tracked.nextDueMs += stepDelay(progression);
+  }
+}
+
+function stepDelay(progression: Progression): number {
+  if (progression.mode === "demo") {
+    return Number.POSITIVE_INFINITY;
+  }
+  const random = progression.random ?? Math.random;
+  return progression.baseDelayMs + Math.floor(random() * progression.jitterMs);
 }

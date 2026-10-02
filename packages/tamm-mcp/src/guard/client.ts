@@ -1,11 +1,11 @@
 /**
  * Client for the Rasikh Guard sidecar `/check` endpoint (INTEGRATION.md section 3).
  *
- * Fails closed: a network error, timeout, non-200 status or malformed body all become a
- * `deny` verdict. Nothing proceeds without an explicit `allow`.
+ * Fails closed: a network error, timeout, non-200 status or malformed body all become
+ * `unavailable`, which callers must treat as deny. Nothing proceeds without an explicit `allow`.
  */
 import { z } from "zod";
-import { CONTRACT_VERSION, type DataLabel, GUARD_DECISIONS, type PayloadRef, dataLabelSchema } from "../contract.js";
+import { type DataLabel, GUARD_DECISIONS, type PayloadRef, dataLabelSchema } from "../contract.js";
 
 export interface GuardCheckRequest {
   session_id: string;
@@ -13,7 +13,10 @@ export interface GuardCheckRequest {
   destination: "tamm";
   data_labels: DataLabel[];
   payload_refs: PayloadRef[];
-  /** Tags of the TAMM service involved. Proposed for contract 1.1.0; ignored by older Guards. */
+  /**
+   * Tags of the TAMM service involved, so Guard can apply "insurance services only".
+   * Not in contract 1.0.0 (proposed for 1.1.0); a 1.0.0 Guard ignores it and fails closed for health.
+   */
   service_tags?: string[];
 }
 
@@ -27,11 +30,12 @@ const verdictSchema = z.object({
   consent_request: z.object({ label: dataLabelSchema, destination: z.string() }).optional(),
 });
 
-/** Guard's answer, or a synthesised fail-closed denial (`check_id: null`). */
-export type GuardVerdict = Omit<z.infer<typeof verdictSchema>, "check_id"> & { check_id: string | null };
+export type GuardVerdict = z.infer<typeof verdictSchema>;
+
+export type GuardOutcome = { kind: "verdict"; verdict: GuardVerdict } | { kind: "unavailable"; detail: string };
 
 export interface GuardClient {
-  check(request: GuardCheckRequest): Promise<GuardVerdict>;
+  check(request: GuardCheckRequest): Promise<GuardOutcome>;
 }
 
 const DEFAULT_TIMEOUT_MS = 2000;
@@ -43,7 +47,7 @@ export class HttpGuardClient implements GuardClient {
     private readonly timeoutMs: number = DEFAULT_TIMEOUT_MS,
   ) {}
 
-  async check(request: GuardCheckRequest): Promise<GuardVerdict> {
+  async check(request: GuardCheckRequest): Promise<GuardOutcome> {
     try {
       const response = await fetch(new URL("/check", this.baseUrl), {
         method: "POST",
@@ -52,28 +56,14 @@ export class HttpGuardClient implements GuardClient {
         signal: AbortSignal.timeout(this.timeoutMs),
       });
       if (!response.ok) {
-        return failClosed(`Guard answered HTTP ${response.status}`);
+        return { kind: "unavailable", detail: `Guard answered HTTP ${response.status}` };
       }
       const parsed = verdictSchema.safeParse(await response.json());
-      return parsed.success ? parsed.data : failClosed("Guard returned an unexpected response");
-    } catch {
-      return failClosed("Guard could not be reached");
+      return parsed.success
+        ? { kind: "verdict", verdict: parsed.data }
+        : { kind: "unavailable", detail: "Guard returned an unexpected response" };
+    } catch (error) {
+      return { kind: "unavailable", detail: `Guard could not be reached: ${String(error)}` };
     }
   }
-}
-
-/**
- * A `deny` verdict used whenever Guard did not give a usable answer. The technical detail
- * goes to stderr (never stdout, which carries the stdio MCP transport).
- */
-export function failClosed(detail: string): GuardVerdict {
-  console.error(`[tamm-mcp] guard check failed closed: ${detail}`);
-  return {
-    contract_version: CONTRACT_VERSION,
-    check_id: null,
-    decision: "deny",
-    reason: "This step was stopped because the privacy check could not be completed. Please try again.",
-    policy_rule: "guard.unreachable",
-    blocked_labels: [],
-  };
 }

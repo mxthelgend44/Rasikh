@@ -1,11 +1,11 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { type ToolContext, runGuarded } from "./pipeline.js";
+import { type ToolContext, withGuard } from "./pipeline.js";
 import { ok } from "./results.js";
-import { guardSessionId, payloadRefs, serviceId, uaepassSession } from "./schemas.js";
+import { applicantRef, documents, guardSessionId, serviceId, uaepassSession } from "./schemas.js";
 
 const NAME = "start_application";
 
-/** Registers `start_application`: submits an application with documents, after a Guard check. */
+/** Registers `start_application`: submits an application with documents, only after Guard allows it. */
 export function registerStartApplication(server: McpServer, ctx: ToolContext): void {
   server.registerTool(
     NAME,
@@ -15,35 +15,29 @@ export function registerStartApplication(server: McpServer, ctx: ToolContext): v
         "Submit an application for a TAMM service with the listed documents. Rasikh Guard must allow sending them to TAMM.",
       inputSchema: {
         service_id: serviceId,
+        applicant_ref: applicantRef,
+        documents,
         uaepass_session: uaepassSession,
         guard_session_id: guardSessionId,
-        payload_refs: payloadRefs,
       },
     },
     (args) =>
-      runGuarded(
+      withGuard(
         ctx,
         {
           tool: NAME,
           uaepassSession: args.uaepass_session,
           guardSessionId: args.guard_session_id,
           serviceId: args.service_id,
-          requiredAudience: "service",
-          payloadRefs: args.payload_refs,
+          documents: args.documents,
         },
-        async ({ session, guardCheckId }) => {
+        async () => {
           const application = await ctx.backend.startApplication({
             service_id: args.service_id,
-            subject_ref: session.subject_ref,
-            payload_refs: args.payload_refs,
+            applicant_ref: args.applicant_ref,
+            documents: args.documents,
           });
-          return ok({
-            application_id: application.application_id,
-            service_id: application.service_id,
-            status: application.status,
-            submitted_at: application.submitted_at,
-            guard_check_id: guardCheckId,
-          });
+          return ok({ application_id: application.application_id, status: application.status });
         },
       ),
   );

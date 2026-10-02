@@ -31,4 +31,9 @@ export class SimulatedUaePass {
   resolve(token: string): UaePassSession | undefined {
     return this.sessions.get(token);
   }
+
+  /** Forgets every session (demo reset). */
+  reset(): void {
+    this.sessions.clear();
+  }
 }

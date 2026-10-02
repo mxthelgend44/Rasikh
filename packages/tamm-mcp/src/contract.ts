@@ -1,6 +1,9 @@
 /**
- * Types from INTEGRATION.md section 2, mirrored locally until `packages/shared` exists.
- * Keep these in lockstep with the contract; they are closed enums.
+ * Runtime schemas for the INTEGRATION.md section 2 and 6 types.
+ *
+ * `packages/shared` holds the canonical TypeScript types, but it is consumed as TS source and
+ * this package is not an npm workspace yet (DECISIONS.md), so the enums are mirrored here as
+ * zod schemas. Keep them in lockstep with `packages/shared/src/contract.ts`.
  */
 import { z } from "zod";
 
@@ -39,13 +42,13 @@ export const payloadRefSchema = z.object({
 });
 export type PayloadRef = z.infer<typeof payloadRefSchema>;
 
-/** Error codes from INTEGRATION.md section 6. */
+/** Error codes from INTEGRATION.md section 6 that this server emits. */
 export type ErrorCode =
   | "invalid_request"
   | "unknown_session"
-  | "not_found"
-  | "invalid_uaepass_session"
-  | "audience_mismatch"
+  | "unknown_service"
+  | "unknown_application"
+  | "demo_mode_only"
   | "guard_unavailable"
   | "internal";
 

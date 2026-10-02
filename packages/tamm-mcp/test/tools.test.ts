@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import { CONTRACT_VERSION } from "../src/contract.js";
-import { type Harness, createHarness } from "./harness.js";
+import { type Harness, type ToolBody, createHarness } from "./harness.js";
 
 const GS = "gs_test";
 const PASSPORT = { ref: "doc_passport_hire_demo_001", labels: ["passport"] };
-const EMIRATES_ID = { ref: "doc_eid_hire_demo_001", labels: ["emirates_id"] };
 
 let h: Harness;
 beforeEach(async () => {
@@ -13,9 +12,15 @@ beforeEach(async () => {
 });
 afterEach(() => h.close());
 
-function assertEnvelope(body: Record<string, unknown>): void {
+function assertEnvelope(body: ToolBody): void {
   assert.equal(body.contract_version, CONTRACT_VERSION);
   assert.equal(body.mock, true);
+}
+
+function assertError(result: { body: ToolBody; isError: boolean }, code: string): void {
+  assert.equal(result.isError, true);
+  assertEnvelope(result.body);
+  assert.equal(result.body.error?.code, code);
 }
 
 describe("tool surface", () => {
@@ -30,195 +35,204 @@ describe("tool surface", () => {
       "start_application",
     ]);
   });
+
+  it("rejects a forged UAE PASS session on every tool", async () => {
+    const forged = { uaepass_session: "uap_sim_forged" };
+    const calls: [string, Record<string, unknown>][] = [
+      ["search_services", { query: "visa", audience: "individual" }],
+      ["get_service_requirements", { service_id: "svc_residency_visa" }],
+      ["start_application", { service_id: "svc_emirates_id", applicant_ref: "hire_demo_001", documents: [], guard_session_id: GS }],
+      ["get_application_status", { application_id: "app_rv_0001" }],
+      ["check_trade_name", { name: "Northwind Analytics" }],
+      ["register_tenancy_tawtheeq", { lease_ref: "lease_reem_2207", applicant_ref: "hire_demo_001", guard_session_id: GS }],
+    ];
+    for (const [name, args] of calls) {
+      assertError(await h.call(name, { ...args, ...forged }), "unknown_session");
+    }
+    assert.equal(h.guard.requests.length, 0, "Guard is not consulted for unauthenticated calls");
+  });
 });
 
 describe("search_services", () => {
-  it("finds Tawtheeq for a tenancy query, only within the audience", async () => {
+  it("finds Tawtheeq for 'tenancy contract' with exactly the contract fields", async () => {
     const { body, isError } = await h.call("search_services", {
       query: "tenancy contract",
       audience: "individual",
       uaepass_session: h.login(),
-      guard_session_id: GS,
     });
     assert.equal(isError, false);
     assertEnvelope(body);
-    const results = body.results as { service_id: string; audience: string }[];
-    assert.equal(results[0]?.service_id, "svc_tawtheeq_registration");
+    const results = body.results as Record<string, unknown>[];
+    assert.deepEqual(results[0], {
+      service_id: "svc_tawtheeq_register",
+      name: "Register a tenancy contract (Tawtheeq)",
+      entity: "Abu Dhabi Municipality",
+      audience: "individual",
+      tags: ["housing"],
+    });
     assert.ok(results.every((result) => result.audience === "individual"));
   });
 
-  it("returns business services for a business query", async () => {
+  it("returns only business services for a business search", async () => {
     const { body } = await h.call("search_services", {
       query: "trade name",
       audience: "business",
-      uaepass_session: h.login("business"),
-      guard_session_id: GS,
+      uaepass_session: h.login("business", "company_demo_001"),
     });
-    assert.equal((body.results as { service_id: string }[])[0]?.service_id, "svc_trade_name_reservation");
-  });
-
-  it("rejects an unknown UAE PASS session", async () => {
-    const { body, isError } = await h.call("search_services", {
-      query: "visa",
-      audience: "individual",
-      uaepass_session: "uap_sim_forged",
-      guard_session_id: GS,
-    });
-    assert.equal(isError, true);
-    assert.deepEqual((body.error as { code: string }).code, "invalid_uaepass_session");
+    const results = body.results as { service_id: string; audience: string }[];
+    assert.equal(results[0]?.service_id, "svc_trade_name");
+    assert.ok(results.every((result) => result.audience === "business"));
   });
 });
 
 describe("get_service_requirements", () => {
-  it("returns requirements with every fee, time and requirement marked illustrative", async () => {
+  it("returns documents, dependencies and illustrative estimates", async () => {
     const { body, isError } = await h.call("get_service_requirements", {
-      service_id: "svc_residency_visa_employment",
+      service_id: "svc_tawtheeq_register",
       uaepass_session: h.login(),
-      guard_session_id: GS,
     });
     assert.equal(isError, false);
     assertEnvelope(body);
-    assert.equal((body.fee as { illustrative: boolean }).illustrative, true);
-    assert.equal((body.processing_time as { illustrative: boolean }).illustrative, true);
-    const requirements = body.requirements as { illustrative: boolean }[];
-    assert.ok(requirements.length > 0 && requirements.every((r) => r.illustrative));
+    assert.equal(body.service_id, "svc_tawtheeq_register");
+    assert.deepEqual(body.depends_on, ["svc_residency_visa"]);
+    assert.deepEqual(
+      (body.required_documents as { label: string }[]).map((doc) => doc.label),
+      ["passport", "emirates_id", "address"],
+    );
+    assert.equal((body.est_fee_aed as { illustrative: boolean }).illustrative, true);
+    assert.equal((body.est_duration_days as { illustrative: boolean }).illustrative, true);
   });
 
-  it("returns not_found for an unknown service", async () => {
-    const { body, isError } = await h.call("get_service_requirements", {
-      service_id: "svc_nope",
-      uaepass_session: h.login(),
-      guard_session_id: GS,
-    });
-    assert.equal(isError, true);
-    assert.equal((body.error as { code: string }).code, "not_found");
+  it("reports unknown_service", async () => {
+    assertError(
+      await h.call("get_service_requirements", { service_id: "svc_nope", uaepass_session: h.login() }),
+      "unknown_service",
+    );
   });
 });
 
 describe("start_application", () => {
-  it("submits and returns the Guard check id", async () => {
+  it("submits and returns the application id and status", async () => {
     const { body, isError } = await h.call("start_application", {
-      service_id: "svc_emirates_id_new",
+      service_id: "svc_tawtheeq_register",
+      applicant_ref: "hire_demo_001",
+      documents: [PASSPORT],
       uaepass_session: h.login(),
       guard_session_id: GS,
-      payload_refs: [PASSPORT],
     });
     assert.equal(isError, false);
-    assertEnvelope(body);
-    assert.match(body.application_id as string, /^app_\d{4}$/);
-    assert.equal(body.status, "submitted");
-    assert.equal(body.guard_check_id, "chk_test_allow");
+    assert.deepEqual(body, {
+      contract_version: CONTRACT_VERSION,
+      mock: true,
+      application_id: "app_tw_0001",
+      status: "submitted",
+    });
   });
 
-  it("refuses a business service from an individual session", async () => {
-    const { body, isError } = await h.call("start_application", {
-      service_id: "svc_economic_license_new",
-      uaepass_session: h.login("individual"),
-      guard_session_id: GS,
-      payload_refs: [],
-    });
-    assert.equal(isError, true);
-    assert.equal((body.error as { code: string }).code, "audience_mismatch");
+  it("reports unknown_service without calling Guard", async () => {
+    assertError(
+      await h.call("start_application", {
+        service_id: "svc_nope",
+        applicant_ref: "hire_demo_001",
+        documents: [PASSPORT],
+        uaepass_session: h.login(),
+        guard_session_id: GS,
+      }),
+      "unknown_service",
+    );
+    assert.equal(h.guard.requests.length, 0);
   });
 });
 
 describe("get_application_status", () => {
-  it("reports status and history for the owner only", async () => {
-    const owner = h.login("individual", "hire_demo_001");
+  it("reports status, history and needs_info", async () => {
+    const session = h.login();
     const started = await h.call("start_application", {
-      service_id: "svc_emirates_id_new",
-      uaepass_session: owner,
+      service_id: "svc_residency_visa",
+      applicant_ref: "hire_demo_001",
+      documents: [PASSPORT],
+      uaepass_session: session,
       guard_session_id: GS,
-      payload_refs: [PASSPORT],
     });
     const applicationId = started.body.application_id as string;
 
-    const { body, isError } = await h.call("get_application_status", {
-      application_id: applicationId,
-      uaepass_session: owner,
-      guard_session_id: GS,
+    const fresh = await h.call("get_application_status", { application_id: applicationId, uaepass_session: session });
+    assert.equal(fresh.isError, false);
+    assertEnvelope(fresh.body);
+    assert.equal(fresh.body.status, "submitted");
+    assert.equal(fresh.body.needs_info, null);
+
+    h.backend.advance(applicationId);
+    h.backend.advance(applicationId);
+    const { body } = await h.call("get_application_status", { application_id: applicationId, uaepass_session: session });
+    assert.equal(body.status, "needs_info");
+    assert.deepEqual(body.needs_info, {
+      message: "Please upload the signed employment contract.",
+      required_labels: ["employment"],
     });
-    assert.equal(isError, false);
-    assertEnvelope(body);
-    assert.equal(body.status, "under_review");
     assert.deepEqual(
       (body.history as { status: string }[]).map((event) => event.status),
-      ["submitted", "under_review"],
+      ["submitted", "under_review", "needs_info"],
     );
+  });
 
-    const stranger = await h.call("get_application_status", {
-      application_id: applicationId,
-      uaepass_session: h.login("individual", "someone_else"),
-      guard_session_id: GS,
-    });
-    assert.equal(stranger.isError, true);
-    assert.equal((stranger.body.error as { code: string }).code, "not_found");
+  it("reports unknown_application", async () => {
+    assertError(
+      await h.call("get_application_status", { application_id: "app_tw_9999", uaepass_session: h.login() }),
+      "unknown_application",
+    );
   });
 });
 
 describe("check_trade_name", () => {
-  it("reports an available name", async () => {
+  it("reports an available name with the contract fields", async () => {
     const { body, isError } = await h.call("check_trade_name", {
-      proposed_name: "Falcon Analytics",
-      uaepass_session: h.login("business"),
-      guard_session_id: GS,
+      name: "Northwind Analytics",
+      uaepass_session: h.login("business", "company_demo_001"),
     });
     assert.equal(isError, false);
-    assertEnvelope(body);
-    assert.equal(body.available, true);
-    assert.equal(body.illustrative, true);
+    assert.deepEqual(body, {
+      contract_version: CONTRACT_VERSION,
+      mock: true,
+      name: "Northwind Analytics",
+      available: true,
+      notes: "Name appears available. Final approval happens during licensing.",
+    });
   });
 
-  it("reports a taken name with available suggestions", async () => {
+  it("reports a taken name as unavailable with a reason", async () => {
     const { body } = await h.call("check_trade_name", {
-      proposed_name: "Falcon Trading",
-      licensing_authority: "ded",
-      uaepass_session: h.login("business"),
-      guard_session_id: GS,
+      name: "Falcon Trading",
+      uaepass_session: h.login("business", "company_demo_001"),
     });
     assert.equal(body.available, false);
-    assert.deepEqual((body.issues as { code: string }[]).map((issue) => issue.code), ["name_taken"]);
-    assert.ok((body.suggestions as string[]).length > 0);
+    assert.match(body.notes as string, /already registered/);
   });
 
-  it("needs a business session", async () => {
-    const { body, isError } = await h.call("check_trade_name", {
-      proposed_name: "Falcon Analytics",
-      uaepass_session: h.login("individual"),
-      guard_session_id: GS,
+  it("flags restricted terms", async () => {
+    const { body } = await h.call("check_trade_name", {
+      name: "Royal Falcon Analytics",
+      uaepass_session: h.login("business", "company_demo_001"),
     });
-    assert.equal(isError, true);
-    assert.equal((body.error as { code: string }).code, "audience_mismatch");
+    assert.equal(body.available, false);
+    assert.match(body.notes as string, /special approval/);
   });
 });
 
 describe("register_tenancy_tawtheeq", () => {
-  const tenancy = {
-    guard_session_id: GS,
-    property_ref: "unit_reem_1204",
-    landlord_name: "Example Properties LLC",
-    annual_rent_aed: 95000,
-    start_date: "2026-11-01",
-    end_date: "2027-10-31",
-    payload_refs: [PASSPORT, EMIRATES_ID],
-  };
-
-  it("registers the tenancy as a Tawtheeq application", async () => {
-    const { body, isError } = await h.call("register_tenancy_tawtheeq", { ...tenancy, uaepass_session: h.login() });
-    assert.equal(isError, false);
-    assertEnvelope(body);
-    assert.equal(body.service_id, "svc_tawtheeq_registration");
-    assert.equal(body.status, "submitted");
-  });
-
-  it("rejects an end date before the start date without calling Guard", async () => {
+  it("registers the lease as a Tawtheeq application", async () => {
     const { body, isError } = await h.call("register_tenancy_tawtheeq", {
-      ...tenancy,
-      end_date: "2026-10-01",
+      lease_ref: "lease_reem_2207",
+      applicant_ref: "hire_demo_001",
       uaepass_session: h.login(),
+      guard_session_id: GS,
     });
-    assert.equal(isError, true);
-    assert.equal((body.error as { code: string }).code, "invalid_request");
-    assert.equal(h.guard.requests.length, 0);
+    assert.equal(isError, false);
+    assert.deepEqual(body, {
+      contract_version: CONTRACT_VERSION,
+      mock: true,
+      application_id: "app_tw_0001",
+      status: "submitted",
+    });
   });
 });

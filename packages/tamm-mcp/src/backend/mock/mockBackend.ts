@@ -1,40 +1,43 @@
 /**
  * In-memory `TammBackend` over the mock catalogue. No real TAMM system is contacted.
+ * Also implements `DemoControls` for the demo-only dev endpoints.
  */
 import type { Audience } from "../../contract.js";
-import type {
-  Application,
-  ApplicationRequest,
-  LicensingAuthority,
-  ServiceRequirements,
-  ServiceSummary,
-  TammBackend,
-  TenancyDetails,
-  TradeNameCheck,
+import {
+  type Application,
+  type ApplicationRequest,
+  type ServiceRequirements,
+  type ServiceSummary,
+  TAWTHEEQ_SERVICE_ID,
+  type TammBackend,
+  type TenancyRequest,
+  type TradeNameCheck,
 } from "../types.js";
-import { TAWTHEEQ_SERVICE_ID } from "../types.js";
 import { type Catalogue, type CatalogueService, loadCatalogue } from "./catalogue.js";
-import { type Progression, type TrackedApplication, advance, submit } from "./stateMachine.js";
+import { type Progression, type TrackedApplication, advance, catchUp, submit } from "./stateMachine.js";
 import { checkTradeName } from "./tradeName.js";
 
+/** Dev-only controls behind `POST /dev/advance` and `POST /dev/reset` (demo mode). */
+export interface DemoControls {
+  /** Moves an application to its next scripted status; `undefined` if the id is unknown. */
+  advance(applicationId: string): Application | undefined;
+  /** Forgets every application. */
+  reset(): void;
+}
+
 export interface MockTammBackendOptions {
-  catalogue?: Catalogue;
   progression: Progression;
+  catalogue?: Catalogue;
   /** Milliseconds since epoch; injectable so tests control time. */
   now?: () => number;
 }
 
-interface OwnedApplication {
-  subjectRef: string;
-  tracked: TrackedApplication;
-}
-
-export class MockTammBackend implements TammBackend {
+export class MockTammBackend implements TammBackend, DemoControls {
   private readonly catalogue: Catalogue;
   private readonly progression: Progression;
   private readonly now: () => number;
-  private readonly applications = new Map<string, OwnedApplication>();
-  private nextApplicationNumber = 1;
+  private readonly applications = new Map<string, TrackedApplication>();
+  private sequence = 0;
 
   constructor(options: MockTammBackendOptions) {
     this.catalogue = options.catalogue ?? loadCatalogue();
@@ -61,10 +64,11 @@ export class MockTammBackend implements TammBackend {
     const service = this.find(serviceId);
     return (
       service && {
-        service: toSummary(service),
-        requirements: service.requirements,
-        fee: service.fee,
-        processing_time: service.processing_time,
+        service_id: service.service_id,
+        required_documents: structuredClone(service.required_documents),
+        depends_on: [...service.depends_on],
+        est_fee_aed: { ...service.est_fee_aed },
+        est_duration_days: { ...service.est_duration_days },
       }
     );
   }
@@ -74,31 +78,50 @@ export class MockTammBackend implements TammBackend {
     if (!service) {
       throw new Error(`unknown service ${request.service_id}`);
     }
-    const applicationId = `app_${String(this.nextApplicationNumber++).padStart(4, "0")}`;
-    const tracked = submit(applicationId, service.service_id, service.review_script, this.now());
-    this.applications.set(applicationId, { subjectRef: request.subject_ref, tracked });
+    this.sequence += 1;
+    const applicationId = `app_${service.application_prefix}_${String(this.sequence).padStart(4, "0")}`;
+    const tracked = submit(applicationId, service.service_id, service.review_script, this.progression, this.now());
+    this.applications.set(applicationId, tracked);
     return structuredClone(tracked.application);
   }
 
-  async getApplicationStatus(applicationId: string, subjectRef: string): Promise<Application | undefined> {
-    const owned = this.applications.get(applicationId);
-    if (!owned || owned.subjectRef !== subjectRef) {
+  async getApplication(applicationId: string): Promise<Application | undefined> {
+    const tracked = this.applications.get(applicationId);
+    if (!tracked) {
       return undefined;
     }
-    advance(owned.tracked, this.progression, this.now());
-    return structuredClone(owned.tracked.application);
+    catchUp(tracked, this.progression, this.now());
+    return structuredClone(tracked.application);
   }
 
-  async checkTradeName(proposedName: string, _authority: LicensingAuthority): Promise<TradeNameCheck> {
-    return checkTradeName(proposedName, {
+  async checkTradeName(name: string): Promise<TradeNameCheck> {
+    return checkTradeName(name, {
       takenNames: this.catalogue.taken_trade_names,
       restrictedTerms: this.catalogue.restricted_trade_name_terms,
     });
   }
 
-  /** The mock records the registration as an application; it does not persist the tenancy details. */
-  async registerTenancy(request: ApplicationRequest, _details: TenancyDetails): Promise<Application> {
-    return this.startApplication({ ...request, service_id: TAWTHEEQ_SERVICE_ID });
+  /** The mock records the registration as a Tawtheeq application; the lease itself is not stored. */
+  async registerTenancy(request: TenancyRequest): Promise<Application> {
+    return this.startApplication({
+      service_id: TAWTHEEQ_SERVICE_ID,
+      applicant_ref: request.applicant_ref,
+      documents: request.documents,
+    });
+  }
+
+  advance(applicationId: string): Application | undefined {
+    const tracked = this.applications.get(applicationId);
+    if (!tracked) {
+      return undefined;
+    }
+    advance(tracked, this.now());
+    return structuredClone(tracked.application);
+  }
+
+  reset(): void {
+    this.applications.clear();
+    this.sequence = 0;
   }
 
   private find(serviceId: string): CatalogueService | undefined {
@@ -107,18 +130,18 @@ export class MockTammBackend implements TammBackend {
 }
 
 function toSummary(service: CatalogueService): ServiceSummary {
-  const { service_id, name, entity, audience, tags, summary, channel } = service;
-  return { service_id, name, entity, audience, tags, summary, channel };
+  const { service_id, name, entity, audience, tags } = service;
+  return { service_id, name, entity, audience, tags: [...tags] };
 }
 
-/** Crude relevance: keyword and tag hits weigh more than name or summary hits. */
+/** Crude relevance: keyword and tag hits weigh more than name hits. */
 function relevance(service: CatalogueService, terms: readonly string[]): number {
   const keywords = service.keywords.join(" ").toLowerCase();
   const tags = service.tags.join(" ").toLowerCase();
-  const text = `${service.name} ${service.summary}`.toLowerCase();
+  const name = service.name.toLowerCase();
   return terms.reduce(
     (score, term) =>
-      score + (keywords.includes(term) ? 3 : 0) + (tags.includes(term) ? 2 : 0) + (text.includes(term) ? 1 : 0),
+      score + (keywords.includes(term) ? 3 : 0) + (tags.includes(term) ? 2 : 0) + (name.includes(term) ? 1 : 0),
     0,
   );
 }

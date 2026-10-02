@@ -1,16 +1,28 @@
 /**
- * HTTP surface: the Streamable HTTP MCP endpoint plus dev-only helpers
- * (`GET /health`, `POST /dev/uaepass/login`, simulated UAE PASS).
+ * HTTP surface: the Streamable HTTP MCP endpoint plus dev helpers (INTEGRATION.md 4.2, 4.5):
+ * `GET /health`, `POST /dev/uaepass/login` (simulated UAE PASS), and the demo-mode-only
+ * `POST /dev/advance` and `POST /dev/reset`.
  */
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import type { Express, Response } from "express";
 import { z } from "zod";
+import type { DemoControls } from "./backend/mock/mockBackend.js";
 import { CONTRACT_VERSION, type ErrorBody, type ErrorCode, audienceSchema } from "./contract.js";
 import { createTammServer } from "./server.js";
 import type { ToolContext } from "./tools/pipeline.js";
 
 const loginSchema = z.object({ subject_ref: z.string().min(1), audience: audienceSchema });
+const advanceSchema = z.object({ application_id: z.string().min(1) });
+
+export interface HttpAppOptions {
+  host: string;
+  mcpPath: string;
+  /** Present only in demo mode; without it the `/dev/advance` and `/dev/reset` routes answer 404. */
+  demo?: DemoControls;
+  /** Clears simulated UAE PASS sessions on `/dev/reset`. */
+  resetSessions?: () => void;
+}
 
 function sendError(res: Response, status: number, code: ErrorCode, message: string): void {
   const body: ErrorBody = { contract_version: CONTRACT_VERSION, error: { code, message } };
@@ -21,8 +33,9 @@ function sendError(res: Response, status: number, code: ErrorCode, message: stri
  * Creates the Express app. MCP runs stateless: each POST gets a fresh server and transport
  * over the shared `ctx`, so application and UAE PASS state live in `ctx`, not in MCP sessions.
  */
-export function createHttpApp(ctx: ToolContext, options: { host: string; mcpPath: string }): Express {
+export function createHttpApp(ctx: ToolContext, options: HttpAppOptions): Express {
   const app = createMcpExpressApp({ host: options.host });
+  const { demo } = options;
 
   app.get("/health", (_req, res) => {
     res.json({ contract_version: CONTRACT_VERSION, status: "ok", mock: true });
@@ -36,6 +49,35 @@ export function createHttpApp(ctx: ToolContext, options: { host: string; mcpPath
     }
     const session = ctx.uaepass.login(parsed.data.subject_ref, parsed.data.audience);
     res.json({ contract_version: CONTRACT_VERSION, uaepass_session: session.uaepass_session, simulated: true });
+  });
+
+  app.post("/dev/advance", (req, res) => {
+    if (!demo) {
+      sendError(res, 404, "demo_mode_only", "Set RASIKH_DEMO_MODE=1 to use /dev/advance.");
+      return;
+    }
+    const parsed = advanceSchema.safeParse(req.body);
+    if (!parsed.success) {
+      sendError(res, 400, "invalid_request", "Send application_id.");
+      return;
+    }
+    const application = demo.advance(parsed.data.application_id);
+    if (!application) {
+      sendError(res, 404, "unknown_application", `No application with id ${parsed.data.application_id}.`);
+      return;
+    }
+    const { application_id, status, history, needs_info } = application;
+    res.json({ contract_version: CONTRACT_VERSION, mock: true, application_id, status, history, needs_info });
+  });
+
+  app.post("/dev/reset", (_req, res) => {
+    if (!demo) {
+      sendError(res, 404, "demo_mode_only", "Set RASIKH_DEMO_MODE=1 to use /dev/reset.");
+      return;
+    }
+    demo.reset();
+    options.resetSessions?.();
+    res.json({ contract_version: CONTRACT_VERSION, reset: true });
   });
 
   app.post(options.mcpPath, async (req, res) => {
@@ -60,7 +102,7 @@ export function createHttpApp(ctx: ToolContext, options: { host: string; mcpPath
     sendError(res, 405, "invalid_request", "This MCP endpoint is stateless: use POST.");
   });
 
-  app.use((_req, res) => sendError(res, 404, "not_found", "No such route."));
+  app.use((_req, res) => sendError(res, 404, "invalid_request", "No such route."));
 
   return app;
 }

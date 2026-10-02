@@ -1,14 +1,12 @@
 /**
- * The one path every tool call takes:
- *   1. authenticate the simulated UAE PASS session,
- *   2. resolve the target service (if any) so Guard sees its tags,
- *   3. ask Rasikh Guard about sending this call's data to TAMM,
- *   4. execute only on `allow`.
- * A tool can never skip the Guard step.
+ * The two paths a tool call can take (INTEGRATION.md 4.2, 4.3):
+ * - `withSession`: authenticate the simulated UAE PASS session, then execute.
+ * - `withGuard` (data-sending tools): authenticate, resolve the target service, ask Rasikh
+ *   Guard about sending the documents to TAMM, and execute only on `allow`.
  */
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import type { Audience, DataLabel, PayloadRef } from "../contract.js";
-import type { ServiceSummary, TammBackend } from "../backend/types.js";
+import type { DataLabel, PayloadRef } from "../contract.js";
+import type { TammBackend } from "../backend/types.js";
 import type { GuardClient } from "../guard/client.js";
 import type { SimulatedUaePass, UaePassSession } from "../uaepass.js";
 import { denied, failure } from "./results.js";
@@ -19,60 +17,56 @@ export interface ToolContext {
   uaepass: SimulatedUaePass;
 }
 
-export interface ToolCall {
-  tool: string;
-  uaepassSession: string;
-  guardSessionId: string;
-  /** Session audience the tool requires: a fixed audience, the target service's audience, or any if unset. */
-  requiredAudience?: Audience | "service";
-  /** Service the call targets; must exist. Its tags are passed to Guard. */
-  serviceId?: string;
-  payloadRefs?: PayloadRef[];
-}
-
-export interface Authorised {
-  session: UaePassSession;
-  guardCheckId: string;
-  service: ServiceSummary | undefined;
-}
-
 /** Every label carried by the given refs, deduplicated, in first-seen order. */
 export function labelsOf(refs: readonly PayloadRef[]): DataLabel[] {
   return [...new Set(refs.flatMap((ref) => ref.labels))];
 }
 
-/**
- * Runs `execute` only if the UAE PASS session is valid, the service exists, and Guard
- * answers `allow`. Otherwise returns an error result or a structured Guard denial.
- */
-export async function runGuarded(
+/** Runs `execute` only if `uaepassSession` is a live simulated UAE PASS session. */
+export async function withSession(
   ctx: ToolContext,
-  call: ToolCall,
-  execute: (authorised: Authorised) => Promise<CallToolResult>,
+  uaepassSession: string,
+  execute: (session: UaePassSession) => Promise<CallToolResult>,
 ): Promise<CallToolResult> {
-  const session = ctx.uaepass.resolve(call.uaepassSession);
-  if (!session) {
-    return failure("invalid_uaepass_session", "Sign in with UAE PASS (simulated) to continue.");
-  }
-  const service = call.serviceId === undefined ? undefined : await ctx.backend.getService(call.serviceId);
-  if (call.serviceId !== undefined && !service) {
-    return failure("not_found", `No service with id ${call.serviceId}.`);
-  }
-  const requiredAudience = call.requiredAudience === "service" ? service?.audience : call.requiredAudience;
-  if (requiredAudience && session.audience !== requiredAudience) {
-    return failure("audience_mismatch", `This service needs a ${requiredAudience} UAE PASS session.`);
-  }
-  const payloadRefs = call.payloadRefs ?? [];
-  const verdict = await ctx.guard.check({
-    session_id: call.guardSessionId,
-    tool: call.tool,
-    destination: "tamm",
-    data_labels: labelsOf(payloadRefs),
-    payload_refs: payloadRefs,
-    ...(service ? { service_tags: service.tags } : {}),
+  const session = ctx.uaepass.resolve(uaepassSession);
+  return session ? execute(session) : failure("unknown_session", "Sign in with UAE PASS (simulated) to continue.");
+}
+
+export interface GuardedCall {
+  tool: string;
+  uaepassSession: string;
+  guardSessionId: string;
+  serviceId: string;
+  documents: PayloadRef[];
+}
+
+/**
+ * Runs `execute` only if the session is valid, the service exists, and Guard answers
+ * `allow` for sending `documents` to TAMM. Otherwise returns an error or a Guard denial,
+ * and the backend is never asked to act.
+ */
+export async function withGuard(
+  ctx: ToolContext,
+  call: GuardedCall,
+  execute: () => Promise<CallToolResult>,
+): Promise<CallToolResult> {
+  return withSession(ctx, call.uaepassSession, async () => {
+    const service = await ctx.backend.getService(call.serviceId);
+    if (!service) {
+      return failure("unknown_service", `No service with id ${call.serviceId}.`);
+    }
+    const outcome = await ctx.guard.check({
+      session_id: call.guardSessionId,
+      tool: call.tool,
+      destination: "tamm",
+      data_labels: labelsOf(call.documents),
+      payload_refs: call.documents,
+      service_tags: service.tags,
+    });
+    if (outcome.kind === "unavailable") {
+      console.error(`[tamm-mcp] ${call.tool} stopped, failing closed: ${outcome.detail}`);
+      return failure("guard_unavailable", "The privacy check could not be completed, so nothing was sent.");
+    }
+    return outcome.verdict.decision === "allow" ? execute() : denied(outcome.verdict);
   });
-  if (verdict.decision !== "allow" || verdict.check_id === null) {
-    return denied(verdict);
-  }
-  return execute({ session, guardCheckId: verdict.check_id, service });
 }
