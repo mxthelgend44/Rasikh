@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-10-02, end of Session 2.
+Last updated: 2026-10-02, Session 3 partly done (usage limit reached).
 
 ## Where things stand
 
@@ -9,25 +9,35 @@ Sessions 1 and 2 are done.
 - **Session 1.** The base shell matches the OpenAI Platform references within 1 to 2 px on every edge, in light and dark, and passes an axe-core WCAG 2.1 AA audit. The scope update (Abu Dhabi positioning, company expansion, TAMM MCP and Rasikh Guard integrations) is applied to the plan, the repo structure and the contract.
 - **Session 2.** One domain model with an Abu Dhabi seed, pure reducers, and live sync over Server-Sent Events. A change made in one browser tab appears in another within about 15 to 40 ms (verified in two real browser tabs), and 55 tests pass.
 
-Session 3 (newcomer app) is next.
+Session 3 (newcomer app) is in progress: shell, roadmap and Arabic RTL foundation are built; documents, agent feed and trust passport views are next.
 
 ## Session plan
 
-| #   | Session                                                                               | Status  |
-| --- | ------------------------------------------------------------------------------------- | ------- |
-| 1   | Recon and design system, scaffold, base shell                                         | Done    |
-| 2   | Data model and live sync (Abu Dhabi seed data, Expansion and Guard entities included) | Done    |
-| 3   | Newcomer app                                                                          | Next    |
-| 4   | Employer dashboard                                                                    | Planned |
-| 5   | Landlord and bank dashboards                                                          | Planned |
-| 6   | AI agent (extraction, roadmap, loop with tools, risk summaries, demo mode)            | Planned |
-| 7   | Demo polish, both paths scripted, reset button, QA                                    | Planned |
-| 8   | Abu Dhabi context pass across all existing screens and data                           | Planned |
-| 9   | Company expansion module                                                              | Planned |
-| 10  | Integration clients, stubs, Guard log, blocked-action demo moment                     | Planned |
-| 11  | Swap stubs for the real packages once they land, end-to-end test of both demo paths   | Planned |
+| #   | Session                                                                               | Status      |
+| --- | ------------------------------------------------------------------------------------- | ----------- |
+| 1   | Recon and design system, scaffold, base shell                                         | Done        |
+| 2   | Data model and live sync (Abu Dhabi seed data, Expansion and Guard entities included) | Done        |
+| 3   | Newcomer app                                                                          | In progress |
+| 4   | Employer dashboard                                                                    | Planned     |
+| 5   | Landlord and bank dashboards                                                          | Planned     |
+| 6   | AI agent (extraction, roadmap, loop with tools, risk summaries, demo mode)            | Planned     |
+| 7   | Demo polish, both paths scripted, reset button, QA                                    | Planned     |
+| 8   | Abu Dhabi context pass across all existing screens and data                           | Planned     |
+| 9   | Company expansion module                                                              | Planned     |
+| 10  | Integration clients, stubs, Guard log, blocked-action demo moment                     | Planned     |
+| 11  | Swap stubs for the real packages once they land, end-to-end test of both demo paths   | Planned     |
 
 Note on Session 8: Abu Dhabi context is applied from the Session 2 seed onward, so Session 8 is an audit of names, areas, copy, currency and date formats, not a retrofit.
+
+## Session 3 so far
+
+Built and committed: mobile-first shell (bottom tabs on phones, top tabs on desktop), roadmap with a dependency rail and why-this-step disclosure, type-checked English and Arabic catalogs, cookie-scoped locale (lang and dir correct on first paint), Noto Sans Arabic, Intl formatters in Abu Dhabi time, the policy matrix mirroring INTEGRATION.md 3.4, demo-mode document extraction, and the reducer rule that completes the documents step once passport, offer letter and degree are verified. 88 tests pass.
+
+Still to build for Session 3: documents view (upload with extraction and confidence), agent feed with approval cards, trust passport (switches over grants), then a phone-width and Arabic quality-gate pass with captures. The i18n keys for those views already exist. Known gaps: agent-written feed text and blocked reasons are English only; extracted values such as salary text are English.
+
+## Reference recon workflow
+
+The recon workflow was stopped at the usage limit. Reports written: dark colour, page layout, tables and feedback, icons and brand, chat and agent, controls, plus the dark-colour verification. Not written: typography, light colour, shell, and the other verifiers. The built shell already matches the references within 1 to 2 px, and the font and light tokens were measured directly, so DESIGN.md stands. Re-run only typography and light-colour measurement if exact values are wanted.
 
 ## Done in Session 2
 
