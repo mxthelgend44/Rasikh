@@ -10,6 +10,7 @@
 | Main at first checkpoint | `63b5b8247b011578fa999d2700f938215780877f` | Clean root build/typecheck; data tests; actual repaired Guard, contract 1.2.0 |
 | Main after PR [#29](https://github.com/mxthelgend44/Rasikh/pull/29) | `966a01d6d1c035c281f6276c502de13256638632` | Root build/typecheck/lint PASS; only tsconfig changed from the preceding checkpoint |
 | Landing proposal, PR [#30](https://github.com/mxthelgend44/Rasikh/pull/30) | `29bb6b1479a7eeee881c9342c559d97088c53c4a` | Source inspection only; unmerged marketing page, not an integrated app |
+| Guard/TAMM hardening proposal, PR [#33](https://github.com/mxthelgend44/Rasikh/pull/33) | `9c514483df9e7b7292ee9274f61bd65ee51fa2d9` | Independent affected-package tests, actual Guard HTTP checks, TAMM concurrency and HTTP reset probes; unmerged |
 
 Checked on 2 October 2026, approximately 12:24–12:48 **Asia/Dubai**. GitHub was repeatedly refreshed; main advanced during QA, and earlier failures remain attributed to their original commits. Main uses a root `src/app` scaffold; the functional API stack uses `apps/web`. Testing the app with a newer independently built Guard is an explicitly **mixed-source** compatibility check, not proof of one integrated release SHA.
 
@@ -41,6 +42,8 @@ Actual **5/5 API trials** and **5/5 instrumented runtime trials** executed twice
 Executable repro: `node docs/qa/repro/concurrent-approval.mjs http://127.0.0.1:3107 5`. Exit **1** intentionally means duplicate execution was detected. [Script](repro/concurrent-approval.mjs); [sanitized observed evidence](evidence/consent-guard-summary.json).
 
 Proposed owner fix: atomically claim the proposal before awaiting Guard, reject simultaneous duplicates, restore retryability after a denied/unavailable check, and pass the proposal id as downstream idempotency key. Add a meaningful concurrent regression test. No runtime patch is included in this QA PR.
+
+**14:40 Dubai recheck:** PR #33 adds single flight to TAMM submission endpoints, but does not change this app runtime. The tested app calls `InMemoryEmployerRequests` directly and has no TAMM client. TAMM concurrency now passes its independent checks; B2 remains open for the actual app approval flow. This is a source-scope conclusion, not a repeated app execution test.
 
 ### B3 — P1: distinct roles are shells, not working experiences
 
@@ -85,6 +88,32 @@ Coordinator request: supply the exact release SHA, final URL and intended mode (
 - At 320 px, document scroll widths are 344 px Employer/Bank and 337 px Landlord. Bank avatar extends to x=344. At 375 and 390 px the checked shells fit the viewport; populated workflow layouts remain untested. [320 px overflow](screenshots/candidate-bank-320-overflow.jpg), [375 px dark shell](screenshots/candidate-employer-phone-dark.jpg).
 - At 375 px, opening navigation leaves focus on the trigger; pressing Tab moves to the background Rasikh link. No drawer focus transfer/trap. Escape does close it. Stakeholder view links disappear below 768 px without a mobile replacement.
 - Organization menu ArrowDown/Enter works, and both light/dark theme controls work. Those small successes do not establish whole-product accessibility.
+
+### B8 — P1 verification gate: added labels inherit a ref's derived status
+
+Verified on both current main `966a01d6d1c035c281f6276c502de13256638632` and hardening PR #33 `9c514483df9e7b7292ee9274f61bd65ee51fa2d9`. This predates PR #33. The existing 25 forbidden fixtures still all deny; the following additional metadata probes expose a separate assurance gap.
+
+1. Create an owned synthetic Guard session (`case_type: hire`).
+2. Observe `{ref: "synthetic_derived_salary", labels: ["salary"], derived: true}`.
+3. Check `send_message` to `landlord`, declaring `data_labels: ["salary", "bank_statement"]` and `{ref: "synthetic_derived_salary", labels: ["salary", "bank_statement"], derived: false}` as the payload ref.
+4. Actual HTTP 200: `allow`, `blocked_labels: []`, `policy_rule: salary.landlord.derived_only`. The outgoing `derived: true` variant also allows.
+
+The newly declared bank-statement label was never observed as derived. `flowing_labels` unions declared/observed labels and applies the known ref's derived flag to all of them. This is consistent with its documented implementation, but leaves the caller responsible for keeping a stable ref bound to immutable canonical data. The sidecar has no content binding or rejection of expanded metadata. Measured scope: actual sidecar metadata authorization; no document was forwarded, and a full-app exploit was not demonstrated. Release verification needs proof that integrated callers enforce that invariant, or a small Guard change treating added labels as raw/rejecting expansion. Preserve a regression for unchanged derived salary remaining allowed.
+
+Evidence: [exact candidate and valid main HTTP exchanges](evidence/guard-hardening-provenance.json). Reported to the owner in [PR #33](https://github.com/mxthelgend44/Rasikh/pull/33#issuecomment-5950545540).
+
+### B9 — P1: TAMM reset leaves a cached successful application
+
+New regression verified on PR #33 `9c514483df9e7b7292ee9274f61bd65ee51fa2d9` with the mock TAMM backend, recording fake Guard and actual local Streamable HTTP MCP/reset routes:
+
+1. Log in with simulated UAE PASS and call `start_application` for synthetic `hire_demo_001`, `svc_emirates_id` and a synthetic passport ref. Capture successful `app_eid_0001/submitted`.
+2. `POST /dev/reset` in demo mode: HTTP 200. The backend application is deleted and the token invalidated.
+3. Within five seconds, repeat the identical `start_application` using that old token.
+4. Actual: cached successful `app_eid_0001/submitted`. `get_application_status` with the same token correctly returns `unknown_session`; the backend application no longer exists. Expected: the replay also rejects the invalidated session.
+
+Single flight wraps authentication/Guard checks, and reset does not clear its five-second success cache. Total recorded Guard calls remains one; the replay performs **no new backend write**. This is incoherent demo state and a stale authorization response. Clear cached/in-flight results as part of authorized reset, or scope them to a reset generation; verify old tokens fail and a fresh seeded journey works. No TAMM patch is included in QA.
+
+Evidence: [sanitized HTTP/MCP requests, responses, timing and counters](evidence/tamm-reset-regression.json). A fresh login correctly sees `unknown_application` for the deleted id, then can create/read a new submitted application.
 
 ## Actual test results
 
@@ -135,11 +164,30 @@ Acceptance timing for that future recheck (not a claimed rehearsal): 0:00–0:30
 
 Current local cleanup: restart only the owned app to clear its in-memory journey/mock requests; recreate only owned Guard sessions. This is an environment cleanup, not a coherent product “Reset demo” pass. Final reset must restore seeded app data, clear owned TAMM applications, then clear owned Guard sessions/consents/logs in the contract order, and update the other tab.
 
+## Affected hardening recheck, 14:29–14:43 Asia/Dubai
+
+PR #33 was extracted into owned temporary directories without switching either checkout. Main remains `966a01d`; the tested app remains `cd0470f`. No integrated release SHA, final URL or access-mode reply has arrived in PR #31/#27. PR #30 advanced to `03dbf2cc88db6bae0bdbd4e7894cbf18d81fc330`; its source inspection still shows a marketing/pitch surface. New PR #32 `dd56d99d3ca261e5d3137b1832c2c7ccbf7301c7` contains synthetic Maya demo documents, not operational app changes. Neither clears the journey/access gates.
+
+| Exact affected check on `9c514483df9e7b7292ee9274f61bd65ee51fa2d9` | Actual result |
+| --- | --- |
+| Guard `cargo test --locked --manifest-path <owned-archive>/packages/rasikh-guard/Cargo.toml -p rasikh-guard` | **123 pass**, including 10 property laws configured for 2,000 cases each; no independent claim for the owner's separate 50,000-case run |
+| Actual owned Guard HTTP standard consent/error checks and existing forbidden fixtures | **11/11 pass; 25/25 explicit denies** |
+| Additional actual Guard HTTP provenance checks | **6/8 pass, 2 metadata-expansion gaps**; unchanged verified derived signal still allows |
+| Same additional checks on exact main, rebuilt in a unique Cargo target | **4/8 pass**; PR #33 fixes two raw-salary cases; B8 predates the PR |
+| TAMM `npm ci --workspaces=false --cache /private/tmp/rasikh-release-qa-npm-cache`; `npm test`; `npm run typecheck`; `npm run build` | Locked install PASS; **70/70 tests pass**; typecheck/build PASS |
+| TAMM independent `node --import tsx --test --test-reporter=spec qa-release-probes.test.ts` | Exit **1**, **14/15 pass**; B9 reset test FAIL |
+| `RASIKH_DEMO_MODE=1 node --import tsx qa-reset-evidence.ts` | Exit **1**; independently captures B9 as `passed: false` |
+
+TAMM probes use a mock backend and recording fake Guard. Twenty simultaneous identical calls produce one application per sending tool; six batches (two tools × deny/needs-consent/unavailable) produce zero downstream writes. Different case, simulated persona, business subject, documents and Guard-session arguments receive separate results; a denied Guard session cannot reuse another session's success. These are API-context checks, not proof of working visible selectors. Single flight is in-memory, per process and tool/argument key, with five-second success replay.
+
+The actual Guard probes use contract 1.2.0 on owned ports 18889/18890. No AI provider or real TAMM call occurred. Both sidecars and the probe HTTP servers were cleaned up. One preliminary main comparison reused a newer binary from a shared Cargo target; its artifact is explicitly **INVALID** and excluded from these results. The valid baseline was rebuilt in a unique target and visibly compiled the exact archived main source. Raw commands/logs remain in `artifacts/security-qa-hardening` and `artifacts/build-qa-hardening`; committed evidence preserves the measured failures and their scope.
+
 ## Proposed fixes and next release check
 
 1. Runtime owner fixes the concurrent approval race with an atomic claim/idempotency check.
 2. Coordinator assembles one app entry point and the repaired Guard/TAMM/data versions, then supplies one release SHA. Main root build fix passed independent verification; the marketing landing animation must not be treated as live Guard evidence.
 3. Screen/state owners complete the missing journey, role actions, consent UI, sync/reset and requested language mode. Small shell fixes can shrink the organization control at 320 px and add mobile drawer focus management/view switching after journey blockers.
 4. Coordinator supplies judge URL and access mode. QA rechecks affected flows and records the exact timed three-minute script before 15:30 target submission. At 15:45 Dubai, hard code freeze applies; after final submission, do not alter judged code.
+5. Guard/caller owner resolves B8's ref immutability/added-label validation gate; TAMM owner invalidates single-flight state on reset for B9. Recheck only their affected flows on the final integrated candidate.
 
 This PR changes QA documentation, synthetic evidence and a standalone reproducer only. It does not deploy, rewrite shared history or overwrite an engineer’s screens. Release remains unverified until the integration/access gates above are met.
