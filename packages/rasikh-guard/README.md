@@ -60,8 +60,10 @@ A refused `/check` is not a dead end. Every non-allow response carries:
 - **`remedy`**: the smallest set of steps that would make this call allowed (`sidecar/src/remedy.rs`). Each blocked
   label gets the cheapest step its cell admits, from cheapest to most expensive: `use_tool` (send via
   `extract_document`), `send_derived_signal`, `redact`, `grant_consent`, `remove_label`. Guard then re-decides a copy
-  of the call with every step applied, and downgrades any step that does not hold to `remove_label` until the call is
-  allowed, so every plan is `verified: true`. Tests follow the remedy for all 37 refused cells through the real store
+  of the call with every step applied. If steps interact (under a custom policy a `use_tool` step can change how
+  another label is judged), an exact search tries every combination of no step, cheapest step or `remove_label` per
+  label in ascending total cost, so the first plan that verifies is a minimum-cost plan. Every plan is
+  `verified: true`. Tests follow the remedy for all 37 refused cells through the real store
   (grant the consent, observe the derived or redacted ref, switch the tool) and get `allow` each time.
 - **`allowed_destinations`**: where the same payload may go as it stands. This is the OpenAPPA fold's audience,
   so the agent can pick another route.
@@ -76,22 +78,37 @@ refuses unknown keys, labels, destinations or effects, and any missing cell, so 
 ## Test
 
 ```sh
-cargo test --workspace          # vendored upstream suites (571) + Rasikh Guard (110)
+cargo test --workspace          # vendored upstream suites (571) + Rasikh Guard (123)
+PROPTEST_CASES=50000 cargo test -p rasikh-guard --test laws   # deeper property search
 cargo test -p rasikh-guard      # Rasikh Guard only
 ```
 
 | Suite                        | Tests | What it proves                                                                       |
 | ---------------------------- | ----: | ------------------------------------------------------------------------------------ |
 | `tests/policy_rules.rs`      |    64 | One test per matrix cell (63), each on both sides of its condition, plus a coverage check |
-| `tests/adversarial.rs`       |    25 | Indirect leaks are denied (table below), including the 12 fresh-ref attacks from `packages/rasikh-evals` |
+| `tests/adversarial.rs`       |    27 | Indirect leaks are denied (table below), including the 12 fresh-ref attacks from `packages/rasikh-evals` |
+| `tests/laws.rs`              |    10 | Security laws over random requests, observations and consents (2,000 cases each by default) |
 | `tests/policy_file.rs`       |     6 | Loader refusals, the legal disclaimer, plain-language reasons, rule ids              |
-| `tests/remedies.rs`          |     6 | Every refused cell's remedy works when followed; cheapest step per effect; mixed plans; routing |
+| `tests/remedies.rs`          |     7 | Every refused cell's remedy works when followed; cheapest step per effect; mixed plans; routing; minimum-cost search under a custom policy |
 | `tests/http.rs`              |     6 | Every endpoint, the contract example flow, error codes, demo-only reset, versioned 405 |
 | upstream (`vendor/`)         |   571 | OpenAPPA engine unchanged at the pinned commit                                       |
 
 The expected matrix in `policy_rules.rs` is transcribed from INTEGRATION.md separately from the TOML. Mutation check:
 flipping `passport -> school` to `allow` in the TOML fails 4 adversarial tests, plus `passport_school` in
 `policy_rules.rs`.
+
+### Laws (property-based, `tests/laws.rs`)
+
+Each holds for every generated input: decisions are deterministic; sending more data, declaring more labels or (for
+agent-written content) reading more never turns a refusal into an allow; a fresh unlabelled ref never launders what was
+read; a consent only affects its own label and destination, and never unlocks a `deny` cell; every refusal carries a
+verified remedy; the OpenAPPA fold agrees with the per-label analysis; verdict fields are consistent.
+
+The laws found two real flaws that hand-written tests missed, both now fixed and pinned as adversarial tests: a
+declared raw `salary` was treated as covered by a derived salary signal the session had observed, either on its own or
+next to agent-written content. A declared label now counts as raw unless an observed ref carries it and the call has no
+agent-written content. Mutation check: making unobserved refs stop inheriting the session fails the laundering law and
+2 adversarial tests.
 
 ### Adversarial flows (all non-allow)
 
@@ -105,6 +122,8 @@ flipping `passport -> school` to `allow` in the TOML fails 4 adversarial tests, 
 | Re-label an observed raw salary slip as `derived: true` for a landlord | deny `salary.landlord.derived_only`      |
 | Derived affordability signal plus the raw slip in the same call        | deny                                     |
 | Declare `salary` with no ref behind it                                 | deny (counts as raw)                     |
+| Declare `salary` after observing only a derived salary signal          | deny (found by the laws)                 |
+| Declare `salary` with the signal ref beside an agent-written draft     | deny (found by the laws)                 |
 | Re-send an observed salary slip as "redacted" (`labels: []`) to the LLM | deny `salary.llm_provider.redacted_only` |
 | Reasoning call with no refs after reading a passport                   | deny `passport.llm_provider.extraction_only` |
 | Use the `extract_document` tool name to reach a school                 | deny                                     |

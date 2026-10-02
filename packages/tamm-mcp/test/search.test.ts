@@ -45,6 +45,16 @@ describe("BM25 service search", () => {
     assert.equal(await top("insurence"), "svc_health_insurance");
   });
 
+  it("matches half-typed words by prefix", async () => {
+    assert.equal(await top("tawth"), "svc_tawtheeq_register");
+    assert.equal(await top("emira"), "svc_emirates_id");
+    assert.equal(await top("establ", "business"), "svc_establishment_card");
+  });
+
+  it("does not let a two-letter fragment match everything", async () => {
+    assert.deepEqual(await backend.searchServices("zq", "individual"), []);
+  });
+
   it("scores in descending order, never mixes audiences, and drops non-matches", async () => {
     const results = await backend.searchServices("free zone licence", "business");
     assert.ok(results.length >= 4);

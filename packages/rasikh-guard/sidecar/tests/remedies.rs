@@ -185,3 +185,29 @@ fn allowed_calls_report_every_reachable_destination_and_no_remedy() {
         vec![Tamm, Employer, Landlord, Bank, Newcomer]
     );
 }
+
+#[test]
+fn interacting_steps_get_the_minimum_cost_plan_under_a_custom_policy() {
+    use rasikh_guard::policy::{DEFAULT_POLICY_TOML, Policy};
+    // Passport to TAMM made extraction-only. Health to TAMM stays insurance-only, which needs
+    // the start_application tool, so switching the tool for the passport would block health.
+    let custom = DEFAULT_POLICY_TOML.replacen(
+        "[matrix.passport]
+tamm = \"allow\"",
+        "[matrix.passport]
+tamm = \"extraction_only\"",
+        1,
+    );
+    let store = Store::new(Policy::from_toml_str(&custom).expect("custom policy loads"));
+    let sid = session(&store);
+    let verdict = check(&store, &sid, Tamm)
+        .tool("start_application")
+        .tags(&["insurance"])
+        .refs(&[raw("doc_passport", &[Passport]), raw("doc_medical", &[Health])])
+        .run();
+    assert_eq!(verdict.decision, rasikh_guard::contract::GuardDecision::Deny);
+    let remedy = verdict.remedy.expect("remedy");
+    assert!(remedy.verified);
+    // Greedy would be use_tool (passport) + remove (health), cost 6. Removing the passport costs 5.
+    assert_eq!(remedy.steps, vec![RemedyStep::RemoveLabel { label: Passport }]);
+}

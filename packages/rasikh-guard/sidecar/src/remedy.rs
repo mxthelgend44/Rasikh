@@ -12,10 +12,10 @@
 //! |    5 | `remove_label`        | anything else          | none of this label             |
 //!
 //! Steps are then applied together to a copy of the call and the call is decided again
-//! ([`decide::decide_flows`]). Any label still blocked (for example because a `use_tool` step
-//! changed the tool for another label) is downgraded to `remove_label` and the plan is
-//! re-verified. Removing every remaining label always yields `allow`, so the loop ends after at
-//! most one pass per label and every returned plan is `verified`.
+//! ([`decide::decide_flows`]). If steps interact (under a custom policy a `use_tool` step can
+//! change how another label is judged), an exact search finds the minimum-cost plan that
+//! verifies; see [`plan`]. Removing every label always yields `allow`, so every returned plan
+//! is `verified`.
 
 use std::collections::BTreeMap;
 
@@ -34,18 +34,6 @@ pub enum RemedyStep {
     Redact { label: DataLabel },
     GrantConsent { label: DataLabel, destination: Destination },
     RemoveLabel { label: DataLabel },
-}
-
-impl RemedyStep {
-    fn label(&self) -> DataLabel {
-        match self {
-            RemedyStep::UseTool { label, .. }
-            | RemedyStep::SendDerivedSignal { label }
-            | RemedyStep::Redact { label }
-            | RemedyStep::GrantConsent { label, .. }
-            | RemedyStep::RemoveLabel { label } => *label,
-        }
-    }
 }
 
 /// A plan of steps and whether re-deciding the call with all of them applied gave `allow`.
@@ -107,7 +95,31 @@ fn still_blocked(
     }
 }
 
-/// Plans the smallest verified remedy for a call whose `blocked` labels stopped it.
+/// Cost of a step, from the table in the module docs. `None` (leave the label alone) is free.
+fn cost(step: Option<&RemedyStep>) -> u32 {
+    match step {
+        None => 0,
+        Some(RemedyStep::UseTool { .. }) => 1,
+        Some(RemedyStep::SendDerivedSignal { .. }) => 2,
+        Some(RemedyStep::Redact { .. }) => 3,
+        Some(RemedyStep::GrantConsent { .. }) => 4,
+        Some(RemedyStep::RemoveLabel { .. }) => 5,
+    }
+}
+
+/// Upper bound on plans the exact search may verify before falling back.
+const SEARCH_LIMIT: usize = 4096;
+
+/// Plans the minimum-cost verified remedy for a call whose `blocked` labels stopped it.
+///
+/// 1. Fast path: the cheapest step for every blocked label. It verifies for the shipped
+///    policy, so a normal refusal costs one re-decision.
+/// 2. Exact search, when steps interact (a `use_tool` step can change how another label is
+///    judged under a custom policy): every flowing label may take no step, its cheapest
+///    admissible step, or `remove_label`. Plans are tried in ascending total cost, so the
+///    first plan that verifies is a minimum-cost plan. Exact while the plan space fits within
+///    `SEARCH_LIMIT` (3 options per label, so up to 7 flowing labels).
+/// 3. Fallback: remove every flowing label, which always verifies.
 pub fn plan(
     policy: &Policy,
     request: &CheckRequest,
@@ -115,22 +127,71 @@ pub fn plan(
     consented: &dyn Fn(DataLabel, Destination) -> bool,
     blocked: &[DataLabel],
 ) -> Remedy {
-    let mut steps: Vec<RemedyStep> = blocked
+    let greedy: Vec<RemedyStep> = blocked
         .iter()
         .map(|label| cheapest_step(policy, request, *label))
         .collect();
-    for _ in 0..=flows.len() {
-        let remaining = still_blocked(policy, request, flows, consented, &steps);
-        if remaining.is_empty() {
-            return Remedy { steps, verified: true };
-        }
-        for label in remaining {
-            match steps.iter_mut().find(|step| step.label() == label) {
-                Some(step) => *step = RemedyStep::RemoveLabel { label },
-                None => steps.push(RemedyStep::RemoveLabel { label }),
+    if still_blocked(policy, request, flows, consented, &greedy).is_empty() {
+        return Remedy {
+            steps: greedy,
+            verified: true,
+        };
+    }
+
+    let options: Vec<Vec<Option<RemedyStep>>> = flows
+        .keys()
+        .map(|label| {
+            let mut choices = vec![None];
+            let cheapest = cheapest_step(policy, request, *label);
+            if !matches!(cheapest, RemedyStep::RemoveLabel { .. }) {
+                choices.push(Some(cheapest));
             }
+            choices.push(Some(RemedyStep::RemoveLabel { label: *label }));
+            choices
+        })
+        .collect();
+
+    let mut plans: Vec<(u32, usize, Vec<RemedyStep>)> = Vec::new();
+    let mut indexes = vec![0usize; options.len()];
+    loop {
+        let steps: Vec<RemedyStep> = indexes
+            .iter()
+            .zip(&options)
+            .filter_map(|(index, choices)| choices[*index].clone())
+            .collect();
+        let total = steps.iter().map(|step| cost(Some(step))).sum();
+        plans.push((total, steps.len(), steps));
+        if plans.len() > SEARCH_LIMIT {
+            break;
+        }
+        // Odometer increment over the option lists.
+        let mut position = 0;
+        while position < indexes.len() {
+            indexes[position] += 1;
+            if indexes[position] < options[position].len() {
+                break;
+            }
+            indexes[position] = 0;
+            position += 1;
+        }
+        if position == indexes.len() {
+            break;
         }
     }
-    let verified = still_blocked(policy, request, flows, consented, &steps).is_empty();
-    Remedy { steps, verified }
+    plans.sort_by_key(|(total, count, _)| (*total, *count));
+    for (_, _, steps) in plans.into_iter().take(SEARCH_LIMIT) {
+        if still_blocked(policy, request, flows, consented, &steps).is_empty() {
+            return Remedy { steps, verified: true };
+        }
+    }
+
+    let remove_all: Vec<RemedyStep> = flows
+        .keys()
+        .map(|label| RemedyStep::RemoveLabel { label: *label })
+        .collect();
+    let verified = still_blocked(policy, request, flows, consented, &remove_all).is_empty();
+    Remedy {
+        steps: remove_all,
+        verified,
+    }
 }

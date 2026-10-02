@@ -17,6 +17,8 @@ Owner: Devin. Scope: `packages/rasikh-guard`, `packages/tamm-mcp`, `packages/ras
 | Guard 7: remedies (1.2.0) | done | verified minimal fix per refusal + `allowed_destinations`; following the remedy reaches allow for all 37 refused cells (110 tests) |
 | TAMM 8: search and planning (1.2.0) | done | BM25 with synonyms, Arabic normalisation, one-edit typo tolerance; topological prerequisite order and readiness gap (60 tests) |
 | Data: `packages/rasikh-data` | done | Firestore schema, validating converters, typed refs and queries, rules, indexes, trust passport sync; 9 unit + 11 emulator rules tests |
+| Guard 8: laws and exact remedy search | done | 10 property-based security laws (2,000 cases each in CI, 50,000 checked locally); they found and pinned two declared-label flaws; minimum-cost remedy search when steps interact (123 tests) |
+| TAMM 9: single flight and prefix search | done | identical racing data-sending calls run once (release QA B2 pattern), prefix matching for half-typed words (70 tests) |
 | CI | done | `integrations.yml` on every change; `publish-integrations.yml` pushes `ghcr.io/mxthelgend44/rasikh-guard` and `rasikh-tamm-mcp` after CI passes on main |
 
 End-to-end check (real binaries): a TAMM `start_application` carrying health was allowed for `svc_health_insurance`, and

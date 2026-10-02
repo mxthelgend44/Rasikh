@@ -10,13 +10,14 @@ import { HttpGuardClient } from "./guard/client.js";
 import { createHttpApp } from "./http.js";
 import { createTammServer } from "./server.js";
 import type { ToolContext } from "./tools/pipeline.js";
+import { SingleFlight } from "./tools/singleFlight.js";
 import { SimulatedUaePass } from "./uaepass.js";
 
 async function main(): Promise<void> {
   const config = loadConfig();
   const backend = new MockTammBackend({ progression: config.progression });
   const uaepass = new SimulatedUaePass();
-  const ctx: ToolContext = { backend, guard: new HttpGuardClient(config.guardUrl), uaepass };
+  const ctx: ToolContext = { backend, guard: new HttpGuardClient(config.guardUrl), uaepass, flights: new SingleFlight() };
 
   const app = createHttpApp(ctx, {
     host: config.host,

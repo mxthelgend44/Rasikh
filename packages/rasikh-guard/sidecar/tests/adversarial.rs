@@ -353,3 +353,34 @@ fn observed_derived_signal_passes_after_reading_the_raw_slip() {
         .run();
     assert_eq!(verdict.decision, GuardDecision::Allow, "{verdict:?}");
 }
+
+/// Found by the `observing_more_never_unlocks_agent_content` law: after observing a derived
+/// salary signal, a free-form message declaring raw salary to a landlord was treated as if it
+/// carried only the signal. A declared label without a ref is raw.
+#[test]
+fn a_derived_signal_in_the_session_does_not_cover_declared_raw_salary() {
+    let store = store();
+    let sid = session(&store);
+    observe(&store, &sid, &[derived("affordability_signal", &[Salary])]);
+    let verdict = check(&store, &sid, Landlord)
+        .tool("send_message")
+        .labels(&[Salary])
+        .run();
+    assert_ne!(verdict.decision, GuardDecision::Allow);
+    assert_eq!(verdict.policy_rule, "salary.landlord.derived_only");
+}
+
+/// Found by the `adding_data_never_unlocks` law: attaching an observed derived signal next to
+/// agent-written content must not make a declared raw label look covered.
+#[test]
+fn a_signal_ref_beside_agent_content_does_not_cover_declared_salary() {
+    let store = store();
+    let sid = session(&store);
+    observe(&store, &sid, &[derived("affordability_signal", &[Salary])]);
+    let verdict = check(&store, &sid, Landlord)
+        .tool("send_message")
+        .labels(&[Salary])
+        .refs(&[raw("agent_draft", &[]), derived("affordability_signal", &[])])
+        .run();
+    assert_ne!(verdict.decision, GuardDecision::Allow);
+}
