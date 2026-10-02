@@ -5,7 +5,7 @@ in the style of TAMM. **There is no public TAMM API in use: everything is served
 tool response carries `"mock": true`, and every fee, duration and document carries `"illustrative": true`. None of it is
 an official statement of fees, durations or legal requirements.
 
-The contract is in the repo-root [`INTEGRATION.md`](../../INTEGRATION.md), section 4. This package implements v1.1.0.
+The contract is in the repo-root [`INTEGRATION.md`](../../INTEGRATION.md), section 4. This package implements v1.1.1.
 
 ## Tools
 

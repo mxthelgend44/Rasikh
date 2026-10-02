@@ -94,6 +94,13 @@ pub fn router(app: Arc<App>) -> Router {
         .route("/log", get(log))
         .route("/dev/reset", post(dev_reset))
         .fallback(|| async { ApiError::new(StatusCode::NOT_FOUND, "invalid_request", "No such route.") })
+        .method_not_allowed_fallback(|| async {
+            ApiError::new(
+                StatusCode::METHOD_NOT_ALLOWED,
+                "invalid_request",
+                "Method not allowed on this route.",
+            )
+        })
         .with_state(app)
 }
 

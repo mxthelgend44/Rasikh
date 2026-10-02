@@ -10,12 +10,13 @@
 //!
 //! 1. A payload ref that was observed carries the union of its declared and observed labels,
 //!    and its observed `derived` flag. Re-declaring a raw document as `derived` or with fewer
-//!    labels changes nothing.
-//! 2. A payload ref that was never observed carries what it declares. This is how the app's
-//!    redaction step (a new ref with the label removed) and derived signals reach Guard.
-//! 3. A declared label that no payload ref carries counts as raw data.
-//! 4. A call with no payload refs is free-form content (for example a "summary" the agent
-//!    wrote). Anything the agent has read may be in it, so every observed ref flows into it.
+//!    labels changes nothing. This is the only way a redacted ref (the app's redaction step
+//!    reports the new ref with the label removed) or a derived signal is trusted.
+//! 2. A payload ref that was never observed is content the agent produced, for example a
+//!    "summary". Anything the agent has read may be in it, so every observed ref flows into the
+//!    call, and its declared labels count as raw (an unobserved `derived` claim is ignored).
+//! 3. A call with no payload refs is free-form content and is treated the same way.
+//! 4. A declared label that no payload ref carries counts as raw data.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
@@ -52,6 +53,7 @@ pub const NO_DATA_RULE: &str = "no_labelled_data.allowed";
 /// Every label that can flow into `request`, given what the session has observed.
 pub fn flowing_labels(request: &CheckRequest, observed: &HashMap<String, ObservedRef>) -> BTreeMap<DataLabel, Flow> {
     let mut flows: BTreeMap<DataLabel, Flow> = BTreeMap::new();
+    let mut carries_agent_content = request.payload_refs.is_empty();
     for payload in &request.payload_refs {
         match observed.get(&payload.r#ref) {
             Some(known) => {
@@ -59,13 +61,16 @@ pub fn flowing_labels(request: &CheckRequest, observed: &HashMap<String, Observe
                     add_flow(&mut flows, *label, !known.derived);
                 }
             }
-            None => payload
-                .labels
-                .iter()
-                .for_each(|label| add_flow(&mut flows, *label, !payload.derived)),
+            None => {
+                carries_agent_content = true;
+                payload
+                    .labels
+                    .iter()
+                    .for_each(|label| add_flow(&mut flows, *label, true));
+            }
         }
     }
-    if request.payload_refs.is_empty() {
+    if carries_agent_content {
         for known in observed.values() {
             known
                 .labels

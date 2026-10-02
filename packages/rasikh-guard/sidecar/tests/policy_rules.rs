@@ -4,7 +4,7 @@
 
 mod common;
 
-use common::{assert_decision, check, derived, grant, raw, session, store};
+use common::{assert_decision, check, derived, grant, observe, raw, session, store};
 use rasikh_guard::contract::{DataLabel, Destination, GuardDecision};
 
 #[derive(Clone, Copy)]
@@ -90,6 +90,7 @@ fn assert_rule(label: DataLabel, destination: Destination, expect: Expect) {
                 &id,
             );
             let signal = derived("affordability_signal", &[label]);
+            observe(&store, &sid, std::slice::from_ref(&signal));
             assert_decision(
                 &check(&store, &sid, destination).refs(&[signal]).run(),
                 GuardDecision::Allow,
@@ -123,6 +124,7 @@ fn assert_rule(label: DataLabel, destination: Destination, expect: Expect) {
                 &id,
             );
             let redacted = raw("doc_under_test_redacted", &[]);
+            observe(&store, &sid, std::slice::from_ref(&redacted));
             let verdict = check(&store, &sid, destination).refs(&[redacted]).run();
             assert_eq!(
                 verdict.decision,

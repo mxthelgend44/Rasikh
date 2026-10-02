@@ -229,3 +229,11 @@ async fn tamm_service_tags_unlock_health_for_insurance() {
         "Health details can only be shared for insurance services."
     );
 }
+
+#[tokio::test]
+async fn wrong_method_gets_a_versioned_json_error() {
+    let (status, body) = call(&app(false), Method::GET, "/check", None).await;
+    assert_eq!(status, StatusCode::METHOD_NOT_ALLOWED);
+    assert_eq!(body["contract_version"], CONTRACT_VERSION);
+    assert_eq!(body["error"]["code"], "invalid_request");
+}

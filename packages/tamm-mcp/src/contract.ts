@@ -8,7 +8,7 @@
 import { z } from "zod";
 
 /** Contract version this server implements (INTEGRATION.md header). */
-export const CONTRACT_VERSION = "1.1.0";
+export const CONTRACT_VERSION = "1.1.1";
 
 export const DATA_LABELS = [
   "passport",
