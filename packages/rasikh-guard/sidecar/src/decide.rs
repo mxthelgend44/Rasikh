@@ -23,6 +23,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use crate::appa;
 use crate::contract::{CheckRequest, ConsentRequestInfo, DataLabel, Destination, GuardDecision};
 use crate::policy::{Effect, Policy, ReasonKind};
+use crate::remedy::{self, Remedy};
 
 /// What the session knows about one observed data item.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -46,6 +47,10 @@ pub struct Verdict {
     pub policy_rule: String,
     pub blocked_labels: Vec<DataLabel>,
     pub consent_request: Option<ConsentRequestInfo>,
+    /// Every destination the same payload could reach as it stands (contract 1.2.0).
+    pub allowed_destinations: Vec<Destination>,
+    /// The smallest verified fix, present only when `decision` is not `allow` (contract 1.2.0).
+    pub remedy: Option<Remedy>,
 }
 
 /// Stable rule id when a call carries no labelled data.
@@ -138,13 +143,8 @@ fn severity(decision: GuardDecision) -> u8 {
 /// the policy is expected to take.
 pub const ENGINE_REFUSED_RULE: &str = "appa.audience.refused";
 
-/// Evaluates a `/check` request.
-///
-/// The gate is the OpenAPPA label fold ([`crate::appa`]): every flowing label contributes the
-/// destinations it may reach in this context, the engine's meet intersects them, and only a
-/// folded audience that admits `request.destination` yields `allow`. When it does not, the
-/// most severe label outcome (deny over needs_consent) and the first label in contract order
-/// with that outcome supply the decision, reason and rule.
+/// Evaluates a `/check` request: decides the call ([`decide_flows`]) and, when it is not
+/// allowed, attaches the smallest verified remedy ([`crate::remedy::plan`]).
 pub fn evaluate(
     policy: &Policy,
     request: &CheckRequest,
@@ -152,18 +152,46 @@ pub fn evaluate(
     consented: &dyn Fn(DataLabel, Destination) -> bool,
 ) -> Verdict {
     let flows = flowing_labels(request, observed);
+    let mut verdict = decide_flows(policy, request, &flows, consented);
+    if verdict.decision != GuardDecision::Allow {
+        verdict.remedy = Some(remedy::plan(
+            policy,
+            request,
+            &flows,
+            consented,
+            &verdict.blocked_labels,
+        ));
+    }
+    verdict
+}
+
+/// Decides a call from the labels flowing into it.
+///
+/// The gate is the OpenAPPA label fold ([`crate::appa`]): every flowing label contributes the
+/// destinations it may reach in this context, the engine's meet intersects them, and only a
+/// folded audience that admits `request.destination` yields `allow`. When it does not, the
+/// most severe label outcome (deny over needs_consent) and the first label in contract order
+/// with that outcome supply the decision, reason and rule. The folded audience is also
+/// reported as `allowed_destinations`.
+pub(crate) fn decide_flows(
+    policy: &Policy,
+    request: &CheckRequest,
+    flows: &BTreeMap<DataLabel, Flow>,
+    consented: &dyn Fn(DataLabel, Destination) -> bool,
+) -> Verdict {
     let call_label = appa::fold(flows.iter().map(|(label, flow)| {
         appa::label_for(Destination::ALL.into_iter().filter(|destination| {
             decide_label(policy, request, *destination, *label, *flow, consented).0 == GuardDecision::Allow
         }))
     }));
     let engine_allows = appa::admits(&call_label, request.destination);
+    let allowed_destinations = appa::admitted(&call_label);
 
     let outcomes: Vec<(DataLabel, GuardDecision, ReasonKind)> = flows
-        .into_iter()
+        .iter()
         .map(|(label, flow)| {
-            let (decision, kind) = decide_label(policy, request, request.destination, label, flow, consented);
-            (label, decision, kind)
+            let (decision, kind) = decide_label(policy, request, request.destination, *label, *flow, consented);
+            (*label, decision, kind)
         })
         .collect();
 
@@ -179,6 +207,8 @@ pub fn evaluate(
                 policy_rule: NO_DATA_RULE.to_string(),
                 blocked_labels: Vec::new(),
                 consent_request: None,
+                allowed_destinations,
+                remedy: None,
             };
         }
         (true, Some(GuardDecision::Allow)) => GuardDecision::Allow,
@@ -190,6 +220,8 @@ pub fn evaluate(
                 policy_rule: ENGINE_REFUSED_RULE.to_string(),
                 blocked_labels: outcomes.iter().map(|(label, _, _)| *label).collect(),
                 consent_request: None,
+                allowed_destinations,
+                remedy: None,
             };
         }
     };
@@ -208,5 +240,7 @@ pub fn evaluate(
             .map(|(label, _, _)| *label)
             .collect(),
         consent_request: (decision == GuardDecision::NeedsConsent).then_some(ConsentRequestInfo { label, destination }),
+        allowed_destinations,
+        remedy: None,
     }
 }

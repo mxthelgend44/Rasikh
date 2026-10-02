@@ -97,6 +97,11 @@ async fn contract_example_flow_check_consent_revoke_log() {
     assert_eq!(first["policy_rule"], "passport.landlord.requires_consent");
     assert_eq!(first["blocked_labels"], json!(["passport"]));
     assert_eq!(
+        first["remedy"],
+        json!({ "steps": [{ "action": "grant_consent", "label": "passport", "destination": "landlord" }], "verified": true })
+    );
+    assert_eq!(first["allowed_destinations"], json!(["tamm", "employer", "newcomer"]));
+    assert_eq!(
         first["consent_request"],
         json!({ "label": "passport", "destination": "landlord" })
     );
@@ -117,6 +122,7 @@ async fn contract_example_flow_check_consent_revoke_log() {
     let (_, allowed) = call(&app, Method::POST, "/check", Some(rental_check(&sid))).await;
     assert_eq!(allowed["decision"], "allow");
     assert_eq!(allowed["blocked_labels"], json!([]));
+    assert!(allowed.get("remedy").is_none(), "remedy only on refusals");
     assert!(
         allowed.get("consent_request").is_none(),
         "consent_request only on needs_consent"

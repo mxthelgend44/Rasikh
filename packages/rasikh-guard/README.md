@@ -53,6 +53,19 @@ RASIKH_DEMO_MODE=1 cargo run --release -p rasikh-guard
    The first such label in contract order supplies `reason` (plain language) and `policy_rule`
    (`<label>.<destination>.<effect>`, e.g. `passport.landlord.requires_consent`).
 
+## Remedies and routing (contract 1.2.0)
+
+A refused `/check` is not a dead end. Every non-allow response carries:
+
+- **`remedy`**: the smallest set of steps that would make this call allowed (`sidecar/src/remedy.rs`). Each blocked
+  label gets the cheapest step its cell admits, from cheapest to most expensive: `use_tool` (send via
+  `extract_document`), `send_derived_signal`, `redact`, `grant_consent`, `remove_label`. Guard then re-decides a copy
+  of the call with every step applied, and downgrades any step that does not hold to `remove_label` until the call is
+  allowed, so every plan is `verified: true`. Tests follow the remedy for all 37 refused cells through the real store
+  (grant the consent, observe the derived or redacted ref, switch the tool) and get `allow` each time.
+- **`allowed_destinations`**: where the same payload may go as it stands. This is the OpenAPPA fold's audience,
+  so the agent can pick another route.
+
 **Consent** comes from the newcomer's trust passport and acts as a per-session override. It covers exactly one label
 and one destination, only for cells whose effect is `consent`; a `deny` cell cannot be unlocked. It can be revoked with
 `DELETE /consent/{id}` and can carry an `expires_at`. Only `granted_by: "newcomer"` is accepted.
@@ -63,7 +76,7 @@ refuses unknown keys, labels, destinations or effects, and any missing cell, so 
 ## Test
 
 ```sh
-cargo test --workspace          # vendored upstream suites (571) + Rasikh Guard (104)
+cargo test --workspace          # vendored upstream suites (571) + Rasikh Guard (110)
 cargo test -p rasikh-guard      # Rasikh Guard only
 ```
 
@@ -72,6 +85,7 @@ cargo test -p rasikh-guard      # Rasikh Guard only
 | `tests/policy_rules.rs`      |    64 | One test per matrix cell (63), each on both sides of its condition, plus a coverage check |
 | `tests/adversarial.rs`       |    25 | Indirect leaks are denied (table below), including the 12 fresh-ref attacks from `packages/rasikh-evals` |
 | `tests/policy_file.rs`       |     6 | Loader refusals, the legal disclaimer, plain-language reasons, rule ids              |
+| `tests/remedies.rs`          |     6 | Every refused cell's remedy works when followed; cheapest step per effect; mixed plans; routing |
 | `tests/http.rs`              |     6 | Every endpoint, the contract example flow, error codes, demo-only reset, versioned 405 |
 | upstream (`vendor/`)         |   571 | OpenAPPA engine unchanged at the pinned commit                                       |
 

@@ -4,6 +4,7 @@
 //! - [`policy`]: the label x destination matrix, loaded from `policies/rasikh.toml`.
 //! - [`decide`]: pure decision core, including what observed data can flow into a call.
 //! - [`store`]: sessions, observations, consents and the decision log.
+//! - [`remedy`]: the smallest verified fix for a refused call (contract 1.2.0).
 //! - [`http`]: the sidecar endpoints.
 //!
 //! - [`appa`]: the gate. Every allow is decided by the vendored OpenAPPA engine's label algebra
@@ -16,6 +17,7 @@ pub mod contract;
 pub mod decide;
 pub mod http;
 pub mod policy;
+pub mod remedy;
 pub mod store;
 
 /// The OpenAPPA commit vendored under `vendor/`, reported by `GET /health`.
