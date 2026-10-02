@@ -1,0 +1,27 @@
+{
+  "illustrative": true,
+  "stuck_window_multiplier": 2,
+  "minimum_window_days": { "value": 1, "illustrative": true },
+  "rules": [
+    {
+      "id": "risk.document_missing",
+      "level": "at_risk",
+      "trigger": "ready_step_missing_original_document"
+    },
+    {
+      "id": "risk.dependency_document_missing",
+      "level": "at_risk",
+      "trigger": "unfinished_dependency_chain_contains_ready_document_blocker"
+    },
+    {
+      "id": "risk.step_overdue",
+      "level": "at_risk",
+      "trigger": "active_elapsed_days_strictly_exceeds_illustrative_window"
+    },
+    {
+      "id": "risk.step_stuck",
+      "level": "stuck",
+      "trigger": "active_elapsed_days_strictly_exceeds_illustrative_window_times_multiplier"
+    }
+  ]
+}

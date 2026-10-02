@@ -28,3 +28,24 @@ entry, preventing global or inherited documents satisfying another employee's re
 Validation: 43 roadmap/recommendation tests pass, including 100 seeded ranking/rounding
 scenarios, sensitivity to meaningful inputs, weight rescaling, malformed inputs, immutable
 outputs, prototype-safe document lookup and sparse-input regressions. TypeScript passes.
+
+## 3. Explicit blocker risks and next actions
+
+Suggested PR title: `Add deterministic blocker risk rules and validated case histories`
+
+Return on-track, at-risk or stuck findings from actionable missing documents and
+illustrative waiting windows, with structured reasons and exact next actions. Use
+caller-supplied timestamps and validate chronological histories so wait timers cannot
+be silently refreshed. Completed work and ordinary queues do not trigger risk alone.
+
+Validation: 26 risk tests; all 69 engine tests and strict TypeScript pass. Covers exact
+threshold boundaries, dependency cause propagation/deduplication, calendar/timezone
+errors, conflicting/reopened history, sparse inputs and employee document isolation.
+
+## Contract-only proposal
+
+Branch: `gpt/engine-contract`. Suggested PR title: `Document Rasikh Engine API in contract 1.1.0`.
+The commit changes only INTEGRATION.md. Adds function/type signatures, structured reason
+schema, scoring/risk semantics and eval handoff. Existing closed enums remain unchanged.
+The web/shared owners adopt the additive contract after merge. Runtime output continues
+using the current shared version until that change is merged.

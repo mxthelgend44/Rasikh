@@ -1,6 +1,6 @@
 # Rasikh Engine
 
-Deterministic TypeScript planning and recommendations. Algorithms return decisions and structured reasons;
+Deterministic TypeScript planning, recommendations and risk detection. Algorithms return decisions and structured reasons;
 the app can render or explain them. There are no LLM calls, network calls, file reads,
 clock reads, or other IO in exported engine functions.
 
@@ -100,3 +100,25 @@ duplicates/aliases count once. Team bands (micro <=5, small <=20, growing >20) a
 illustrative. `data/setup-options.json` and `data/areas.json` mark data and checklists
 illustrative. Entity/area source links do not validate scoring or legal requirements.
 
+## Blocker risk rules
+
+`detectRisks(CaseState | readonly CaseState[], Partial<RiskConfig>?): RiskResult`
+returns `on_track`, `at_risk` or `stuck`, exact reasons, and structured next actions.
+The caller must supply `as_of` and timezone-bearing `step_states.since` timestamps.
+The engine never reads the current clock. A latest snapshot determines the result;
+history validates case identity, chronological snapshots and status continuity.
+
+`config/risk-rules.json` defines illustrative windows and explicit rule metadata:
+
+- A ready step missing an original document is at risk; its exact document cause
+  propagates through dependent steps. The action targets the root missing document.
+- An in-progress/waiting step strictly beyond its illustrative window is at risk.
+  Strictly beyond twice that window it is stuck. The multiplier can be overridden
+  with a finite value greater than one; zero-day milestones use a one-day floor.
+- An ordinary dependency queue and downstream documents that are not yet produced
+  are not alone a risk. Completed steps do not produce findings.
+
+Invalid calendar dates, missing timezones, future start times and backwards history
+are rejected. Histories cannot reopen completed steps, remove unfinished statuses,
+refresh an unchanged wait timer or report transitions predating the preceding snapshot.
+This is deterministic rule detection, not prediction or an agency processing guarantee.
