@@ -8,7 +8,6 @@ export default function TeamMovePage() {
   return (
     <EmptyPage
       title="Team move"
-      description="People moving with the entity, from visa quota to settled."
       icon={Route}
       emptyTitle="Nobody is moving yet"
       emptyDescription="Once the entity can sponsor visas, the team you plan to transfer starts relocating here."

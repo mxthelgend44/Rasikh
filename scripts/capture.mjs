@@ -4,10 +4,10 @@
  * Used for design comparison and QA passes. Needs Node 22 (global WebSocket).
  *
  *   node scripts/capture.mjs --path employer/hires --out shot.png
- *        [--theme light|dark] [--dir ltr|rtl] [--width 1536] [--height 964] [--dpr 1.25]
+ *        [--theme light|dark] [--dir ltr|rtl] [--width 1512] [--height 949] [--dpr 1.27]
  *        [--base http://localhost:3000] [--wait 800]
  *
- * Defaults reproduce the reference captures: a 1536x964 viewport at 1.25x is 1920x1205 px.
+ * Defaults reproduce the reference captures: a 1512x949 viewport at 1.27x is 1920x1205 px.
  * Set BROWSER_PATH to override browser detection. Pass --path without a leading slash in Git Bash,
  * which rewrites arguments that start with one.
  */
@@ -29,9 +29,9 @@ const options = {
   out: args.out ?? 'capture.png',
   theme: args.theme ?? 'light',
   dir: args.dir ?? 'ltr',
-  width: Number(args.width ?? 1536),
-  height: Number(args.height ?? 964),
-  dpr: Number(args.dpr ?? 1.25),
+  width: Number(args.width ?? 1512),
+  height: Number(args.height ?? 949),
+  dpr: Number(args.dpr ?? 1.27),
   wait: Number(args.wait ?? 800),
 };
 

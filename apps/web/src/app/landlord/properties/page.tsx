@@ -8,7 +8,6 @@ export default function PropertiesPage() {
   return (
     <EmptyPage
       title="Properties"
-      description="Units you let, with the terms you accept."
       icon={Building2}
       emptyTitle="No properties listed"
       emptyDescription="Units and the cheque schedules you accept appear here."

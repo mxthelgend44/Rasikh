@@ -8,7 +8,6 @@ export default function PartnersPage() {
   return (
     <EmptyPage
       title="Employer partners"
-      description="Companies whose hires you onboard."
       icon={Handshake}
       emptyTitle="No employer partners"
       emptyDescription="Employers that back their hires through Rasikh are listed here."

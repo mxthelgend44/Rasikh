@@ -8,7 +8,6 @@ export default function BankApplicationsPage() {
   return (
     <EmptyPage
       title="Applications"
-      description="Account applications from newcomers, with employer backing and document status."
       icon={Landmark}
       emptyTitle="No pending applications"
       emptyDescription="New account applications arrive here with a plain-language risk summary."

@@ -8,7 +8,6 @@ export default function ExpansionPage() {
   return (
     <EmptyPage
       title="Setup roadmap"
-      description="Steps to open your Abu Dhabi entity, in the order they unlock."
       icon={Building2}
       emptyTitle="No expansion started"
       emptyDescription="Describe your company to get a recommended setup path and an ordered roadmap."

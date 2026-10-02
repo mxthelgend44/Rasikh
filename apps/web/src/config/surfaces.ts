@@ -2,6 +2,8 @@ import {
   Building2,
   FileCheck,
   Gauge,
+  LayoutGrid,
+  Palette,
   Handshake,
   Landmark,
   Route,
@@ -10,7 +12,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-export type SurfaceId = 'employer' | 'landlord' | 'bank';
+export type SurfaceId = 'employer' | 'landlord' | 'bank' | 'design';
 
 export interface NavItem {
   label: string;
@@ -92,6 +94,25 @@ export const SURFACES: Record<SurfaceId, Surface> = {
         items: [
           { label: 'Applications', href: '/bank', icon: Landmark, match: 'prefix' },
           { label: 'Employer partners', href: '/bank/partners', icon: Handshake, match: 'prefix' },
+        ],
+      },
+    ],
+  },
+  design: {
+    id: 'design',
+    label: 'Design system',
+    href: '/design-system',
+    orgs: ['Rasikh design system'],
+    user: 'Design',
+    nav: [
+      {
+        label: 'Foundations',
+        items: [{ label: 'Tokens', href: '/design-system', icon: Palette, match: 'exact' }],
+      },
+      {
+        label: 'Library',
+        items: [
+          { label: 'Components', href: '/design-system/components', icon: LayoutGrid, match: 'prefix' },
         ],
       },
     ],

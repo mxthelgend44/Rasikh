@@ -8,7 +8,6 @@ export default function EmployerOverviewPage() {
   return (
     <EmptyPage
       title="Overview"
-      description="Relocation progress across your international hires."
       icon={Gauge}
       emptyTitle="No relocations in progress"
       emptyDescription="Average days to settled, blocked hires and hires on track appear here once you add a hire."

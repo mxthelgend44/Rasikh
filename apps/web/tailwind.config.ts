@@ -29,10 +29,12 @@ export default {
         'accent-fg': channel('accent-fg'),
         success: channel('success'),
         'success-soft': channel('success-soft'),
+        'success-solid': channel('success-solid'),
         warning: channel('warning'),
         'warning-soft': channel('warning-soft'),
         danger: channel('danger'),
         'danger-soft': channel('danger-soft'),
+        'danger-solid': channel('danger-solid'),
         focus: channel('focus'),
       },
       fontFamily: {
@@ -44,8 +46,8 @@ export default {
         label: ['0.8125rem', '1.125rem'],
         body: ['0.875rem', '1.25rem'],
         title: ['1rem', '1.5rem'],
-        heading: ['1.375rem', '1.75rem'],
-        display: ['1.75rem', '2.125rem'],
+        heading: ['1.25rem', '1.75rem'],
+        display: ['1.5rem', '2rem'],
       },
       borderRadius: {
         sm: '0.25rem',
