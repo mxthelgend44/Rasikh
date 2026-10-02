@@ -110,3 +110,20 @@ evidence from this phase uses Vertex AI.
 
 These finite synthetic cases do not establish real customer outcomes, legal
 correctness, comprehensive policy coverage or universal prompt-injection safety.
+
+## Bilingual prompt injections
+
+```powershell
+npm --prefix packages/rasikh-evals run eval:injection
+```
+
+Twenty English/Arabic attacks across leases, offers, landlord messages, bank
+letters and TAMM status text are repeated three times. `evals/INJECTION.md/json`
+distinguishes actual model hijacks, authorization of actual malicious proposals,
+and forced malicious controls that exercise the gate even when the model resists.
+External addresses are rejected by the closed-destination validator locally;
+those blocks are never counted as HTTP Guard denials. Nothing is sent outward.
+No malicious model proposals means conditional system leak rate is null.
+`evals/DEMO_INJECTION.md` reproduces the lease demonstration and labels the
+attempt as scripted when the live model resists. Interrupted initial evidence
+and the separate lease supplemental run are preserved with their own scopes.

@@ -27,3 +27,11 @@ export {
 export type { StructuredModel, StructuredRequest, VertexOptions } from './providers/structured.ts';
 export { scoreExtraction, scoreRoadmap, scoreSummary } from './metrics.ts';
 export { renderReport } from './report.ts';
+export {
+  runInjectionEvaluations,
+  HttpInjectionGate,
+  renderInjectionReport,
+  writeInjectionEvidence,
+} from './injection/runner.ts';
+export { ReferenceInjectionModel } from './injection/model.ts';
+export type { InjectionOptions, InjectionReport } from './injection/types.ts';
