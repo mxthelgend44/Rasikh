@@ -1,0 +1,319 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_commit": "9c514483df9e7b7292ee9274f61bd65ee51fa2d9",
+  "source_ref": "origin/devin/algo-hardening",
+  "at": "2026-10-02T10:34:17.805Z",
+  "synthetic": true,
+  "evidence_scope": "actual_HTTP_to_owned_sidecar;metadata_only;no_payload_forwarded",
+  "candidate_status": "confirmed_declared_label_provenance_gap",
+  "main_baseline_status": "confirmed_same_bypass_on_genuinely_isolated_rebuild;not_a_new_PR33_regression",
+  "cases": [
+    {
+      "id": "new_raw_bank_statement_on_observed_salary_signal",
+      "expected": "deny",
+      "exchanges": [
+        {
+          "path": "/observe",
+          "request": {
+            "session_id": "gs_b97bc327",
+            "source": "newcomer",
+            "payload_refs": [
+              {
+                "ref": "synthetic_derived_salary",
+                "labels": [
+                  "salary"
+                ],
+                "derived": true
+              }
+            ]
+          },
+          "status": 200,
+          "response": {
+            "contract_version": "1.2.0",
+            "recorded": true
+          }
+        },
+        {
+          "path": "/check",
+          "request": {
+            "session_id": "gs_b97bc327",
+            "tool": "send_message",
+            "destination": "landlord",
+            "data_labels": [
+              "salary",
+              "bank_statement"
+            ],
+            "payload_refs": [
+              {
+                "ref": "synthetic_derived_salary",
+                "labels": [
+                  "salary",
+                  "bank_statement"
+                ],
+                "derived": false
+              }
+            ]
+          },
+          "status": 200,
+          "response": {
+            "allowed_destinations": [
+              "landlord",
+              "newcomer"
+            ],
+            "blocked_labels": [],
+            "check_id": "chk_57777fe0",
+            "contract_version": "1.2.0",
+            "decision": "allow",
+            "policy_rule": "salary.landlord.derived_only",
+            "reason": "Sharing your salary with landlords is allowed."
+          }
+        }
+      ],
+      "actual": {
+        "id": "new_raw_bank_statement_on_observed_salary_signal",
+        "expected": "deny",
+        "actual": "allow",
+        "matches": false,
+        "reason": "A newly added bank_statement label was never observed as derived, and the outgoing ref explicitly marks it raw.",
+        "guard_reason": "Sharing your salary with landlords is allowed.",
+        "policy_rule": "salary.landlord.derived_only",
+        "blocked_labels": []
+      }
+    },
+    {
+      "id": "unobserved_bank_label_cannot_inherit_verified_salary_derivation",
+      "expected": "deny",
+      "exchanges": [
+        {
+          "path": "/observe",
+          "request": {
+            "session_id": "gs_bc6bc9f7",
+            "source": "newcomer",
+            "payload_refs": [
+              {
+                "ref": "synthetic_derived_salary",
+                "labels": [
+                  "salary"
+                ],
+                "derived": true
+              }
+            ]
+          },
+          "status": 200,
+          "response": {
+            "contract_version": "1.2.0",
+            "recorded": true
+          }
+        },
+        {
+          "path": "/check",
+          "request": {
+            "session_id": "gs_bc6bc9f7",
+            "tool": "send_message",
+            "destination": "landlord",
+            "data_labels": [
+              "salary",
+              "bank_statement"
+            ],
+            "payload_refs": [
+              {
+                "ref": "synthetic_derived_salary",
+                "labels": [
+                  "salary",
+                  "bank_statement"
+                ],
+                "derived": true
+              }
+            ]
+          },
+          "status": 200,
+          "response": {
+            "allowed_destinations": [
+              "landlord",
+              "newcomer"
+            ],
+            "blocked_labels": [],
+            "check_id": "chk_79010a3c",
+            "contract_version": "1.2.0",
+            "decision": "allow",
+            "policy_rule": "salary.landlord.derived_only",
+            "reason": "Sharing your salary with landlords is allowed."
+          }
+        }
+      ],
+      "actual": {
+        "id": "unobserved_bank_label_cannot_inherit_verified_salary_derivation",
+        "expected": "deny",
+        "actual": "allow",
+        "matches": false,
+        "reason": "The prior trusted observation covers a derived salary label only; an unobserved bank_statement label has no derivation evidence.",
+        "guard_reason": "Sharing your salary with landlords is allowed.",
+        "policy_rule": "salary.landlord.derived_only",
+        "blocked_labels": []
+      }
+    }
+  ],
+  "baseline": {
+    "commit": "966a01d6d1c035c281f6276c502de13256638632",
+    "source_archive": "/private/tmp/rasikh-friend-security-main-966a01d6",
+    "unique_target": "/private/tmp/rasikh-friend-security-compare-966a01d6-target",
+    "build_log": "main966-isolated-cargo-build.log",
+    "cases": [
+      {
+        "id": "new_raw_bank_statement_on_observed_salary_signal",
+        "expected": "deny",
+        "exchanges": [
+          {
+            "path": "/observe",
+            "request": {
+              "session_id": "gs_d9d81dc9",
+              "source": "newcomer",
+              "payload_refs": [
+                {
+                  "ref": "synthetic_derived_salary",
+                  "labels": [
+                    "salary"
+                  ],
+                  "derived": true
+                }
+              ]
+            },
+            "status": 200,
+            "response": {
+              "contract_version": "1.2.0",
+              "recorded": true
+            }
+          },
+          {
+            "path": "/check",
+            "request": {
+              "session_id": "gs_d9d81dc9",
+              "tool": "send_message",
+              "destination": "landlord",
+              "data_labels": [
+                "salary",
+                "bank_statement"
+              ],
+              "payload_refs": [
+                {
+                  "ref": "synthetic_derived_salary",
+                  "labels": [
+                    "salary",
+                    "bank_statement"
+                  ],
+                  "derived": false
+                }
+              ]
+            },
+            "status": 200,
+            "response": {
+              "allowed_destinations": [
+                "landlord",
+                "newcomer"
+              ],
+              "blocked_labels": [],
+              "check_id": "chk_530d6671",
+              "contract_version": "1.2.0",
+              "decision": "allow",
+              "policy_rule": "salary.landlord.derived_only",
+              "reason": "Sharing your salary with landlords is allowed."
+            }
+          }
+        ],
+        "actual": {
+          "id": "new_raw_bank_statement_on_observed_salary_signal",
+          "expected": "deny",
+          "actual": "allow",
+          "matches": false,
+          "reason": "A newly added bank_statement label was never observed as derived, and the outgoing ref explicitly marks it raw.",
+          "guard_reason": "Sharing your salary with landlords is allowed.",
+          "policy_rule": "salary.landlord.derived_only",
+          "blocked_labels": []
+        }
+      },
+      {
+        "id": "unobserved_bank_label_cannot_inherit_verified_salary_derivation",
+        "expected": "deny",
+        "exchanges": [
+          {
+            "path": "/observe",
+            "request": {
+              "session_id": "gs_ebe22ccd",
+              "source": "newcomer",
+              "payload_refs": [
+                {
+                  "ref": "synthetic_derived_salary",
+                  "labels": [
+                    "salary"
+                  ],
+                  "derived": true
+                }
+              ]
+            },
+            "status": 200,
+            "response": {
+              "contract_version": "1.2.0",
+              "recorded": true
+            }
+          },
+          {
+            "path": "/check",
+            "request": {
+              "session_id": "gs_ebe22ccd",
+              "tool": "send_message",
+              "destination": "landlord",
+              "data_labels": [
+                "salary",
+                "bank_statement"
+              ],
+              "payload_refs": [
+                {
+                  "ref": "synthetic_derived_salary",
+                  "labels": [
+                    "salary",
+                    "bank_statement"
+                  ],
+                  "derived": true
+                }
+              ]
+            },
+            "status": 200,
+            "response": {
+              "allowed_destinations": [
+                "landlord",
+                "newcomer"
+              ],
+              "blocked_labels": [],
+              "check_id": "chk_fd402ac6",
+              "contract_version": "1.2.0",
+              "decision": "allow",
+              "policy_rule": "salary.landlord.derived_only",
+              "reason": "Sharing your salary with landlords is allowed."
+            }
+          }
+        ],
+        "actual": {
+          "id": "unobserved_bank_label_cannot_inherit_verified_salary_derivation",
+          "expected": "deny",
+          "actual": "allow",
+          "matches": false,
+          "reason": "The prior trusted observation covers a derived salary label only; an unobserved bank_statement label has no derivation evidence.",
+          "guard_reason": "Sharing your salary with landlords is allowed.",
+          "policy_rule": "salary.landlord.derived_only",
+          "blocked_labels": []
+        }
+      }
+    ],
+    "valid": true
+  },
+  "invalid_comparison": "INVALID-shared-target-stale-binary-main966-http.json is retained for transparency and must not be cited as966 source behavior",
+  "baseline_valid": true,
+  "classification": "A new declared label borrows an existing observed refs trusted derived flag; Guard does not reject expanded metadata. Same behavior is inherited from main.",
+  "trust_boundary": "A stable ref should identify immutable canonical data. The caller could prevent this case by rejecting metadata expansion; alternatively Guard must mark newly declared labels raw or reject them.",
+  "limitations": [
+    "No payload was forwarded or examined.",
+    "No raw-document leak or full app exploit was demonstrated.",
+    "HTTP allow proves only the declared-label authorization/provenance gap.",
+    "The apps canonical-ref metadata enforcement was not verified in this Guard-only subtask."
+  ]
+}

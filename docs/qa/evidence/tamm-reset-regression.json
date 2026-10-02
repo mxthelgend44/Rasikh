@@ -1,0 +1,291 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_commit": "9c514483df9e7b7292ee9274f61bd65ee51fa2d9",
+  "component": "packages/tamm-mcp",
+  "recorded_at": "2026-10-02T10:42:19.177Z",
+  "environment": {
+    "node": "v24.19.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "RASIKH_DEMO_MODE": "1"
+  },
+  "scope": {
+    "transport": "real local Streamable HTTP MCP and Express demo endpoints",
+    "tamm_backend": "MockTammBackend; no real TAMM",
+    "guard": "injected recording FakeGuard returning allow",
+    "ai": "none",
+    "programmatic_options": {
+      "backend_progression": "demo",
+      "demo_reset_enabled": true,
+      "reset_uaepass_sessions": true
+    }
+  },
+  "sanitized": true,
+  "all_data_synthetic": true,
+  "token_values_replaced_with_aliases": true,
+  "exchanges": [
+    {
+      "stage": "before_reset_login",
+      "method": "POST",
+      "path": "/dev/uaepass/login",
+      "request": {
+        "subject_ref": "hire_demo_001",
+        "audience": "individual"
+      },
+      "http_status": 200,
+      "response": {
+        "contract_version": "1.2.0",
+        "uaepass_session": "<synthetic-session-before-reset>",
+        "simulated": true
+      }
+    },
+    {
+      "stage": "first_start",
+      "method": "POST",
+      "path": "/mcp",
+      "mcp_method": "tools/call",
+      "request": {
+        "name": "start_application",
+        "arguments": {
+          "service_id": "svc_emirates_id",
+          "applicant_ref": "hire_demo_001",
+          "documents": [
+            {
+              "ref": "doc_passport_hire_demo_001",
+              "labels": [
+                "passport"
+              ]
+            }
+          ],
+          "uaepass_session": "<synthetic-session-before-reset>",
+          "guard_session_id": "gs_qa_before_reset"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "is_error": false,
+        "body": {
+          "contract_version": "1.2.0",
+          "mock": true,
+          "application_id": "app_eid_0001",
+          "status": "submitted"
+        }
+      }
+    },
+    {
+      "stage": "reset",
+      "method": "POST",
+      "path": "/dev/reset",
+      "request": null,
+      "http_status": 200,
+      "response": {
+        "contract_version": "1.2.0",
+        "reset": true
+      }
+    },
+    {
+      "stage": "old_token_replay",
+      "method": "POST",
+      "path": "/mcp",
+      "mcp_method": "tools/call",
+      "request": {
+        "name": "start_application",
+        "arguments": {
+          "service_id": "svc_emirates_id",
+          "applicant_ref": "hire_demo_001",
+          "documents": [
+            {
+              "ref": "doc_passport_hire_demo_001",
+              "labels": [
+                "passport"
+              ]
+            }
+          ],
+          "uaepass_session": "<synthetic-session-before-reset>",
+          "guard_session_id": "gs_qa_before_reset"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "is_error": false,
+        "body": {
+          "contract_version": "1.2.0",
+          "mock": true,
+          "application_id": "app_eid_0001",
+          "status": "submitted"
+        }
+      }
+    },
+    {
+      "stage": "old_token_get_status",
+      "method": "POST",
+      "path": "/mcp",
+      "mcp_method": "tools/call",
+      "request": {
+        "name": "get_application_status",
+        "arguments": {
+          "application_id": "app_eid_0001",
+          "uaepass_session": "<synthetic-session-before-reset>"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "is_error": true,
+        "body": {
+          "contract_version": "1.2.0",
+          "mock": true,
+          "error": {
+            "code": "unknown_session",
+            "message": "Sign in with UAE PASS (simulated) to continue."
+          }
+        }
+      }
+    },
+    {
+      "stage": "after_reset_login",
+      "method": "POST",
+      "path": "/dev/uaepass/login",
+      "request": {
+        "subject_ref": "hire_demo_001",
+        "audience": "individual"
+      },
+      "http_status": 200,
+      "response": {
+        "contract_version": "1.2.0",
+        "uaepass_session": "<synthetic-session-after-reset>",
+        "simulated": true
+      }
+    },
+    {
+      "stage": "fresh_token_get_deleted_application",
+      "method": "POST",
+      "path": "/mcp",
+      "mcp_method": "tools/call",
+      "request": {
+        "name": "get_application_status",
+        "arguments": {
+          "application_id": "app_eid_0001",
+          "uaepass_session": "<synthetic-session-after-reset>"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "is_error": true,
+        "body": {
+          "contract_version": "1.2.0",
+          "mock": true,
+          "error": {
+            "code": "unknown_application",
+            "message": "No application with id app_eid_0001."
+          }
+        }
+      }
+    },
+    {
+      "stage": "fresh_start",
+      "method": "POST",
+      "path": "/mcp",
+      "mcp_method": "tools/call",
+      "request": {
+        "name": "start_application",
+        "arguments": {
+          "service_id": "svc_emirates_id",
+          "applicant_ref": "hire_demo_001",
+          "documents": [
+            {
+              "ref": "doc_passport_hire_demo_001",
+              "labels": [
+                "passport"
+              ]
+            }
+          ],
+          "uaepass_session": "<synthetic-session-after-reset>",
+          "guard_session_id": "gs_qa_after_reset"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "is_error": false,
+        "body": {
+          "contract_version": "1.2.0",
+          "mock": true,
+          "application_id": "app_eid_0001",
+          "status": "submitted"
+        }
+      }
+    },
+    {
+      "stage": "fresh_token_get_new_application",
+      "method": "POST",
+      "path": "/mcp",
+      "mcp_method": "tools/call",
+      "request": {
+        "name": "get_application_status",
+        "arguments": {
+          "application_id": "app_eid_0001",
+          "uaepass_session": "<synthetic-session-after-reset>"
+        }
+      },
+      "http_status": 200,
+      "response": {
+        "is_error": false,
+        "body": {
+          "contract_version": "1.2.0",
+          "mock": true,
+          "application_id": "app_eid_0001",
+          "status": "submitted",
+          "history": [
+            {
+              "status": "submitted",
+              "at": "2026-10-02T10:42:19.170Z"
+            }
+          ],
+          "needs_info": null
+        }
+      }
+    }
+  ],
+  "observations": {
+    "success_replay_window_ms": 5000,
+    "elapsed_replay_since_success_ms": 12.168,
+    "within_replay_window": true,
+    "session_valid_after_reset": false,
+    "application_exists_after_reset": false,
+    "counters_after_first_start": {
+      "mock_backend_created_calls": 1,
+      "guard_check_calls": 1
+    },
+    "counters_after_reset": {
+      "mock_backend_created_calls": 1,
+      "guard_check_calls": 1
+    },
+    "counters_after_old_token_replay": {
+      "mock_backend_created_calls": 1,
+      "guard_check_calls": 1
+    },
+    "new_downstream_writes_after_reset_replay": 0,
+    "new_guard_checks_after_reset_replay": 0,
+    "old_token_get_status_error": "unknown_session",
+    "fresh_token_get_deleted_application_error": "unknown_application",
+    "fresh_start_guard_checks_total": 2,
+    "fresh_start_backend_created_calls_total": 2,
+    "fresh_start_status": "submitted"
+  },
+  "check": {
+    "name": "reset rejects a cached successful call using an invalidated token",
+    "passed": false,
+    "expected": {
+      "error_code": "unknown_session"
+    },
+    "actual": {
+      "contract_version": "1.2.0",
+      "mock": true,
+      "application_id": "app_eid_0001",
+      "status": "submitted"
+    },
+    "classification": "demo coherence and stale authorization response regression",
+    "security_statement": "No new downstream write was executed by the old-token replay. It returned only a cached pre-reset success for a deleted application."
+  },
+  "suggested_fix": "Clear SingleFlight results on authorized demo reset or scope the cache to a reset generation; regress old-token rejection and a coherent fresh-session submission.",
+  "original_app_approval_race_fixed": false
+}
