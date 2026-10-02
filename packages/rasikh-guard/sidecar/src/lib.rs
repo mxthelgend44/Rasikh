@@ -6,9 +6,12 @@
 //! - [`store`]: sessions, observations, consents and the decision log.
 //! - [`http`]: the sidecar endpoints.
 //!
-//! Built in the OpenAPPA fork (`vendor/`, see `UPSTREAM.md`). This layer does not call the
-//! vendored engine yet; see the package README for the status of that integration.
+//! - [`appa`]: the gate. Every allow is decided by the vendored OpenAPPA engine's label algebra
+//!   (`appa_engine::label`): the restrictive meet of each flowing label's reachable audience.
+//!
+//! Built in the OpenAPPA fork (`vendor/`, see `UPSTREAM.md`).
 
+pub mod appa;
 pub mod contract;
 pub mod decide;
 pub mod http;

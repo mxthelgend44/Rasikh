@@ -11,6 +11,7 @@ name = "rasikh-guard"
 path = "src/main.rs"
 
 [dependencies]
+appa-engine = { workspace = true }
 axum = { version = "0.8", default-features = false, features = ["json", "tokio", "http1", "query"] }
 chrono = { version = "0.4", default-features = false, features = ["std", "clock"] }
 rand = "0.9"

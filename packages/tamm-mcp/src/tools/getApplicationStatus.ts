@@ -18,8 +18,8 @@ export function registerGetApplicationStatus(server: McpServer, ctx: ToolContext
       annotations: { readOnlyHint: true },
     },
     (args) =>
-      withSession(ctx, args.uaepass_session, async () => {
-        const application = await ctx.backend.getApplication(args.application_id);
+      withSession(ctx, args.uaepass_session, async (session) => {
+        const application = await ctx.backend.getApplication(args.application_id, session.subject_ref);
         if (!application) {
           return failure("unknown_application", `No application with id ${args.application_id}.`);
         }

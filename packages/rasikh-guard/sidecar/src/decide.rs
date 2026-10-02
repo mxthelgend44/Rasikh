@@ -20,6 +20,7 @@
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
+use crate::appa;
 use crate::contract::{CheckRequest, ConsentRequestInfo, DataLabel, Destination, GuardDecision};
 use crate::policy::{Effect, Policy, ReasonKind};
 
@@ -93,20 +94,21 @@ fn add_flow(flows: &mut BTreeMap<DataLabel, Flow>, label: DataLabel, raw: bool) 
         .or_insert(Flow { raw });
 }
 
-/// One label's outcome under the policy.
+/// One label's outcome under the policy if this call were sent to `destination`.
 fn decide_label(
     policy: &Policy,
     request: &CheckRequest,
+    destination: Destination,
     label: DataLabel,
     flow: Flow,
     consented: &dyn Fn(DataLabel, Destination) -> bool,
 ) -> (GuardDecision, ReasonKind) {
     let conditions = policy.conditions();
-    let effect = policy.effect(label, request.destination);
+    let effect = policy.effect(label, destination);
     let allowed = match effect {
         Effect::Allow => true,
         Effect::Deny | Effect::RedactedOnly => false,
-        Effect::Consent if consented(label, request.destination) => {
+        Effect::Consent if consented(label, destination) => {
             return (GuardDecision::Allow, ReasonKind::ConsentGranted);
         }
         Effect::Consent => return (GuardDecision::NeedsConsent, ReasonKind::Consent),
@@ -131,34 +133,65 @@ fn severity(decision: GuardDecision) -> u8 {
     }
 }
 
-/// Evaluates a `/check` request. The most severe label outcome wins (deny over needs_consent
-/// over allow); the first label in contract order with that outcome supplies the reason and rule.
+/// Stable rule id if the OpenAPPA fold refuses a call that no single label refused. The two
+/// are computed from the same cells, so this is a fail-closed guard against drift, not a path
+/// the policy is expected to take.
+pub const ENGINE_REFUSED_RULE: &str = "appa.audience.refused";
+
+/// Evaluates a `/check` request.
+///
+/// The gate is the OpenAPPA label fold ([`crate::appa`]): every flowing label contributes the
+/// destinations it may reach in this context, the engine's meet intersects them, and only a
+/// folded audience that admits `request.destination` yields `allow`. When it does not, the
+/// most severe label outcome (deny over needs_consent) and the first label in contract order
+/// with that outcome supply the decision, reason and rule.
 pub fn evaluate(
     policy: &Policy,
     request: &CheckRequest,
     observed: &HashMap<String, ObservedRef>,
     consented: &dyn Fn(DataLabel, Destination) -> bool,
 ) -> Verdict {
-    let outcomes: Vec<(DataLabel, GuardDecision, ReasonKind)> = flowing_labels(request, observed)
+    let flows = flowing_labels(request, observed);
+    let call_label = appa::fold(flows.iter().map(|(label, flow)| {
+        appa::label_for(Destination::ALL.into_iter().filter(|destination| {
+            decide_label(policy, request, *destination, *label, *flow, consented).0 == GuardDecision::Allow
+        }))
+    }));
+    let engine_allows = appa::admits(&call_label, request.destination);
+
+    let outcomes: Vec<(DataLabel, GuardDecision, ReasonKind)> = flows
         .into_iter()
         .map(|(label, flow)| {
-            let (decision, kind) = decide_label(policy, request, label, flow, consented);
+            let (decision, kind) = decide_label(policy, request, request.destination, label, flow, consented);
             (label, decision, kind)
         })
         .collect();
 
-    let Some(decision) = outcomes
+    let worst = outcomes
         .iter()
         .map(|(_, decision, _)| *decision)
-        .max_by_key(|d| severity(*d))
-    else {
-        return Verdict {
-            decision: GuardDecision::Allow,
-            reason: policy.no_data_reason().to_string(),
-            policy_rule: NO_DATA_RULE.to_string(),
-            blocked_labels: Vec::new(),
-            consent_request: None,
-        };
+        .max_by_key(|d| severity(*d));
+    let decision = match (engine_allows, worst) {
+        (true, None) => {
+            return Verdict {
+                decision: GuardDecision::Allow,
+                reason: policy.no_data_reason().to_string(),
+                policy_rule: NO_DATA_RULE.to_string(),
+                blocked_labels: Vec::new(),
+                consent_request: None,
+            };
+        }
+        (true, Some(GuardDecision::Allow)) => GuardDecision::Allow,
+        (false, Some(worst)) if worst != GuardDecision::Allow => worst,
+        (_, _) => {
+            return Verdict {
+                decision: GuardDecision::Deny,
+                reason: "This step was stopped by a privacy safety check.".to_string(),
+                policy_rule: ENGINE_REFUSED_RULE.to_string(),
+                blocked_labels: outcomes.iter().map(|(label, _, _)| *label).collect(),
+                consent_request: None,
+            };
+        }
     };
     let (label, _, kind) = *outcomes
         .iter()

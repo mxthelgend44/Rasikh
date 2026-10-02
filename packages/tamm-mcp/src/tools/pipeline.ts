@@ -48,9 +48,9 @@ export interface GuardedCall {
 export async function withGuard(
   ctx: ToolContext,
   call: GuardedCall,
-  execute: () => Promise<CallToolResult>,
+  execute: (session: UaePassSession) => Promise<CallToolResult>,
 ): Promise<CallToolResult> {
-  return withSession(ctx, call.uaepassSession, async () => {
+  return withSession(ctx, call.uaepassSession, async (session) => {
     const service = await ctx.backend.getService(call.serviceId);
     if (!service) {
       return failure("unknown_service", `No service with id ${call.serviceId}.`);
@@ -67,6 +67,6 @@ export async function withGuard(
       console.error(`[tamm-mcp] ${call.tool} stopped, failing closed: ${outcome.detail}`);
       return failure("guard_unavailable", "The privacy check could not be completed, so nothing was sent.");
     }
-    return outcome.verdict.decision === "allow" ? execute() : denied(outcome.verdict);
+    return outcome.verdict.decision === "allow" ? execute(session) : denied(outcome.verdict);
   });
 }
