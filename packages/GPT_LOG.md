@@ -40,3 +40,16 @@ Sparse ids/labels and malformed states are rejected; default unlocks infer the c
 template context and include employee residency for the company sponsorship gate.
 Verification: 43 roadmap/recommendation tests, including 100 seeded scoring scenarios,
 passed. Strict TypeScript checks pass under both package and eval consumer settings.
+
+## 2026-10-02 — Milestone 3: blocker risk rules
+
+Added `detectRisks` for individual snapshots or chronological histories. Explicit
+caller timestamps drive illustrative overdue/stuck thresholds; ready missing-document
+causes propagate through dependencies with exact actions. No clock or IO is consulted.
+History validation prevents reopened completion and reset wait timers.
+Verification: 26 risk tests and all 69 engine tests pass; strict TypeScript passes.
+
+The contract-only proposal is on `gpt/engine-contract`, editing INTEGRATION.md only,
+with the Rasikh Engine function signatures/type proposal and version 1.1.0. Active
+shared/runtime responses remain 1.0.0 pending review/merge. Both branches share the
+same repository history; no remote is available to open or merge real PRs.

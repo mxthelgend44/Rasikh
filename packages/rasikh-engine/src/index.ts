@@ -3,3 +3,4 @@ export { planRoadmap, getBlockers, getUnlocks, getCriticalPath } from './roadmap
 export type * from './recommendation-types.js';
 export { recommendSetupPaths } from './setup.js';
 export { matchNeighborhoods } from './neighborhoods.js';
+export { detectRisks } from './risk.js';
