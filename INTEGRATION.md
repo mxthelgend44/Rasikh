@@ -1,29 +1,22 @@
 # INTEGRATION.md
 
-Contract version: 1.0.0
+Contract version: **1.0.0**
 Status: active
 
 This file is the single source of truth for how the three parts of Rasikh talk to each other. Every agent working on this repo builds against it exactly.
 
-| Part                                  | Path                    | Owner                              |
-| ------------------------------------- | ----------------------- | ---------------------------------- |
-| Web app and agent                     | `apps/web`              | Claude                             |
-| Shared types                          | `packages/shared`       | Claude (Devin may propose changes) |
-| Rasikh Guard (OpenAPPA fork, sidecar) | `packages/rasikh-guard` | Devin                              |
-| TAMM MCP server                       | `packages/tamm-mcp`     | Devin                              |
-
-> **Provenance note.** Sections 0 to 4.3 and the start of 4.4 were supplied by the project owner. The source
-> text was truncated in transit partway through 4.4 (`search_services` output). The remainder of 4.4 and
-> sections 5 and 6 were drafted by Devin to be consistent with the rest of the contract, and are marked
-> _(drafted)_. The owner should confirm or replace them.
+| Part | Path | Owner |
+|---|---|---|
+| Web app and agent | `apps/web` | Claude |
+| Shared types | `packages/shared` | Claude (Devin may propose changes) |
+| Rasikh Guard (OpenAPPA fork, sidecar) | `packages/rasikh-guard` | Devin |
+| TAMM MCP server | `packages/tamm-mcp` | Devin |
 
 ## 0. Rules for changing this contract
 
-Nobody changes this file silently. A change is a PR that edits only this file, explains why, and bumps the version (patch for clarifications, minor for additive changes, major for breaking changes).
-
-Until a change is merged, everyone keeps building against the current version.
-
-Every response from every service includes `contract_version`. The app logs a warning if versions differ.
+1. Nobody changes this file silently. A change is a PR that edits only this file, explains why, and bumps the version (patch for clarifications, minor for additive changes, major for breaking changes).
+2. Until a change is merged, everyone keeps building against the current version.
+3. Every response from every service includes `contract_version`. The app logs a warning if versions differ.
 
 ## 1. Repo layout
 
@@ -91,7 +84,7 @@ export interface ErrorBody {
 
 - Base URL from env `RASIKH_GUARD_URL`, default `http://localhost:8787`
 - JSON over HTTP, UTF-8
-- Fail closed: if Guard is unreachable or returns an error, the caller treats the action as `deny`. No tool call proceeds without an explicit `allow`.
+- **Fail closed:** if Guard is unreachable or returns an error, the caller treats the action as `deny`. No tool call proceeds without an explicit `allow`.
 - Latency target: p95 under 50 ms for `/check`
 
 ### 3.2 How the agent uses Guard
@@ -100,8 +93,8 @@ Guard tracks what the agent has read so it can catch indirect leaks (for example
 
 For every agent step:
 
-1. When the agent reads labelled data, call `POST /observe`.
-2. Before the agent sends anything to any destination (including the LLM provider), call `POST /check`.
+1. When the agent **reads** labelled data, call `POST /observe`.
+2. Before the agent **sends** anything to any destination (including the LLM provider), call `POST /check`.
 3. Proceed only on `allow`. On `needs_consent`, show the consent prompt in the newcomer app. On `deny`, show the reason and stop that action.
 
 ### 3.3 Endpoints
@@ -117,13 +110,10 @@ For every agent step:
 Starts a Guard session for one hire or one company expansion case.
 
 Request:
-
 ```json
 { "case_id": "hire_demo_001", "case_type": "hire" }
 ```
-
 Response:
-
 ```json
 { "contract_version": "1.0.0", "session_id": "gs_8f2a1c" }
 ```
@@ -133,7 +123,6 @@ Response:
 Records that the agent has read labelled data in this session.
 
 Request:
-
 ```json
 {
   "session_id": "gs_8f2a1c",
@@ -143,9 +132,7 @@ Request:
   ]
 }
 ```
-
 Response:
-
 ```json
 { "contract_version": "1.0.0", "recorded": true }
 ```
@@ -155,7 +142,6 @@ Response:
 Asks whether an outbound action is allowed.
 
 Request:
-
 ```json
 {
   "session_id": "gs_8f2a1c",
@@ -170,7 +156,6 @@ Request:
 ```
 
 Response:
-
 ```json
 {
   "contract_version": "1.0.0",
@@ -187,19 +172,17 @@ Response:
 ```
 
 Field rules:
-
 - `reason` is plain language and is shown to users as is. No jargon, no rule ids in it.
 - `policy_rule` is the stable id of the matched rule, shown only in the Guard log.
 - `blocked_labels` lists only the labels that caused a non-allow decision.
 - `consent_request` is present only when `decision` is `needs_consent`.
-- Guard evaluates `data_labels` plus everything observed in the session that could flow into this call. Declaring fewer labels than were read does not make a leak pass.
+- Guard evaluates `data_labels` **plus** everything observed in the session that could flow into this call. Declaring fewer labels than were read does not make a leak pass.
 
 #### `POST /consent`
 
 Grants consent from the newcomer's trust passport. Scoped to exactly one label and one destination.
 
 Request:
-
 ```json
 {
   "session_id": "gs_8f2a1c",
@@ -209,9 +192,7 @@ Request:
   "expires_at": null
 }
 ```
-
 Response:
-
 ```json
 { "contract_version": "1.0.0", "consent_id": "cns_44d1", "active": true }
 ```
@@ -253,25 +234,24 @@ Demo mode only (`RASIKH_DEMO_MODE=1`). Clears all sessions, consents and logs. R
 
 Product defaults for the demo. They are not legal statements and the policy file says so in comments.
 
-| Label          | tamm                    | employer | landlord            | bank    | school  | llm_provider    | newcomer |
-| -------------- | ----------------------- | -------- | ------------------- | ------- | ------- | --------------- | -------- |
-| passport       | allow                   | allow    | consent             | consent | deny    | extraction only | allow    |
-| emirates_id    | allow                   | allow    | consent             | consent | deny    | extraction only | allow    |
-| salary         | allow                   | allow    | derived signal only | consent | deny    | redacted        | allow    |
-| bank_statement | deny                    | deny     | derived signal only | consent | deny    | extraction only | allow    |
-| employment     | allow                   | allow    | allow               | allow   | deny    | redacted        | allow    |
-| family         | allow                   | allow    | consent             | deny    | consent | redacted        | allow    |
-| address        | allow                   | allow    | allow               | consent | consent | redacted        | allow    |
-| degree         | allow                   | allow    | deny                | deny    | deny    | extraction only | allow    |
-| health         | insurance services only | deny     | deny                | deny    | deny    | deny            | allow    |
+| Label | tamm | employer | landlord | bank | school | llm_provider | newcomer |
+|---|---|---|---|---|---|---|---|
+| passport | allow | allow | consent | consent | deny | extraction only | allow |
+| emirates_id | allow | allow | consent | consent | deny | extraction only | allow |
+| salary | allow | allow | derived signal only | consent | deny | redacted | allow |
+| bank_statement | deny | deny | derived signal only | consent | deny | extraction only | allow |
+| employment | allow | allow | allow | allow | deny | redacted | allow |
+| family | allow | allow | consent | deny | consent | redacted | allow |
+| address | allow | allow | allow | consent | consent | redacted | allow |
+| degree | allow | allow | deny | deny | deny | extraction only | allow |
+| health | insurance services only | deny | deny | deny | deny | deny | allow |
 
 Meaning of the special cells:
-
-- **consent**: returns `needs_consent` until a matching `/consent` exists.
-- **derived signal only**: raw values are denied. A payload ref with `derived: true` (for example "affordability: yes") is allowed.
-- **extraction only**: allowed only when `tool` is `extract_document`. Any other tool sending this label to `llm_provider` is denied.
-- **redacted**: allowed only if the payload ref has the label removed by the app's redaction step (the app sends the redacted ref, whose `labels` no longer include it). Unredacted is denied.
-- **insurance services only**: allowed only when `tool` is `start_application` and the TAMM service is tagged `insurance`.
+- **consent:** returns `needs_consent` until a matching `/consent` exists.
+- **derived signal only:** raw values are denied. A payload ref with `derived: true` (for example "affordability: yes") is allowed.
+- **extraction only:** allowed only when `tool` is `extract_document`. Any other tool sending this label to `llm_provider` is denied.
+- **redacted:** allowed only if the payload ref has the label removed by the app's redaction step (the app sends the redacted ref, whose `labels` no longer include it). Unredacted is denied.
+- **insurance services only:** allowed only when `tool` is `start_application` and the TAMM service is tagged `insurance`.
 
 ## 4. TAMM MCP server
 
@@ -288,13 +268,10 @@ Meaning of the special cells:
 Every tool call needs a simulated UAE PASS session, passed as tool argument `uaepass_session`.
 
 Dev endpoint (HTTP, not an MCP tool): `POST /dev/uaepass/login`
-
 ```json
 { "subject_ref": "hire_demo_001", "audience": "individual" }
 ```
-
 Response:
-
 ```json
 { "contract_version": "1.0.0", "uaepass_session": "uap_sim_7c3e", "simulated": true }
 ```
@@ -312,198 +289,200 @@ All tools return `contract_version` and `mock`.
 #### `search_services`
 
 Input:
-
 ```json
 { "query": "tenancy contract", "audience": "individual", "uaepass_session": "uap_sim_7c3e" }
 ```
-
-Output _(drafted from here on: the source text was truncated inside this example)_:
-
+Output:
 ```json
 {
   "contract_version": "1.0.0",
   "mock": true,
   "results": [
     {
-      "service_id": "svc_tawtheeq_registration",
-      "name": "Register a Tenancy Contract (Tawtheeq)",
-      "entity": "Abu Dhabi Department of Municipalities and Transport",
+      "service_id": "svc_tawtheeq_register",
+      "name": "Register a tenancy contract (Tawtheeq)",
+      "entity": "Abu Dhabi Municipality",
       "audience": "individual",
-      "tags": ["housing", "tenancy"],
-      "summary": "Register a residential tenancy contract so it is officially recorded."
+      "tags": ["housing"]
     }
   ]
 }
 ```
 
-#### `get_service_requirements` _(drafted)_
+#### `get_service_requirements`
 
 Input:
-
 ```json
-{ "service_id": "svc_tawtheeq_registration", "uaepass_session": "uap_sim_7c3e" }
+{ "service_id": "svc_tawtheeq_register", "uaepass_session": "uap_sim_7c3e" }
 ```
-
 Output:
-
 ```json
 {
   "contract_version": "1.0.0",
   "mock": true,
-  "service": { "service_id": "svc_tawtheeq_registration", "name": "...", "entity": "...", "audience": "individual", "tags": ["housing", "tenancy"], "summary": "..." },
-  "requirements": [
-    { "requirement_id": "req_passport", "description": "Tenant passport copy", "labels": ["passport"], "mandatory": true, "illustrative": true }
+  "service_id": "svc_tawtheeq_register",
+  "required_documents": [
+    { "label": "passport", "description": "Tenant passport copy" },
+    { "label": "emirates_id", "description": "Tenant Emirates ID or application" }
   ],
-  "fee": { "amount_aed": 0, "note": "...", "illustrative": true },
-  "processing_time": { "text": "...", "illustrative": true }
+  "depends_on": ["svc_residency_visa"],
+  "est_fee_aed": { "value": 0, "illustrative": true },
+  "est_duration_days": { "value": 0, "illustrative": true }
 }
 ```
 
-#### `start_application` _(drafted, data-sending)_
+#### `start_application`
 
 Input:
-
 ```json
 {
-  "service_id": "svc_residency_visa_employment",
-  "uaepass_session": "uap_sim_7c3e",
-  "guard_session_id": "gs_8f2a1c",
-  "payload_refs": [{ "ref": "doc_passport_hire_demo_001", "labels": ["passport"] }]
-}
-```
-
-Output:
-
-```json
-{
-  "contract_version": "1.0.0",
-  "mock": true,
-  "application_id": "app_0001",
-  "service_id": "svc_residency_visa_employment",
-  "status": "submitted",
-  "submitted_at": "2026-10-10T09:41:12+04:00",
-  "guard_check_id": "chk_19b0"
-}
-```
-
-#### `get_application_status` _(drafted)_
-
-Input:
-
-```json
-{ "application_id": "app_0001", "uaepass_session": "uap_sim_7c3e" }
-```
-
-Output:
-
-```json
-{
-  "contract_version": "1.0.0",
-  "mock": true,
-  "application_id": "app_0001",
-  "service_id": "svc_residency_visa_employment",
-  "status": "under_review",
-  "history": [
-    { "status": "submitted", "at": "2026-10-10T09:41:12+04:00", "note": "Application received." },
-    { "status": "under_review", "at": "2026-10-10T09:42:00+04:00", "note": "An officer is reviewing the application." }
-  ]
-}
-```
-
-Allowed transitions: `submitted → under_review`; `under_review → needs_info | approved | rejected`; `needs_info → under_review`. `approved` and `rejected` are final.
-
-#### `check_trade_name` _(drafted, data-sending)_
-
-Input:
-
-```json
-{
-  "proposed_name": "Falcon Analytics",
-  "licensing_authority": "ded",
+  "service_id": "svc_tawtheeq_register",
+  "applicant_ref": "hire_demo_001",
+  "documents": [
+    { "ref": "doc_passport_hire_demo_001", "labels": ["passport"] }
+  ],
   "uaepass_session": "uap_sim_7c3e",
   "guard_session_id": "gs_8f2a1c"
 }
 ```
-
-`licensing_authority` is one of `ded`, `adgm`, `kezad`, `masdar`, `twofour54`.
-
-Output:
-
+Output on success:
 ```json
 {
   "contract_version": "1.0.0",
   "mock": true,
-  "proposed_name": "Falcon Analytics",
-  "available": true,
-  "issues": [],
-  "suggestions": [],
-  "illustrative": true
+  "application_id": "app_tw_0192",
+  "status": "submitted"
 }
 ```
-
-#### `register_tenancy_tawtheeq` _(drafted, data-sending)_
-
-Input:
-
-```json
-{
-  "uaepass_session": "uap_sim_7c3e",
-  "guard_session_id": "gs_8f2a1c",
-  "property_ref": "unit_reem_1204",
-  "landlord_name": "Example Properties LLC",
-  "annual_rent_aed": 95000,
-  "start_date": "2026-11-01",
-  "end_date": "2027-10-31",
-  "payload_refs": [
-    { "ref": "doc_passport_hire_demo_001", "labels": ["passport"] },
-    { "ref": "doc_emirates_id_hire_demo_001", "labels": ["emirates_id"] }
-  ]
-}
-```
-
-Output: the same shape as `start_application`, with `service_id: "svc_tawtheeq_registration"`.
-
-#### Denial result _(drafted)_
-
-When Guard does not return `allow`, or Guard is unreachable, a data-sending tool does nothing and returns an MCP result with `isError: true` and this `structuredContent`:
-
+Output on Guard denial:
 ```json
 {
   "contract_version": "1.0.0",
   "mock": true,
   "denied": true,
-  "decision": "needs_consent",
-  "reason": "Your passport has not been shared with landlords yet.",
-  "policy_rule": "passport.landlord.requires_consent",
-  "blocked_labels": ["passport"],
-  "consent_request": { "label": "passport", "destination": "landlord" },
-  "guard_check_id": "chk_19b0"
+  "guard": {
+    "decision": "deny",
+    "reason": "Health details can only be shared for insurance services.",
+    "policy_rule": "health.tamm.insurance_only"
+  }
 }
 ```
 
-If Guard is unreachable, `decision` is `deny`, `policy_rule` is `guard.unreachable`, and `guard_check_id` is `null`.
+#### `get_application_status`
 
-## 5. Environment and ports _(drafted)_
+Input:
+```json
+{ "application_id": "app_tw_0192", "uaepass_session": "uap_sim_7c3e" }
+```
+Output:
+```json
+{
+  "contract_version": "1.0.0",
+  "mock": true,
+  "application_id": "app_tw_0192",
+  "status": "under_review",
+  "history": [
+    { "status": "submitted", "at": "2026-10-10T09:45:00+04:00" },
+    { "status": "under_review", "at": "2026-10-10T09:46:30+04:00" }
+  ],
+  "needs_info": null
+}
+```
+When `status` is `needs_info`, `needs_info` holds `{ "message": "...", "required_labels": [...] }`.
 
-| Variable           | Used by          | Default                     |
-| ------------------ | ---------------- | --------------------------- |
-| `RASIKH_GUARD_URL` | app, tamm-mcp    | `http://localhost:8787`     |
-| `RASIKH_DEMO_MODE` | guard, tamm-mcp  | unset (off); `1` turns it on |
-| `TAMM_MCP_URL`     | app              | `http://localhost:8790/mcp` |
+#### `check_trade_name`
 
-In demo mode, TAMM application status advances one step per `get_application_status` call along a fixed script, so a scripted demo is repeatable.
+Input:
+```json
+{ "name": "Northwind Analytics", "uaepass_session": "uap_sim_9a1f" }
+```
+Output:
+```json
+{
+  "contract_version": "1.0.0",
+  "mock": true,
+  "name": "Northwind Analytics",
+  "available": true,
+  "notes": "Name appears available. Final approval happens during licensing."
+}
+```
 
-## 6. Error codes _(drafted)_
+#### `register_tenancy_tawtheeq`
 
-Errors use `ErrorBody`. MCP tools put the same body in `structuredContent` with `isError: true`.
+Shortcut for the demo, equivalent to `start_application` on `svc_tawtheeq_register`.
 
-| Code                       | HTTP | Meaning                                           |
-| -------------------------- | ---- | ------------------------------------------------- |
-| `invalid_request`          | 400  | Body or arguments failed validation               |
-| `unknown_session`          | 404  | Guard `session_id` does not exist                 |
-| `unknown_consent`          | 404  | `consent_id` does not exist                       |
-| `not_found`                | 404  | Route, service or application does not exist     |
-| `invalid_uaepass_session`  | 401  | Missing or unknown simulated UAE PASS session     |
-| `audience_mismatch`        | 403  | UAE PASS session audience does not fit the service |
-| `guard_unavailable`        | 503  | Guard could not be reached (caller fails closed)  |
-| `internal`                 | 500  | Unexpected server error                           |
+Input:
+```json
+{
+  "lease_ref": "lease_reem_2207",
+  "applicant_ref": "hire_demo_001",
+  "uaepass_session": "uap_sim_7c3e",
+  "guard_session_id": "gs_8f2a1c"
+}
+```
+Output: same shape as `start_application`.
+
+### 4.5 Application state machine
+
+```
+submitted -> under_review -> approved
+                          -> needs_info -> under_review
+                          -> rejected
+```
+
+- Normal mode: transitions are time-based with small random delays.
+- Demo mode (`RASIKH_DEMO_MODE=1`): transitions are deterministic and advanced by the dev endpoint below.
+
+Dev endpoints (HTTP, demo mode only):
+- `POST /dev/advance` with `{ "application_id": "app_tw_0192" }` moves to the next scripted status
+- `POST /dev/reset` clears all applications
+
+### 4.6 Catalogue coverage (minimum)
+
+Individual: residency visa, Emirates ID, tenancy registration (Tawtheeq), health insurance enrolment (tagged `insurance`), school registration.
+
+Business: trade name reservation, economic license (mainland), free zone setup entries for ADGM, KEZAD, Masdar City Free Zone, twofour54, establishment card, visa quota.
+
+Entity names must be real and correct. Anything numeric is illustrative.
+
+## 5. Demo fixtures
+
+Both packages and the app seed the same ids so demo paths line up.
+
+| Id | What it is |
+|---|---|
+| `hire_demo_001` | International hire, path 1 |
+| `company_demo_001` | Foreign company opening an Abu Dhabi branch, path 2 |
+| `hire_demo_002` to `hire_demo_004` | First three transferred employees in path 2 |
+| `lease_reem_2207` | Apartment on Al Reem Island used in the rental moment |
+| `doc_passport_hire_demo_001` | Passport document for the main hire |
+
+Reset order for a clean demo: app reset, then `POST /dev/reset` on TAMM MCP, then `POST /dev/reset` on Guard. The app's "Reset demo" button does all three.
+
+## 6. Error codes
+
+All errors use `ErrorBody` from section 2.
+
+| Code | HTTP | Meaning |
+|---|---|---|
+| `invalid_request` | 400 | Missing or malformed fields |
+| `unknown_session` | 404 | Guard or UAE PASS session not found |
+| `unknown_service` | 404 | TAMM service id not in catalogue |
+| `unknown_application` | 404 | Application id not found |
+| `consent_not_found` | 404 | Consent id not found |
+| `demo_mode_only` | 404 | Dev endpoint called with demo mode off |
+| `guard_unavailable` | 503 | Guard could not be reached. Callers treat as deny |
+| `internal` | 500 | Anything else |
+
+## 7. Environment variables
+
+| Variable | Used by | Default |
+|---|---|---|
+| `RASIKH_GUARD_URL` | app, tamm-mcp | `http://localhost:8787` |
+| `TAMM_MCP_URL` | app | `http://localhost:8790/mcp` |
+| `RASIKH_DEMO_MODE` | all | `0` |
+| `OPENAI_API_KEY` | app | none, required for live mode |
+
+## 8. Changelog
+
+- **1.0.0** Initial contract: Guard sidecar with observe, check, consent and log; TAMM MCP tools; shared types; demo fixtures.

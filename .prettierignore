@@ -1,6 +1,8 @@
 node_modules
 .next
 .reference
-artifacts
+docs/reference-audit
+docs/INTEGRATION.devin-draft.md
+INTEGRATION.md
 package-lock.json
 next-env.d.ts

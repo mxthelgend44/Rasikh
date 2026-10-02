@@ -1,0 +1,24 @@
+{
+  "name": "rasikh",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "packages/shared"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @rasikh/web",
+    "build": "npm run build -w @rasikh/web",
+    "start": "npm run start -w @rasikh/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "3.8.1"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
