@@ -1,6 +1,6 @@
 # INTEGRATION.md
 
-Contract version: **1.0.0**
+Contract version: **1.1.0**
 Status: active
 
 This file is the single source of truth for how the three parts of Rasikh talk to each other. Every agent working on this repo builds against it exactly.
@@ -177,6 +177,7 @@ Field rules:
 - `blocked_labels` lists only the labels that caused a non-allow decision.
 - `consent_request` is present only when `decision` is `needs_consent`.
 - Guard evaluates `data_labels` **plus** everything observed in the session that could flow into this call. Declaring fewer labels than were read does not make a leak pass.
+- `service_tags` (optional, added in 1.1.0): tags of the TAMM service the call targets, for example `["health", "insurance"]`. TAMM MCP sends it on every `destination: "tamm"` check. Guard needs it for the "insurance services only" rule in 3.4; when it is absent, that rule denies.
 
 #### `POST /consent`
 
@@ -485,4 +486,5 @@ All errors use `ErrorBody` from section 2.
 
 ## 8. Changelog
 
+- **1.1.0** Additive: optional `service_tags` on `POST /check`, so Guard can evaluate "insurance services only". Without it the rule can't be evaluated, because `/check` does not say which TAMM service a call targets.
 - **1.0.0** Initial contract: Guard sidecar with observe, check, consent and log; TAMM MCP tools; shared types; demo fixtures.
