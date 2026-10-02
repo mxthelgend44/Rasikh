@@ -12,9 +12,9 @@ Contract: `INTEGRATION.md` v1.0.0.
 | Guard 3: consent | done | per session, one label + one destination, revocable, optional expiry, only on `consent` cells |
 | Guard 4: sidecar | done | every endpoint in 3.3, `/check` p95 ~1 ms locally |
 | Guard 5: tests | done | 63 rule tests + coverage check, 21 adversarial, 6 loader, 5 HTTP (96) |
-| Guard 6: Docker | written, not run here | `docker compose up --build`; Docker daemon was not running on the dev machine. The `--locked` release build it runs was verified |
+| Guard 6: Docker | done | `docker compose up --build`; image built and verified (`/health`, `/check`, `/dev/reset`) |
 | TAMM 1-7 | done | six tools, catalogue, state machine + demo mode, simulated UAE PASS, `TammBackend`, Guard gate, 46 tests |
-| CI | written | `.github/workflows/integrations.yml`, not yet run (no remote) |
+| CI | written, not running on GitHub | every step passes locally; GitHub registered no workflow runs (see Open) |
 
 End-to-end check (real binaries): a TAMM `start_application` carrying health was allowed for `svc_health_insurance`, and
 denied for `svc_residency_visa` with `health.tamm.insurance_only`. The Guard log showed both, newest first.
@@ -45,8 +45,8 @@ denied for `svc_residency_visa` with `health.tamm.insurance_only`. The Guard log
 1. **Contract 1.1.0 proposal: `service_tags` on `/check`** (branch `devin/contract-1.1.0`, edits only INTEGRATION.md).
    Without it the "insurance services only" cell cannot be evaluated, so Guard denies health to TAMM.
 2. Route `/check` through `appa-engine` (see Decisions).
-3. Push and PRs: the GitHub repo is empty and `gh` is not authenticated. Commits are local on `devin/integrations`.
-4. Run the Docker image and CI once Docker and the remote are available.
+3. PRs #1 to #6 on mxthelgend44/Rasikh are stacked on `main` and contain only Devin-owned paths. `devin/integrations` also carries the web agent's commits; merging it into `main` conflicts on root README.md, package.json and package-lock.json, which the web agent owns.
+4. GitHub Actions shows zero runs for this repo even though Actions is enabled. Check the account's Actions access in repo or account settings.
 5. tamm-mcp mirrors `packages/shared` enums locally until it joins the npm workspaces (DECISIONS.md, Session 11).
 6. The web agent's open questions (DECISIONS.md) on `case_type` and `/observe` `source`: Guard accepts any non-empty
    `case_type` and any `Destination` as `source`, which matches their proposals.
