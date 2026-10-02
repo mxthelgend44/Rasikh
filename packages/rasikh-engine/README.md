@@ -1,5 +1,28 @@
 # Rasikh Engine
 
+## Illustrative relocation simulator
+
+`simulateJourneys(options?: SimulationOptions)` runs paired seeded Monte Carlo
+journeys through the roadmap planner. `getSimulationAssumptions()` returns an
+independent copy of the default configuration. Both are pure functions: no IO,
+clock or model calls. Optional cases can use the planner's supported journeys.
+
+Every processing duration, delay probability, document-preparation interval,
+notice gap, handoff gap and sensitivity setting comes from
+`config/simulation-assumptions.json`, marked illustrative with a rationale.
+The baseline is deliberately sequential and reactive; orchestration permits
+unbounded dependency-safe parallelism and proactive document work. Shared draws
+hold institutional processing and disruptions constant between policies.
+Outputs contain synthetic day distributions, paired savings and sensitivity
+contrasts. These assumptions are uncalibrated and omit resource contention.
+Results are modeled, not measured customer performance.
+
+The eval package writes the reproducible `SIMULATION.md/json` artifacts:
+
+```powershell
+npm --prefix packages/rasikh-evals run eval:simulation
+```
+
 Deterministic TypeScript planning, recommendations and risk detection. Algorithms return decisions and structured reasons;
 the app can render or explain them. There are no LLM calls, network calls, file reads,
 clock reads, or other IO in exported engine functions.

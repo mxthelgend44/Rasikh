@@ -161,3 +161,16 @@ are rejected as live source evidence. The actual summaries lack independent
 human truth labels; their judge findings are advisory. A judge using the same
 model as the generator can share blind spots, even with perfect finite-set
 calibration. Missing classifications are errors rather than safe decisions.
+
+## Relocation scheduling model
+
+```powershell
+npm --prefix packages/rasikh-evals run eval:simulation
+```
+
+The pure engine simulator compares paired sequential/reactive and parallel/
+proactive scheduling under one recorded illustrative config. `evals/SIMULATION.md`
+and `.json` show settlement/operational day distributions, medians, p10–p90,
+min/max, paired savings and assumption sensitivity. Seed and run count reproduce
+the model. It does not measure customers or accelerate modeled authority
+processing. Honest pitch phrasing: “In our simulation, under these assumptions…”

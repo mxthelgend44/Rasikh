@@ -167,3 +167,21 @@ or regex leaks, no disagreements and no errors. JUDGE.json binds REPORT.json's
 exact SHA-256. These are advisory assessments without independent human summary
 labels. The generator and judge share the same Vertex model, so correlated
 blind spots remain possible; finite calibration does not certify universal safety.
+
+## 2026-10-02 — Phase 2 / section 5: illustrative relocation simulator
+
+Added pure seeded Monte Carlo scheduling through the existing roadmap DAG,
+including document availability and company sponsorship dependencies. All
+numeric assumptions and rationale comments are in simulation-assumptions.json.
+Baseline is sequential/reactive; orchestration permits unlimited parallel work
+where dependencies allow, proactive document preparation and assumed faster
+handoffs. Institutional processing and disruption draws match between policies.
+
+At seed 7102026, 1000 paired runs per default journey: modeled median days to
+settle 38.96 → 18.00; modeled median days to operate 34.53 → 19.40. Distribution
+ranges and ten-driver sensitivity appear in SIMULATION.md/json. Fifteen tests
+include identical-policy zero-savings, negative-benefit controls, seed replay,
+analytical sensitivity and sponsorship/document gates. These are uncalibrated
+illustrative model results, not real-world customer outcomes or service SLAs.
+Reports retain the input case topology so custom team/sponsor/setup simulations
+can also be reproduced exactly.

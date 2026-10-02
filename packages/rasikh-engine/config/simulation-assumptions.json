@@ -1,0 +1,202 @@
+{
+  "illustrative": true,
+  "rationale": "Synthetic scheduling comparison, not calibrated customer evidence. Processing and disruption draws are identical in both policies. Only noticing, handoffs, preparation timing and concurrency differ.",
+  "default_seed": {
+    "value": 7102026,
+    "illustrative": true,
+    "rationale": "Fixed public seed makes the pitch reproducible."
+  },
+  "default_runs": {
+    "value": 1000,
+    "illustrative": true,
+    "rationale": "A small synthetic cohort smooths sampling noise while running locally."
+  },
+  "maximum_runs": {
+    "value": 10000,
+    "illustrative": true,
+    "rationale": "Bound local compute; this is not a statistical power claim."
+  },
+  "sensitivity_relative_change": {
+    "value": 0.2,
+    "illustrative": true,
+    "rationale": "One-at-a-time plus/minus twenty percent probes numeric assumptions; structural policies also have separate on/off ablations."
+  },
+  "step_duration_days": {
+    "collect_documents": {
+      "min": 1,
+      "max": 3,
+      "illustrative": true,
+      "rationale": "Synthetic document review after retrieving originals; same processing in both policies."
+    },
+    "residency_visa": {
+      "min": 3,
+      "max": 7,
+      "illustrative": true,
+      "rationale": "Illustrative processing variability; no actual ICP timing is asserted."
+    },
+    "health_insurance": {
+      "min": 1,
+      "max": 3,
+      "illustrative": true,
+      "rationale": "Synthetic enrolment window, not a published insurer or DoH commitment."
+    },
+    "emirates_id": {
+      "min": 2,
+      "max": 6,
+      "illustrative": true,
+      "rationale": "Illustrative identity milestone duration, unchanged by assistance."
+    },
+    "housing_search": {
+      "min": 2,
+      "max": 4,
+      "illustrative": true,
+      "rationale": "Synthetic search task; market conditions are not measured."
+    },
+    "tawtheeq_register": {
+      "min": 1,
+      "max": 3,
+      "illustrative": true,
+      "rationale": "Illustrative registration processing; not an authority service-level claim."
+    },
+    "bank_account": {
+      "min": 2,
+      "max": 4,
+      "illustrative": true,
+      "rationale": "Synthetic account-opening processing; no bank approval guarantee."
+    },
+    "family_residency": {
+      "min": 3,
+      "max": 7,
+      "illustrative": true,
+      "rationale": "Synthetic family milestone, not a legal requirement or ICP timing."
+    },
+    "school_registration": {
+      "min": 2,
+      "max": 4,
+      "illustrative": true,
+      "rationale": "Illustrative school task; admissions capacity is outside the model."
+    },
+    "company_profile": {
+      "min": 0.5,
+      "max": 1.5,
+      "illustrative": true,
+      "rationale": "Synthetic company information task."
+    },
+    "trade_name": {
+      "min": 1,
+      "max": 3,
+      "illustrative": true,
+      "rationale": "Illustrative trade-name processing; no authority deadline."
+    },
+    "economic_license": {
+      "min": 4,
+      "max": 10,
+      "illustrative": true,
+      "rationale": "Synthetic licence window shared across setup paths; no jurisdiction comparison is claimed."
+    },
+    "establishment_card": {
+      "min": 2,
+      "max": 4,
+      "illustrative": true,
+      "rationale": "Synthetic establishment milestone; not actual ICP timing."
+    },
+    "visa_quota": {
+      "min": 2,
+      "max": 4,
+      "illustrative": true,
+      "rationale": "Illustrative sponsorship-readiness task; not legal quota advice."
+    },
+    "entity_can_sponsor": {
+      "min": 0,
+      "max": 0,
+      "illustrative": true,
+      "rationale": "A logical join adds no processing time; predecessor tasks establish modeled readiness."
+    },
+    "corporate_bank": {
+      "min": 3,
+      "max": 7,
+      "illustrative": true,
+      "rationale": "Synthetic company banking window; identical institutional processing in both policies."
+    },
+    "fully_settled": {
+      "min": 0,
+      "max": 0,
+      "illustrative": true,
+      "rationale": "Terminal join, not an additional service."
+    },
+    "fully_operational": {
+      "min": 0,
+      "max": 0,
+      "illustrative": true,
+      "rationale": "Terminal join, not an additional service."
+    }
+  },
+  "document_preparation_days": {
+    "passport": {
+      "min": 0.5,
+      "max": 1.5,
+      "illustrative": true,
+      "rationale": "Synthetic retrieval and preparation of an already-held fake passport."
+    },
+    "employment": {
+      "min": 0.5,
+      "max": 2,
+      "illustrative": true,
+      "rationale": "Synthetic coordination to obtain employment documents."
+    },
+    "family": {
+      "min": 1,
+      "max": 3,
+      "illustrative": true,
+      "rationale": "Synthetic household-paperwork preparation, not attestation rules."
+    }
+  },
+  "document_producers": { "emirates_id": "emirates_id", "address": "tawtheeq_register" },
+  "delay_probability": {
+    "value": 0.2,
+    "illustrative": true,
+    "rationale": "An assumed independent disruption rate for positive-duration steps, applied identically to both policies."
+  },
+  "unexpected_delay_days": {
+    "min": 1,
+    "max": 3,
+    "illustrative": true,
+    "rationale": "Synthetic processing disruption; orchestration does not remove institutional delays."
+  },
+  "baseline": {
+    "parallel_steps": false,
+    "proactive_documents": false,
+    "notice_days": {
+      "min": 0.5,
+      "max": 2,
+      "illustrative": true,
+      "rationale": "Assumed delay before an unassisted person notices an actionable task or document blocker."
+    },
+    "handoff_days": {
+      "min": 0.25,
+      "max": 1,
+      "illustrative": true,
+      "rationale": "Assumed manual coordination gap between ready work and starting it."
+    },
+    "illustrative": true,
+    "rationale": "Deliberately sequential comparison: one active step and reactive document retrieval. This assumption can disadvantage baseline and is not a measured description of real newcomers."
+  },
+  "orchestration": {
+    "parallel_steps": true,
+    "proactive_documents": true,
+    "notice_days": {
+      "min": 0.05,
+      "max": 0.25,
+      "illustrative": true,
+      "rationale": "Assumed faster notifications, not measured product performance."
+    },
+    "handoff_days": {
+      "min": 0.05,
+      "max": 0.15,
+      "illustrative": true,
+      "rationale": "Assumed faster orchestration handoffs; authority processing remains unchanged."
+    },
+    "illustrative": true,
+    "rationale": "Independent steps and original-document preparation run in parallel when dependencies allow. Unlimited parallel resources are assumed; contention, capacity and human multitasking limits are not modeled."
+  }
+}

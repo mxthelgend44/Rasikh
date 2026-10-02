@@ -14,6 +14,7 @@
     "eval:injection": "node scripts/with-guard.mjs -- node --import tsx src/injection/cli.ts live",
     "eval:documents": "tsx src/documents/cli.ts",
     "eval:judge": "tsx src/judge/cli.ts",
+    "eval:simulation": "tsx src/simulation.ts",
     "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },

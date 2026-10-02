@@ -4,3 +4,5 @@ export type * from './recommendation-types.js';
 export { recommendSetupPaths } from './setup.js';
 export { matchNeighborhoods } from './neighborhoods.js';
 export { detectRisks } from './risk.js';
+export { simulateJourneys, getSimulationAssumptions } from './simulation.js';
+export type * from './simulation-types.js';
