@@ -13,15 +13,15 @@ The deployment is run by the main coordinator. The AI journey below needs a reac
 
 ## Layout
 
-| Path | What |
-|---|---|
-| `apps/web` | Next.js app: newcomer, employer, expansion, landlord and bank surfaces, and the agent |
-| `packages/shared` | Contract types shared by every part |
-| `packages/rasikh-guard` | Policy sidecar that checks every outbound agent action |
-| `packages/tamm-mcp` | MCP server over a mocked TAMM service catalogue |
-| `packages/rasikh-engine` | Deterministic, illustrative roadmap, recommendation, risk and simulation engine. No IO, no LLM calls |
-| `packages/rasikh-evals` | Synthetic and live evaluation harness (extraction, injection, Guard conformance, document vision, privacy judge, simulation) |
-| `apps/web/src/lib/agent-runtime` | App-side AI journey: Guard-gated extraction, review, grounded recommendation, approved action |
+| Path                             | What                                                                                                                         |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web`                       | Next.js app: newcomer, employer, expansion, landlord and bank surfaces, and the agent                                        |
+| `packages/shared`                | Contract types shared by every part                                                                                          |
+| `packages/rasikh-guard`          | Policy sidecar that checks every outbound agent action                                                                       |
+| `packages/tamm-mcp`              | MCP server over a mocked TAMM service catalogue                                                                              |
+| `packages/rasikh-engine`         | Deterministic, illustrative roadmap, recommendation, risk and simulation engine. No IO, no LLM calls                         |
+| `packages/rasikh-evals`          | Synthetic and live evaluation harness (extraction, injection, Guard conformance, document vision, privacy judge, simulation) |
+| `apps/web/src/lib/agent-runtime` | App-side AI journey: Guard-gated extraction, review, grounded recommendation, approved action                                |
 
 How the parts talk to each other is defined in [INTEGRATION.md](INTEGRATION.md). Design rules are in [DESIGN.md](DESIGN.md), the system in [ARCHITECTURE.md](ARCHITECTURE.md), the demo in [DEMO.md](DEMO.md), status in [PROGRESS.md](PROGRESS.md) and reasoning in [DECISIONS.md](DECISIONS.md).
 
@@ -44,14 +44,14 @@ The app is at http://127.0.0.1:3000.
 
 Set in `apps/web/.env.local`. See also INTEGRATION.md section 7.
 
-| Variable | Purpose | Default |
-|---|---|---|
-| `OPENAI_API_KEY` | Live AI mode. Server-side only, never prefixed with `NEXT_PUBLIC_`. | none |
-| `OPENAI_MODEL` | Model used in live mode (required with `OPENAI_API_KEY`) | none |
-| `RASIKH_AI_MODE` | `demo` for cached deterministic responses, `live` for the OpenAI API | `demo` |
-| `RASIKH_GUARD_URL` | Rasikh Guard sidecar | `http://localhost:8787` |
-| `TAMM_MCP_URL` | TAMM MCP server | `http://localhost:8790/mcp` |
-| `RASIKH_DEMO_MODE` | `1` enables the dev reset and advance endpoints | `0` |
+| Variable           | Purpose                                                              | Default                     |
+| ------------------ | -------------------------------------------------------------------- | --------------------------- |
+| `OPENAI_API_KEY`   | Live AI mode. Server-side only, never prefixed with `NEXT_PUBLIC_`.  | none                        |
+| `OPENAI_MODEL`     | Model used in live mode (required with `OPENAI_API_KEY`)             | none                        |
+| `RASIKH_AI_MODE`   | `demo` for cached deterministic responses, `live` for the OpenAI API | `demo`                      |
+| `RASIKH_GUARD_URL` | Rasikh Guard sidecar                                                 | `http://localhost:8787`     |
+| `TAMM_MCP_URL`     | TAMM MCP server                                                      | `http://localhost:8790/mcp` |
+| `RASIKH_DEMO_MODE` | `1` enables the dev reset and advance endpoints                      | `0`                         |
 
 ## Demo mode
 
@@ -59,14 +59,14 @@ Demo mode runs the same flows with cached, realistic responses, so the demo neve
 
 ## Scripts
 
-| Command | Does |
-|---|---|
-| `npm run dev` | Start the web app |
-| `npm run build` | Production build |
-| `npm run lint` | ESLint across workspaces |
-| `npm run typecheck` | TypeScript across workspaces |
-| `npm run format:check` | Prettier check |
-| `npm run test:agent -w @rasikh/web` | AI journey tests |
+| Command                             | Does                         |
+| ----------------------------------- | ---------------------------- |
+| `npm run dev`                       | Start the web app            |
+| `npm run build`                     | Production build             |
+| `npm run lint`                      | ESLint across workspaces     |
+| `npm run typecheck`                 | TypeScript across workspaces |
+| `npm run format:check`              | Prettier check               |
+| `npm run test:agent -w @rasikh/web` | AI journey tests             |
 
 ## What has been built
 
