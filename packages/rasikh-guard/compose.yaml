@@ -1,0 +1,8 @@
+# Run the Guard sidecar locally: docker compose up --build
+services:
+  rasikh-guard:
+    build: .
+    ports:
+      - "8787:8787"
+    environment:
+      RASIKH_DEMO_MODE: "${RASIKH_DEMO_MODE:-1}"

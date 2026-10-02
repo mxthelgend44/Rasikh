@@ -1,0 +1,146 @@
+# Rasikh Guard default policy (INTEGRATION.md section 3.4).
+#
+# THESE ARE PRODUCT DEFAULTS FOR THE DEMO. THEY ARE NOT LEGAL STATEMENTS.
+# Nothing here describes what UAE or Abu Dhabi law requires or permits. They encode what
+# the Rasikh product chooses to allow by default, so the agent never moves a newcomer's
+# data further than the newcomer would expect.
+#
+# Every label x destination cell must be present: a missing cell is a load error, so a
+# new label or destination can never fall through to "allow" by accident.
+#
+# Effects:
+#   allow            the flow is allowed.
+#   deny             the flow is never allowed. Consent cannot change it.
+#   consent          `needs_consent` until the newcomer grants consent for exactly this
+#                    label and destination (POST /consent). Revocable at any time.
+#   derived_only     raw values are denied; a payload ref with `derived: true`
+#                    (e.g. "affordability: yes") is allowed.
+#   extraction_only  allowed only when `tool` is `conditions.extraction_tool`.
+#   redacted_only    allowed only if the label has been removed by the app's redaction
+#                    step, i.e. it does not reach this call at all.
+#   insurance_only   allowed only when `tool` is `conditions.insurance_tool` and the TAMM
+#                    service carries `conditions.insurance_service_tag`.
+
+version = 1
+
+[conditions]
+extraction_tool = "extract_document"
+insurance_tool = "start_application"
+insurance_service_tag = "insurance"
+
+# Plain-language names used in reasons shown to the newcomer.
+[names.labels]
+passport = "passport"
+emirates_id = "Emirates ID"
+salary = "salary"
+bank_statement = "bank statement"
+employment = "employment details"
+family = "family details"
+address = "address"
+degree = "degree"
+health = "health details"
+
+[names.destinations]
+tamm = "TAMM"
+employer = "your employer"
+landlord = "landlords"
+bank = "banks"
+school = "schools"
+llm_provider = "the AI assistant"
+newcomer = "you"
+
+# Reasons are shown to users as is: plain language, no rule ids. `{label}` and
+# `{destination}` are replaced with the names above.
+[reasons]
+allow = "Sharing your {label} with {destination} is allowed."
+consent_granted = "You agreed to share your {label} with {destination}."
+deny = "Your {label} can't be shared with {destination}."
+consent = "Your {label} has not been shared with {destination} yet."
+derived_only = "Only a yes or no result based on your {label} can be shared with {destination}, not the figures."
+extraction_only = "Your {label} can only be sent to {destination} to read the document, not for other tasks."
+redacted_only = "Your {label} must be removed before {destination} can use this."
+insurance_only = "Health details can only be shared for insurance services."
+no_data = "No personal data is shared in this step."
+
+# label -> destination -> effect
+[matrix.passport]
+tamm = "allow"
+employer = "allow"
+landlord = "consent"
+bank = "consent"
+school = "deny"
+llm_provider = "extraction_only"
+newcomer = "allow"
+
+[matrix.emirates_id]
+tamm = "allow"
+employer = "allow"
+landlord = "consent"
+bank = "consent"
+school = "deny"
+llm_provider = "extraction_only"
+newcomer = "allow"
+
+[matrix.salary]
+tamm = "allow"
+employer = "allow"
+landlord = "derived_only"
+bank = "consent"
+school = "deny"
+llm_provider = "redacted_only"
+newcomer = "allow"
+
+[matrix.bank_statement]
+tamm = "deny"
+employer = "deny"
+landlord = "derived_only"
+bank = "consent"
+school = "deny"
+llm_provider = "extraction_only"
+newcomer = "allow"
+
+# Employment is the employer backing: shared with the employer and landlords by default.
+[matrix.employment]
+tamm = "allow"
+employer = "allow"
+landlord = "allow"
+bank = "allow"
+school = "deny"
+llm_provider = "redacted_only"
+newcomer = "allow"
+
+[matrix.family]
+tamm = "allow"
+employer = "allow"
+landlord = "consent"
+bank = "deny"
+school = "consent"
+llm_provider = "redacted_only"
+newcomer = "allow"
+
+[matrix.address]
+tamm = "allow"
+employer = "allow"
+landlord = "allow"
+bank = "consent"
+school = "consent"
+llm_provider = "redacted_only"
+newcomer = "allow"
+
+[matrix.degree]
+tamm = "allow"
+employer = "allow"
+landlord = "deny"
+bank = "deny"
+school = "deny"
+llm_provider = "extraction_only"
+newcomer = "allow"
+
+[matrix.health]
+tamm = "insurance_only"
+employer = "deny"
+landlord = "deny"
+bank = "deny"
+school = "deny"
+llm_provider = "deny"
+newcomer = "allow"

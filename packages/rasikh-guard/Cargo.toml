@@ -10,6 +10,7 @@ members = [
     "vendor/appa-runtime-api",
     "vendor/appa-engine",
     "vendor/appa-policy",
+    "sidecar",
 ]
 
 [workspace.package]
