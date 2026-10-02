@@ -97,6 +97,11 @@
   --shadow-dialog: 0 4px 16px rgb(0 0 0 / 0.25), 0 0 0 1px rgb(255 255 255 / 0.06);
 }
 
+/* Arabic gets its own face. Latin text inside it falls back to Geist. */
+[lang='ar'] {
+  --font-sans: 'Noto Sans Arabic Variable', 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;

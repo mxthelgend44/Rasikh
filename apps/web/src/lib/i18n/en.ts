@@ -1,0 +1,148 @@
+/**
+ * English UI strings for the newcomer app. The Arabic catalog must have exactly the same keys:
+ * `ar.ts` is typed against this file, so a missing translation fails the build.
+ *
+ * Agent-written text (feed summaries and their reasoning) is generated per event and is not part
+ * of this catalog.
+ */
+export const en = {
+  'app.name': 'Rasikh',
+  'common.est': 'est.',
+  'common.language': 'Language',
+  'common.theme.toDark': 'Switch to dark theme',
+  'common.theme.toLight': 'Switch to light theme',
+  'common.viewingAs': 'Viewing as',
+  'common.error': 'Something went wrong. Try again.',
+  'common.today': 'Today',
+
+  'nav.label': 'Main navigation',
+  'nav.roadmap': 'Roadmap',
+  'nav.documents': 'Documents',
+  'nav.agent': 'Agent',
+  'nav.passport': 'Trust passport',
+
+  'roadmap.title': 'Your roadmap',
+  'roadmap.progress': '{done} of {total} steps done',
+  'roadmap.next': 'Next: {step}',
+  'roadmap.allDone': 'Everything is done',
+  'roadmap.backed': 'Backed by {employer}',
+  'roadmap.notBacked': 'Not backed by your employer yet',
+  'roadmap.startDate': 'Starts work {date}',
+
+  'status.locked': 'Locked',
+  'status.ready': 'Ready',
+  'status.in_progress': 'In progress',
+  'status.waiting': 'Waiting',
+  'status.needs_approval': 'Needs your approval',
+  'status.blocked': 'Blocked',
+  'status.done': 'Done',
+
+  'owner.agent': 'Agent',
+  'owner.newcomer': 'You',
+  'owner.employer': 'Your employer',
+  'owner.landlord': 'Landlord',
+  'owner.bank': 'Bank',
+  'owner.authority': 'Authority',
+
+  'step.waitingOn': 'Waiting on {who}',
+  'step.unlocksAfter': 'Unlocks after {steps}',
+  'step.unlocksAfterApplied': 'Unlocks once {steps} is submitted',
+  'step.why': 'Why this step is here',
+  'step.tamm': 'Handled through TAMM',
+  'step.documents.title': 'Upload your documents',
+  'step.documents.reason':
+    'Every later step needs verified copies of your passport, offer letter and degree, so this goes first.',
+  'step.residence_visa.title': 'Residence visa',
+  'step.residence_visa.reason':
+    'Your employer sponsors the visa. It needs your verified passport and offer letter.',
+  'step.emirates_id.title': 'Emirates ID application',
+  'step.emirates_id.reason':
+    'The Emirates ID application follows the residence visa, so the agent submits it as soon as the visa is issued.',
+  'step.housing.title': 'Find and rent a home',
+  'step.housing.reason':
+    'Landlords decide sooner when your documents are verified and your employer backs you. This can run alongside the visa.',
+  'step.tenancy_registration.title': 'Register your tenancy contract',
+  'step.tenancy_registration.reason':
+    'Registration needs a signed lease and your residence visa. Family sponsorship can depend on it.',
+  'step.bank_account.title': 'Open a current account',
+  'step.bank_account.reason':
+    'Banks usually ask for your Emirates ID application before opening an account. This unlocks as soon as it is submitted.',
+  'step.health_insurance.title': 'Health insurance',
+  'step.health_insurance.reason': 'Cover is arranged once your residence visa is issued.',
+  'step.family_sponsorship.title': 'Sponsor your family',
+  'step.family_sponsorship.reason':
+    'Family sponsorship can depend on a registered tenancy contract.',
+  'step.school.title': 'Register at a school',
+  'step.school.reason': 'School registration follows family sponsorship.',
+
+  'documents.title': 'Documents',
+  'documents.intro':
+    'The agent reads each document, shows what it found, and checks it against the others.',
+  'documents.upload': 'Upload a document',
+  'documents.choose': 'Choose a file',
+  'documents.kind': 'Document type',
+  'documents.reading': 'Reading {file}',
+  'documents.found': 'What the agent read',
+  'documents.field': 'Field',
+  'documents.value': 'Value',
+  'documents.confidence': 'Confidence',
+  'documents.why': 'Why it was accepted',
+  'documents.empty': 'No documents yet',
+  'documents.emptyHint':
+    'Upload your passport, offer letter and degree and the agent starts your roadmap.',
+  'documents.status.uploaded': 'Uploaded',
+  'documents.status.extracted': 'Read',
+  'documents.status.verified': 'Verified',
+  'documents.status.rejected': 'Needs a new copy',
+  'documents.kind.passport': 'Passport',
+  'documents.kind.offer_letter': 'Offer letter',
+  'documents.kind.degree': 'Degree certificate',
+  'documents.kind.residence_visa': 'Residence visa',
+  'documents.kind.emirates_id': 'Emirates ID',
+  'documents.kind.tenancy_contract': 'Tenancy contract',
+  'documents.kind.salary_certificate': 'Salary certificate',
+  'documents.kind.bank_statement': 'Bank statement',
+
+  'agent.title': 'Agent activity',
+  'agent.approvals': 'Needs your approval',
+  'agent.approve': 'Approve',
+  'agent.decline': 'Not now',
+  'agent.sharing': 'Shares: {labels}',
+  'agent.nothingSent': 'Nothing is sent until you approve.',
+  'agent.history': 'What the agent did',
+  'agent.empty': 'Nothing yet',
+  'agent.emptyHint': 'When you add documents the agent builds your roadmap and gets to work.',
+  'agent.reasoning': 'Why',
+  'agent.status.done': 'Done',
+  'agent.status.waiting': 'Waiting',
+  'agent.status.needs_approval': 'Needs your approval',
+  'agent.status.blocked': 'Blocked',
+
+  'passport.title': 'Trust passport',
+  'passport.intro':
+    'Choose what each party can see. The agent can only share what is allowed here, and every check is recorded.',
+  'passport.shared': 'Shared',
+  'passport.never': 'Never shared',
+  'passport.derived': 'Yes or no only',
+  'passport.insurance': 'Insurance only',
+  'passport.consent': 'Needs your consent',
+  'passport.allowed': 'Allowed',
+  'passport.off': 'Off',
+  'passport.on': 'On',
+  'passport.group.landlord': 'Landlords',
+  'passport.group.bank': 'Banks',
+  'passport.group.employer': 'Your employer',
+  'passport.group.school': 'Schools',
+  'passport.group.tamm': 'Government services',
+  'passport.label.passport': 'Passport',
+  'passport.label.emirates_id': 'Emirates ID',
+  'passport.label.salary': 'Salary',
+  'passport.label.bank_statement': 'Bank statements',
+  'passport.label.employment': 'Employment letter',
+  'passport.label.family': 'Family details',
+  'passport.label.address': 'Address',
+  'passport.label.degree': 'Degree',
+  'passport.label.health': 'Health details',
+} as const;
+
+export type MessageKey = keyof typeof en;

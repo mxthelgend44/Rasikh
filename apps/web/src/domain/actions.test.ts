@@ -375,3 +375,79 @@ describe('company expansion and team move', () => {
     expect(Object.keys(again.hires)).toHaveLength(Object.keys(done.hires).length);
   });
 });
+
+describe('document upload', () => {
+  const passport = (hireId: string): Action => ({
+    type: 'document.add',
+    hireId,
+    kind: 'passport',
+    fileName: 'passport.pdf',
+    labels: ['passport'],
+    fields: [{ key: 'name', label: 'Full name', value: 'Priya Menon', confidence: 0.99 }],
+    reasoning: 'The name matches your offer letter.',
+    status: 'verified',
+  });
+  const upload = (state: AppState, kind: 'offer_letter' | 'degree'): AppState =>
+    run(state, {
+      type: 'document.add',
+      hireId: DEMO_FIXTURES.hire,
+      kind,
+      fileName: `${kind}.pdf`,
+      labels: kind === 'degree' ? ['degree'] : ['employment', 'salary'],
+      fields: [{ key: 'x', label: 'X', value: 'y', confidence: 0.95 }],
+      reasoning: 'Agrees with the other documents.',
+      status: 'verified',
+    });
+
+  it('puts the documents step in progress after the first upload', () => {
+    const created = run(seed(), { type: 'hire.create', hire: NEW_HIRE });
+    const after = run(created, passport(DEMO_FIXTURES.hire));
+    expect(stepOf(after, DEMO_FIXTURES.hire, 'documents').status).toBe('in_progress');
+    expect(after.documents[`doc_passport_${DEMO_FIXTURES.hire}`]?.status).toBe('verified');
+  });
+
+  it('completes the step and opens the visa and housing once all three are verified', () => {
+    let state = run(seed(), { type: 'hire.create', hire: NEW_HIRE });
+    state = run(state, passport(DEMO_FIXTURES.hire));
+    expect(stepOf(state, DEMO_FIXTURES.hire, 'residence_visa').status).toBe('locked');
+    state = upload(state, 'offer_letter');
+    expect(stepOf(state, DEMO_FIXTURES.hire, 'documents').status).toBe('in_progress');
+    state = upload(state, 'degree');
+    expect(stepOf(state, DEMO_FIXTURES.hire, 'documents').status).toBe('done');
+    expect(stepOf(state, DEMO_FIXTURES.hire, 'residence_visa').status).toBe('ready');
+    expect(stepOf(state, DEMO_FIXTURES.hire, 'housing').status).toBe('ready');
+  });
+
+  it('logs a feed entry with reasoning for each document and for the completion', () => {
+    let state = run(seed(), { type: 'hire.create', hire: NEW_HIRE });
+    state = run(state, passport(DEMO_FIXTURES.hire));
+    state = upload(state, 'offer_letter');
+    state = upload(state, 'degree');
+    const entries = Object.values(state.agentActions).filter(
+      (a) => a.caseId === DEMO_FIXTURES.hire,
+    );
+    expect(entries.filter((a) => a.kind === 'document_extracted')).toHaveLength(3);
+    expect(
+      entries.some((a) => a.summary === 'Verified your passport, offer letter and degree'),
+    ).toBe(true);
+    for (const entry of entries) expect(entry.reasoning.length).toBeGreaterThan(15);
+  });
+
+  it('clears a blocked documents step when a verified replacement arrives', () => {
+    const state = seed();
+    expect(stepOf(state, 'hire_seed_01', 'documents').status).toBe('blocked');
+    const after = run(state, {
+      type: 'document.add',
+      hireId: 'hire_seed_01',
+      kind: 'degree',
+      fileName: 'attested-degree.pdf',
+      labels: ['degree'],
+      fields: [{ key: 'x', label: 'X', value: 'y', confidence: 0.96 }],
+      reasoning: 'The attestation stamp is present.',
+      status: 'verified',
+    });
+    expect(stepOf(after, 'hire_seed_01', 'documents')).toMatchObject({ status: 'done' });
+    expect(stepOf(after, 'hire_seed_01', 'documents').blockedReason).toBeUndefined();
+    expect(stepOf(after, 'hire_seed_01', 'residence_visa').status).toBe('ready');
+  });
+});

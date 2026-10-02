@@ -1,18 +1,53 @@
 import type { Action } from '../actions';
+import { DOCUMENT_NAMES, documentId, REQUIRED_DOCUMENTS } from '../documents';
 import { nextId } from '../ids';
-import type { AppState } from '../types';
-import { logAction, lookup, type Context } from './shared';
+import type { AppState, Id } from '../types';
+import { logAction, lookup, refreshUnlocks, type Context } from './shared';
 
 type RecordAction = Extract<
   Action,
   { type: 'document.add' | 'agent.log' | 'grant.set' | 'guard.record' }
 >;
 
+/**
+ * Once the passport, offer letter and degree are all verified the documents step is done and the
+ * visa and housing steps open. Until then, the first upload puts the step in progress.
+ */
+function afterDocument(draft: AppState, hireId: Id, context: Context): void {
+  const step = Object.values(draft.steps).find(
+    (candidate) => candidate.hireId === hireId && candidate.key === 'documents',
+  );
+  if (!step || step.status === 'done') return;
+
+  const allVerified = REQUIRED_DOCUMENTS.every(
+    (kind) => draft.documents[documentId(kind, hireId)]?.status === 'verified',
+  );
+  if (!allVerified) {
+    if (step.status === 'ready') step.status = 'in_progress';
+    return;
+  }
+
+  step.status = 'done';
+  step.completedAt = context.now;
+  step.blockedReason = undefined;
+  refreshUnlocks(draft, hireId);
+  logAction(draft, context, {
+    caseId: hireId,
+    caseType: 'hire',
+    kind: 'step_updated',
+    summary: 'Verified your passport, offer letter and degree',
+    reasoning:
+      'Names, dates and role agree across all three, so the visa application and the housing search can start.',
+    status: 'done',
+    stepId: step.id,
+  });
+}
+
 export function applyRecordAction(draft: AppState, action: RecordAction, context: Context): void {
   switch (action.type) {
     case 'document.add': {
       lookup(draft.hires, action.hireId, 'hire');
-      const id = `doc_${action.kind}_${action.hireId}`;
+      const id = documentId(action.kind, action.hireId);
       draft.documents[id] = {
         id,
         hireId: action.hireId,
@@ -24,6 +59,16 @@ export function applyRecordAction(draft: AppState, action: RecordAction, context
         fields: action.fields,
         reasoning: action.reasoning,
       };
+      logAction(draft, context, {
+        caseId: action.hireId,
+        caseType: 'hire',
+        kind: 'document_extracted',
+        summary: `Read your ${DOCUMENT_NAMES[action.kind]}`,
+        reasoning: action.reasoning,
+        status: 'done',
+        tool: 'extract_document',
+      });
+      afterDocument(draft, action.hireId, context);
       return;
     }
 
