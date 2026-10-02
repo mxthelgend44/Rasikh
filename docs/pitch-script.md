@@ -1,6 +1,6 @@
 # Three-minute pitch script
 
-**Status:** rehearsal draft. No interview has been completed or cleared for quotation, so the opening uses verified process facts. Replace the first 20 seconds with one approved real story or quote when available. The checked app commit is a Next.js scaffold with Firebase browser analytics; the screen directions below are a storyboard until those screens exist. If shown as slides or cached responses, say so. Suggested handoff: **Firas Aleter** speaks 0:00-1:02 and 2:25-3:00; **Mohammad Alhniidi** runs the demo from 1:02-2:25.
+**Status:** rehearsal draft. No interview has been completed or cleared for quotation, so the opening uses verified process facts. Replace the first 20 seconds with one approved real story or quote when available. The local site has an interactive sample journey; the route selector, four role views and external actions below remain storyboard items until built. If shown as slides or cached responses, say so. Suggested handoff: **Firas Aleter** speaks 0:00-1:02 and 2:25-3:00; **Mohammad Alhniidi** runs the demo from 1:02-2:25.
 
 | Time | Screen | Spoken words |
 | --- | --- | --- |

@@ -15,4 +15,8 @@ Rasikh is an early-stage hackathon concept for making an employer-led move to Ab
 
 ## Status
 
-The application is currently a Next.js scaffold with Firebase browser analytics. The relocation workflows, four role dashboards, TAMM adapter, partner actions and OpenAPPA guard are not implemented in the checked commits. References to those capabilities in the hackathon materials are proposals or demo plans until implementation and permissions are separately verified.
+The application now has a local landing page and an interactive concept preview for a new hire, a family move, and a company bringing a team. The sample journeys show possible steps and owners; they do not submit applications or read live status. Separate mock TAMM MCP and Rasikh Guard services exist under packages, but the website does not connect to them. The four role dashboards, real government or partner actions, and a production integration are still proposed. The Abu Dhabi imagery on the landing page is generated and illustrative.
+
+## Local preview
+
+Run npm install if dependencies are not already installed, then npm run dev and open [http://127.0.0.1:3000](http://127.0.0.1:3000). Use the journey tabs and step list to explore the preview.
