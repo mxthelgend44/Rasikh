@@ -11,7 +11,7 @@ Contract: `INTEGRATION.md` v1.1.0 (1.1.0 adds optional `service_tags` on `/check
 | Guard 2: Rasikh TOML policy | done | `policies/rasikh.toml`, full 9x7 matrix, disclaimer in header, loader refuses gaps |
 | Guard 3: consent | done | per session, one label + one destination, revocable, optional expiry, only on `consent` cells |
 | Guard 4: sidecar | done | every endpoint in 3.3, `/check` p95 ~1 ms locally |
-| Guard 5: tests | done | 63 rule tests + coverage check, 21 adversarial, 6 loader, 5 HTTP (96) |
+| Guard 5: tests | done | 63 rule tests + coverage check, 25 adversarial, 6 loader, 6 HTTP (101) |
 | Guard 6: Docker | done | `docker compose up --build`; image built and verified (`/health`, `/check`, `/dev/reset`) |
 | TAMM 1-7 | done | six tools, catalogue, state machine + demo mode, simulated UAE PASS, `TammBackend`, Guard gate, 46 tests |
 | CI | written, not running on GitHub | every step passes locally; GitHub registered no workflow runs (see Open) |
@@ -27,9 +27,10 @@ denied for `svc_residency_visa` with `health.tamm.insurance_only`. The Guard log
   engine means compiling the matrix into OpenAPPA's audience/trust dialect and replaying trajectories through the
   runtime, which is not vendored. The Rasikh layer follows the same approach (labels follow observed data into later
   calls and are checked where the data leaves), and the engine stays vendored and tested for that integration.
-- **Taint model.** Observed refs keep their observed labels and `derived` flag, so they cannot be re-declared away.
-  Unobserved refs carry what they declare (this is the path for redaction and derived signals). Calls with no refs
-  inherit the whole session.
+- **Taint model (contract 1.1.1).** Observed refs keep their observed labels and `derived` flag, so they cannot be
+  re-declared away. Unobserved refs and ref-less calls are agent content and inherit the whole session, so redacted refs
+  and derived signals must be observed first. The first version trusted unobserved refs; the independent evaluation in
+  `packages/rasikh-evals` (Codex PR #11) found that 12 of 25 attacks passed that way. Fixed, and those attacks are now regression tests.
 - **Only the data-sending TAMM tools call Guard** (`start_application`, `register_tenancy_tawtheeq`). The brief said every
   tool call; the contract gives `guard_session_id` only to those two, and the contract wins.
 - **`register_tenancy_tawtheeq` derives its documents**: the lease as `address`, plus `doc_<label>_<applicant_ref>` for the

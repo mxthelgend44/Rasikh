@@ -35,8 +35,10 @@ RASIKH_DEMO_MODE=1 cargo run --release -p rasikh-guard
 1. **What flows into the call.** The declared `data_labels`, the labels on every payload ref, and the session's
    observations:
    - a ref that was observed keeps its observed labels and `derived` flag, so re-declaring it does not shed labels;
-   - a ref that was never observed carries what it declares (this is how redacted refs and derived signals arrive);
-   - a call with **no payload refs** is free-form content, so everything observed in the session flows into it.
+   - a ref that was **never observed** is content the agent produced (for example a "summary"), so everything observed
+     in the session flows into it, and an unobserved `derived` claim is ignored;
+   - a call with **no payload refs** is treated the same way;
+   - so a redacted ref or a derived signal is trusted only after the app reports it with `POST /observe` (contract 1.1.1).
 2. **Each label against the matrix.** The effects are `allow`, `deny`, `consent`, `derived_only`, `extraction_only`
    (`tool == extract_document`), `redacted_only` and `insurance_only` (`tool == start_application` and the service tag
    is `insurance`).
@@ -54,16 +56,16 @@ refuses unknown keys, labels, destinations or effects, and any missing cell, so 
 ## Test
 
 ```sh
-cargo test --workspace          # vendored upstream suites (571) + Rasikh Guard (96)
+cargo test --workspace          # vendored upstream suites (571) + Rasikh Guard (101)
 cargo test -p rasikh-guard      # Rasikh Guard only
 ```
 
 | Suite                        | Tests | What it proves                                                                       |
 | ---------------------------- | ----: | ------------------------------------------------------------------------------------ |
 | `tests/policy_rules.rs`      |    64 | One test per matrix cell (63), each on both sides of its condition, plus a coverage check |
-| `tests/adversarial.rs`       |    21 | Indirect leaks are denied (table below)                                              |
+| `tests/adversarial.rs`       |    25 | Indirect leaks are denied (table below), including the 12 fresh-ref attacks from `packages/rasikh-evals` |
 | `tests/policy_file.rs`       |     6 | Loader refusals, the legal disclaimer, plain-language reasons, rule ids              |
-| `tests/http.rs`              |     5 | Every endpoint, the contract example flow, error codes, demo-only reset              |
+| `tests/http.rs`              |     6 | Every endpoint, the contract example flow, error codes, demo-only reset, versioned 405 |
 | upstream (`vendor/`)         |   571 | OpenAPPA engine unchanged at the pinned commit                                       |
 
 The expected matrix in `policy_rules.rs` is transcribed from INTEGRATION.md separately from the TOML. Mutation check:
@@ -94,7 +96,10 @@ flipping `passport -> school` to `allow` in the TOML fails 4 adversarial tests, 
 | Retry after revoking consent                                           | needs_consent                            |
 | Grant an already expired consent                                       | refused                                  |
 | Consent with `granted_by` other than `newcomer`                        | refused                                  |
+| Read a sensitive document, then send a fresh unlabelled "summary" ref (12 label/destination pairs) | deny |
+| Fresh ref claiming `derived: true` without being observed              | deny                                     |
 | Observations in one session tainting another                           | isolated (control)                       |
+| Observed redacted ref / observed derived signal after the raw read     | allow (control)                          |
 
 ## Known limits
 
@@ -102,9 +107,9 @@ flipping `passport -> school` to `allow` in the TOML fails 4 adversarial tests, 
   `sidecar/`, which takes the same approach (labels follow observed data into the agent's later calls, then are
   checked where the data leaves). Compiling the Rasikh matrix into OpenAPPA's policy dialect and driving `appa-engine`
   per check is open work (see `packages/DEVIN_LOG.md`).
-- **Granularity is per payload ref, not per value.** Guard cannot see content, so it trusts the app to describe outbound
-  content with refs. A ref that was never observed is taken at its declared labels; only ref-less calls inherit the
-  whole session.
+- **Granularity is per payload ref, not per value.** Guard cannot see content. Any unobserved ref inherits the whole
+  session, which is safe but coarse: if the session has read a bank statement, a TAMM call that includes an unobserved
+  ref is denied. The app should `/observe` every document it holds as it reads it.
 - **`service_tags` on `/check`** (contract 1.1.0) is optional. A caller that omits it gets deny for health to TAMM.
 - **Strict input:** unknown JSON fields are rejected with `invalid_request`, and callers treat that as deny.
 - State is in memory, so a restart clears sessions, consents and logs.
