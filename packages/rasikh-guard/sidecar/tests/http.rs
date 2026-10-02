@@ -7,6 +7,7 @@ use axum::body::Body;
 use axum::http::{Method, Request, StatusCode};
 use http_body_util::BodyExt;
 use rasikh_guard::UPSTREAM_COMMIT;
+use rasikh_guard::contract::CONTRACT_VERSION;
 use rasikh_guard::http::{App, router};
 use rasikh_guard::policy::Policy;
 use rasikh_guard::store::Store;
@@ -64,7 +65,7 @@ async fn health_reports_version_and_upstream_commit() {
     assert_eq!(status, StatusCode::OK);
     assert_eq!(
         body,
-        json!({ "contract_version": "1.0.0", "status": "ok", "upstream_commit": UPSTREAM_COMMIT })
+        json!({ "contract_version": CONTRACT_VERSION, "status": "ok", "upstream_commit": UPSTREAM_COMMIT })
     );
 }
 
@@ -84,7 +85,10 @@ async fn contract_example_flow_check_consent_revoke_log() {
     .await;
     assert_eq!(
         (status, observed),
-        (StatusCode::OK, json!({ "contract_version": "1.0.0", "recorded": true }))
+        (
+            StatusCode::OK,
+            json!({ "contract_version": CONTRACT_VERSION, "recorded": true })
+        )
     );
 
     let (_, first) = call(&app, Method::POST, "/check", Some(rental_check(&sid))).await;
@@ -121,7 +125,7 @@ async fn contract_example_flow_check_consent_revoke_log() {
     let (_, revoked) = call(&app, Method::DELETE, &format!("/consent/{consent_id}"), None).await;
     assert_eq!(
         revoked,
-        json!({ "contract_version": "1.0.0", "consent_id": consent_id, "active": false })
+        json!({ "contract_version": CONTRACT_VERSION, "consent_id": consent_id, "active": false })
     );
     let (_, again) = call(&app, Method::POST, "/check", Some(rental_check(&sid))).await;
     assert_eq!(again["decision"], "needs_consent");
@@ -148,7 +152,7 @@ async fn errors_use_contract_codes() {
         (status, &body["error"]["code"]),
         (StatusCode::NOT_FOUND, &json!("unknown_session"))
     );
-    assert_eq!(body["contract_version"], "1.0.0");
+    assert_eq!(body["contract_version"], CONTRACT_VERSION);
 
     let (status, body) = call(&app, Method::DELETE, "/consent/cns_missing", None).await;
     assert_eq!(

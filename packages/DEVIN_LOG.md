@@ -1,7 +1,7 @@
 # Devin log: rasikh-guard and tamm-mcp
 
 Owner: Devin. Scope: `packages/rasikh-guard`, `packages/tamm-mcp`, and their CI (`.github/workflows/integrations.yml`).
-Contract: `INTEGRATION.md` v1.0.0.
+Contract: `INTEGRATION.md` v1.1.0 (1.1.0 adds optional `service_tags` on `/check`, merged in PR #6).
 
 ## Built
 
@@ -42,11 +42,10 @@ denied for `svc_residency_visa` with `health.tamm.insurance_only`. The Guard log
 
 ## Open
 
-1. **Contract 1.1.0 proposal: `service_tags` on `/check`** (branch `devin/contract-1.1.0`, edits only INTEGRATION.md).
-   Without it the "insurance services only" cell cannot be evaluated, so Guard denies health to TAMM.
+1. `packages/shared` `GuardCheckRequest` needs the optional `service_tags?: string[]` from contract 1.1.0 (owned by the web agent).
 2. Route `/check` through `appa-engine` (see Decisions).
 3. PRs #1 to #6 on mxthelgend44/Rasikh are stacked on `main` and contain only Devin-owned paths. `devin/integrations` also carries the web agent's commits; merging it into `main` conflicts on root README.md, package.json and package-lock.json, which the web agent owns.
-4. GitHub Actions shows zero runs for this repo even though Actions is enabled. Check the account's Actions access in repo or account settings.
+4. CI runs on GitHub (it started once the workflow reached `main`).
 5. tamm-mcp mirrors `packages/shared` enums locally until it joins the npm workspaces (DECISIONS.md, Session 11).
 6. The web agent's open questions (DECISIONS.md) on `case_type` and `/observe` `source`: Guard accepts any non-empty
    `case_type` and any `Destination` as `source`, which matches their proposals.
