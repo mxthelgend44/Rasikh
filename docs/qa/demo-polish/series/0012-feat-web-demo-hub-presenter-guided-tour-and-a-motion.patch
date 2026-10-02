@@ -1,0 +1,3440 @@
+From cfc629fcc16a206f46e74c94f3d2ad0cd35a13e2 Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 15:00:36 +0400
+Subject: [PATCH 12/18] feat(web): demo hub, presenter guided tour and a motion
+ layer
+
+The hub at / gives every user a distinct link and starts the tour. The guide
+(?tour=demo, ?tour=features, Alt+G) walks a presenter through the story with a
+spotlight, talking points and honest notes. motion.css adds restrained,
+reduced-motion-safe page and card motion. Guard wording matches the evidence:
+75 of 75 synthetic attacks denied in the latest HTTP measurement, an archived
+evaluation allowed 12 of 25, and end-to-end safety is not proven.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/app/motion.css                   | 271 ++++++-
+ apps/web/src/app/page.tsx                     |  18 +-
+ apps/web/src/components/demo/hub-data.test.ts |  48 ++
+ apps/web/src/components/demo/hub-data.ts      |  93 +++
+ apps/web/src/components/demo/hub.tsx          | 670 +++++++++++++++++-
+ apps/web/src/components/tour/demo-guide.tsx   | 369 +++++++++-
+ apps/web/src/components/tour/guide-panel.tsx  | 430 +++++++++++
+ apps/web/src/components/tour/spotlight.tsx    | 200 ++++++
+ apps/web/src/components/tour/tour-copy.ts     |  92 +++
+ .../src/components/tour/tour-logic.test.ts    | 179 +++++
+ apps/web/src/components/tour/tour-logic.ts    | 135 ++++
+ apps/web/src/components/tour/tour-styles.ts   |  46 ++
+ apps/web/src/components/ui/dialog.tsx         |   5 +
+ apps/web/src/components/ui/menu.tsx           |   8 +-
+ apps/web/src/components/ui/overlay-motion.css |  75 ++
+ apps/web/src/config/tour.test.ts              | 122 ++++
+ apps/web/src/config/tour.ts                   | 477 +++++++++++++
+ 17 files changed, 3221 insertions(+), 17 deletions(-)
+ create mode 100644 apps/web/src/components/demo/hub-data.test.ts
+ create mode 100644 apps/web/src/components/demo/hub-data.ts
+ create mode 100644 apps/web/src/components/tour/guide-panel.tsx
+ create mode 100644 apps/web/src/components/tour/spotlight.tsx
+ create mode 100644 apps/web/src/components/tour/tour-copy.ts
+ create mode 100644 apps/web/src/components/tour/tour-logic.test.ts
+ create mode 100644 apps/web/src/components/tour/tour-logic.ts
+ create mode 100644 apps/web/src/components/tour/tour-styles.ts
+ create mode 100644 apps/web/src/components/ui/overlay-motion.css
+ create mode 100644 apps/web/src/config/tour.test.ts
+ create mode 100644 apps/web/src/config/tour.ts
+
+diff --git a/apps/web/src/app/motion.css b/apps/web/src/app/motion.css
+index dbd2d5d..0f4e01c 100644
+--- a/apps/web/src/app/motion.css
++++ b/apps/web/src/app/motion.css
+@@ -1 +1,270 @@
+-/* Shared motion. Everything here is wrapped in prefers-reduced-motion: no-preference. */
++/*
++ * Shared motion. Additive and structural: no component knows about it.
++ *
++ * Rules that keep it safe:
++ *  - Everything sits inside prefers-reduced-motion: no-preference, so reduced motion gets none of it.
++ *  - Keyframes only say where an element starts ("from"). The end state is the element's own style,
++ *    and fill-mode is "backwards", so if an animation never runs the content is simply there.
++ *  - Only opacity, transform and a clipped progress width move: nothing shifts the layout.
++ *  - Animations play when an element is inserted, not when its data changes, so a live update that
++ *    re-renders a row in place stays still. The :where() wrappers keep specificity at zero, so a
++ *    component's own animation class (skeleton pulse, menu pop-in) always wins over these.
++ */
++@media (prefers-reduced-motion: no-preference) {
++  :root {
++    --rasikh-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
++    /* 1 in left-to-right, -1 in right-to-left: slides run from the inline edge. */
++    --rasikh-dir: 1;
++    --rasikh-lift-shadow: 0 6px 16px rgb(23 60 71 / 0.1);
++  }
++
++  :root[dir='rtl'] {
++    --rasikh-dir: -1;
++  }
++
++  .dark {
++    --rasikh-lift-shadow: 0 6px 16px rgb(0 0 0 / 0.4);
++  }
++
++  @keyframes rasikh-rise {
++    from {
++      opacity: 0;
++      transform: translateY(8px);
++    }
++  }
++
++  @keyframes rasikh-rise-small {
++    from {
++      opacity: 0;
++      transform: translateY(5px);
++    }
++  }
++
++  @keyframes rasikh-fade {
++    from {
++      opacity: 0;
++    }
++  }
++
++  @keyframes rasikh-fill {
++    from {
++      width: 0;
++    }
++  }
++
++  @keyframes rasikh-dialog-in {
++    from {
++      opacity: 0;
++      transform: translateY(8px);
++    }
++  }
++
++  @keyframes rasikh-drawer-in {
++    from {
++      opacity: 0;
++      transform: translateX(calc(var(--rasikh-dir) * 24px));
++    }
++  }
++
++  @keyframes rasikh-toast-in {
++    from {
++      opacity: 0;
++      transform: translateX(calc(var(--rasikh-dir) * -16px));
++    }
++  }
++
++  /* Page enter: the content region rises and fades in once per route. */
++  :where(main > :not(dialog)) {
++    animation: rasikh-rise 320ms var(--rasikh-ease) backwards;
++  }
++
++  /*
++   * Reveal: the first ten children of a page block, section, grid, list or table body arrive in
++   * 40 ms steps. Later children are already below the first screen and need no ceremony.
++   */
++  :where(
++    main > div > *:nth-child(-n + 10),
++    main section > *:nth-child(-n + 10),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(-n + 10),
++    main tbody > *:nth-child(-n + 10),
++    main .grid > *:nth-child(-n + 10)
++  ) {
++    animation: rasikh-rise-small 280ms var(--rasikh-ease) backwards;
++  }
++
++  :where(
++    main > div > *:nth-child(2),
++    main section > *:nth-child(2),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(2),
++    main tbody > *:nth-child(2),
++    main .grid > *:nth-child(2)
++  ) {
++    animation-delay: 40ms;
++  }
++
++  :where(
++    main > div > *:nth-child(3),
++    main section > *:nth-child(3),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(3),
++    main tbody > *:nth-child(3),
++    main .grid > *:nth-child(3)
++  ) {
++    animation-delay: 80ms;
++  }
++
++  :where(
++    main > div > *:nth-child(4),
++    main section > *:nth-child(4),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(4),
++    main tbody > *:nth-child(4),
++    main .grid > *:nth-child(4)
++  ) {
++    animation-delay: 120ms;
++  }
++
++  :where(
++    main > div > *:nth-child(5),
++    main section > *:nth-child(5),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(5),
++    main tbody > *:nth-child(5),
++    main .grid > *:nth-child(5)
++  ) {
++    animation-delay: 160ms;
++  }
++
++  :where(
++    main > div > *:nth-child(6),
++    main section > *:nth-child(6),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(6),
++    main tbody > *:nth-child(6),
++    main .grid > *:nth-child(6)
++  ) {
++    animation-delay: 200ms;
++  }
++
++  :where(
++    main > div > *:nth-child(7),
++    main section > *:nth-child(7),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(7),
++    main tbody > *:nth-child(7),
++    main .grid > *:nth-child(7)
++  ) {
++    animation-delay: 240ms;
++  }
++
++  :where(
++    main > div > *:nth-child(8),
++    main section > *:nth-child(8),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(8),
++    main tbody > *:nth-child(8),
++    main .grid > *:nth-child(8)
++  ) {
++    animation-delay: 280ms;
++  }
++
++  :where(
++    main > div > *:nth-child(9),
++    main section > *:nth-child(9),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(9),
++    main tbody > *:nth-child(9),
++    main .grid > *:nth-child(9)
++  ) {
++    animation-delay: 320ms;
++  }
++
++  :where(
++    main > div > *:nth-child(10),
++    main section > *:nth-child(10),
++    main :is(ul, ol):not([role='menu'], [role='listbox']) > *:nth-child(10),
++    main tbody > *:nth-child(10),
++    main .grid > *:nth-child(10)
++  ) {
++    animation-delay: 360ms;
++  }
++
++  /* Progress bars fill from empty on first paint. Later changes use the component's own transition. */
++  :where([role='progressbar'] > div) {
++    animation: rasikh-fill 450ms var(--rasikh-ease) 120ms backwards;
++  }
++
++  /* Dialogs and drawers. The page behind fades in with them. */
++  dialog[open] {
++    animation: rasikh-dialog-in 220ms var(--rasikh-ease) backwards;
++  }
++
++  dialog[open][data-presentation='drawer'] {
++    animation-name: rasikh-drawer-in;
++  }
++
++  dialog[open]::backdrop {
++    animation: rasikh-fade 200ms ease-out backwards;
++  }
++
++  /* Live toasts slide in from the inline-start edge. */
++  .rasikh-toast {
++    animation: rasikh-toast-in 200ms var(--rasikh-ease) backwards;
++  }
++
++  /* The focus ring grows out from the control instead of snapping on. */
++  :focus-visible {
++    transition-property:
++      color, background-color, border-color, text-decoration-color, box-shadow, opacity, transform,
++      outline-color, outline-offset;
++    transition-duration: 150ms;
++    transition-timing-function: ease;
++  }
++
++  /* Switch knob and segmented plate ease rather than jump. */
++  .rasikh-switch > span,
++  .rasikh-switch > span > span {
++    transition-duration: 200ms;
++    transition-timing-function: var(--rasikh-ease);
++  }
++
++  [role='radiogroup'] > [role='radio'] {
++    transition-property: color, background-color, border-color, box-shadow;
++    transition-duration: 200ms;
++    transition-timing-function: var(--rasikh-ease);
++  }
++
++  /* Rows that are links or buttons settle their fill smoothly. */
++  :where(main tbody tr) {
++    transition: background-color 150ms ease;
++  }
++
++  /* Hover lift. Pointer devices only, a 2px rise, never a scale. */
++  @media (hover: hover) and (pointer: fine) {
++    main
++      :is(a, button):is(
++        [class*='rounded-lg'],
++        [class*='rounded-xl'],
++        [class*='rounded-2xl']
++      )[class*='border'],
++    main
++      :is(li, article):is(
++        [class*='rounded-lg'],
++        [class*='rounded-xl'],
++        [class*='rounded-2xl']
++      )[class*='border']:has(a[href], button) {
++      transition-property: color, background-color, border-color, transform, box-shadow;
++      transition-duration: 150ms;
++      transition-timing-function: ease;
++    }
++
++    main
++      :is(a, button):is(
++        [class*='rounded-lg'],
++        [class*='rounded-xl'],
++        [class*='rounded-2xl']
++      )[class*='border']:hover,
++    main
++      :is(li, article):is(
++        [class*='rounded-lg'],
++        [class*='rounded-xl'],
++        [class*='rounded-2xl']
++      )[class*='border']:has(a[href], button):hover {
++      transform: translateY(-2px);
++      box-shadow: var(--rasikh-lift-shadow);
++    }
++  }
++}
+diff --git a/apps/web/src/app/page.tsx b/apps/web/src/app/page.tsx
+index 9273d05..9d802b3 100644
+--- a/apps/web/src/app/page.tsx
++++ b/apps/web/src/app/page.tsx
+@@ -1,8 +1,16 @@
+-import type { Metadata } from "next";
+-import { DemoHub } from "@/components/demo/hub";
++import type { Metadata } from 'next';
++import { cookies } from 'next/headers';
++import { DemoHub } from '@/components/demo/hub';
++import { LOCALE_COOKIE, parseLocale } from '@/lib/i18n';
++import { I18nProvider } from '@/lib/i18n/provider';
+ 
+-export const metadata: Metadata = { title: "Demo hub" };
++export const metadata: Metadata = { title: 'Demo hub' };
+ 
+-export default function Home() {
+-  return <DemoHub />;
++export default async function Home() {
++  const locale = parseLocale((await cookies()).get(LOCALE_COOKIE)?.value);
++  return (
++    <I18nProvider initial={locale}>
++      <DemoHub />
++    </I18nProvider>
++  );
+ }
+diff --git a/apps/web/src/components/demo/hub-data.test.ts b/apps/web/src/components/demo/hub-data.test.ts
+new file mode 100644
+index 0000000..f3fd2d1
+--- /dev/null
++++ b/apps/web/src/components/demo/hub-data.test.ts
+@@ -0,0 +1,48 @@
++import { describe, expect, it } from 'vitest';
++import { createSeed } from '@/domain/seed';
++import { buildHub } from './hub-data';
++
++describe('demo hub data', () => {
++  const state = createSeed(Date.parse('2026-10-10T09:30:00+04:00'));
++
++  it('lists every hire once, each with a distinct link', () => {
++    const { people } = buildHub(state, 'en');
++    expect(people).toHaveLength(Object.keys(state.hires).length);
++    expect(new Set(people.map((person) => person.href)).size).toBe(people.length);
++    for (const person of people) {
++      expect(person.href).toMatch(/^\/newcomer\?as=[a-z0-9_]+$/);
++    }
++  });
++
++  it('puts the person with an approval waiting first', () => {
++    const { people } = buildHub(state, 'en');
++    expect(people[0]?.awaiting).toBe(true);
++    expect(people[0]?.href).toBe('/newcomer?as=anders');
++    expect(people.filter((person) => person.awaiting)).toHaveLength(1);
++  });
++
++  it('falls back to the hire id when two people share a first name', () => {
++    const twin = { ...state.hires['hire_seed_04']!, id: 'hire_live_1' };
++    const { people } = buildHub({ ...state, hires: { ...state.hires, hire_live_1: twin } }, 'en');
++    const links = people.filter((person) => person.name === twin.fullName);
++    expect(links.map((person) => person.href).sort()).toEqual([
++      '/newcomer?as=hire_live_1',
++      '/newcomer?as=hire_seed_04',
++    ]);
++  });
++
++  it('counts live numbers from the shared state', () => {
++    const { live } = buildHub(state, 'en');
++    expect(live.approvals).toBe(1);
++    expect(live.inReview).toBe(2);
++    expect(live.guardChecks).toBe(Object.keys(state.guardChecks).length);
++  });
++
++  it('localises the step a person is on', () => {
++    const en = buildHub(state, 'en').people.find((person) => person.now);
++    const ar = buildHub(state, 'ar').people.find((person) => person.id === en?.id);
++    expect(en?.now).toBeTruthy();
++    expect(ar?.now).toBeTruthy();
++    expect(ar?.now).not.toBe(en?.now);
++  });
++});
+diff --git a/apps/web/src/components/demo/hub-data.ts b/apps/web/src/components/demo/hub-data.ts
+new file mode 100644
+index 0000000..7b6f45f
+--- /dev/null
++++ b/apps/web/src/components/demo/hub-data.ts
+@@ -0,0 +1,93 @@
++'use client';
++
++import { useMemo } from 'react';
++import { currentStep, hireStatus, stepsOf, type HireStatus } from '@/domain/selectors';
++import type { AppState, Locale } from '@/domain/types';
++import { CATALOGS } from '@/lib/i18n';
++import { useAppState } from '@/store/provider';
++
++export interface HubPerson {
++  id: string;
++  /** Distinct link for this person, e.g. /newcomer?as=anders. */
++  href: string;
++  name: string;
++  role: string;
++  status: HireStatus;
++  /** A decision is waiting on this person. */
++  awaiting: boolean;
++  /** The step they are on now, in the page language. Null when settled. */
++  now: string | null;
++}
++
++export interface HubLive {
++  journeys: number;
++  approvals: number;
++  inReview: number;
++  guardChecks: number;
++}
++
++function slug(value: string): string {
++  return value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
++}
++
++/** The short step name from the newcomer catalogs, falling back to the stored title. */
++function stepName(locale: Locale, key: string, title: string): string {
++  const catalog = CATALOGS[locale] as Record<string, string>;
++  return catalog[`step.${key}.short`] ?? title;
++}
++
++export function buildHub(state: AppState, locale: Locale): { people: HubPerson[]; live: HubLive } {
++  const pending = new Set(
++    Object.values(state.approvals)
++      .filter((approval) => approval.status === 'pending')
++      .map((approval) => approval.hireId),
++  );
++  const anchor = Date.parse(state.clock.anchor);
++  const hires = Object.values(state.hires);
++
++  // PersonLink matches the first name; two people sharing one fall back to the hire id.
++  const firstNames = new Map<string, number>();
++  for (const hire of hires) {
++    const first = slug(hire.fullName.split(' ')[0] ?? hire.id);
++    firstNames.set(first, (firstNames.get(first) ?? 0) + 1);
++  }
++
++  const rows = hires.map((hire) => {
++    const steps = stepsOf(state, hire.id);
++    const current = currentStep(steps);
++    const first = slug(hire.fullName.split(' ')[0] ?? hire.id);
++    const key = (firstNames.get(first) ?? 0) > 1 ? slug(hire.id) : first;
++    const created = Date.parse(hire.startedAt) >= anchor;
++    const person: HubPerson = {
++      id: hire.id,
++      href: `/newcomer?as=${encodeURIComponent(key)}`,
++      name: hire.fullName,
++      role: hire.role,
++      status: hireStatus(steps),
++      awaiting: pending.has(hire.id),
++      now: current ? stepName(locale, current.key, current.title) : null,
++    };
++    return { person, rank: person.awaiting ? 0 : created ? 1 : 2 };
++  });
++  // Stable sort: the person with a decision waiting first, then anyone created during this run.
++  rows.sort((a, b) => a.rank - b.rank);
++  const people = rows.map((row) => row.person);
++
++  const applications = Object.values(state.applications);
++  return {
++    people,
++    live: {
++      journeys: people.filter((person) => person.status !== 'settled').length,
++      approvals: pending.size,
++      inReview: applications.filter(
++        (application) => application.state === 'submitted' || application.state === 'under_review',
++      ).length,
++      guardChecks: Object.keys(state.guardChecks).length,
++    },
++  };
++}
++
++export function useHub(locale: Locale): { people: HubPerson[]; live: HubLive } {
++  const state = useAppState();
++  return useMemo(() => buildHub(state, locale), [state, locale]);
++}
+diff --git a/apps/web/src/components/demo/hub.tsx b/apps/web/src/components/demo/hub.tsx
+index ea690d5..256edb7 100644
+--- a/apps/web/src/components/demo/hub.tsx
++++ b/apps/web/src/components/demo/hub.tsx
+@@ -1,10 +1,670 @@
+-"use client";
++'use client';
++
++import Link from 'next/link';
++import type { CSSProperties, ReactNode } from 'react';
++import {
++  ArrowRight,
++  Building2,
++  Compass,
++  ExternalLink,
++  FileClock,
++  KeyRound,
++  Landmark,
++  Play,
++  RotateCcw,
++  ScrollText,
++  Smartphone,
++  type LucideIcon,
++} from 'lucide-react';
++import { BrandMark } from '@/components/shell/brand-mark';
++import { ThemeToggle } from '@/components/shell/theme-toggle';
++import { Avatar } from '@/components/ui/avatar';
++import { Badge } from '@/components/ui/badge';
++import { Button } from '@/components/ui/button';
++import { Illustration } from '@/components/ui/illustration';
++import { cn } from '@/lib/cn';
++import { useI18n } from '@/lib/i18n/provider';
++import { useConnection } from '@/store/provider';
++import { useHub, type HubPerson } from './hub-data';
++
++type Copy = (en: string, ar: string) => string;
++
++/** Restrained load-in: short, eased, and only when the visitor has not asked for less motion. */
++const HUB_CSS = `
++@media (prefers-reduced-motion: no-preference) {
++  .hub-rise {
++    animation: hub-rise 420ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
++    animation-delay: calc(var(--hub-i, 0) * 70ms);
++  }
++  @keyframes hub-rise {
++    from { opacity: 0; transform: translateY(10px); }
++    to { opacity: 1; transform: none; }
++  }
++}
++`;
++
++const rise = (index: number): CSSProperties => ({ '--hub-i': index }) as CSSProperties;
++
++/** The sand and seafoam brand fills. Dark theme swaps sand for the dark accent tint. */
++const SAND = 'bg-[rgb(var(--brand-sand))] dark:bg-accent-soft';
++const SAND_SOFT = 'bg-[rgb(var(--brand-sand)/0.5)] dark:bg-subtle';
++
++/** Stretched link: the whole card is the target, with the focus ring drawn around the card. */
++const STRETCH =
++  "focus-visible:shadow-none focus-visible:outline-none after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:after:shadow-[0_0_0_2px_rgb(var(--surface)),0_0_0_4px_rgb(var(--focus))]";
++
++const LINK_BUTTON =
++  'inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 text-body font-medium transition-colors';
++
++function Header() {
++  const { locale, setLocale, t } = useI18n();
++  const next = locale === 'ar' ? 'en' : 'ar';
++  return (
++    <header className="hub-rise mx-auto flex h-16 w-full max-w-[75rem] items-center gap-2 px-4 sm:px-6 lg:px-8">
++      <Link
++        href="/"
++        className="flex items-center gap-2.5 rounded-md text-title font-medium text-fg"
++      >
++        <BrandMark className="size-7" />
++        {t('app.name')}
++      </Link>
++      <span aria-hidden className="mx-1 hidden h-4 w-px bg-line-strong sm:block" />
++      <span className="hidden text-body text-fg-tertiary sm:block">
++        {locale === 'ar' ? 'مركز العرض التجريبي' : 'Demo hub'}
++      </span>
++      <div className="flex-1" />
++      <Button
++        variant="ghost"
++        aria-label={t('common.language')}
++        lang={next}
++        onClick={() => setLocale(next)}
++      >
++        {next === 'ar' ? 'العربية' : 'English'}
++      </Button>
++      <ThemeToggle
++        label={(to) => t(to === 'dark' ? 'common.theme.toDark' : 'common.theme.toLight')}
++      />
++    </header>
++  );
++}
++
++function Hero({ l }: { l: Copy }) {
++  return (
++    <section
++      aria-labelledby="hub-title"
++      className={cn(
++        'overflow-hidden rounded-xl lg:grid lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]',
++        SAND,
++      )}
++    >
++      <div className="flex flex-col justify-center gap-6 px-5 py-8 sm:px-10 sm:py-12 lg:px-12 lg:py-16">
++        <p className="hub-rise text-label font-medium text-accent" style={rise(1)}>
++          {l(
++            'Relocation to Abu Dhabi, on one live record',
++            'الانتقال إلى أبوظبي على سجل واحد مباشر',
++          )}
++        </p>
++        <h1
++          id="hub-title"
++          className="hub-rise text-balance text-[2rem] font-medium leading-[1.15] text-fg sm:text-[2.5rem]"
++          style={rise(2)}
++        >
++          {l(
++            'A new life in Abu Dhabi, one approved step at a time.',
++            'حياة جديدة في أبوظبي، بخطوة واحدة موافَق عليها في كل مرة.',
++          )}
++        </h1>
++        <p className="hub-rise max-w-[34rem] text-title text-fg-secondary" style={rise(3)}>
++          {l(
++            'Rasikh keeps the newcomer, their employer, a landlord and a bank on the same record. An AI agent does the paperwork and asks before it sends anything.',
++            'يجمع راسخ القادم الجديد وصاحب العمل والمؤجر والبنك على سجل واحد. ويتولى وكيل ذكي المعاملات، ويطلب موافقتك قبل أن يرسل أي شيء.',
++          )}
++        </p>
++        <div className="hub-rise flex flex-col gap-3 sm:flex-row" style={rise(4)}>
++          {/* A full load, so the tour always starts clean from the query string. */}
++          <a
++            href="/?tour=demo"
++            className={cn(LINK_BUTTON, 'bg-solid text-solid-fg hover:bg-solid/90')}
++          >
++            <Play className="size-4 rtl:-scale-x-100" aria-hidden />
++            {l('Start the guided tour', 'ابدأ الجولة الإرشادية')}
++          </a>
++          <a
++            href="/?tour=features"
++            className={cn(
++              LINK_BUTTON,
++              'border border-line-strong bg-surface text-fg hover:bg-hover',
++            )}
++          >
++            <Compass className="size-4" aria-hidden />
++            {l('Full feature tour', 'جولة كل الميزات')}
++          </a>
++        </div>
++      </div>
++      <div className="hub-rise relative min-h-0 lg:min-h-[28rem]" style={rise(3)}>
++        <Illustration
++          variant="journey"
++          decorative
++          priority
++          aspect="landscape"
++          sizes="(min-width: 1024px) 640px, 100vw"
++          className="lg:absolute lg:inset-0 lg:aspect-auto lg:h-full dark:brightness-90"
++        />
++      </div>
++    </section>
++  );
++}
++
++interface Role {
++  id: 'newcomer' | 'employer' | 'landlord' | 'bank';
++  href: string;
++  icon: LucideIcon;
++  tile: string;
++  title: string;
++  audience: string;
++  body: string;
++  open: string;
++}
++
++function roles(l: Copy): Role[] {
++  return [
++    {
++      id: 'newcomer',
++      href: '/newcomer',
++      icon: Smartphone,
++      tile: 'bg-[rgb(var(--brand-seafoam))]',
++      title: l('Newcomer', 'الوافد'),
++      audience: l('Phone app', 'تطبيق الهاتف'),
++      body: l(
++        'Sees the relocation roadmap, adds documents, and approves what the agent wants to send before it leaves.',
++        'يرى خارطة الانتقال، ويضيف مستنداته، ويوافق على ما يريد الوكيل إرساله قبل أن يُرسل.',
++      ),
++      open: l('Open the newcomer app', 'افتح تطبيق الوافد'),
++    },
++    {
++      id: 'employer',
++      href: '/employer',
++      icon: Building2,
++      tile: 'bg-[rgb(var(--brand-sand))]',
++      title: l('Employer', 'صاحب العمل'),
++      audience: l('Dashboard', 'لوحة المتابعة'),
++      body: l(
++        'Follows every hire, sees what is blocked, and plans a team move or a company expansion.',
++        'يتابع كل موظف جديد، ويرى ما تعطّل، ويخطط لنقل فريق أو لتوسّع الشركة.',
++      ),
++      open: l('Open the employer dashboard', 'افتح لوحة صاحب العمل'),
++    },
++    {
++      id: 'landlord',
++      href: '/landlord',
++      icon: KeyRound,
++      tile: 'bg-[rgb(var(--brand-coral))]',
++      title: l('Landlord', 'المؤجر'),
++      audience: l('Dashboard', 'لوحة المتابعة'),
++      body: l(
++        'Reviews rental applications with a plain-language risk summary, then approves, asks, offers terms or declines.',
++        'يراجع طلبات الإيجار مع ملخص مخاطر بلغة واضحة، ثم يوافق أو يستفسر أو يعرض شروطًا أو يرفض.',
++      ),
++      open: l('Open the landlord dashboard', 'افتح لوحة المؤجر'),
++    },
++    {
++      id: 'bank',
++      href: '/bank',
++      icon: Landmark,
++      tile: 'bg-[rgb(var(--brand-saffron))]',
++      title: l('Bank', 'البنك'),
++      audience: l('Dashboard', 'لوحة المتابعة'),
++      body: l(
++        'Reviews account applications and sees only the data the newcomer agreed to share.',
++        'يراجع طلبات فتح الحسابات ولا يرى إلا البيانات التي وافق الوافد على مشاركتها.',
++      ),
++      open: l('Open the bank dashboard', 'افتح لوحة البنك'),
++    },
++  ];
++}
++
++function RoleCard({
++  role,
++  l,
++  index,
++  className,
++  children,
++}: {
++  role: Role;
++  l: Copy;
++  index: number;
++  className?: string;
++  children?: ReactNode;
++}) {
++  const Icon = role.icon;
++  return (
++    <article
++      className={cn(
++        'hub-rise group relative flex flex-col rounded-xl border border-edge bg-surface p-5 transition-colors hover:border-line-strong sm:p-6',
++        className,
++      )}
++      style={rise(index)}
++    >
++      <div className="flex items-center gap-3">
++        <span
++          aria-hidden
++          className={cn(
++            'flex size-11 shrink-0 items-center justify-center rounded-lg text-[rgb(var(--brand-ink))]',
++            role.tile,
++          )}
++        >
++          <Icon className="size-5" />
++        </span>
++        <div className="min-w-0">
++          <h3 className="text-title font-medium text-fg">{role.title}</h3>
++          <p className="text-label text-fg-tertiary">{role.audience}</p>
++        </div>
++      </div>
++      <p className="mt-4 max-w-[40rem] text-body text-fg-secondary">{role.body}</p>
++      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-1">
++        <Link
++          href={role.href}
++          className={cn(
++            'inline-flex min-h-11 items-center gap-1.5 rounded-md text-body font-medium text-accent sm:min-h-9',
++            STRETCH,
++          )}
++        >
++          {role.open}
++          <ArrowRight className="size-4 transition-colors rtl:-scale-x-100" aria-hidden />
++        </Link>
++        <a
++          href={role.href}
++          target="_blank"
++          rel="noopener"
++          className="relative z-10 inline-flex min-h-11 items-center gap-1.5 rounded-md text-label text-fg-secondary transition-colors hover:text-fg sm:min-h-9"
++        >
++          {l('Open in new window', 'افتح في نافذة جديدة')}
++          <ExternalLink className="size-3.5 rtl:-scale-x-100" aria-hidden />
++          <span className="sr-only">({role.title})</span>
++        </a>
++      </div>
++      {children}
++    </article>
++  );
++}
++
++function statusLine(
++  person: HubPerson,
++  l: Copy,
++): { text: string; tone: 'warning' | 'success' | 'danger' | 'muted' } {
++  if (person.awaiting) {
++    return { text: l('Approval waiting', 'بانتظار موافقتك'), tone: 'warning' };
++  }
++  if (person.status === 'settled') {
++    return {
++      text: l('Settled in Abu Dhabi', 'استقر في أبوظبي'),
++      tone: 'success',
++    };
++  }
++  if (person.status === 'blocked') {
++    return {
++      text: l(`Blocked: ${person.now ?? ''}`, `متعطل: ${person.now ?? ''}`),
++      tone: 'danger',
++    };
++  }
++  return {
++    text: l(`Now: ${person.now ?? ''}`, `الآن: ${person.now ?? ''}`),
++    tone: 'muted',
++  };
++}
++
++const TONE_TEXT = {
++  warning: 'text-warning',
++  success: 'text-success',
++  danger: 'text-danger',
++  muted: 'text-fg-tertiary',
++} as const;
++
++function PersonRow({ person, l, featured }: { person: HubPerson; l: Copy; featured: boolean }) {
++  const status = statusLine(person, l);
++  return (
++    <li className={cn(featured && 'sm:col-span-2')}>
++      <Link
++        href={person.href}
++        className={cn(
++          'relative z-10 flex min-h-14 items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors',
++          featured
++            ? 'border-accent bg-accent-soft hover:bg-accent-soft/70'
++            : 'border-line bg-surface hover:border-line-strong hover:bg-hover',
++        )}
++      >
++        <Avatar name={person.name} className="size-8" />
++        <span className="min-w-0 flex-1">
++          <span className="flex items-baseline gap-2">
++            <span className="truncate text-body font-medium text-fg">
++              <bdi>{person.name}</bdi>
++            </span>
++            <span className="hidden truncate text-label text-fg-tertiary sm:inline">
++              <bdi>{person.role}</bdi>
++            </span>
++          </span>
++          <span className={cn('block text-label', TONE_TEXT[status.tone])}>
++            {status.text}
++            <span className="text-fg-tertiary sm:hidden">
++              {' '}
++              · <bdi>{person.role}</bdi>
++            </span>
++          </span>
++        </span>
++        {featured ? (
++          <Badge tone="accent" className="shrink-0">
++            {l('Start here', 'ابدأ من هنا')}
++          </Badge>
++        ) : null}
++      </Link>
++    </li>
++  );
++}
++
++function Roles({ l, people }: { l: Copy; people: HubPerson[] }) {
++  const all = roles(l);
++  const newcomer = all[0];
++  const others = all.slice(1);
++  return (
++    <section aria-labelledby="hub-roles" className="mt-14 sm:mt-20">
++      <div className="hub-rise max-w-[40rem]" style={rise(5)}>
++        <h2 id="hub-roles" className="text-[1.5rem] font-medium leading-8 text-fg">
++          {l('Choose who you are', 'اختر دورك')}
++        </h2>
++        <p className="mt-1.5 text-title text-fg-secondary">
++          {l(
++            'Every role and every person has a link of their own, so each one can open in its own window.',
++            'لكل دور ولكل شخص رابطه الخاص، فيُفتح كلٌّ في نافذته.',
++          )}
++        </p>
++      </div>
++      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
++        {newcomer ? (
++          <RoleCard role={newcomer} l={l} index={6}>
++            <div className="mt-6 border-t border-line pt-5">
++              <h4 className="text-label font-medium text-fg-secondary">
++                {l('Open as a person', 'افتح كشخص بعينه')}
++              </h4>
++              {people.length > 0 ? (
++                <ul className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-2 sm:grid-cols-2">
++                  {people.map((person, index) => (
++                    <PersonRow
++                      key={person.id}
++                      person={person}
++                      l={l}
++                      featured={index === 0 && person.awaiting}
++                    />
++                  ))}
++                </ul>
++              ) : (
++                <p className="mt-3 text-body text-fg-tertiary">
++                  {l('No one is on the record yet.', 'لا أحد على السجل بعد.')}
++                </p>
++              )}
++            </div>
++          </RoleCard>
++        ) : null}
++        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-3 lg:grid-cols-1">
++          {others.map((role, index) => (
++            <RoleCard key={role.id} role={role} l={l} index={7 + index} />
++          ))}
++        </div>
++      </div>
++    </section>
++  );
++}
++
++function LiveStrip({ l }: { l: Copy }) {
++  const { locale } = useI18n();
++  const { live } = useHub(locale);
++  const connection = useConnection();
++  const cells = [
++    { n: live.journeys, label: l('Journeys underway', 'رحلات قيد التنفيذ') },
++    { n: live.approvals, label: l('Approvals waiting', 'موافقات بالانتظار') },
++    {
++      n: live.inReview,
++      label: l('Applications in review', 'طلبات قيد المراجعة'),
++    },
++    {
++      n: live.guardChecks,
++      label: l('Guard checks recorded', 'فحوصات حماية مسجلة'),
++    },
++  ];
++  const status =
++    connection === 'live'
++      ? l('Live', 'مباشر')
++      : connection === 'offline'
++        ? l('Offline, showing the last state', 'غير متصل، تُعرض آخر حالة')
++        : l('Connecting', 'جارٍ الاتصال');
++  return (
++    <section aria-labelledby="hub-live" className="mt-14 sm:mt-20">
++      <div
++        className="hub-rise flex flex-wrap items-center justify-between gap-x-4 gap-y-1"
++        style={rise(8)}
++      >
++        <h2 id="hub-live" className="text-title font-medium text-fg">
++          {l('On the record right now', 'على السجل الآن')}
++        </h2>
++        <p className="flex items-center gap-2 text-label text-fg-secondary" role="status">
++          <span
++            aria-hidden
++            className={cn(
++              'size-2 rounded-full',
++              connection === 'live' ? 'bg-success-solid' : 'bg-line-strong',
++            )}
++          />
++          {status}
++          <span className="text-fg-tertiary">
++            {l('· changes from any window appear here', '· تظهر هنا تغييرات أي نافذة')}
++          </span>
++        </p>
++      </div>
++      <dl
++        className="hub-rise mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-edge bg-line md:grid-cols-4"
++        style={rise(9)}
++      >
++        {cells.map((cell) => (
++          <div key={cell.label} className="bg-surface px-5 py-5 sm:px-6">
++            <dd className="text-[2.25rem] font-medium leading-none tabular-nums text-fg">
++              {cell.n}
++            </dd>
++            <dt className="mt-2 text-label text-fg-secondary">{cell.label}</dt>
++          </div>
++        ))}
++      </dl>
++    </section>
++  );
++}
++
++function Tool({
++  href,
++  icon: Icon,
++  title,
++  body,
++  strong,
++  index,
++}: {
++  href: string;
++  icon: LucideIcon;
++  title: string;
++  body: string;
++  strong?: boolean;
++  index: number;
++}) {
++  return (
++    <li
++      className={cn(
++        'hub-rise relative flex items-start gap-3 rounded-xl border p-4 transition-colors sm:p-5',
++        strong
++          ? 'border-accent bg-accent-soft hover:bg-accent-soft/70'
++          : 'border-edge bg-surface hover:border-line-strong hover:bg-subtle',
++      )}
++      style={rise(index)}
++    >
++      <span
++        aria-hidden
++        className={cn(
++          'flex size-9 shrink-0 items-center justify-center rounded-md',
++          strong ? 'bg-solid text-solid-fg' : 'bg-track text-fg',
++        )}
++      >
++        <Icon className="size-4" />
++      </span>
++      <div className="min-w-0 flex-1">
++        <h3 className="text-body font-medium text-fg">
++          <a href={href} className={cn('inline-block rounded-md', STRETCH)}>
++            {title}
++          </a>
++        </h3>
++        <p className="mt-0.5 text-label text-fg-secondary">{body}</p>
++      </div>
++      <ArrowRight className="mt-2 size-4 shrink-0 text-fg-tertiary rtl:-scale-x-100" aria-hidden />
++    </li>
++  );
++}
++
++function Presenter({ l }: { l: Copy }) {
++  return (
++    <section aria-labelledby="hub-tools" className="mt-14 sm:mt-20">
++      <div className="max-w-[40rem]">
++        <h2 id="hub-tools" className="text-[1.5rem] font-medium leading-8 text-fg">
++          {l('Presenter tools', 'أدوات العرض')}
++        </h2>
++        <p className="mt-1.5 text-title text-fg-secondary">
++          {l(
++            'Start a tour, put the story back to its first state, or check what the app is holding.',
++            'ابدأ جولة، أو أعد القصة إلى حالتها الأولى، أو راجع ما يحتفظ به التطبيق.',
++          )}
++        </p>
++      </div>
++      <ul className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-3 md:grid-cols-2">
++        <Tool
++          strong
++          index={10}
++          href="/?tour=demo"
++          icon={Play}
++          title={l('Start the guided tour', 'ابدأ الجولة الإرشادية')}
++          body={l(
++            'The presenting route: what to show, in the order to tell it.',
++            'مسار العرض: ما نعرضه، بالترتيب الذي نرويه به.',
++          )}
++        />
++        <Tool
++          index={11}
++          href="/?tour=features"
++          icon={Compass}
++          title={l('Full feature tour', 'جولة كل الميزات')}
++          body={l(
++            'Every screen and feature, for questions and a closer look.',
++            'كل شاشة وكل ميزة، للأسئلة ولنظرة أقرب.',
++          )}
++        />
++      </ul>
++      <ul className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-3 md:grid-cols-3">
++        <Tool
++          index={12}
++          href="/design-system/state"
++          icon={RotateCcw}
++          title={l('Reset demo', 'إعادة ضبط العرض')}
++          body={l(
++            'Put the story back to its first state before a run.',
++            'أعد القصة إلى حالتها الأولى قبل كل عرض.',
++          )}
++        />
++        <Tool
++          index={13}
++          href="/design-system/state"
++          icon={FileClock}
++          title={l('Live state', 'الحالة المباشرة')}
++          body={l(
++            'Watch revisions arrive from every open window.',
++            'تابع وصول التحديثات من كل نافذة مفتوحة.',
++          )}
++        />
++        <Tool
++          index={14}
++          href="/employer/guard"
++          icon={ScrollText}
++          title={l('Guard log', 'سجل الحماية')}
++          body={l(
++            'The recorded Guard checks and the evaluation evidence.',
++            'فحوصات الحماية المسجلة وأدلة التقييم.',
++          )}
++        />
++      </ul>
++    </section>
++  );
++}
++
++function Honest({ l }: { l: Copy }) {
++  const points = [
++    {
++      title: l('Nothing leaves the app', 'لا شيء يغادر التطبيق'),
++      body: l(
++        'Landlords, banks and government services are simulated here. No application, message or file is sent to a real party.',
++        'الملاك والبنوك والخدمات الحكومية هنا محاكاة. لا يُرسل أي طلب أو رسالة أو ملف إلى جهة حقيقية.',
++      ),
++    },
++    {
++      title: l('Extraction is a labelled preview', 'الاستخراج معاينة موسومة'),
++      body: l(
++        'Reading a document shows a preview of what an extraction would return. Treat the values as examples, not as checked facts.',
++        'قراءة المستند تعرض معاينة لما قد يُستخرج منه. عامل القيم كأمثلة لا كحقائق تم التحقق منها.',
++      ),
++    },
++    {
++      title: l('End-to-end safety is not proven', 'السلامة من البداية إلى النهاية غير مثبتة'),
++      body: l(
++        'Guard is meant to stop data the newcomer has not agreed to share. An archived evaluation allowed 12 of 25 forbidden synthetic flows; a newer measurement of the deployed release denied all 25 in each of 3 runs. That tests the policy decision only, so this demo does not claim the agent is safe.',
++        'الحماية مصممة لمنع البيانات التي لم يوافق الوافد على مشاركتها. سمح تقييم مؤرشف بـ 12 من 25 مسارًا محظورًا اصطناعيًا، بينما رفضت قياسات أحدث للإصدار المنشور المسارات الـ 25 كلها في كل من 3 تجارب. وهذا يختبر قرار السياسة فقط، لذلك لا يدّعي هذا العرض أن الوكيل آمن.',
++      ),
++    },
++  ];
++  return (
++    <section
++      aria-labelledby="hub-real"
++      className={cn('hub-rise mt-14 rounded-xl px-5 py-8 sm:mt-20 sm:px-10 sm:py-10', SAND_SOFT)}
++      style={rise(15)}
++    >
++      <h2 id="hub-real" className="text-[1.5rem] font-medium leading-8 text-fg">
++        {l('What is real in this demo', 'ما الحقيقي في هذا العرض')}
++      </h2>
++      <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-3 md:gap-8">
++        {points.map((point) => (
++          <div key={point.title} className="border-t border-line-strong pt-4">
++            <h3 className="text-body font-medium text-fg">{point.title}</h3>
++            <p className="mt-1.5 text-body text-fg-secondary">{point.body}</p>
++          </div>
++        ))}
++      </div>
++      <p className="mt-6 text-label">
++        <a
++          href="/employer/guard"
++          className="inline-flex min-h-11 items-center gap-1.5 rounded-md font-medium text-accent hover:underline sm:min-h-8"
++        >
++          {l('See the Guard evidence', 'اطلع على أدلة الحماية')}
++          <ArrowRight className="size-3.5 rtl:-scale-x-100" aria-hidden />
++        </a>
++      </p>
++    </section>
++  );
++}
+ 
+-/** The demo hub: one distinct link per user. Replaced by the hub worker. */
+ export function DemoHub() {
++  const { locale } = useI18n();
++  const l: Copy = (en, ar) => (locale === 'ar' ? ar : en);
++  const { people } = useHub(locale);
+   return (
+-    <main className="p-6">
+-      <h1 className="text-heading font-medium">Rasikh demo</h1>
+-    </main>
++    <div className="min-h-dvh bg-canvas text-fg">
++      <style>{HUB_CSS}</style>
++      <Header />
++      <main className="mx-auto w-full max-w-[75rem] px-4 pb-32 pt-2 sm:px-6 lg:px-8">
++        <Hero l={l} />
++        <Roles l={l} people={people} />
++        <LiveStrip l={l} />
++        <Presenter l={l} />
++        <Honest l={l} />
++      </main>
++    </div>
+   );
+ }
+diff --git a/apps/web/src/components/tour/demo-guide.tsx b/apps/web/src/components/tour/demo-guide.tsx
+index 4443bf7..5306b30 100644
+--- a/apps/web/src/components/tour/demo-guide.tsx
++++ b/apps/web/src/components/tour/demo-guide.tsx
+@@ -1,6 +1,369 @@
+-"use client";
++'use client';
+ 
+-/** Presenter's guided tour. Replaced by the tour-engine worker. */
++import {
++  Suspense,
++  useCallback,
++  useEffect,
++  useMemo,
++  useRef,
++  useState,
++  useSyncExternalStore,
++} from 'react';
++import { usePathname, useRouter, useSearchParams } from 'next/navigation';
++import { Route } from 'lucide-react';
++import { TOUR_STEPS } from '@/config/tour';
++import type { TourTrack } from '@/config/tour-types';
++import { useMediaQuery } from '@/lib/use-media-query';
++import { GuidePanel } from './guide-panel';
++import { Spotlight } from './spotlight';
++import { tourCopy } from './tour-copy';
++import {
++  clampIndex,
++  indexAfterTrackSwitch,
++  INITIAL_STATE,
++  isTrack,
++  parseStoredState,
++  sameUrl,
++  stepDeltaForKey,
++  stepsForTrack,
++  stripTourParam,
++  TOUR_STORAGE_KEY,
++  trackFromSearch,
++  type TourState,
++} from './tour-logic';
++import { TOUR_CSS } from './tour-styles';
++
++/** The document's own lang and dir. There is no i18n provider at the root, so read them directly. */
++function useDocumentAttribute(name: 'lang' | 'dir', fallback: string): string {
++  return useSyncExternalStore(
++    (onChange) => {
++      const observer = new MutationObserver(onChange);
++      observer.observe(document.documentElement, {
++        attributes: true,
++        attributeFilter: [name],
++      });
++      return () => observer.disconnect();
++    },
++    () => document.documentElement.getAttribute(name) || fallback,
++    () => fallback,
++  );
++}
++
++/** True while focus is somewhere a bare key press should type or operate that control instead. */
++function isOwnedByControl(target: EventTarget | null): boolean {
++  if (!(target instanceof HTMLElement)) return false;
++  if (target.isContentEditable) return true;
++  if (target.closest('input, textarea, select')) return true;
++  return Boolean(
++    target.closest(
++      '[role="radiogroup"], [role="tablist"], [role="menu"], [role="listbox"], [role="slider"], [role="combobox"], [role="textbox"]',
++    ),
++  );
++}
++
++/** Space the newcomer bottom navigation takes, so the guide docks above it and never covers it. */
++function measureBottomNav(): number {
++  const nav = document.querySelector<HTMLElement>('nav.fixed.bottom-0');
++  if (!nav || getComputedStyle(nav).display === 'none') return 0;
++  const rect = nav.getBoundingClientRect();
++  return Math.max(0, Math.round(window.innerHeight - rect.top));
++}
++
++function Guide() {
++  const router = useRouter();
++  const pathname = usePathname();
++  const search = useSearchParams().toString();
++  const lang = useDocumentAttribute('lang', 'en');
++  const dir = useDocumentAttribute('dir', 'ltr');
++  const copy = tourCopy(lang);
++  const rtl = dir === 'rtl';
++  const phone = useMediaQuery('(max-width: 639px)');
++  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
++
++  const [mounted, setMounted] = useState(false);
++  const [state, setState] = useState<TourState>(INITIAL_STATE);
++  const [bottomOffset, setBottomOffset] = useState(0);
++  const [announcement, setAnnouncement] = useState('');
++  const panelRef = useRef<HTMLElement>(null);
++  const launcherRef = useRef<HTMLButtonElement>(null);
++  const focusTarget = useRef<'panel' | 'launcher' | null>(null);
++
++  const steps = useMemo(() => stepsForTrack(TOUR_STEPS, state.track), [state.track]);
++  const index = clampIndex(state.index, steps.length);
++  const step = steps[index];
++  const current = search ? `${pathname}?${search}` : pathname;
++  const differs = Boolean(step) && !sameUrl(step.href, current);
++
++  // Resume what this tab was doing.
++  useEffect(() => {
++    try {
++      setState(parseStoredState(window.sessionStorage.getItem(TOUR_STORAGE_KEY)));
++    } catch {
++      /* storage can be blocked */
++    }
++    setMounted(true);
++  }, []);
++
++  useEffect(() => {
++    if (!mounted) return;
++    try {
++      window.sessionStorage.setItem(
++        TOUR_STORAGE_KEY,
++        JSON.stringify({
++          open: state.open,
++          track: state.track,
++          index,
++          collapsed: state.collapsed,
++        }),
++      );
++    } catch {
++      /* storage can be blocked */
++    }
++  }, [mounted, state, index]);
++
++  // ?tour=demo or ?tour=features starts a track from its first step, then drops the parameter
++  // so a reload resumes instead of restarting.
++  useEffect(() => {
++    if (!mounted) return;
++    const track = trackFromSearch(window.location.search);
++    if (!track) return;
++    focusTarget.current = 'panel';
++    setState({ open: true, track, index: 0, collapsed: false });
++    const url = `${window.location.pathname}${stripTourParam(window.location.search)}${window.location.hash}`;
++    window.history.replaceState(null, '', url);
++  }, [mounted, search]);
++
++  // window.dispatchEvent(new CustomEvent('rasikh:tour', { detail: { track: 'demo' } }))
++  useEffect(() => {
++    const onTour = (event: Event) => {
++      const detail = (event as CustomEvent<{ track?: unknown; index?: unknown } | undefined>)
++        .detail;
++      focusTarget.current = 'panel';
++      setState((prev) => ({
++        open: true,
++        collapsed: false,
++        track: isTrack(detail?.track) ? detail.track : prev.track,
++        index: typeof detail?.index === 'number' ? Math.max(0, Math.trunc(detail.index)) : 0,
++      }));
++    };
++    window.addEventListener('rasikh:tour', onTour);
++    return () => window.removeEventListener('rasikh:tour', onTour);
++  }, []);
++
++  const goTo = useCallback(
++    (next: number) => {
++      const target = steps[clampIndex(next, steps.length)];
++      if (!target) return;
++      setState((prev) => ({
++        ...prev,
++        open: true,
++        index: clampIndex(next, steps.length),
++      }));
++      if (!sameUrl(target.href, `${window.location.pathname}${window.location.search}`)) {
++        router.push(target.href);
++      }
++    },
++    [router, steps],
++  );
++
++  const switchTrack = useCallback(
++    (track: TourTrack) => {
++      if (track === state.track) return;
++      const nextSteps = stepsForTrack(TOUR_STEPS, track);
++      const nextIndex = indexAfterTrackSwitch(steps, index, nextSteps);
++      setState((prev) => ({ ...prev, track, index: nextIndex }));
++      const target = nextSteps[nextIndex];
++      if (target && !sameUrl(target.href, `${window.location.pathname}${window.location.search}`)) {
++        router.push(target.href);
++      }
++    },
++    [index, router, state.track, steps],
++  );
++
++  const openTour = useCallback(() => {
++    focusTarget.current = 'panel';
++    setState((prev) => ({ ...prev, open: true, collapsed: false }));
++  }, []);
++
++  const closeTour = useCallback((reset: boolean) => {
++    focusTarget.current = 'launcher';
++    setState((prev) => ({
++      ...prev,
++      open: false,
++      index: reset ? 0 : prev.index,
++    }));
++  }, []);
++
++  const setCollapsed = useCallback((collapsed: boolean) => {
++    setState((prev) => ({ ...prev, collapsed }));
++  }, []);
++
++  // Keyboard: g toggles, arrows move (flipped in RTL), Escape collapses and then closes.
++  const keys = useRef({
++    goTo,
++    closeTour,
++    openTour,
++    setCollapsed,
++    index,
++    rtl,
++    state,
++  });
++  keys.current = { goTo, closeTour, openTour, setCollapsed, index, rtl, state };
++  useEffect(() => {
++    const onKey = (event: KeyboardEvent) => {
++      if (event.defaultPrevented || event.ctrlKey || event.metaKey) return;
++      const k = keys.current;
++      if (isOwnedByControl(event.target)) return;
++      // Alt+G, not a bare letter: a single-character shortcut would clash with typing and
++      // assistive technology (WCAG 2.1.4).
++      if (event.altKey && event.code === 'KeyG') {
++        if (event.repeat) return;
++        if (k.state.open) k.closeTour(false);
++        else k.openTour();
++        event.preventDefault();
++        return;
++      }
++      if (event.altKey) return;
++      if (!k.state.open) return;
++      const inPanel = panelRef.current?.contains(event.target as Node) ?? false;
++      const onPage = event.target === document.body || event.target === document.documentElement;
++      if (event.key === 'Escape') {
++        if (!inPanel && !onPage) return;
++        if (document.querySelector('dialog[open]')) return;
++        if (k.state.collapsed) k.closeTour(false);
++        else k.setCollapsed(true);
++        event.preventDefault();
++        return;
++      }
++      const delta = stepDeltaForKey(event.key, k.rtl);
++      if (delta !== 0 && (inPanel || onPage)) {
++        k.goTo(k.index + delta);
++        event.preventDefault();
++      }
++    };
++    document.addEventListener('keydown', onKey);
++    return () => document.removeEventListener('keydown', onKey);
++  }, []);
++
++  // Dock above the newcomer bottom navigation when it is on screen.
++  useEffect(() => {
++    if (!mounted) return;
++    const update = () => setBottomOffset(measureBottomNav());
++    update();
++    const settle = window.setTimeout(update, 400);
++    window.addEventListener('resize', update);
++    return () => {
++      window.clearTimeout(settle);
++      window.removeEventListener('resize', update);
++    };
++  }, [mounted, pathname, phone, state.open]);
++
++  // Move focus when the guide opens or closes from the keyboard or launcher.
++  useEffect(() => {
++    if (!mounted || !focusTarget.current) return;
++    const wanted = focusTarget.current;
++    if (wanted === 'panel' && state.open) {
++      focusTarget.current = null;
++      panelRef.current?.focus({ preventScroll: true });
++    } else if (wanted === 'launcher' && !state.open) {
++      focusTarget.current = null;
++      launcherRef.current?.focus({ preventScroll: true });
++    }
++  }, [mounted, state.open]);
++
++  // Tell screen readers which step is now showing.
++  const stepTitle = step?.title;
++  useEffect(() => {
++    if (!state.open || !stepTitle) {
++      setAnnouncement('');
++      return;
++    }
++    setAnnouncement(`${copy.stepOf(index + 1, steps.length)}: ${stepTitle}`);
++  }, [state.open, stepTitle, index, steps.length, copy]);
++
++  // The part of the screen the guide leaves free. On a phone the sheet owns the bottom; on a
++  // desktop the card only matters when the target sits under it, so scroll the target above it.
++  const getArea = useCallback(
++    (target: Element) => {
++      const top = 72;
++      let bottom = window.innerHeight - bottomOffset;
++      const panel = panelRef.current;
++      if (panel) {
++        const box = panel.getBoundingClientRect();
++        if (phone) {
++          bottom = Math.min(bottom, box.top);
++        } else {
++          const rect = target.getBoundingClientRect();
++          if (rect.right > box.left && rect.left < box.right)
++            bottom = Math.min(bottom, box.top - 8);
++        }
++      }
++      return { top, bottom: Math.max(bottom, top + 120) };
++    },
++    [bottomOffset, phone],
++  );
++
++  if (!mounted) return null;
++
++  return (
++    <>
++      <style>{TOUR_CSS}</style>
++      {state.open && steps.length > 0 ? (
++        <>
++          <Spotlight
++            selector={step?.target}
++            stepKey={`${state.track}:${step?.id ?? ''}`}
++            reducedMotion={reducedMotion}
++            getArea={getArea}
++          />
++          <GuidePanel
++            copy={copy}
++            phone={phone}
++            steps={steps}
++            index={index}
++            track={state.track}
++            collapsed={state.collapsed}
++            differs={differs}
++            dockStart={false}
++            bottomOffset={bottomOffset}
++            panelRef={panelRef}
++            onTrack={switchTrack}
++            onGo={goTo}
++            onCollapse={setCollapsed}
++            onEnd={() => closeTour(true)}
++          />
++          <div aria-live="polite" aria-atomic className="sr-only">
++            {announcement}
++          </div>
++        </>
++      ) : (
++        <button
++          ref={launcherRef}
++          type="button"
++          onClick={openTour}
++          aria-keyshortcuts="Alt+G"
++          className="rasikh-tour-launcher rasikh-button fixed end-4 z-40 inline-flex h-10 items-center gap-2 rounded-full border border-line-strong bg-surface ps-3 pe-3.5 text-body font-medium text-fg shadow-pop transition-colors hover:bg-hover max-sm:min-h-11"
++          style={{ bottom: `calc(${bottomOffset}px + 1rem)` }}
++        >
++          <Route aria-hidden className="size-4 text-accent" />
++          {copy.guide}
++          <kbd
++            aria-hidden
++            className="rounded-sm bg-track px-1.5 font-mono text-caption text-fg-secondary max-sm:hidden"
++          >
++            Alt G
++          </kbd>
++        </button>
++      )}
++    </>
++  );
++}
++
++/** The presenter's guided tour. Mounted once in the root layout; renders nothing until mounted. */
+ export function DemoGuide() {
+-  return null;
++  return (
++    <Suspense fallback={null}>
++      <Guide />
++    </Suspense>
++  );
+ }
+diff --git a/apps/web/src/components/tour/guide-panel.tsx b/apps/web/src/components/tour/guide-panel.tsx
+new file mode 100644
+index 0000000..fe8ec02
+--- /dev/null
++++ b/apps/web/src/components/tour/guide-panel.tsx
+@@ -0,0 +1,430 @@
++'use client';
++
++import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
++import Link from 'next/link';
++import {
++  ArrowLeft,
++  ArrowRight,
++  ArrowUpRight,
++  Check,
++  ChevronDown,
++  ChevronUp,
++  ExternalLink,
++  Info,
++  ListChecks,
++  Mic,
++  MousePointerClick,
++  Route,
++} from 'lucide-react';
++import type { TourStep, TourTrack } from '@/config/tour-types';
++import { Button } from '@/components/ui/button';
++import { Segmented } from '@/components/ui/segmented';
++import { cn } from '@/lib/cn';
++import type { TourCopy } from './tour-copy';
++import { DEMO_BUDGET_SECONDS, elapsedSeconds, formatClock, totalSeconds } from './tour-logic';
++
++export interface GuidePanelProps {
++  copy: TourCopy;
++  phone: boolean;
++  steps: TourStep[];
++  index: number;
++  track: TourTrack;
++  collapsed: boolean;
++  /** The current page is not the page this step happens on. */
++  differs: boolean;
++  /** Dock on the inline-start side so the spotlight target stays visible. */
++  dockStart: boolean;
++  /** Pixels reserved at the bottom of the viewport (the newcomer bottom navigation). */
++  bottomOffset: number;
++  panelRef: RefObject<HTMLElement | null>;
++  onTrack: (track: TourTrack) => void;
++  onGo: (index: number) => void;
++  onCollapse: (collapsed: boolean) => void;
++  onEnd: () => void;
++}
++
++function SectionLabel({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
++  return (
++    <h3 className="mb-2 flex items-center gap-1.5 text-label font-medium text-fg-tertiary">
++      <span aria-hidden className="text-accent">
++        {icon}
++      </span>
++      {children}
++    </h3>
++  );
++}
++
++const linkButton =
++  'rasikh-button inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line-strong bg-surface px-3 text-body font-medium text-fg transition-colors hover:bg-hover max-sm:min-h-11';
++
++export function GuidePanel({
++  copy,
++  phone,
++  steps,
++  index,
++  track,
++  collapsed,
++  differs,
++  dockStart,
++  bottomOffset,
++  panelRef,
++  onTrack,
++  onGo,
++  onCollapse,
++  onEnd,
++}: GuidePanelProps) {
++  const step = steps[index];
++  const [listOpen, setListOpen] = useState(false);
++  const bodyRef = useRef<HTMLDivElement>(null);
++  const activeRowRef = useRef<HTMLButtonElement>(null);
++
++  useEffect(() => {
++    bodyRef.current?.scrollTo({ top: 0 });
++  }, [step?.id, track]);
++
++  useEffect(() => {
++    if (listOpen) activeRowRef.current?.scrollIntoView({ block: 'nearest' });
++  }, [listOpen, index]);
++
++  const total = totalSeconds(steps);
++  const elapsed = elapsedSeconds(steps, index);
++  const budget = track === 'demo' ? DEMO_BUDGET_SECONDS : total;
++  const over = track === 'demo' && elapsed > DEMO_BUDGET_SECONDS;
++  const first = index === 0;
++  const last = index === steps.length - 1;
++  const trackName = track === 'demo' ? copy.demoStory : copy.fullTour;
++
++  const placement: CSSProperties = phone
++    ? {
++        bottom: bottomOffset,
++        maxHeight: `min(30rem, 58dvh)`,
++        paddingBottom: bottomOffset > 0 ? undefined : 'env(safe-area-inset-bottom)',
++      }
++    : {
++        bottom: `calc(${bottomOffset}px + 1rem)`,
++        maxHeight: `min(40rem, calc(100dvh - ${bottomOffset}px - 2rem))`,
++      };
++
++  const frame = cn(
++    'rasikh-tour-panel fixed z-40 flex flex-col border border-edge bg-surface text-fg shadow-pop focus:outline-none',
++    phone
++      ? 'inset-x-0 rounded-t-xl border-b-0'
++      : cn('w-[24rem] max-w-[calc(100vw-2rem)] rounded-lg', dockStart ? 'start-4' : 'end-4'),
++  );
++
++  const back = (
++    <Button
++      variant="secondary"
++      size="lg"
++      iconOnly={collapsed}
++      onClick={() => onGo(index - 1)}
++      disabled={first}
++      aria-label={collapsed ? copy.back : undefined}
++      icon={<ArrowLeft aria-hidden className="size-4 rtl:-scale-x-100" />}
++    >
++      {collapsed ? null : copy.back}
++    </Button>
++  );
++
++  const next = (
++    <Button
++      variant="primary"
++      size="lg"
++      iconOnly={collapsed}
++      onClick={last ? onEnd : () => onGo(index + 1)}
++      aria-label={collapsed ? (last ? copy.finish : copy.next) : undefined}
++      icon={
++        collapsed ? (
++          last ? (
++            <Check aria-hidden />
++          ) : (
++            <ArrowRight aria-hidden className="rtl:-scale-x-100" />
++          )
++        ) : undefined
++      }
++    >
++      {last ? (
++        copy.finish
++      ) : (
++        <>
++          {copy.next}
++          <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
++        </>
++      )}
++    </Button>
++  );
++
++  const progress = (
++    <div
++      role="progressbar"
++      aria-label={copy.progress}
++      aria-valuemin={1}
++      aria-valuemax={steps.length}
++      aria-valuenow={index + 1}
++      aria-valuetext={copy.stepOf(index + 1, steps.length)}
++      className="rasikh-tour-progress flex gap-1"
++    >
++      {steps.map((item, i) => (
++        <span
++          key={item.id}
++          className={cn('h-1 min-w-0 flex-1 rounded-full', i <= index ? 'bg-accent' : 'bg-track')}
++        />
++      ))}
++    </div>
++  );
++
++  if (collapsed) {
++    return (
++      <section
++        ref={panelRef}
++        role="region"
++        aria-label={copy.presenterGuide}
++        tabIndex={-1}
++        className={frame}
++        style={placement}
++      >
++        <div className="px-2.5 pt-2.5">{progress}</div>
++        <div className="flex items-center gap-1.5 p-2">
++          <button
++            type="button"
++            onClick={() => onCollapse(false)}
++            aria-expanded={false}
++            aria-label={`${copy.expand}: ${step?.title ?? ''}`}
++            className="flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-md px-2 text-start transition-colors hover:bg-hover"
++          >
++            <Route aria-hidden className="size-4 shrink-0 text-accent" />
++            <span className="min-w-0 flex-1">
++              <span dir="auto" className="block truncate text-label font-medium text-fg">
++                {step?.title}
++              </span>
++              <span className="block text-caption text-fg-tertiary">
++                {copy.stepOf(index + 1, steps.length)}
++              </span>
++            </span>
++            <ChevronUp aria-hidden className="size-4 shrink-0 text-fg-tertiary" />
++          </button>
++          {back}
++          {next}
++        </div>
++      </section>
++    );
++  }
++
++  return (
++    <section
++      ref={panelRef}
++      role="region"
++      aria-label={copy.presenterGuide}
++      tabIndex={-1}
++      className={frame}
++      style={placement}
++    >
++      <header className="flex items-center gap-2 px-3 pb-3 pt-3 sm:px-4">
++        <span
++          aria-hidden
++          className="flex size-8 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent"
++        >
++          <Route className="size-4" />
++        </span>
++        <Segmented<TourTrack>
++          label={copy.trackLabel}
++          value={track}
++          onChange={onTrack}
++          className="h-10 min-w-0 flex-1 [&>button]:min-w-0 [&>button]:flex-1 [&>button]:px-2 [&>button]:text-label"
++          options={[
++            { value: 'demo', label: copy.demoStory },
++            { value: 'features', label: copy.fullTour },
++          ]}
++        />
++        <Button
++          variant="ghost"
++          size="lg"
++          iconOnly
++          onClick={() => onCollapse(true)}
++          aria-label={copy.collapse}
++          aria-expanded
++          icon={<ChevronDown aria-hidden className="size-4" />}
++        />
++      </header>
++
++      <div className="space-y-2 border-t border-line px-4 py-3">
++        <div className="flex items-baseline justify-between gap-3">
++          <p className="text-label font-medium text-accent">
++            {copy.stepOf(index + 1, steps.length)}
++          </p>
++          <p className="flex items-baseline gap-1.5 text-caption tabular-nums text-fg-tertiary">
++            <span className="text-fg-secondary">{copy.seconds(step?.seconds ?? 0)}</span>
++            <span aria-hidden>·</span>
++            <bdi dir="ltr" className={cn(over && 'font-medium text-warning')}>
++              {formatClock(elapsed)} / {formatClock(budget)}
++            </bdi>
++            <span className="sr-only">
++              {copy.runningTotal}
++              {over ? `. ${copy.overBudget}` : ''}
++            </span>
++          </p>
++        </div>
++        {progress}
++        <p className="sr-only">{trackName}</p>
++      </div>
++
++      <div
++        ref={bodyRef}
++        className="min-h-0 flex-1 overflow-y-auto overscroll-contain border-t border-line px-4 py-4"
++      >
++        {step ? (
++          <div key={`${track}:${step.id}`} className="rasikh-tour-step space-y-4">
++            <div>
++              <h2 dir="auto" className="text-title font-medium text-fg">
++                {step.title}
++              </h2>
++              <p dir="auto" className="mt-1 text-body text-fg-secondary">
++                {step.summary}
++              </p>
++            </div>
++
++            {differs ? (
++              <div className="flex flex-wrap gap-2">
++                <Link href={step.href} className={cn(linkButton, 'flex-1')}>
++                  <ArrowUpRight aria-hidden className="size-4 rtl:-scale-x-100" />
++                  {copy.openThisView}
++                </Link>
++                <a href={step.href} target="_blank" rel="noopener" className={linkButton}>
++                  <ExternalLink aria-hidden className="size-4" />
++                  {copy.newWindow}
++                </a>
++              </div>
++            ) : null}
++
++            {step.say.length > 0 ? (
++              <section>
++                <SectionLabel icon={<Mic className="size-3.5" />}>{copy.say}</SectionLabel>
++                <ul className="space-y-1.5">
++                  {step.say.map((line) => (
++                    <li
++                      key={line}
++                      dir="auto"
++                      className="border-s-2 border-line-strong ps-3 text-body text-fg"
++                    >
++                      {line}
++                    </li>
++                  ))}
++                </ul>
++              </section>
++            ) : null}
++
++            {step.show.length > 0 ? (
++              <section>
++                <SectionLabel icon={<MousePointerClick className="size-3.5" />}>
++                  {copy.show}
++                </SectionLabel>
++                <ol className="space-y-2">
++                  {step.show.map((line, i) => (
++                    <li key={line} dir="auto" className="flex gap-2.5 text-body text-fg">
++                      <span
++                        aria-hidden
++                        className="mt-px flex size-5 shrink-0 items-center justify-center rounded-full bg-track text-caption font-medium tabular-nums text-fg-secondary"
++                      >
++                        {i + 1}
++                      </span>
++                      <span className="min-w-0">{line}</span>
++                    </li>
++                  ))}
++                </ol>
++              </section>
++            ) : null}
++
++            {step.features.length > 0 ? (
++              <ul className="flex flex-wrap gap-1.5" aria-label={copy.featuresLabel}>
++                {step.features.map((feature) => (
++                  <li
++                    key={feature}
++                    dir="auto"
++                    className="rounded-sm bg-accent-soft px-2 py-0.5 text-caption font-medium text-accent"
++                  >
++                    {feature}
++                  </li>
++                ))}
++              </ul>
++            ) : null}
++
++            {step.honesty ? (
++              <aside className="rounded-md border-s-4 border-[rgb(var(--brand-saffron))] bg-[rgb(var(--brand-saffron)/0.16)] px-3 py-2.5">
++                <p className="flex items-center gap-1.5 text-label font-medium text-warning">
++                  <Info aria-hidden className="size-4 shrink-0" />
++                  {copy.beStraight}
++                </p>
++                <p dir="auto" className="mt-1 text-body text-fg">
++                  {step.honesty}
++                </p>
++              </aside>
++            ) : null}
++          </div>
++        ) : (
++          <p className="text-body text-fg-secondary">{copy.noSteps}</p>
++        )}
++
++        <div className="mt-4 border-t border-line pt-2">
++          <button
++            type="button"
++            onClick={() => setListOpen((open) => !open)}
++            aria-expanded={listOpen}
++            aria-controls="rasikh-tour-steps"
++            className="flex min-h-10 w-full items-center gap-2 rounded-md px-1 text-start text-label font-medium text-fg-secondary transition-colors hover:text-fg max-sm:min-h-11"
++          >
++            <ListChecks aria-hidden className="size-4 text-accent" />
++            <span className="flex-1">{copy.allSteps}</span>
++            <ChevronDown
++              aria-hidden
++              className={cn(
++                'size-4 text-fg-tertiary transition-transform',
++                listOpen && 'rotate-180',
++              )}
++            />
++          </button>
++          {listOpen ? (
++            <ol id="rasikh-tour-steps" className="mt-1 max-h-56 space-y-0.5 overflow-y-auto">
++              {steps.map((item, i) => {
++                const active = i === index;
++                return (
++                  <li key={item.id}>
++                    <button
++                      type="button"
++                      ref={active ? activeRowRef : undefined}
++                      onClick={() => onGo(i)}
++                      aria-current={active ? 'step' : undefined}
++                      className={cn(
++                        'flex min-h-10 w-full items-center gap-2.5 rounded-md px-2 text-start text-body transition-colors max-sm:min-h-11',
++                        active
++                          ? 'bg-selected font-medium text-fg'
++                          : 'text-fg-secondary hover:bg-hover',
++                      )}
++                    >
++                      <span className="w-5 shrink-0 text-caption tabular-nums text-fg-tertiary">
++                        {i + 1}
++                      </span>
++                      <span dir="auto" className="min-w-0 flex-1 truncate">
++                        {item.title}
++                      </span>
++                      <span className="shrink-0 text-caption tabular-nums text-fg-tertiary">
++                        {copy.seconds(item.seconds)}
++                      </span>
++                    </button>
++                  </li>
++                );
++              })}
++            </ol>
++          ) : null}
++        </div>
++      </div>
++
++      <footer className="flex items-center gap-2 border-t border-line px-4 py-3">
++        <Button variant="ghost" size="lg" onClick={onEnd} className="me-auto text-fg-secondary">
++          {copy.endTour}
++        </Button>
++        {back}
++        {next}
++      </footer>
++    </section>
++  );
++}
+diff --git a/apps/web/src/components/tour/spotlight.tsx b/apps/web/src/components/tour/spotlight.tsx
+new file mode 100644
+index 0000000..1a868df
+--- /dev/null
++++ b/apps/web/src/components/tour/spotlight.tsx
+@@ -0,0 +1,200 @@
++'use client';
++
++import { useEffect, useRef } from 'react';
++
++/** How long to keep looking for a target that has not rendered yet (pages hydrate and load data). */
++export const TARGET_RETRY_MS = 10000;
++const PAD = 6;
++const EDGE = 4;
++const SLIDE_MS = 300;
++
++export interface SpotlightArea {
++  top: number;
++  bottom: number;
++}
++
++export interface SpotlightProps {
++  /** CSS selector of the element to highlight. Missing or unmatched: nothing is drawn. */
++  selector: string | undefined;
++  /** Changes with the step, so the same selector on a new step is revealed again. */
++  stepKey: string;
++  reducedMotion: boolean;
++  /** The part of the viewport not covered by the guide, used to centre the target. */
++  getArea: (target: Element) => SpotlightArea;
++}
++
++/** The first match that is actually on screen, so a hidden desktop table row never shadows its phone card. */
++function safeQuery(selector: string): Element | null {
++  try {
++    const all = document.querySelectorAll(selector);
++    for (const node of all) {
++      const rect = node.getBoundingClientRect();
++      if (rect.width > 0 || rect.height > 0) return node;
++    }
++    return all[0] ?? null;
++  } catch {
++    return null;
++  }
++}
++
++function scrollParentOf(node: Element): Element | null {
++  let current = node.parentElement;
++  while (current && current !== document.body && current !== document.documentElement) {
++    const { overflowY } = getComputedStyle(current);
++    if (
++      /(auto|scroll|overlay)/.test(overflowY) &&
++      current.scrollHeight > current.clientHeight + 1
++    ) {
++      return current;
++    }
++    current = current.parentElement;
++  }
++  return null;
++}
++
++/** Brings the target into the free part of the screen. Smooth only when motion is allowed. */
++function reveal(node: Element, area: SpotlightArea, reducedMotion: boolean) {
++  const rect = node.getBoundingClientRect();
++  if (rect.width === 0 && rect.height === 0) return;
++  const margin = 16;
++  if (rect.top >= area.top + margin && rect.bottom <= area.bottom - margin) return;
++  const free = area.bottom - area.top;
++  const delta =
++    rect.height > free - margin * 2
++      ? rect.top - (area.top + margin)
++      : rect.top + rect.height / 2 - (area.top + free / 2);
++  const behavior: ScrollBehavior = reducedMotion ? 'auto' : 'smooth';
++  const parent = scrollParentOf(node);
++  if (parent) parent.scrollBy({ top: delta, behavior });
++  else window.scrollBy({ top: delta, behavior });
++}
++
++/**
++ * A highlight ring that follows its target, with a soft ink dimmer made from one very large
++ * box-shadow. It never takes pointer events, so the page underneath stays fully usable.
++ */
++export function Spotlight({ selector, stepKey, reducedMotion, getArea }: SpotlightProps) {
++  const ringRef = useRef<HTMLDivElement>(null);
++  const areaRef = useRef(getArea);
++  areaRef.current = getArea;
++
++  useEffect(() => {
++    const ring = ringRef.current;
++    if (!ring) return;
++    const ringNode: HTMLDivElement = ring;
++
++    let target: Element | null = null;
++    let frame = 0;
++    let observer: MutationObserver | null = null;
++    let poll = 0;
++    let giveUp = 0;
++    let settle = 0;
++    let cancelled = false;
++    let visible = ringNode.style.opacity === '1';
++    let lastKey = '';
++
++    function hide() {
++      if (visible) {
++        ringNode.style.transition = reducedMotion ? 'none' : 'opacity 180ms ease-out';
++        ringNode.style.opacity = '0';
++        visible = false;
++      }
++      lastKey = '';
++    }
++
++    function stopSearching() {
++      observer?.disconnect();
++      observer = null;
++      window.clearInterval(poll);
++      window.clearTimeout(giveUp);
++    }
++
++    function paint() {
++      if (cancelled) return;
++      if (!target || !target.isConnected) {
++        target = null;
++        hide();
++        search();
++        return;
++      }
++      const rect = target.getBoundingClientRect();
++      const vw = window.innerWidth;
++      const vh = window.innerHeight;
++      const offscreen = rect.bottom < 0 || rect.top > vh || rect.right < 0 || rect.left > vw;
++      if ((rect.width === 0 && rect.height === 0) || offscreen) {
++        hide();
++      } else {
++        const x = Math.max(rect.left - PAD, EDGE);
++        const y = Math.max(rect.top - PAD, EDGE);
++        const w = Math.max(Math.min(rect.right + PAD, vw - EDGE) - x, 0);
++        const h = Math.max(Math.min(rect.bottom + PAD, vh - EDGE) - y, 0);
++        const key = `${Math.round(x)}|${Math.round(y)}|${Math.round(w)}|${Math.round(h)}`;
++        if (key !== lastKey || !visible) {
++          lastKey = key;
++          ringNode.style.transform = `translate3d(${x}px, ${y}px, 0)`;
++          ringNode.style.width = `${w}px`;
++          ringNode.style.height = `${h}px`;
++          if (!visible) {
++            ringNode.style.opacity = '1';
++            visible = true;
++          }
++        }
++      }
++      frame = requestAnimationFrame(paint);
++    }
++
++    function attach(node: Element) {
++      stopSearching();
++      target = node;
++      reveal(node, areaRef.current(node), reducedMotion);
++      if (reducedMotion) {
++        ringNode.style.transition = 'none';
++      } else {
++        // Slide between targets, fade in from nothing, then track exactly while scrolling.
++        ringNode.style.transition = visible
++          ? `transform ${SLIDE_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1), width ${SLIDE_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1), height ${SLIDE_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 180ms ease-out`
++          : 'opacity 220ms ease-out';
++        settle = window.setTimeout(() => {
++          if (!cancelled) ringNode.style.transition = 'opacity 180ms ease-out';
++        }, SLIDE_MS + 40);
++      }
++      cancelAnimationFrame(frame);
++      frame = requestAnimationFrame(paint);
++    }
++
++    function search() {
++      stopSearching();
++      if (!selector) return;
++      const found = safeQuery(selector);
++      if (found) {
++        attach(found);
++        return;
++      }
++      const check = () => {
++        const next = safeQuery(selector);
++        if (next) attach(next);
++      };
++      observer = new MutationObserver(check);
++      observer.observe(document.body, { childList: true, subtree: true });
++      poll = window.setInterval(check, 250);
++      giveUp = window.setTimeout(stopSearching, TARGET_RETRY_MS);
++    }
++
++    if (!selector) {
++      hide();
++    } else {
++      // A step on another page: do not leave the old highlight hanging while the new page loads.
++      if (!safeQuery(selector)) hide();
++      search();
++    }
++
++    return () => {
++      cancelled = true;
++      cancelAnimationFrame(frame);
++      window.clearTimeout(settle);
++      stopSearching();
++    };
++  }, [selector, stepKey, reducedMotion]);
++
++  return <div ref={ringRef} aria-hidden className="rasikh-tour-ring" />;
++}
+diff --git a/apps/web/src/components/tour/tour-copy.ts b/apps/web/src/components/tour/tour-copy.ts
+new file mode 100644
+index 0000000..850bcac
+--- /dev/null
++++ b/apps/web/src/components/tour/tour-copy.ts
+@@ -0,0 +1,92 @@
++/** Chrome strings of the presenter guide. Step content itself lives in config/tour.ts. */
++
++export interface TourCopy {
++  guide: string;
++  presenterGuide: string;
++  next: string;
++  back: string;
++  finish: string;
++  endTour: string;
++  collapse: string;
++  expand: string;
++  stepOf: (n: number, total: number) => string;
++  thisStep: string;
++  runningTotal: string;
++  seconds: (n: number) => string;
++  overBudget: string;
++  openThisView: string;
++  newWindow: string;
++  say: string;
++  show: string;
++  beStraight: string;
++  demoStory: string;
++  fullTour: string;
++  trackLabel: string;
++  allSteps: string;
++  noSteps: string;
++  keysHint: string;
++  progress: string;
++  featuresLabel: string;
++}
++
++const EN: TourCopy = {
++  guide: 'Guide',
++  presenterGuide: 'Presenter guide',
++  next: 'Next',
++  back: 'Back',
++  finish: 'Finish',
++  endTour: 'End tour',
++  collapse: 'Collapse guide',
++  expand: 'Expand guide',
++  stepOf: (n, total) => `Step ${n} of ${total}`,
++  thisStep: 'This step',
++  runningTotal: 'Running total',
++  seconds: (n) => `${n} s`,
++  overBudget: 'Over the 3 minute budget',
++  openThisView: 'Open this view',
++  newWindow: 'New window',
++  say: 'Say',
++  show: 'Show',
++  beStraight: 'Be straight about this',
++  demoStory: 'Demo story',
++  fullTour: 'Full feature tour',
++  trackLabel: 'Tour track',
++  allSteps: 'All steps',
++  noSteps: 'There are no steps in this tour yet.',
++  keysHint: 'Arrow keys move between steps. G opens or closes the guide.',
++  progress: 'Tour progress',
++  featuresLabel: 'Features shown',
++};
++
++const AR: TourCopy = {
++  guide: 'الدليل',
++  presenterGuide: 'دليل المقدّم',
++  next: 'التالي',
++  back: 'السابق',
++  finish: 'إنهاء',
++  endTour: 'إنهاء الجولة',
++  collapse: 'طيّ الدليل',
++  expand: 'توسيع الدليل',
++  stepOf: (n, total) => `الخطوة ${n} من ${total}`,
++  thisStep: 'هذه الخطوة',
++  runningTotal: 'المجموع التراكمي',
++  seconds: (n) => `${n} ث`,
++  overBudget: 'تجاوز ميزانية الدقائق الثلاث',
++  openThisView: 'افتح هذه الصفحة',
++  newWindow: 'نافذة جديدة',
++  say: 'قل',
++  show: 'اعرض',
++  beStraight: 'كن صريحاً بشأن هذا',
++  demoStory: 'قصة العرض',
++  fullTour: 'جولة المزايا الكاملة',
++  trackLabel: 'مسار الجولة',
++  allSteps: 'كل الخطوات',
++  noSteps: 'لا توجد خطوات في هذه الجولة بعد.',
++  keysHint: 'مفاتيح الأسهم تنقلك بين الخطوات. المفتاح G يفتح الدليل أو يغلقه.',
++  progress: 'تقدّم الجولة',
++  featuresLabel: 'المزايا المعروضة',
++};
++
++export function tourCopy(lang: string): TourCopy {
++  return lang.toLowerCase().startsWith('ar') ? AR : EN;
++}
+diff --git a/apps/web/src/components/tour/tour-logic.test.ts b/apps/web/src/components/tour/tour-logic.test.ts
+new file mode 100644
+index 0000000..63a454b
+--- /dev/null
++++ b/apps/web/src/components/tour/tour-logic.test.ts
+@@ -0,0 +1,179 @@
++import { describe, expect, it } from 'vitest';
++import type { TourStep } from '@/config/tour-types';
++import {
++  clampIndex,
++  elapsedSeconds,
++  formatClock,
++  indexAfterTrackSwitch,
++  INITIAL_STATE,
++  normalizeUrl,
++  parseStoredState,
++  sameUrl,
++  stepDeltaForKey,
++  stepsForTrack,
++  stripTourParam,
++  totalSeconds,
++  trackFromSearch,
++} from './tour-logic';
++
++function step(id: string, tracks: TourStep['tracks'], seconds: number): TourStep {
++  return {
++    id,
++    tracks,
++    surface: 'hub',
++    href: '/',
++    title: id,
++    summary: '',
++    say: [],
++    show: [],
++    features: [],
++    seconds,
++  };
++}
++
++const STEPS = [
++  step('a', ['demo', 'features'], 30),
++  step('b', ['features'], 45),
++  step('c', ['demo', 'features'], 60),
++  step('d', ['demo'], 20),
++];
++
++describe('stepsForTrack', () => {
++  it('keeps only steps that belong to the track, in order', () => {
++    expect(stepsForTrack(STEPS, 'demo').map((s) => s.id)).toEqual(['a', 'c', 'd']);
++    expect(stepsForTrack(STEPS, 'features').map((s) => s.id)).toEqual(['a', 'b', 'c']);
++  });
++
++  it('returns an empty list when nothing matches', () => {
++    expect(stepsForTrack([], 'demo')).toEqual([]);
++  });
++});
++
++describe('time totals', () => {
++  it('adds up a whole track', () => {
++    expect(totalSeconds(stepsForTrack(STEPS, 'demo'))).toBe(110);
++    expect(totalSeconds([])).toBe(0);
++  });
++
++  it('gives the running total through the current step, inclusive', () => {
++    const demo = stepsForTrack(STEPS, 'demo');
++    expect(elapsedSeconds(demo, 0)).toBe(30);
++    expect(elapsedSeconds(demo, 1)).toBe(90);
++    expect(elapsedSeconds(demo, 2)).toBe(110);
++  });
++
++  it('clamps the index and ignores negative durations', () => {
++    const demo = stepsForTrack(STEPS, 'demo');
++    expect(elapsedSeconds(demo, 99)).toBe(110);
++    expect(elapsedSeconds(demo, -4)).toBe(30);
++    expect(elapsedSeconds([], 3)).toBe(0);
++    expect(totalSeconds([step('x', ['demo'], -5), step('y', ['demo'], 10)])).toBe(10);
++  });
++
++  it('formats clock time as m:ss', () => {
++    expect(formatClock(0)).toBe('0:00');
++    expect(formatClock(9)).toBe('0:09');
++    expect(formatClock(180)).toBe('3:00');
++    expect(formatClock(185)).toBe('3:05');
++    expect(formatClock(-3)).toBe('0:00');
++  });
++});
++
++describe('clampIndex', () => {
++  it('keeps an index inside the list', () => {
++    expect(clampIndex(2, 5)).toBe(2);
++    expect(clampIndex(-1, 5)).toBe(0);
++    expect(clampIndex(9, 5)).toBe(4);
++    expect(clampIndex(2.9, 5)).toBe(2);
++  });
++
++  it('is safe for empty lists and bad numbers', () => {
++    expect(clampIndex(3, 0)).toBe(0);
++    expect(clampIndex(Number.NaN, 4)).toBe(0);
++    expect(clampIndex(Number.POSITIVE_INFINITY, 4)).toBe(0);
++  });
++});
++
++describe('url comparison', () => {
++  it('ignores the hash', () => {
++    expect(sameUrl('/employer#guard', '/employer')).toBe(true);
++    expect(sameUrl('/newcomer?as=anders#roadmap', '/newcomer?as=anders')).toBe(true);
++  });
++
++  it('treats a different path or query as a different page', () => {
++    expect(sameUrl('/newcomer?as=anders', '/newcomer?as=maria')).toBe(false);
++    expect(sameUrl('/newcomer', '/newcomer?as=anders')).toBe(false);
++    expect(sameUrl('/employer', '/landlord')).toBe(false);
++  });
++
++  it('ignores the tour launcher parameter, trailing slashes and query order', () => {
++    expect(sameUrl('/?tour=demo', '/')).toBe(true);
++    expect(sameUrl('/employer/', '/employer')).toBe(true);
++    expect(sameUrl('/x?b=2&a=1', '/x?a=1&b=2')).toBe(true);
++    expect(normalizeUrl('/newcomer?as=anders&tour=features')).toBe('/newcomer?as=anders');
++  });
++});
++
++describe('tour launch parameter', () => {
++  it('reads a valid track only', () => {
++    expect(trackFromSearch('?tour=demo')).toBe('demo');
++    expect(trackFromSearch('?as=anders&tour=features')).toBe('features');
++    expect(trackFromSearch('?tour=other')).toBeNull();
++    expect(trackFromSearch('')).toBeNull();
++  });
++
++  it('strips the parameter and keeps the rest', () => {
++    expect(stripTourParam('?tour=demo')).toBe('');
++    expect(stripTourParam('?as=anders&tour=demo')).toBe('?as=anders');
++  });
++});
++
++describe('stored state', () => {
++  it('round-trips a saved state', () => {
++    const raw = JSON.stringify({
++      open: true,
++      track: 'features',
++      index: 3,
++      collapsed: true,
++    });
++    expect(parseStoredState(raw)).toEqual({
++      open: true,
++      track: 'features',
++      index: 3,
++      collapsed: true,
++    });
++  });
++
++  it('falls back to a closed, fresh tour for missing or malformed data', () => {
++    expect(parseStoredState(null)).toEqual(INITIAL_STATE);
++    expect(parseStoredState('not json')).toEqual(INITIAL_STATE);
++    expect(parseStoredState('42')).toEqual(INITIAL_STATE);
++    expect(parseStoredState(JSON.stringify({ open: 'yes', track: 'x', index: -4 }))).toEqual({
++      ...INITIAL_STATE,
++      index: 0,
++    });
++  });
++});
++
++describe('track switching and keys', () => {
++  it('stays on the same stop when the other track has it', () => {
++    const demo = stepsForTrack(STEPS, 'demo');
++    const features = stepsForTrack(STEPS, 'features');
++    expect(indexAfterTrackSwitch(demo, 1, features)).toBe(2);
++  });
++
++  it('starts over when the stop is not in the other track', () => {
++    const demo = stepsForTrack(STEPS, 'demo');
++    const features = stepsForTrack(STEPS, 'features');
++    expect(indexAfterTrackSwitch(demo, 2, features)).toBe(0);
++    expect(indexAfterTrackSwitch([], 0, features)).toBe(0);
++  });
++
++  it('flips the arrow keys in right-to-left layouts', () => {
++    expect(stepDeltaForKey('ArrowRight', false)).toBe(1);
++    expect(stepDeltaForKey('ArrowLeft', false)).toBe(-1);
++    expect(stepDeltaForKey('ArrowRight', true)).toBe(-1);
++    expect(stepDeltaForKey('ArrowLeft', true)).toBe(1);
++    expect(stepDeltaForKey('Enter', false)).toBe(0);
++  });
++});
+diff --git a/apps/web/src/components/tour/tour-logic.ts b/apps/web/src/components/tour/tour-logic.ts
+new file mode 100644
+index 0000000..c17dff8
+--- /dev/null
++++ b/apps/web/src/components/tour/tour-logic.ts
+@@ -0,0 +1,135 @@
++import type { TourStep, TourTrack } from '@/config/tour-types';
++
++/** Pure logic behind the presenter guide. No DOM, so it is unit tested in node. */
++
++export const TOUR_STORAGE_KEY = 'rasikh-tour';
++
++/** The demo track has a fixed time budget the presenter is held to. */
++export const DEMO_BUDGET_SECONDS = 180;
++
++export const TRACKS: TourTrack[] = ['demo', 'features'];
++
++export interface TourState {
++  open: boolean;
++  track: TourTrack;
++  index: number;
++  /** Panel shrunk to a compact bar. Progress is kept. */
++  collapsed: boolean;
++}
++
++export const INITIAL_STATE: TourState = {
++  open: false,
++  track: 'demo',
++  index: 0,
++  collapsed: false,
++};
++
++export function isTrack(value: unknown): value is TourTrack {
++  return value === 'demo' || value === 'features';
++}
++
++export function stepsForTrack(steps: readonly TourStep[], track: TourTrack): TourStep[] {
++  return steps.filter((step) => step.tracks.includes(track));
++}
++
++/** Keeps an index inside 0..length-1. A non-finite index and an empty list both give 0. */
++export function clampIndex(index: number, length: number): number {
++  if (!Number.isFinite(index) || length <= 0) return 0;
++  return Math.min(Math.max(Math.trunc(index), 0), length - 1);
++}
++
++export function totalSeconds(steps: readonly TourStep[]): number {
++  return steps.reduce((sum, step) => sum + Math.max(0, step.seconds), 0);
++}
++
++/** Running total: seconds of every step up to and including `index`. */
++export function elapsedSeconds(steps: readonly TourStep[], index: number): number {
++  if (steps.length === 0) return 0;
++  return totalSeconds(steps.slice(0, clampIndex(index, steps.length) + 1));
++}
++
++/** m:ss, e.g. 185 -> "3:05". */
++export function formatClock(totalSecondsValue: number): string {
++  const safe = Math.max(0, Math.round(totalSecondsValue));
++  const minutes = Math.floor(safe / 60);
++  const seconds = safe % 60;
++  return `${minutes}:${String(seconds).padStart(2, '0')}`;
++}
++
++/**
++ * A comparable form of a route: path without a trailing slash, query parameters sorted,
++ * the hash dropped, and the tour parameter ignored (it is a launcher, not a location).
++ */
++export function normalizeUrl(url: string): string {
++  let parsed: URL;
++  try {
++    parsed = new URL(url, 'http://rasikh.local');
++  } catch {
++    return url;
++  }
++  const params = new URLSearchParams(parsed.search);
++  params.delete('tour');
++  params.sort();
++  const query = params.toString();
++  const path = parsed.pathname.length > 1 ? parsed.pathname.replace(/\/+$/, '') : parsed.pathname;
++  return query ? `${path}?${query}` : path;
++}
++
++/** True when two routes are the same page, ignoring the hash. */
++export function sameUrl(a: string, b: string): boolean {
++  return normalizeUrl(a) === normalizeUrl(b);
++}
++
++/** Reads `?tour=demo|features` from a query string. Anything else is not a launch. */
++export function trackFromSearch(search: string): TourTrack | null {
++  const value = new URLSearchParams(search).get('tour');
++  return isTrack(value) ? value : null;
++}
++
++/** The same query string without the tour parameter, so a reload resumes instead of restarting. */
++export function stripTourParam(search: string): string {
++  const params = new URLSearchParams(search);
++  params.delete('tour');
++  const query = params.toString();
++  return query ? `?${query}` : '';
++}
++
++/** Parses what sessionStorage holds. Anything malformed falls back to a closed, fresh tour. */
++export function parseStoredState(raw: string | null): TourState {
++  if (!raw) return INITIAL_STATE;
++  try {
++    const value: unknown = JSON.parse(raw);
++    if (typeof value !== 'object' || value === null) return INITIAL_STATE;
++    const record = value as Record<string, unknown>;
++    return {
++      open: record.open === true,
++      track: isTrack(record.track) ? record.track : INITIAL_STATE.track,
++      index:
++        typeof record.index === 'number' && Number.isFinite(record.index)
++          ? Math.max(0, Math.trunc(record.index))
++          : 0,
++      collapsed: record.collapsed === true,
++    };
++  } catch {
++    return INITIAL_STATE;
++  }
++}
++
++/** When the track changes, stay on the same stop if the new track has it, else start over. */
++export function indexAfterTrackSwitch(
++  from: readonly TourStep[],
++  fromIndex: number,
++  to: readonly TourStep[],
++): number {
++  const current = from[clampIndex(fromIndex, from.length)];
++  if (!current) return 0;
++  const found = to.findIndex((step) => step.id === current.id);
++  return found >= 0 ? found : 0;
++}
++
++/** Which way a key moves through the steps. Arrow keys flip in right-to-left layouts. */
++export function stepDeltaForKey(key: string, rtl: boolean): 1 | -1 | 0 {
++  if (key === 'ArrowRight') return rtl ? -1 : 1;
++  if (key === 'ArrowLeft') return rtl ? 1 : -1;
++  return 0;
++}
+diff --git a/apps/web/src/components/tour/tour-styles.ts b/apps/web/src/components/tour/tour-styles.ts
+new file mode 100644
+index 0000000..52fa823
+--- /dev/null
++++ b/apps/web/src/components/tour/tour-styles.ts
+@@ -0,0 +1,46 @@
++/**
++ * Styles the guide cannot express as utility classes: the spotlight ring (a fixed element with one
++ * very large box-shadow as the dimmer) and the motion. Every animation lives inside
++ * prefers-reduced-motion: no-preference.
++ */
++export const TOUR_CSS = `
++.rasikh-tour-ring {
++  position: fixed;
++  inset: 0 auto auto 0;
++  z-index: 35;
++  width: 0;
++  height: 0;
++  border-radius: 0.5rem;
++  opacity: 0;
++  pointer-events: none;
++  --tour-dim: rgb(var(--brand-ink) / 0.42);
++  box-shadow:
++    0 0 0 2px rgb(var(--surface)),
++    0 0 0 4px rgb(var(--accent)),
++    0 0 0 9999px var(--tour-dim);
++}
++.dark .rasikh-tour-ring {
++  --tour-dim: rgb(10 24 29 / 0.58);
++}
++@media (prefers-reduced-motion: no-preference) {
++  @keyframes rasikh-tour-in {
++    from { opacity: 0; transform: translateY(14px); }
++    to { opacity: 1; transform: none; }
++  }
++  @keyframes rasikh-tour-step {
++    from { opacity: 0; transform: translateY(5px); }
++    to { opacity: 1; transform: none; }
++  }
++  @keyframes rasikh-tour-launcher {
++    from { opacity: 0; transform: translateY(6px); }
++    to { opacity: 1; transform: none; }
++  }
++  .rasikh-tour-panel { animation: rasikh-tour-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
++  .rasikh-tour-step { animation: rasikh-tour-step 240ms ease-out both; }
++  .rasikh-tour-launcher { animation: rasikh-tour-launcher 200ms ease-out both; }
++  .rasikh-tour-progress > span { transition: background-color 200ms ease-out; }
++}
++@media print {
++  .rasikh-tour-ring, .rasikh-tour-panel, .rasikh-tour-launcher { display: none !important; }
++}
++`;
+diff --git a/apps/web/src/components/ui/dialog.tsx b/apps/web/src/components/ui/dialog.tsx
+index 1f86fde..2622345 100644
+--- a/apps/web/src/components/ui/dialog.tsx
++++ b/apps/web/src/components/ui/dialog.tsx
+@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
+ import { X } from 'lucide-react';
+ import { Button } from '@/components/ui/button';
+ import { cn } from '@/lib/cn';
++import './overlay-motion.css';
+ 
+ export interface DialogProps {
+   open: boolean;
+@@ -16,6 +17,8 @@ export interface DialogProps {
+   size?: 'sm' | 'md' | 'lg';
+   className?: string;
+   presentation?: 'dialog' | 'drawer';
++  /** Edge a drawer is anchored to. Defaults to the inline-end edge. */
++  side?: 'start' | 'end';
+ }
+ 
+ const WIDTHS = { sm: 'w-[24rem]', md: 'w-[36rem]', lg: 'w-[48rem]' };
+@@ -31,6 +34,7 @@ export function Dialog({
+   size = 'md',
+   className,
+   presentation = 'dialog',
++  side = 'end',
+ }: DialogProps) {
+   const dialog = useRef<HTMLDialogElement>(null);
+   const titleId = useId();
+@@ -54,6 +58,7 @@ export function Dialog({
+       aria-labelledby={titleId}
+       aria-describedby={description ? descriptionId : undefined}
+       data-presentation={presentation}
++      data-side={presentation === 'drawer' ? side : undefined}
+       onCancel={(event) => {
+         event.preventDefault();
+         onClose();
+diff --git a/apps/web/src/components/ui/menu.tsx b/apps/web/src/components/ui/menu.tsx
+index d318f6a..52984dd 100644
+--- a/apps/web/src/components/ui/menu.tsx
++++ b/apps/web/src/components/ui/menu.tsx
+@@ -20,7 +20,9 @@ export interface MenuItem {
+   disabled?: boolean;
+ }
+ 
+-type TriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & { 'data-open': boolean };
++type TriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
++  'data-open': boolean;
++};
+ 
+ export interface MenuProps {
+   /** Accessible name of the menu. */
+@@ -94,7 +96,7 @@ export function Menu({ label, items, trigger, align = 'start' }: MenuProps) {
+           aria-label={label}
+           onKeyDown={onListKey}
+           className={cn(
+-            'absolute top-full z-30 mt-1 min-w-48 animate-pop-in rounded-lg bg-raised p-1 shadow-pop',
++            'absolute top-full z-30 mt-1 min-w-48 rounded-lg bg-raised p-1 shadow-pop motion-safe:animate-pop-in',
+             align === 'end' ? 'end-0' : 'start-0',
+           )}
+         >
+@@ -108,7 +110,7 @@ export function Menu({ label, items, trigger, align = 'start' }: MenuProps) {
+                 item.onSelect();
+                 close(true);
+               }}
+-              className="rasikh-menu-item flex h-8 w-full items-center gap-2 rounded-md px-2 text-start text-body text-fg hover:bg-hover focus-visible:bg-selected focus-visible:outline-none disabled:opacity-40"
++              className="rasikh-menu-item flex h-8 w-full items-center gap-2 rounded-md px-2 text-start text-body text-fg transition-colors hover:bg-hover focus-visible:bg-selected focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:opacity-40"
+             >
+               <span className="flex-1 truncate">{item.label}</span>
+               {item.selected ? <Check aria-hidden className="size-4 text-fg-secondary" /> : null}
+diff --git a/apps/web/src/components/ui/overlay-motion.css b/apps/web/src/components/ui/overlay-motion.css
+new file mode 100644
+index 0000000..e41e232
+--- /dev/null
++++ b/apps/web/src/components/ui/overlay-motion.css
+@@ -0,0 +1,75 @@
++/*
++ * Open animation for dialogs and drawers. Entrance only (the native dialog closes at once), short and
++ * eased, and wrapped in prefers-reduced-motion: no-preference so nothing moves for people who ask
++ * for less. Direction comes from --rasikh-dir so a drawer enters from its own side in RTL as well.
++ */
++
++/* A side drawer can be anchored to either edge. The default stays the inline-end edge. */
++.rasikh-dialog[data-presentation='drawer'][data-side='start'] {
++  inset-inline-start: 0;
++  inset-inline-end: auto;
++}
++
++.rasikh-dialog[data-presentation='drawer'] {
++  --rasikh-dir: 1;
++}
++
++[dir='rtl'] .rasikh-dialog[data-presentation='drawer'] {
++  --rasikh-dir: -1;
++}
++
++@keyframes rasikh-dialog-in {
++  from {
++    opacity: 0;
++    transform: translateY(0.5rem) scale(0.985);
++  }
++  to {
++    opacity: 1;
++    transform: none;
++  }
++}
++
++@keyframes rasikh-drawer-in-end {
++  from {
++    transform: translateX(calc(var(--rasikh-dir, 1) * 100%));
++  }
++  to {
++    transform: none;
++  }
++}
++
++@keyframes rasikh-drawer-in-start {
++  from {
++    transform: translateX(calc(var(--rasikh-dir, 1) * -100%));
++  }
++  to {
++    transform: none;
++  }
++}
++
++@keyframes rasikh-backdrop-in {
++  from {
++    opacity: 0;
++  }
++  to {
++    opacity: 1;
++  }
++}
++
++@media (prefers-reduced-motion: no-preference) {
++  .rasikh-dialog[open] {
++    animation: rasikh-dialog-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
++  }
++
++  .rasikh-dialog[open][data-presentation='drawer'] {
++    animation: rasikh-drawer-in-end 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
++  }
++
++  .rasikh-dialog[open][data-presentation='drawer'][data-side='start'] {
++    animation-name: rasikh-drawer-in-start;
++  }
++
++  .rasikh-dialog[open]::backdrop {
++    animation: rasikh-backdrop-in 200ms ease-out;
++  }
++}
+diff --git a/apps/web/src/config/tour.test.ts b/apps/web/src/config/tour.test.ts
+new file mode 100644
+index 0000000..43cae37
+--- /dev/null
++++ b/apps/web/src/config/tour.test.ts
+@@ -0,0 +1,122 @@
++import { describe, expect, it } from 'vitest';
++import { TOUR_STEPS } from './tour';
++import type { TourSurface, TourTrack } from './tour-types';
++
++const TRACKS: TourTrack[] = ['demo', 'features'];
++const SURFACES: TourSurface[] = ['hub', 'newcomer', 'employer', 'landlord', 'bank', 'design'];
++const inTrack = (track: TourTrack) => TOUR_STEPS.filter((step) => step.tracks.includes(track));
++
++describe('guided tour content', () => {
++  it('has unique, non-empty ids', () => {
++    const ids = TOUR_STEPS.map((step) => step.id);
++    expect(ids.every((id) => id.length > 0)).toBe(true);
++    expect(new Set(ids).size).toBe(ids.length);
++  });
++
++  it('points every step at an in-app route', () => {
++    for (const step of TOUR_STEPS) {
++      expect(step.href.startsWith('/'), `${step.id} href`).toBe(true);
++      expect(step.href.startsWith('//'), `${step.id} href is not protocol-relative`).toBe(false);
++    }
++  });
++
++  it('uses only valid tracks and surfaces', () => {
++    for (const step of TOUR_STEPS) {
++      expect(step.tracks.length, `${step.id} tracks`).toBeGreaterThan(0);
++      for (const track of step.tracks) expect(TRACKS).toContain(track);
++      expect(SURFACES).toContain(step.surface);
++    }
++  });
++
++  it('runs the demo track for roughly three minutes', () => {
++    const seconds = inTrack('demo').reduce((sum, step) => sum + step.seconds, 0);
++    expect(seconds).toBeGreaterThanOrEqual(160);
++    expect(seconds).toBeLessThanOrEqual(200);
++  });
++
++  it('keeps every demo step in the features track', () => {
++    for (const step of inTrack('demo')) {
++      expect(step.tracks, `${step.id} is a demo step`).toContain('features');
++    }
++    expect(inTrack('features').length).toBeGreaterThan(inTrack('demo').length);
++  });
++
++  it('gives every step something to say and something to show', () => {
++    for (const step of TOUR_STEPS) {
++      expect(step.title.trim().length, `${step.id} title`).toBeGreaterThan(0);
++      expect(step.summary.trim().length, `${step.id} summary`).toBeGreaterThan(0);
++      expect(step.say.length, `${step.id} say`).toBeGreaterThanOrEqual(1);
++      expect(step.say.length, `${step.id} say`).toBeLessThanOrEqual(4);
++      expect(step.show.length, `${step.id} show`).toBeGreaterThanOrEqual(1);
++      expect(step.features.length, `${step.id} features`).toBeGreaterThan(0);
++      expect(step.seconds, `${step.id} seconds`).toBeGreaterThan(0);
++      for (const line of [...step.say, ...step.show]) expect(line.trim().length).toBeGreaterThan(0);
++    }
++  });
++
++  it('states the Guard limitation plainly on the Guard step', () => {
++    const guard = TOUR_STEPS.find((step) => step.id === 'guard');
++    expect(guard).toBeDefined();
++    expect(guard?.href).toBe('/employer/guard');
++    expect(guard?.honesty).toMatch(/not proven/i);
++    expect(guard?.honesty).toMatch(/12 of 25/);
++    expect(guard?.honesty).toMatch(/12 of 25/);
++  });
++
++  it('never presents the consent block as a Guard verdict', () => {
++    const blocked = TOUR_STEPS.find((step) => step.id === 'blocked-action');
++    expect(blocked?.honesty).toMatch(/not a Guard verdict/i);
++    expect(blocked?.honesty).toMatch(/not a Guard verdict/i);
++    expect(blocked?.honesty).toMatch(/not the agent end to end/i);
++  });
++
++  it('covers the required story in order', () => {
++    const order = TOUR_STEPS.map((step) => step.id);
++    const demoOrder = [
++      'problem',
++      'solution',
++      'roadmap',
++      'documents',
++      'agent-card',
++      'passport-revoke',
++      'blocked-action',
++      'landlord-live',
++      'landlord-decision',
++      'employer-live',
++      'closing',
++    ];
++    expect(inTrack('demo').map((step) => step.id)).toEqual(demoOrder);
++    for (const id of [
++      'employer-overview',
++      'employer-pipeline',
++      'hire-journey',
++      'expansion-roadmap',
++      'expansion-team',
++      'guard',
++      'bank',
++      'rtl-dark',
++      'live-state',
++    ]) {
++      expect(order, `${id} is a feature stop`).toContain(id);
++    }
++  });
++
++  it('runs the newcomer story as Anders', () => {
++    for (const step of TOUR_STEPS.filter((s) => s.surface === 'newcomer')) {
++      expect(step.href).toContain('as=anders');
++    }
++  });
++
++  it('does not claim more than is true', () => {
++    const everything = JSON.stringify(TOUR_STEPS).toLowerCase();
++    for (const claim of [
++      'guard blocked',
++      'guard stopped the',
++      'guard is safe',
++      'verified guard',
++      'enforces',
++    ]) {
++      expect(everything, claim).not.toContain(claim);
++    }
++  });
++});
+diff --git a/apps/web/src/config/tour.ts b/apps/web/src/config/tour.ts
+new file mode 100644
+index 0000000..74d1380
+--- /dev/null
++++ b/apps/web/src/config/tour.ts
+@@ -0,0 +1,477 @@
++import type { TourStep } from './tour-types';
++
++/**
++ * The presenter's story. Order is the order a presenter takes.
++ *
++ * - `demo` is the three-minute story (seconds sum to about 180).
++ * - `features` contains every demo step plus extra stops for questions and a closer look.
++ *
++ * Every label quoted in `show` exists in the app today. Targets are ids, aria attributes and hrefs
++ * that exist in the seeded state; the checker is qa/tour-selectors.mjs. The spoken lines stay in
++ * English: they are the presenter's talking points, not product copy.
++ *
++ * Truthfulness: Guard's decisions passed 75 of 75 synthetic attacks in the latest HTTP measurement
++ * (an archived evaluation allowed 12 of 25), but end-to-end safety is NOT measured; document
++ * extraction is a labelled demo preview, nothing leaves the app, and money figures are
++ * illustrative. Keep the `honesty` lines when editing.
++ */
++export const TOUR_STEPS: TourStep[] = [
++  // The story (demo + features)
++  {
++    id: 'problem',
++    tracks: ['demo', 'features'],
++    surface: 'hub',
++    href: '/',
++    target: '#hub-title',
++    title: 'The problem',
++    summary:
++      'Relocating to Abu Dhabi is a chain of dependent steps, and nobody holds the whole picture.',
++    say: [
++      'Moving to Abu Dhabi is up to nine steps, and each one depends on another.',
++      'The steps sit with different people: an employer, immigration, a landlord, a bank.',
++      'Each of them sees their own piece. Nobody sees the whole move, and the newcomer is left chasing.',
++    ],
++    show: [
++      'Start on the hub, with the headline in view.',
++      'Say the four parties out loud while you point down the page: employer, immigration, landlord, bank.',
++    ],
++    features: ['Dependent steps', 'Four parties'],
++    seconds: 15,
++  },
++  {
++    id: 'solution',
++    tracks: ['demo', 'features'],
++    surface: 'hub',
++    href: '/',
++    target: 'section[aria-labelledby="hub-roles"]',
++    title: 'The solution: one agent, one record',
++    summary:
++      'Everyone works on the same live record, and an agent does the paperwork only with the newcomer’s consent.',
++    say: [
++      'Rasikh puts the newcomer, the employer, a landlord and a bank on one shared, live record.',
++      'An AI agent prepares the paperwork, and it asks before it sends anything.',
++      'Every role, and every person, has a link of its own, so each one opens in its own window.',
++    ],
++    show: [
++      'Scroll to Choose who you are.',
++      'Point at the Newcomer card, then the Employer, Landlord and Bank cards.',
++      'Open Anders Lindqvist, marked Start here, under Open as a person.',
++    ],
++    features: ['One shared record', 'Agent asks first', 'One link per person'],
++    seconds: 15,
++    honesty:
++      'Landlords, banks and government services are simulated. Nothing leaves the app. The agent’s draft and its activity feed are recorded demo data, and the optional live AI explanation may be unavailable.',
++  },
++  {
++    id: 'roadmap',
++    tracks: ['demo', 'features'],
++    surface: 'newcomer',
++    href: '/newcomer?as=anders',
++    target: 'section[aria-labelledby="next-action-title"]',
++    title: 'The newcomer roadmap',
++    summary: 'One clear next action, honest progress, and every step shows what it waits on.',
++    say: [
++      'This is Anders, a solutions architect moving from Stockholm. His employer hired him and backs him.',
++      'He sees one clear next action: review a request. Two of nine steps are done.',
++      'Every step has an owner and a reason. Tenancy registration stays locked until the home and the visa are done.',
++    ],
++    show: [
++      'Point at Your next action: Review a request.',
++      'Point at the progress bar, 2 of 9 steps done, and the line Backed by Gulf Meridian Technologies.',
++      'Scroll the steps: Emirates ID application is Waiting on the immigration authority; Register your tenancy contract is Locked.',
++    ],
++    features: ['Next best action', 'Dependencies', 'Employer backing'],
++    seconds: 20,
++    honesty:
++      'Government and landlord activity on the roadmap is simulated. The Emirates ID status is a recorded demo status, not a live submission.',
++  },
++  {
++    id: 'documents',
++    tracks: ['demo', 'features'],
++    surface: 'newcomer',
++    href: '/newcomer/documents?as=anders',
++    target: 'section[aria-labelledby$="-required"]',
++    title: 'Documents and the review gate',
++    summary:
++      'The app suggests fields from each document; nothing moves until the person confirms them.',
++    say: [
++      'Three documents, each Confirmed in demo.',
++      'Every suggested field comes with a confidence score, and Anders reviewed each one.',
++      'Nothing moves on until a person confirms. That is the human review gate.',
++    ],
++    show: [
++      'Tap Documents on the bottom bar.',
++      'Point at 3 of 3 sets of details confirmed.',
++      'Open View details on Passport and point at the extracted fields and their Demo confidence.',
++    ],
++    features: ['Extraction with confidence', 'Human review gate'],
++    seconds: 15,
++    honesty:
++      'This is a labelled demo preview. In demo mode no AI reads the file: the suggested fields come from the hire profile and the confidence scores are illustrative.',
++  },
++  {
++    id: 'agent-card',
++    tracks: ['demo', 'features'],
++    surface: 'newcomer',
++    href: '/newcomer/agent?as=anders',
++    target: 'article[aria-labelledby^="approval-title-"]',
++    title: 'The agent asks before it acts',
++    summary:
++      'The approval card names the recipient, the home, the employer backing and exactly what would be shared.',
++    say: [
++      'The agent drafted a rental application. It cannot send it. It needs Anders to approve.',
++      'The card says who receives it, which home, and that the employer backing is attached.',
++      'Look at the contents: the employment letter is allowed, the passport needs consent, and the salary is a derived result only.',
++      'The landlord gets a yes or no on affordability. Never the salary.',
++    ],
++    show: [
++      'Tap Agent on the bottom bar.',
++      'Read the card: Review rental application, Recipient Al Reem Residences, Home Maryah Plaza Residences.',
++      'Point at Employer backing on this application, then at Draft contents: Employment letter, Passport, Salary.',
++    ],
++    features: ['Explicit consent', 'Derived result, not salary', 'Employer backing'],
++    seconds: 20,
++    honesty:
++      'The draft is seeded demo data. Approving records a simulated submission inside Rasikh. No external application is sent, and rent and salary figures are illustrative.',
++  },
++  {
++    id: 'passport-revoke',
++    tracks: ['demo', 'features'],
++    surface: 'newcomer',
++    href: '/newcomer/passport?as=anders',
++    target: 'section[aria-labelledby="current-consent"]',
++    title: 'Trust passport: consent is his to take back',
++    summary:
++      'Every kind of data has a consent per recipient category, and the person can revoke it at any time.',
++    say: [
++      'This is Anders’s trust passport. Each kind of data has a consent for each kind of recipient.',
++      'Passport for Landlords is on. Watch what happens when he takes it back.',
++    ],
++    show: [
++      'Tap Trust passport on the bottom bar.',
++      'Under Current consent, point at Passport · Landlords.',
++      'Tap Revoke.',
++      'Point at the notice on this page: live Guard enforcement is unverified.',
++    ],
++    features: ['Trust passport', 'Revocable consent'],
++    seconds: 15,
++    honesty:
++      'These controls change demo consent only. The page itself says live Guard enforcement is unverified and that its records are illustrative.',
++  },
++  {
++    id: 'blocked-action',
++    tracks: ['demo', 'features'],
++    surface: 'newcomer',
++    href: '/newcomer/agent?as=anders',
++    target: 'article[aria-labelledby^="approval-title-"] button[role="switch"]',
++    title: 'The blocked action',
++    summary:
++      'Without consent the agent cannot send his passport, and the button says why. Consent back on, he approves.',
++    say: [
++      'Back on the agent card. Approve is greyed out, and it tells him why: the required consent is off.',
++      'Without his consent the agent cannot send the passport. That is the blocked action.',
++      'He turns the Passport switch back on, and now he can approve. Consent is his to give and take back.',
++    ],
++    show: [
++      'Tap Agent. This needs the Revoke from the last step: if Passport · Landlords is still on, revoke it first. Point at Approve demo submission, disabled, with the reason: Turn on the required consent to approve this draft.',
++      'Turn the Passport switch back on.',
++      'Tap Approve demo submission. The card clears and the feed records it.',
++    ],
++    features: ['Blocked action', 'Explicit consent', 'Reason shown'],
++    seconds: 20,
++    honesty:
++      'This block is the app’s own consent rule on the newcomer side. It is not a Guard verdict. The Guard page holds its own results: an archived evaluation allowed 12 of 25 forbidden synthetic flows, and a newer measurement of the deployed release denied all 25 in each of 3 runs. That tests the policy decision only, not the agent end to end.',
++  },
++  {
++    id: 'landlord-live',
++    tracks: ['demo', 'features'],
++    surface: 'landlord',
++    href: '/landlord/applications',
++    target:
++      'tr:has(a[href="/landlord/applications/app_seed_06"]), li:has(a[href="/landlord/applications/app_seed_06"])',
++    title: 'The landlord receives it, live',
++    summary:
++      'The application reaches the landlord’s inbox the moment it is approved, with no refresh.',
++    say: [
++      'Switch to the landlord window. Do not reload.',
++      'Before the approval this row was locked: Awaiting applicant approval, details not released.',
++      'The moment Anders approved, it opened here. No email, no chasing.',
++    ],
++    show: [
++      'Switch to the landlord window on Rental applications, organisation Al Reem Residences.',
++      'Point at the row for Maryah Plaza Residences, unit 1706. It now names Anders Lindqvist.',
++      'Open the row.',
++    ],
++    features: ['Live sync', 'Landlord inbox'],
++    seconds: 15,
++    honesty:
++      'In a fresh, reset demo the row reads Awaiting applicant approval until the newcomer approves.',
++  },
++  {
++    id: 'landlord-decision',
++    tracks: ['demo', 'features'],
++    surface: 'landlord',
++    href: '/landlord/applications/app_seed_06',
++    target: 'main section',
++    title: 'A decision with reasons, and no salary',
++    summary:
++      'The landlord gets employer backing and a risk summary with a reason on every point, never the salary.',
++    say: [
++      'The landlord sees the employer backing and a risk summary, with a reason for every point.',
++      'On affordability it gives a yes or no and a plain margin note. It never shows the salary or a ratio.',
++      'Then the landlord decides, and the decision flows back to Anders.',
++    ],
++    show: [
++      'Point at Application assessment, then Employer backing and Rent against income.',
++      'On a wide screen the guide covers the decision panel, so press Esc to collapse it first. Under Your decision choose Offer lease terms, pick 4 cheques, add a short note and press Save lease offer. If the page shows Start review first, press it.',
++    ],
++    features: ['Risk reasoning', 'No salary shared', 'Landlord decision'],
++    seconds: 20,
++    honesty: 'The risk summary is an illustrative assessment. Nothing is sent to a real landlord.',
++  },
++  {
++    id: 'employer-live',
++    tracks: ['demo', 'features'],
++    surface: 'employer',
++    href: '/employer/hires/hire_seed_04',
++    target: 'main section:has([role="progressbar"])',
++    title: 'The employer sees the move, untouched',
++    summary: 'The hire moves forward without anyone updating a spreadsheet or chasing a landlord.',
++    say: [
++      'Now the employer’s window. Do not reload.',
++      'Find and rent a home is Done, and the count has moved from two of nine to three of nine.',
++      'The waiting-for-approval notice is gone. Nobody touched this page.',
++    ],
++    show: [
++      'Switch to the employer window on Anders Lindqvist.',
++      'Point at the progress count and at Find and rent a home, now Done.',
++      'Point out that A personal approval is waiting is gone.',
++    ],
++    features: ['Live sync', 'Hire detail'],
++    seconds: 15,
++  },
++
++  // Feature stops (features track only)
++  {
++    id: 'employer-overview',
++    tracks: ['features'],
++    surface: 'employer',
++    href: '/employer',
++    target: 'main section',
++    title: 'Employer overview',
++    summary: 'One screen for every journey underway, and what needs a person.',
++    say: [
++      'The employer sees every journey underway, and which ones are blocked or waiting.',
++      'Personal data decisions stay with the hire. The employer can see that an approval is pending, not decide it.',
++    ],
++    show: [
++      'Point at People in motion, Needs your attention and Awaiting hire approval.',
++      'Open Review next step on a hire who needs attention.',
++    ],
++    features: ['Overview', 'Needs attention'],
++    seconds: 20,
++    honesty: 'The people and counts are illustrative demo data.',
++  },
++  {
++    id: 'employer-pipeline',
++    tracks: ['features'],
++    surface: 'employer',
++    href: '/employer/hires',
++    target:
++      'div[role="group"][aria-label="Filter by status"], div[role="group"][aria-label="تصفية حسب الحالة"]',
++    title: 'The hire pipeline',
++    summary: 'Every hire, filterable by status and stage.',
++    say: [
++      'Nine hires, and each one is filterable by status: Needs attention, On track, Waiting, Blocked, Settled.',
++      'Open any row to see that person’s journey.',
++    ],
++    show: [
++      'Point at the status filters and their counts.',
++      'Select Needs attention, then open a hire.',
++    ],
++    features: ['Pipeline', 'Filters'],
++    seconds: 15,
++  },
++  {
++    id: 'hire-journey',
++    tracks: ['features'],
++    surface: 'employer',
++    href: '/employer/hires/hire_seed_04',
++    target: 'main section:has(h3)',
++    title: 'One hire, step by step',
++    summary:
++      'Each step has an owner, a reason and a dependency, so a blocked step explains itself.',
++    say: [
++      'Every step has an owner and a reason. Emirates ID waits on the immigration authority.',
++      'Tenancy registration depends on the home and the visa. The order is explained, not assumed.',
++    ],
++    show: [
++      'Scroll An ordered path forward and read the Owner and Depends on lines.',
++      'Point at Employer backing, and at Connected applications.',
++      'Open the Documents and Trust passport tabs if asked what the employer can see.',
++    ],
++    features: ['Journey', 'Owners and dependencies', 'Employer backing'],
++    seconds: 25,
++  },
++  {
++    id: 'expansion-roadmap',
++    tracks: ['features'],
++    surface: 'employer',
++    href: '/employer/expansion',
++    target: 'main section:has(h3)',
++    title: 'Company setup roadmap',
++    summary: 'The company’s own setup is an ordered roadmap, and it unlocks the team’s moves.',
++    say: [
++      'Before the team moves, the company has to exist. This is the Abu Dhabi branch setup.',
++      'Reserve a trade name is done, Get your licence is in progress, and the rest unlock in order.',
++      'There is also a saved recommendation, ADGM or mainland, with the reasons.',
++    ],
++    show: [
++      'Point at Company setup progress, 1 of 6 steps.',
++      'Read the roadmap: trade name, licence, office, establishment card, visa quota, entity bank account.',
++      'Scroll to Why this path?.',
++    ],
++    features: ['Company setup', 'Ordered dependencies'],
++    seconds: 25,
++    honesty:
++      'This is an illustrative setup. No licence or authority application is sent, and the recommendation is a saved demo one.',
++  },
++  {
++    id: 'expansion-team',
++    tracks: ['features'],
++    surface: 'employer',
++    href: '/employer/expansion/team',
++    target: 'main section:has(table)',
++    title: 'The team move',
++    summary: 'One company milestone unlocks every person’s own relocation journey.',
++    say: [
++      'Three people are planned: Eleanor Brooks, Arjun Nair and Hana Farouk.',
++      'Their journeys start when the company’s visa quota step is complete. Until then each is Awaiting visa quota.',
++      'Then each one enters the hire pipeline with employer backing.',
++    ],
++    show: [
++      'Point at One company milestone unlocks every person.',
++      'Point at the team table and the Journey column.',
++      'Point at Team planning notes.',
++    ],
++    features: ['Team move', 'Household planning'],
++    seconds: 20,
++    honesty: 'Team members, timelines and salary totals are illustrative.',
++  },
++  {
++    id: 'guard',
++    tracks: ['features'],
++    surface: 'employer',
++    href: '/employer/guard',
++    target: 'main section',
++    title: 'The Guard log, and what is not proven',
++    summary:
++      'Recorded sharing checks are visible, and the evaluation limitation is stated on the same page.',
++    say: [
++      'The log lists recorded demo checks: who, which destination, and why it was allowed or stopped.',
++      'One recorded denial: salary can only be shared with landlords as a yes or no.',
++      'And this is the honest part. An archived evaluation allowed 12 of 25 forbidden synthetic flows. A newer measurement of the deployed release denied all 25 in each of 3 runs, 75 of 75, but it only tests the policy decision. We do not claim the agent is proven safe.',
++    ],
++    show: [
++      'Point at Archived evaluation: provenance failure recorded.',
++      'Open View evidence & scope.',
++      'Back in the Demo check log, open View check details on the Denied entry.',
++    ],
++    features: ['Guard log', 'Honest limitation', 'Evidence'],
++    seconds: 25,
++    honesty:
++      'End-to-end safety is not proven. The archived evaluation allowed 12 of 25 forbidden synthetic flows in each of 3 runs. A newer HTTP measurement of the deployed release denied 75 of 75 attacks, but did not measure the model, end-to-end exfiltration or production prompt parity. The log is seeded demo records, not live measurements.',
++  },
++  {
++    id: 'bank',
++    tracks: ['features'],
++    surface: 'bank',
++    href: '/bank',
++    target: 'section[aria-labelledby="bank-scope-title"]',
++    title: 'The bank: permission comes first',
++    summary:
++      'The bank sees only what the newcomer agreed to share, and cannot grant permission for them.',
++    say: [
++      'Permission comes first. A bank officer cannot grant permission for an applicant.',
++      'Applications that wait on the newcomer’s permission stay outside the queue.',
++      'What the bank can see is split three ways: shared by policy, needs the newcomer’s permission, and outside this workspace.',
++    ],
++    show: [
++      'Point at Permission comes first near the top of the page.',
++      'Point at What the bank can see.',
++      'Open Review application on Mei Lin Tan to show the officer’s three steps.',
++    ],
++    features: ['Bank onboarding', 'Permission first', 'Employer backing'],
++    seconds: 20,
++    honesty: 'The bank and the applicants are fictional, and figures are estimates.',
++  },
++  {
++    id: 'rtl-dark',
++    tracks: ['features'],
++    surface: 'employer',
++    href: '/employer',
++    target: 'button[lang="ar"], button[lang="en"]',
++    title: 'Arabic right-to-left and dark mode',
++    summary: 'The same screens switch to Arabic, mirrored, and to a dark theme.',
++    say: [
++      'Language and theme are one tap away on every page.',
++      'Arabic is right to left, and the layout mirrors with it.',
++      'Dark mode follows the same tokens, so nothing needs a separate design.',
++    ],
++    show: [
++      'Tap the language button, then switch back.',
++      'Tap the theme button next to it.',
++      'Open the newcomer app at phone width and repeat in Arabic.',
++    ],
++    features: ['Arabic RTL', 'Dark mode', 'Phone and desktop'],
++    seconds: 20,
++    honesty: 'A few recorded names and one generated roadmap note stay in their original language.',
++  },
++  {
++    id: 'live-state',
++    tracks: ['features'],
++    surface: 'design',
++    href: '/design-system/state',
++    target: 'main header',
++    title: 'Live state and Reset demo',
++    summary:
++      'One shared record, watched live from any window, with a reset back to the first state.',
++    say: [
++      'This page shows the shared record itself: connection, revision, hires, and the agent feed.',
++      'Change anything in another window and the revision moves here.',
++      'Reset demo puts every open window back to the starting state. Do it before every run.',
++    ],
++    show: [
++      'Point at Connection: live and the Revision count.',
++      'Point at Reset demo. Do not press it during the tour.',
++    ],
++    features: ['Live sync', 'Reset demo'],
++    seconds: 20,
++    honesty: 'State lives in memory. A server restart is the same as Reset demo.',
++  },
++
++  // Closing (demo + features)
++  {
++    id: 'closing',
++    tracks: ['demo', 'features'],
++    surface: 'hub',
++    href: '/',
++    target: 'section[aria-labelledby="hub-real"]',
++    title: 'What is real, and what is demo',
++    summary:
++      'The working record and consent flow are real; the outside world and the numbers are simulated.',
++    say: [
++      'What is real: one shared record, live across windows, and an agent that waits for consent.',
++      'What is demo: landlords, banks and government are simulated, extraction is a preview, and the money figures are illustrative.',
++      'And end-to-end safety is not proven. We say so rather than claim it.',
++    ],
++    show: [
++      'Point at the three statements under What is real in this demo.',
++      'Open Reset demo in Presenter tools, or Live state, to put the story back to its first state.',
++    ],
++    features: ['Honest scope', 'Reset demo'],
++    seconds: 10,
++    honesty:
++      'Nothing leaves the app. Extraction is a labelled preview, money figures are illustrative, and end-to-end safety is not proven.',
++  },
++];
+-- 
+2.51.0.windows.1
+

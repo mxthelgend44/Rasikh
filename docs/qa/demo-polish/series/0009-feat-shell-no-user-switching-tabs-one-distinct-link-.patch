@@ -1,0 +1,623 @@
+From 7fa8c9ac1455b4cdd723ab1597ac94b727113d8d Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 14:03:37 +0400
+Subject: [PATCH 09/18] feat(shell): no user-switching tabs; one distinct link
+ per user; mounts for guide, toasts, motion
+
+Removes the Employer/Landlord/Bank/Newcomer tab strip and the Viewing-as menu.
+Each person is opened from its own link (/newcomer?as=anders); the person is
+kept per browser tab. The brand mark returns to the demo hub at /.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/app/layout.tsx                   | 47 ++++++++-----
+ apps/web/src/app/motion.css                   |  1 +
+ apps/web/src/app/newcomer/layout.tsx          | 20 ++++--
+ apps/web/src/app/page.tsx                     |  7 +-
+ apps/web/src/components/demo/hub.tsx          | 10 +++
+ apps/web/src/components/live/live-toasts.tsx  |  6 ++
+ apps/web/src/components/newcomer/header.tsx   | 65 ++++++++----------
+ .../src/components/newcomer/person-link.tsx   | 36 ++++++++++
+ .../src/components/shell/surface-links.tsx    | 66 -------------------
+ apps/web/src/components/shell/top-bar.tsx     | 51 ++++++++------
+ apps/web/src/components/tour/demo-guide.tsx   |  6 ++
+ apps/web/src/config/tour-types.ts             | 33 ++++++++++
+ apps/web/src/store/person.ts                  | 35 ++++++----
+ 13 files changed, 218 insertions(+), 165 deletions(-)
+ create mode 100644 apps/web/src/app/motion.css
+ create mode 100644 apps/web/src/components/demo/hub.tsx
+ create mode 100644 apps/web/src/components/live/live-toasts.tsx
+ create mode 100644 apps/web/src/components/newcomer/person-link.tsx
+ delete mode 100644 apps/web/src/components/shell/surface-links.tsx
+ create mode 100644 apps/web/src/components/tour/demo-guide.tsx
+ create mode 100644 apps/web/src/config/tour-types.ts
+
+diff --git a/apps/web/src/app/layout.tsx b/apps/web/src/app/layout.tsx
+index 34b5e75..08bc8d8 100644
+--- a/apps/web/src/app/layout.tsx
++++ b/apps/web/src/app/layout.tsx
+@@ -1,30 +1,37 @@
+-import type { Metadata, Viewport } from 'next';
+-import { cookies } from 'next/headers';
+-import '@fontsource-variable/geist';
+-import '@fontsource-variable/geist-mono';
+-import '@fontsource-variable/noto-sans-arabic';
+-import './globals.css';
+-import { THEME_BOOT } from '@/lib/theme-boot';
+-import { directionOf, LOCALE_COOKIE, parseLocale } from '@/lib/i18n';
+-import { getStore } from '@/server/store';
+-import { StoreProvider } from '@/store/provider';
++import type { Metadata, Viewport } from "next";
++import { cookies } from "next/headers";
++import "@fontsource-variable/geist";
++import "@fontsource-variable/geist-mono";
++import "@fontsource-variable/noto-sans-arabic";
++import "./globals.css";
++import "./motion.css";
++import { THEME_BOOT } from "@/lib/theme-boot";
++import { directionOf, LOCALE_COOKIE, parseLocale } from "@/lib/i18n";
++import { DemoGuide } from "@/components/tour/demo-guide";
++import { LiveToasts } from "@/components/live/live-toasts";
++import { getStore } from "@/server/store";
++import { StoreProvider } from "@/store/provider";
+ 
+ /** The shared state is live, so no page may be prerendered or cached. */
+-export const dynamic = 'force-dynamic';
++export const dynamic = "force-dynamic";
+ 
+ export const metadata: Metadata = {
+-  title: { default: 'Rasikh', template: '%s · Rasikh' },
+-  description: 'The landing OS for Abu Dhabi.',
++  title: { default: "Rasikh", template: "%s · Rasikh" },
++  description: "The landing OS for Abu Dhabi.",
+ };
+ 
+ export const viewport: Viewport = {
+-  width: 'device-width',
++  width: "device-width",
+   initialScale: 1,
+-  colorScheme: 'light dark',
+-  themeColor: '#f3f3f3',
++  colorScheme: "light dark",
++  themeColor: "#f3f3f3",
+ };
+ 
+-export default async function RootLayout({ children }: { children: React.ReactNode }) {
++export default async function RootLayout({
++  children,
++}: {
++  children: React.ReactNode;
++}) {
+   const locale = parseLocale((await cookies()).get(LOCALE_COOKIE)?.value);
+   return (
+     <html lang={locale} dir={directionOf(locale)} suppressHydrationWarning>
+@@ -32,7 +39,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
+         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+       </head>
+       <body>
+-        <StoreProvider initial={getStore().snapshot()}>{children}</StoreProvider>
++        <StoreProvider initial={getStore().snapshot()}>
++          {children}
++          <LiveToasts />
++          <DemoGuide />
++        </StoreProvider>
+       </body>
+     </html>
+   );
+diff --git a/apps/web/src/app/motion.css b/apps/web/src/app/motion.css
+new file mode 100644
+index 0000000..dbd2d5d
+--- /dev/null
++++ b/apps/web/src/app/motion.css
+@@ -0,0 +1 @@
++/* Shared motion. Everything here is wrapped in prefers-reduced-motion: no-preference. */
+diff --git a/apps/web/src/app/newcomer/layout.tsx b/apps/web/src/app/newcomer/layout.tsx
+index a791a60..c00561b 100644
+--- a/apps/web/src/app/newcomer/layout.tsx
++++ b/apps/web/src/app/newcomer/layout.tsx
+@@ -1,15 +1,21 @@
+-import type { Metadata } from 'next';
+-import { cookies } from 'next/headers';
+-import { NewcomerShell } from '@/components/newcomer/newcomer-shell';
+-import { LOCALE_COOKIE, parseLocale } from '@/lib/i18n';
+-import { I18nProvider } from '@/lib/i18n/provider';
++import type { Metadata } from "next";
++import { cookies } from "next/headers";
++import { NewcomerShell } from "@/components/newcomer/newcomer-shell";
++import { PersonLink } from "@/components/newcomer/person-link";
++import { LOCALE_COOKIE, parseLocale } from "@/lib/i18n";
++import { I18nProvider } from "@/lib/i18n/provider";
+ 
+-export const metadata: Metadata = { title: 'Your relocation' };
++export const metadata: Metadata = { title: "Your relocation" };
+ 
+-export default async function NewcomerLayout({ children }: { children: React.ReactNode }) {
++export default async function NewcomerLayout({
++  children,
++}: {
++  children: React.ReactNode;
++}) {
+   const locale = parseLocale((await cookies()).get(LOCALE_COOKIE)?.value);
+   return (
+     <I18nProvider initial={locale}>
++      <PersonLink />
+       <NewcomerShell>{children}</NewcomerShell>
+     </I18nProvider>
+   );
+diff --git a/apps/web/src/app/page.tsx b/apps/web/src/app/page.tsx
+index a8c7a08..9273d05 100644
+--- a/apps/web/src/app/page.tsx
++++ b/apps/web/src/app/page.tsx
+@@ -1,5 +1,8 @@
+-import { redirect } from 'next/navigation';
++import type { Metadata } from "next";
++import { DemoHub } from "@/components/demo/hub";
++
++export const metadata: Metadata = { title: "Demo hub" };
+ 
+ export default function Home() {
+-  redirect('/employer');
++  return <DemoHub />;
+ }
+diff --git a/apps/web/src/components/demo/hub.tsx b/apps/web/src/components/demo/hub.tsx
+new file mode 100644
+index 0000000..ea690d5
+--- /dev/null
++++ b/apps/web/src/components/demo/hub.tsx
+@@ -0,0 +1,10 @@
++"use client";
++
++/** The demo hub: one distinct link per user. Replaced by the hub worker. */
++export function DemoHub() {
++  return (
++    <main className="p-6">
++      <h1 className="text-heading font-medium">Rasikh demo</h1>
++    </main>
++  );
++}
+diff --git a/apps/web/src/components/live/live-toasts.tsx b/apps/web/src/components/live/live-toasts.tsx
+new file mode 100644
+index 0000000..2a0bda6
+--- /dev/null
++++ b/apps/web/src/components/live/live-toasts.tsx
+@@ -0,0 +1,6 @@
++"use client";
++
++/** Surfaces changes made in other windows as toasts. Replaced by the motion-and-live worker. */
++export function LiveToasts() {
++  return null;
++}
+diff --git a/apps/web/src/components/newcomer/header.tsx b/apps/web/src/components/newcomer/header.tsx
+index 875e966..65f2c80 100644
+--- a/apps/web/src/components/newcomer/header.tsx
++++ b/apps/web/src/components/newcomer/header.tsx
+@@ -1,56 +1,41 @@
+-'use client';
++"use client";
+ 
+-import { ChevronDown } from 'lucide-react';
+-import { BrandMark } from '@/components/shell/brand-mark';
+-import { ThemeToggle } from '@/components/shell/theme-toggle';
+-import { Avatar } from '@/components/ui/avatar';
+-import { Button } from '@/components/ui/button';
+-import { Menu } from '@/components/ui/menu';
+-import { useI18n } from '@/lib/i18n/provider';
+-import { useNewcomer } from '@/store/person';
++import { BrandMark } from "@/components/shell/brand-mark";
++import { ThemeToggle } from "@/components/shell/theme-toggle";
++import { Avatar } from "@/components/ui/avatar";
++import { Button } from "@/components/ui/button";
++import { useI18n } from "@/lib/i18n/provider";
++import { useNewcomer } from "@/store/person";
+ 
+-function PersonMenu() {
++/** Who this phone belongs to. Fixed per link: a person is opened with /newcomer?as=<name>. */
++function PersonBadge() {
+   const { t } = useI18n();
+-  const { hire, hires, choose } = useNewcomer();
++  const { hire } = useNewcomer();
+   if (!hire) return null;
+   return (
+-    <Menu
+-      label={t('common.viewingAs')}
+-      align="end"
+-      items={hires.map((person) => ({
+-        id: person.id,
+-        label: person.fullName,
+-        selected: person.id === hire.id,
+-        onSelect: () => choose(person.id),
+-      }))}
+-      trigger={({ 'data-open': open, ...props }) => (
+-        <button
+-          type="button"
+-          data-open={open}
+-          aria-label={`${t('common.viewingAs')} ${hire.fullName}`}
+-          className="flex h-9 items-center gap-1 rounded-full ps-1 pe-2 transition-colors hover:bg-hover data-[open=true]:bg-hover"
+-          {...props}
+-        >
+-          <Avatar name={hire.fullName} />
+-          <ChevronDown aria-hidden className="size-3.5 text-fg-tertiary" />
+-        </button>
+-      )}
+-    />
++    <span
++      title={`${t("common.viewingAs")} ${hire.fullName}`}
++      aria-label={`${t("common.viewingAs")} ${hire.fullName}`}
++      role="img"
++      className="ms-1 flex h-9 items-center"
++    >
++      <Avatar name={hire.fullName} />
++    </span>
+   );
+ }
+ 
+ function LocaleToggle() {
+   const { locale, setLocale, t } = useI18n();
+-  const next = locale === 'ar' ? 'en' : 'ar';
++  const next = locale === "ar" ? "en" : "ar";
+   return (
+     <Button
+       variant="ghost"
+       size="md"
+-      aria-label={t('common.language')}
++      aria-label={t("common.language")}
+       lang={next}
+       onClick={() => setLocale(next)}
+     >
+-      {next === 'ar' ? 'العربية' : 'English'}
++      {next === "ar" ? "العربية" : "English"}
+     </Button>
+   );
+ }
+@@ -61,14 +46,16 @@ export function NewcomerHeader() {
+     <header className="sticky top-0 z-20 flex h-[3.25rem] items-center gap-1 bg-surface px-4">
+       <span className="flex items-center gap-2 text-title font-medium text-fg">
+         <BrandMark />
+-        {t('app.name')}
++        {t("app.name")}
+       </span>
+       <div className="flex-1" />
+       <LocaleToggle />
+       <ThemeToggle
+-        label={(next) => t(next === 'dark' ? 'common.theme.toDark' : 'common.theme.toLight')}
++        label={(next) =>
++          t(next === "dark" ? "common.theme.toDark" : "common.theme.toLight")
++        }
+       />
+-      <PersonMenu />
++      <PersonBadge />
+     </header>
+   );
+ }
+diff --git a/apps/web/src/components/newcomer/person-link.tsx b/apps/web/src/components/newcomer/person-link.tsx
+new file mode 100644
+index 0000000..f4e3a60
+--- /dev/null
++++ b/apps/web/src/components/newcomer/person-link.tsx
+@@ -0,0 +1,36 @@
++"use client";
++
++import { useEffect, useRef } from "react";
++import { useNewcomer } from "@/store/person";
++
++function slug(value: string): string {
++  return value
++    .normalize("NFD")
++    .replace(/[\u0300-\u036f]/g, "")
++    .toLowerCase();
++}
++
++/**
++ * Every person has a link of their own: `/newcomer?as=anders` (first name) or `?as=hire_seed_04`
++ * (id). Opening it pins this browser tab to that person, and the choice survives moving between
++ * the four phone pages. Without `as` the phone follows the story (see defaultHire).
++ */
++export function PersonLink() {
++  const { hires, choose } = useNewcomer();
++  const applied = useRef<string | null>(null);
++
++  useEffect(() => {
++    const wanted = new URLSearchParams(window.location.search).get("as");
++    if (!wanted || applied.current === wanted || hires.length === 0) return;
++    const key = slug(wanted);
++    const match =
++      hires.find((hire) => slug(hire.id) === key) ??
++      hires.find((hire) => slug(hire.fullName.split(" ")[0] ?? "") === key);
++    if (match) {
++      applied.current = wanted;
++      choose(match.id);
++    }
++  }, [hires, choose]);
++
++  return null;
++}
+diff --git a/apps/web/src/components/shell/surface-links.tsx b/apps/web/src/components/shell/surface-links.tsx
+deleted file mode 100644
+index f48c00d..0000000
+--- a/apps/web/src/components/shell/surface-links.tsx
++++ /dev/null
+@@ -1,66 +0,0 @@
+-'use client';
+-
+-import Link from 'next/link';
+-import { useRouter } from 'next/navigation';
+-import { ChevronDown } from 'lucide-react';
+-import { SURFACES, SURFACE_ORDER, type SurfaceId } from '@/config/surfaces';
+-import { cn } from '@/lib/cn';
+-import { useI18n } from '@/lib/i18n/provider';
+-import { Button } from '@/components/ui/button';
+-import { Menu } from '@/components/ui/menu';
+-import { navLabel } from './nav-labels';
+-
+-/** Top-bar switch between the stakeholder views that share one data model. */
+-export function SurfaceLinks({ active }: { active: SurfaceId }) {
+-  const { t } = useI18n();
+-  const router = useRouter();
+-  const views = [
+-    ...SURFACE_ORDER.map((id) => SURFACES[id]),
+-    { id: 'newcomer', href: '/newcomer', label: 'Newcomer' },
+-  ];
+-  return (
+-    <>
+-      <nav aria-label={t('shell.switchView')} className="hidden items-center gap-1 lg:flex">
+-        {views.map((surface) => {
+-          const isActive = surface.id === active;
+-          return (
+-            <Link
+-              key={surface.id}
+-              href={surface.href}
+-              aria-current={isActive ? 'page' : undefined}
+-              className={cn(
+-                'rounded-md px-2.5 py-1 text-body font-medium transition-colors',
+-                isActive ? 'bg-selected text-fg' : 'text-fg-secondary hover:bg-hover hover:text-fg',
+-              )}
+-            >
+-              {navLabel(surface.label, t)}
+-            </Link>
+-          );
+-        })}
+-      </nav>
+-      <div className="lg:hidden">
+-        <Menu
+-          label={t('shell.switchView')}
+-          align="end"
+-          items={views.map((view) => ({
+-            id: view.id,
+-            label: navLabel(view.label, t),
+-            selected: view.id === active,
+-            onSelect: () => router.push(view.href),
+-          }))}
+-          trigger={(props) => (
+-            <Button
+-              variant="ghost"
+-              icon={<ChevronDown />}
+-              aria-label={`${t('shell.switchView')}: ${navLabel(SURFACES[active].label, t)}`}
+-              className="max-sm:w-11 max-sm:px-0"
+-              {...props}
+-            >
+-              <span className="max-sm:hidden">{navLabel(SURFACES[active].label, t)}</span>
+-            </Button>
+-          )}
+-        />
+-      </div>
+-    </>
+-  );
+-}
+diff --git a/apps/web/src/components/shell/top-bar.tsx b/apps/web/src/components/shell/top-bar.tsx
+index 4beed88..f0a5037 100644
+--- a/apps/web/src/components/shell/top-bar.tsx
++++ b/apps/web/src/components/shell/top-bar.tsx
+@@ -1,15 +1,14 @@
+-'use client';
++"use client";
+ 
+-import Link from 'next/link';
+-import { Menu as MenuIcon } from 'lucide-react';
+-import { Avatar } from '@/components/ui/avatar';
+-import { Button } from '@/components/ui/button';
+-import { BrandMark } from '@/components/shell/brand-mark';
+-import { OrgSwitcher } from '@/components/shell/org-switcher';
+-import { SurfaceLinks } from '@/components/shell/surface-links';
+-import { ThemeToggle } from '@/components/shell/theme-toggle';
+-import type { SurfaceId } from '@/config/surfaces';
+-import { useI18n } from '@/lib/i18n/provider';
++import Link from "next/link";
++import { Menu as MenuIcon } from "lucide-react";
++import { Avatar } from "@/components/ui/avatar";
++import { Button } from "@/components/ui/button";
++import { BrandMark } from "@/components/shell/brand-mark";
++import { OrgSwitcher } from "@/components/shell/org-switcher";
++import { ThemeToggle } from "@/components/shell/theme-toggle";
++import type { SurfaceId } from "@/config/surfaces";
++import { useI18n } from "@/lib/i18n/provider";
+ 
+ export interface TopBarProps {
+   surface: SurfaceId;
+@@ -21,15 +20,23 @@ export interface TopBarProps {
+   user: string;
+ }
+ 
+-export function TopBar({ surface, orgs, org, onOrgChange, onOpenNav, navOpen, user }: TopBarProps) {
++export function TopBar({
++  surface,
++  orgs,
++  org,
++  onOrgChange,
++  onOpenNav,
++  navOpen,
++  user,
++}: TopBarProps) {
+   const { t, locale, setLocale } = useI18n();
+-  const nextLocale = locale === 'ar' ? 'en' : 'ar';
++  const nextLocale = locale === "ar" ? "en" : "ar";
+   return (
+     <header className="flex h-topbar shrink-0 items-center gap-1 px-4 max-sm:px-3">
+       <Button
+         variant="ghost"
+         iconOnly
+-        aria-label={t('shell.openNav')}
++        aria-label={t("shell.openNav")}
+         aria-expanded={navOpen}
+         icon={<MenuIcon />}
+         onClick={onOpenNav}
+@@ -40,9 +47,12 @@ export function TopBar({ surface, orgs, org, onOrgChange, onOpenNav, navOpen, us
+         className="flex items-center gap-2 rounded-md py-1 pe-2 ps-1 text-body font-medium text-fg"
+       >
+         <BrandMark />
+-        <span className="max-sm:sr-only">{t('app.name')}</span>
++        <span className="max-sm:sr-only">{t("app.name")}</span>
+       </Link>
+-      <span aria-hidden className="px-0.5 text-body text-fg-placeholder max-sm:hidden">
++      <span
++        aria-hidden
++        className="px-0.5 text-body text-fg-placeholder max-sm:hidden"
++      >
+         /
+       </span>
+       <div className="hidden min-w-0 sm:block">
+@@ -54,17 +64,18 @@ export function TopBar({ surface, orgs, org, onOrgChange, onOpenNav, navOpen, us
+         />
+       </div>
+       <div className="min-w-0 flex-1" />
+-      <SurfaceLinks active={surface} />
+       <Button
+         variant="ghost"
+-        aria-label={t('common.language')}
++        aria-label={t("common.language")}
+         lang={nextLocale}
+         onClick={() => setLocale(nextLocale)}
+       >
+-        {nextLocale === 'ar' ? 'العربية' : 'English'}
++        {nextLocale === "ar" ? "العربية" : "English"}
+       </Button>
+       <ThemeToggle
+-        label={(next) => t(next === 'dark' ? 'common.theme.toDark' : 'common.theme.toLight')}
++        label={(next) =>
++          t(next === "dark" ? "common.theme.toDark" : "common.theme.toLight")
++        }
+       />
+       <Avatar name={user} className="ms-1 max-sm:hidden" />
+     </header>
+diff --git a/apps/web/src/components/tour/demo-guide.tsx b/apps/web/src/components/tour/demo-guide.tsx
+new file mode 100644
+index 0000000..4443bf7
+--- /dev/null
++++ b/apps/web/src/components/tour/demo-guide.tsx
+@@ -0,0 +1,6 @@
++"use client";
++
++/** Presenter's guided tour. Replaced by the tour-engine worker. */
++export function DemoGuide() {
++  return null;
++}
+diff --git a/apps/web/src/config/tour-types.ts b/apps/web/src/config/tour-types.ts
+new file mode 100644
+index 0000000..6e5b5f7
+--- /dev/null
++++ b/apps/web/src/config/tour-types.ts
+@@ -0,0 +1,33 @@
++/** The shape of one stop in the presenter's guided tour. Content lives in config/tour.ts. */
++export type TourSurface =
++  | "hub"
++  | "newcomer"
++  | "employer"
++  | "landlord"
++  | "bank"
++  | "design";
++
++/** `demo` is the three-minute story; `features` adds the rest of what the product does. */
++export type TourTrack = "demo" | "features";
++
++export interface TourStep {
++  id: string;
++  tracks: TourTrack[];
++  surface: TourSurface;
++  /** The route this stop happens on. May carry a query, e.g. /newcomer?as=anders. */
++  href: string;
++  /** CSS selector of the element to spotlight. Optional: no match means a centred card. */
++  target?: string;
++  title: string;
++  /** One sentence: what this screen proves. */
++  summary: string;
++  /** What to say, in order. 2 to 4 short lines. */
++  say: string[];
++  /** What to click or point at, in order. */
++  show: string[];
++  /** Feature tags shown as chips, e.g. "Live sync". */
++  features: string[];
++  seconds: number;
++  /** A limitation to state plainly at this stop, if there is one. */
++  honesty?: string;
++}
+diff --git a/apps/web/src/store/person.ts b/apps/web/src/store/person.ts
+index c317613..ec8fc37 100644
+--- a/apps/web/src/store/person.ts
++++ b/apps/web/src/store/person.ts
+@@ -1,34 +1,40 @@
+-'use client';
++"use client";
+ 
+-import { useMemo, useSyncExternalStore } from 'react';
+-import type { AppState, Hire } from '@/domain/types';
+-import { defaultHire } from './default-person';
+-import { useAppState } from './provider';
++import { useMemo, useSyncExternalStore } from "react";
++import type { AppState, Hire } from "@/domain/types";
++import { defaultHire } from "./default-person";
++import { useAppState } from "./provider";
+ 
+-const KEY = 'rasikh-person';
+-const EVENT = 'rasikh-person-change';
++const KEY = "rasikh-person";
++const EVENT = "rasikh-person-change";
+ 
+ function read(): string | null {
+   try {
+-    return window.localStorage.getItem(KEY);
++    // Tab-scoped first, so each window opened from its own link keeps its own person.
++    return (
++      window.sessionStorage.getItem(KEY) ?? window.localStorage.getItem(KEY)
++    );
+   } catch {
+     return null;
+   }
+ }
+ 
+ function subscribe(listener: () => void): () => void {
+-  window.addEventListener('storage', listener);
++  window.addEventListener("storage", listener);
+   window.addEventListener(EVENT, listener);
+   return () => {
+-    window.removeEventListener('storage', listener);
++    window.removeEventListener("storage", listener);
+     window.removeEventListener(EVENT, listener);
+   };
+ }
+ 
+ function write(id: string | null): void {
+   try {
+-    if (id) window.localStorage.setItem(KEY, id);
+-    else window.localStorage.removeItem(KEY);
++    if (id) window.sessionStorage.setItem(KEY, id);
++    else {
++      window.sessionStorage.removeItem(KEY);
++      window.localStorage.removeItem(KEY);
++    }
+   } catch {
+     /* storage unavailable: the choice lasts until reload */
+   }
+@@ -55,7 +61,10 @@ export function useNewcomer(): Newcomer {
+   const stored = useSyncExternalStore(subscribe, read, () => null);
+ 
+   const hires = useMemo(
+-    () => Object.values(state.hires).sort((a, b) => b.startedAt.localeCompare(a.startedAt)),
++    () =>
++      Object.values(state.hires).sort((a, b) =>
++        b.startedAt.localeCompare(a.startedAt),
++      ),
+     [state.hires],
+   );
+   const chosen = stored ? state.hires[stored] : undefined;
+-- 
+2.51.0.windows.1
+

@@ -1,0 +1,1122 @@
+From e3f490bca5767c06454f493a4bd6ff2ce3353e28 Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 15:00:36 +0400
+Subject: [PATCH 13/18] feat(web): live toasts that disclose only what each
+ screen may know
+
+A landlord or bank window hears only that an application reached it, an
+employer a bare 'Journey updated', a phone its own person, the hub nothing.
+Drafts, approvals, consents and agent notes never cross screens.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/components/live/diff.test.ts    | 405 ++++++++++++++++++
+ apps/web/src/components/live/diff.ts         | 412 +++++++++++++++++++
+ apps/web/src/components/live/live-toasts.tsx | 263 +++++++++++-
+ 3 files changed, 1077 insertions(+), 3 deletions(-)
+ create mode 100644 apps/web/src/components/live/diff.test.ts
+ create mode 100644 apps/web/src/components/live/diff.ts
+
+diff --git a/apps/web/src/components/live/diff.test.ts b/apps/web/src/components/live/diff.test.ts
+new file mode 100644
+index 0000000..1188c9c
+--- /dev/null
++++ b/apps/web/src/components/live/diff.test.ts
+@@ -0,0 +1,405 @@
++import { describe, expect, it } from 'vitest';
++import { applyAction } from '@/domain/actions';
++import { createSeed } from '@/domain/seed';
++import type { AppState } from '@/domain/types';
++import type { Snapshot } from '@/store/snapshot';
++import {
++  audienceEvents,
++  audienceOf,
++  diffStates,
++  foldEvents,
++  isReset,
++  isRelevant,
++  pushToast,
++  resetEvent,
++  routeFor,
++  surfaceOf,
++  ToastGate,
++  type LiveEvent,
++} from './diff';
++
++const NOW = Date.parse('2026-10-10T09:00:00+04:00');
++const seed = (): AppState => createSeed(NOW);
++const snap = (state: AppState, epoch = 'a'): Snapshot => ({ epoch, state });
++
++function pendingApproval(state: AppState) {
++  const approval = Object.values(state.approvals).find((item) => item.status === 'pending');
++  if (!approval?.applicationId) throw new Error('seed has no pending rental approval');
++  return approval;
++}
++
++const event = (overrides: Partial<LiveEvent> = {}): LiveEvent => ({
++  key: 'k',
++  kind: 'agent',
++  who: 'Anders',
++  text: 'Did a thing',
++  tone: 'success',
++  ...overrides,
++});
++
++describe('diffStates', () => {
++  it('reports nothing for the same state or an identical copy', () => {
++    const state = seed();
++    expect(diffStates(state, state)).toEqual([]);
++    expect(diffStates(state, structuredClone(state))).toEqual([]);
++  });
++
++  it('tells one story for an approval: the feed entry, not the application, approval and step too', () => {
++    const before = seed();
++    const approval = pendingApproval(before);
++    const after = applyAction(
++      before,
++      {
++        type: 'approval.decide',
++        approvalId: approval.id,
++        hireId: approval.hireId,
++        approve: true,
++      },
++      NOW + 1000,
++    );
++    const events = diffStates(before, after);
++    expect(events).toHaveLength(1);
++    expect(events[0]).toMatchObject({
++      kind: 'agent',
++      hireId: approval.hireId,
++      applicationId: approval.applicationId,
++      applicationKind: 'rental',
++      tone: 'info',
++    });
++    expect(events[0]?.who).toBe(after.hires[approval.hireId]?.fullName.split(' ')[0]);
++    expect(events[0]?.text).toContain('Recorded the demo application');
++  });
++
++  it('reports a landlord decision with a success tone and the landlord application route', () => {
++    let state = seed();
++    const approval = pendingApproval(state);
++    state = applyAction(
++      state,
++      {
++        type: 'approval.decide',
++        approvalId: approval.id,
++        hireId: approval.hireId,
++        approve: true,
++      },
++      NOW + 1000,
++    );
++    const application = state.applications[approval.applicationId ?? ''];
++    if (!application) throw new Error('missing application');
++    const after = applyAction(
++      state,
++      {
++        type: 'application.decide',
++        applicationId: application.id,
++        outcome: 'approved',
++        note: 'Looks good.',
++        decidedBy: 'Landlord',
++      },
++      NOW + 2000,
++    );
++    const events = diffStates(state, after);
++    expect(events).toHaveLength(1);
++    expect(events[0]).toMatchObject({ kind: 'agent', tone: 'success' });
++    expect(routeFor(events[0]!, 'dashboard')).toBe(`/landlord/applications/${application.id}`);
++  });
++
++  it('falls back to application, approval and step events for a hire with no feed entry', () => {
++    const before = seed();
++    const after = structuredClone(before);
++    const application = Object.values(after.applications)[0]!;
++    application.state = application.state === 'approved' ? 'declined' : 'approved';
++    const events = diffStates(before, after);
++    expect(events).toHaveLength(1);
++    expect(events[0]).toMatchObject({
++      kind: 'application',
++      applicationId: application.id,
++      hireId: application.hireId,
++    });
++    expect(events[0]?.text).toMatch(/application: (approved|declined)$/);
++  });
++
++  it('raises one event per hire from application, approval and step, application first', () => {
++    const before = seed();
++    const after = structuredClone(before);
++    const approval = pendingApproval(after);
++    const application = after.applications[approval.applicationId ?? '']!;
++    application.state = 'submitted';
++    approval.status = 'approved';
++    const step = after.steps[approval.stepId]!;
++    step.status = 'waiting';
++    const events = diffStates(before, after);
++    const forHire = events.filter((item) => item.hireId === approval.hireId);
++    expect(forHire).toHaveLength(1);
++    expect(forHire[0]?.kind).toBe('application');
++  });
++
++  it('reports a new pending approval and a step change made without a feed entry', () => {
++    const before = seed();
++    const after = structuredClone(before);
++    const step = Object.values(after.steps).find(
++      (item) => item.status === 'ready' || item.status === 'in_progress',
++    )!;
++    step.status = 'done';
++    const events = diffStates(before, after);
++    expect(events).toHaveLength(1);
++    expect(events[0]).toMatchObject({
++      kind: 'step',
++      tone: 'success',
++      hireId: step.hireId,
++    });
++    expect(events[0]?.text).toBe(`${step.title}: done`);
++  });
++
++  it('does not raise a toast for steps that only unlock', () => {
++    const before = seed();
++    const after = structuredClone(before);
++    const step = Object.values(after.steps).find((item) => item.status === 'locked')!;
++    step.status = 'ready';
++    expect(diffStates(before, after)).toEqual([]);
++  });
++
++  it('names a company for company feed entries', () => {
++    const before = seed();
++    const company = Object.values(before.companies)[0]!;
++    const after = applyAction(
++      before,
++      {
++        type: 'agent.log',
++        entry: {
++          caseId: company.id,
++          caseType: 'company',
++          kind: 'step_updated',
++          summary: 'Trade name reserved',
++          reasoning: 'Demo.',
++          status: 'done',
++        },
++      },
++      NOW + 1000,
++    );
++    const events = diffStates(before, after);
++    expect(events).toHaveLength(1);
++    expect(events[0]).toMatchObject({
++      who: company.name,
++      companyId: company.id,
++      tone: 'success',
++    });
++    expect(events[0]?.hireId).toBeUndefined();
++    expect(routeFor(events[0]!, 'dashboard')).toBe('/employer/expansion');
++  });
++});
++
++describe('isReset', () => {
++  it('detects a reset by the clock, a new epoch, or a lower revision', () => {
++    const state = seed();
++    const reset = {
++      ...seed(),
++      rev: state.rev + 1,
++      clock: { ...state.clock, resetAtMs: NOW + 5000 },
++    };
++    expect(isReset(snap(state), snap(reset))).toBe(true);
++    expect(isReset(snap(state, 'a'), snap({ ...state, rev: state.rev + 1 }, 'b'))).toBe(true);
++    expect(isReset(snap({ ...state, rev: 5 }), snap({ ...state, rev: 2 }))).toBe(true);
++  });
++
++  it('is false for an ordinary step forward', () => {
++    const state = seed();
++    expect(isReset(snap(state), snap({ ...state, rev: state.rev + 1 }))).toBe(false);
++  });
++
++  it('gives the reset toast a key that differs per reset', () => {
++    const state = seed();
++    const first = resetEvent(snap(state));
++    const second = resetEvent(snap({ ...state, clock: { ...state.clock, resetAtMs: NOW + 1 } }));
++    expect(first.kind).toBe('reset');
++    expect(first.key).not.toBe(second.key);
++  });
++});
++
++describe('foldEvents', () => {
++  const many = (count: number) =>
++    Array.from({ length: count }, (_, index) => event({ key: `k${index}`, text: `Text ${index}` }));
++
++  it('leaves a short list alone', () => {
++    expect(foldEvents(many(3))).toHaveLength(3);
++  });
++
++  it('keeps the first two and counts the rest', () => {
++    const folded = foldEvents(many(7));
++    expect(folded).toHaveLength(3);
++    expect(folded.slice(0, 2).map((item) => item.key)).toEqual(['k0', 'k1']);
++    expect(folded[2]).toMatchObject({ kind: 'overflow', count: 5 });
++  });
++});
++
++describe('relevance and routes', () => {
++  it('shows only the viewed person on the newcomer surface, everything on dashboards', () => {
++    const mine = event({ hireId: 'hire_seed_04' });
++    const theirs = event({ hireId: 'hire_seed_01' });
++    expect(isRelevant(mine, 'newcomer', 'hire_seed_04')).toBe(true);
++    expect(isRelevant(theirs, 'newcomer', 'hire_seed_04')).toBe(false);
++    expect(
++      isRelevant(event({ companyId: 'c', hireId: undefined }), 'newcomer', 'hire_seed_04'),
++    ).toBe(false);
++    expect(isRelevant(theirs, 'dashboard', 'hire_seed_04')).toBe(true);
++    expect(isRelevant(theirs, 'newcomer', undefined)).toBe(false);
++    expect(isRelevant(resetEvent(snap(seed())), 'newcomer', 'hire_seed_04')).toBe(true);
++  });
++
++  it('tells the surfaces apart by path', () => {
++    expect(surfaceOf('/newcomer')).toBe('newcomer');
++    expect(surfaceOf('/newcomer/agent')).toBe('newcomer');
++    expect(surfaceOf('/newcomerish')).toBe('dashboard');
++    expect(surfaceOf('/landlord/applications')).toBe('dashboard');
++  });
++
++  it('routes to the page that shows the change', () => {
++    expect(
++      routeFor(event({ applicationId: 'app_1', applicationKind: 'bank_account' }), 'dashboard'),
++    ).toBe('/bank/applications/app_1');
++    expect(routeFor(event({ hireId: 'hire_seed_04' }), 'dashboard')).toBe(
++      '/employer/hires/hire_seed_04',
++    );
++    expect(routeFor(event({ kind: 'agent' }), 'newcomer')).toBe('/newcomer/agent');
++    expect(routeFor(event({ kind: 'step' }), 'newcomer')).toBe('/newcomer');
++    expect(routeFor(event({ kind: 'reset' }), 'dashboard')).toBeUndefined();
++    expect(routeFor(event({ kind: 'overflow' }), 'dashboard')).toBeUndefined();
++    expect(routeFor(event(), 'dashboard')).toBeUndefined();
++  });
++});
++
++describe('ToastGate', () => {
++  it('drops a repeat of the same change and the same words about the same person', () => {
++    const gate = new ToastGate();
++    expect(gate.accept(event({ key: 'a' }), 0)).toBe(true);
++    expect(gate.accept(event({ key: 'a' }), 1000)).toBe(false);
++    expect(gate.accept(event({ key: 'b' }), 1000)).toBe(false);
++    expect(gate.accept(event({ key: 'c', text: 'Something else' }), 1000)).toBe(true);
++  });
++
++  it('lets the same change through again once the dedupe window has passed', () => {
++    const gate = new ToastGate({ dedupeMs: 5000, windowMs: 10_000, limit: 8 });
++    expect(gate.accept(event({ key: 'a' }), 0)).toBe(true);
++    expect(gate.accept(event({ key: 'a' }), 6000)).toBe(true);
++  });
++
++  it('caps the rate and recovers when the window slides', () => {
++    const gate = new ToastGate({
++      dedupeMs: 60_000,
++      windowMs: 10_000,
++      limit: 3,
++    });
++    const at = (index: number, nowMs: number) =>
++      gate.accept(event({ key: `k${index}`, text: `Text ${index}` }), nowMs);
++    expect([at(0, 0), at(1, 100), at(2, 200), at(3, 300)]).toEqual([true, true, true, false]);
++    expect(at(4, 10_500)).toBe(true);
++  });
++
++  it('always lets a reset through and starts clean after clear()', () => {
++    const gate = new ToastGate({
++      dedupeMs: 60_000,
++      windowMs: 10_000,
++      limit: 1,
++    });
++    expect(gate.accept(event({ key: 'a' }), 0)).toBe(true);
++    expect(gate.accept(event({ key: 'b', text: 'More' }), 1)).toBe(false);
++    expect(gate.accept(resetEvent(snap(seed())), 2)).toBe(true);
++    gate.clear();
++    expect(gate.accept(event({ key: 'a' }), 3)).toBe(true);
++  });
++});
++
++describe('pushToast', () => {
++  const item = (key: string) => ({ id: `t-${key}`, event: event({ key }) });
++
++  it('keeps the newest three', () => {
++    let list = [] as ReturnType<typeof item>[];
++    for (const key of ['a', 'b', 'c', 'd']) list = pushToast(list, item(key));
++    expect(list.map((entry) => entry.event.key)).toEqual(['b', 'c', 'd']);
++  });
++
++  it('replaces a toast for the same change instead of stacking a copy', () => {
++    const list = pushToast(pushToast([], item('a')), item('a'));
++    expect(list).toHaveLength(1);
++  });
++});
++
++describe('audienceEvents: a toast is a disclosure', () => {
++  const approve = () => {
++    const before = seed();
++    const approval = pendingApproval(before);
++    const after = applyAction(
++      before,
++      {
++        type: 'approval.decide',
++        approvalId: approval.id,
++        hireId: approval.hireId,
++        approve: true,
++      },
++      NOW + 1000,
++    );
++    return { before, after, approval };
++  };
++
++  it('maps a path to its audience', () => {
++    expect(audienceOf('/newcomer/agent')).toBe('newcomer');
++    expect(audienceOf('/employer/hires/hire_seed_04')).toBe('employer');
++    expect(audienceOf('/landlord')).toBe('landlord');
++    expect(audienceOf('/bank/applications/x')).toBe('bank');
++    expect(audienceOf('/')).toBe('presenter');
++    expect(audienceOf('/design-system/state')).toBe('presenter');
++    expect(audienceOf('/landlordish')).toBe('presenter');
++  });
++
++  it('tells the landlord only that an application reached them, with no agent or approval detail', () => {
++    const { before, after, approval } = approve();
++    const events = audienceEvents(before, after, 'landlord', undefined);
++    expect(events).toHaveLength(1);
++    expect(events[0]?.kind).toBe('application');
++    expect(events[0]?.applicationId).toBe(approval.applicationId);
++    expect(events[0]?.text).toMatch(/^Rental application: submitted$/);
++  });
++
++  it('tells the landlord and the bank nothing about a draft', () => {
++    const before = seed();
++    const draft = Object.values(before.applications).find(
++      (application) => application.state === 'awaiting_approval',
++    );
++    expect(draft).toBeDefined();
++    const after = structuredClone(before);
++    for (const application of Object.values(after.applications))
++      if (application.id === draft?.id) application.state = 'awaiting_approval';
++    expect(audienceEvents(before, after, 'landlord', undefined)).toEqual([]);
++    expect(audienceEvents(before, after, 'bank', undefined)).toEqual([]);
++  });
++
++  it('does not tell the bank about a rental application', () => {
++    const { before, after } = approve();
++    expect(audienceEvents(before, after, 'bank', undefined)).toEqual([]);
++  });
++
++  it("gives the employer a bare 'journey updated', never the agent's words or an approval", () => {
++    const { before, after } = approve();
++    const events = audienceEvents(before, after, 'employer', undefined);
++    expect(events.length).toBeGreaterThan(0);
++    for (const event of events) {
++      expect(['agent', 'step']).toContain(event.kind);
++      if (event.kind === 'agent') {
++        expect(event.text).toBe('Journey updated');
++        expect(event.applicationId).toBeUndefined();
++      }
++    }
++    const spoken = events.map((event) => event.text).join(' ');
++    expect(spoken).not.toMatch(/approv|consent|passport|salary|Al Reem|landlord/i);
++  });
++
++  it('keeps the phone to its own person', () => {
++    const { before, after, approval } = approve();
++    expect(audienceEvents(before, after, 'newcomer', approval.hireId).length).toBeGreaterThan(0);
++    expect(audienceEvents(before, after, 'newcomer', 'hire_seed_01')).toEqual([]);
++    expect(audienceEvents(before, after, 'newcomer', undefined)).toEqual([]);
++  });
++
++  it('tells the hub and presenter tools nothing', () => {
++    const { before, after } = approve();
++    expect(audienceEvents(before, after, 'presenter', undefined)).toEqual([]);
++  });
++});
+diff --git a/apps/web/src/components/live/diff.ts b/apps/web/src/components/live/diff.ts
+new file mode 100644
+index 0000000..16b7be1
+--- /dev/null
++++ b/apps/web/src/components/live/diff.ts
+@@ -0,0 +1,412 @@
++import type {
++  AgentAction,
++  Application,
++  ApplicationKind,
++  ApplicationState,
++  AppState,
++  Approval,
++  Id,
++  Step,
++  StepStatus,
++} from '@/domain/types';
++import type { Snapshot } from '@/store/snapshot';
++
++/**
++ * Pure logic behind the live toasts: what changed between two copies of the shared state, and
++ * how many of those changes are worth interrupting someone for. No React, no clock, no DOM.
++ */
++
++export type ToastTone = 'success' | 'warning' | 'danger' | 'info';
++
++export type LiveEventKind = 'agent' | 'application' | 'approval' | 'step' | 'reset' | 'overflow';
++
++export interface LiveEvent {
++  /** Stable identity of the change, used to drop repeats. */
++  key: string;
++  kind: LiveEventKind;
++  /** The hire this is about. Absent for company, reset and overflow events. */
++  hireId?: Id;
++  companyId?: Id;
++  applicationId?: Id;
++  applicationKind?: ApplicationKind;
++  /** First name of the hire, or the company name. Empty for reset and overflow events. */
++  who: string;
++  /** The app's own wording of what happened. Not translated. Empty for reset and overflow. */
++  text: string;
++  tone: ToastTone;
++  /** Overflow events only: how many further updates were folded in. */
++  count?: number;
++}
++
++/** How many toasts one state change may raise before the rest are folded into a count. */
++export const MAX_PER_UPDATE = 3;
++
++/**
++ * Whether `next` is a reset or a new server rather than a normal step forward. After either the
++ * old ids mean nothing, so the screen shows one "Demo reset" toast instead of diffing.
++ */
++export function isReset(prev: Snapshot, next: Snapshot): boolean {
++  return (
++    prev.epoch !== next.epoch ||
++    next.state.rev < prev.state.rev ||
++    next.state.clock.resetAtMs !== prev.state.clock.resetAtMs
++  );
++}
++
++export function resetEvent(next: Snapshot): LiveEvent {
++  return {
++    key: `reset:${next.epoch}:${next.state.clock.resetAtMs}`,
++    kind: 'reset',
++    who: '',
++    text: '',
++    tone: 'info',
++  };
++}
++
++const APPLICATION_STATE_WORDS: Record<ApplicationState, string> = {
++  awaiting_approval: 'awaiting approval',
++  submitted: 'submitted',
++  under_review: 'under review',
++  needs_info: 'needs more information',
++  terms_offered: 'terms offered',
++  approved: 'approved',
++  declined: 'declined',
++};
++
++const APPLICATION_STATE_TONES: Record<ApplicationState, ToastTone> = {
++  awaiting_approval: 'warning',
++  submitted: 'info',
++  under_review: 'info',
++  needs_info: 'warning',
++  terms_offered: 'warning',
++  approved: 'success',
++  declined: 'danger',
++};
++
++const STEP_STATUS_TONES: Record<StepStatus, ToastTone> = {
++  locked: 'info',
++  ready: 'info',
++  in_progress: 'info',
++  waiting: 'warning',
++  needs_approval: 'warning',
++  blocked: 'danger',
++  done: 'success',
++};
++
++const AGENT_STATUS_TONES: Record<AgentAction['status'], ToastTone> = {
++  done: 'success',
++  waiting: 'info',
++  needs_approval: 'warning',
++  blocked: 'danger',
++};
++
++export function firstName(fullName: string): string {
++  return fullName.trim().split(/\s+/)[0] ?? fullName;
++}
++
++function words(value: string): string {
++  return value.replaceAll('_', ' ');
++}
++
++function hireName(state: AppState, hireId: Id): string {
++  const hire = state.hires[hireId];
++  return hire ? firstName(hire.fullName) : '';
++}
++
++function applicationLabel(application: Application): string {
++  return application.kind === 'rental' ? 'Rental application' : 'Bank account application';
++}
++
++function agentEvent(state: AppState, action: AgentAction): LiveEvent {
++  const isHire = action.caseType === 'hire';
++  const application = action.applicationId ? state.applications[action.applicationId] : undefined;
++  return {
++    key: `agent:${action.id}`,
++    kind: 'agent',
++    hireId: isHire ? action.caseId : undefined,
++    companyId: isHire ? undefined : action.caseId,
++    applicationId: application?.id,
++    applicationKind: application?.kind,
++    who: isHire ? hireName(state, action.caseId) : (state.companies[action.caseId]?.name ?? ''),
++    text: action.summary,
++    tone: AGENT_STATUS_TONES[action.status],
++  };
++}
++
++function applicationEvent(state: AppState, application: Application): LiveEvent {
++  return {
++    key: `application:${application.id}:${application.state}`,
++    kind: 'application',
++    hireId: application.hireId,
++    applicationId: application.id,
++    applicationKind: application.kind,
++    who: hireName(state, application.hireId),
++    text: `${applicationLabel(application)}: ${APPLICATION_STATE_WORDS[application.state]}`,
++    tone: APPLICATION_STATE_TONES[application.state],
++  };
++}
++
++function approvalEvent(state: AppState, approval: Approval): LiveEvent {
++  const application = approval.applicationId
++    ? state.applications[approval.applicationId]
++    : undefined;
++  const lead =
++    approval.status === 'pending'
++      ? 'Approval needed'
++      : approval.status === 'approved'
++        ? 'Approved'
++        : 'Declined';
++  return {
++    key: `approval:${approval.id}:${approval.status}`,
++    kind: 'approval',
++    hireId: approval.hireId,
++    applicationId: application?.id,
++    applicationKind: application?.kind,
++    who: hireName(state, approval.hireId),
++    text: `${lead}: ${approval.title}`,
++    tone:
++      approval.status === 'pending'
++        ? 'warning'
++        : approval.status === 'approved'
++          ? 'success'
++          : 'danger',
++  };
++}
++
++function stepEvent(state: AppState, step: Step): LiveEvent {
++  return {
++    key: `step:${step.id}:${step.status}`,
++    kind: 'step',
++    hireId: step.hireId,
++    who: hireName(state, step.hireId),
++    text: `${step.title}: ${words(step.status)}`,
++    tone: STEP_STATUS_TONES[step.status],
++  };
++}
++
++function sortedByTime<T extends { id: Id }>(items: T[], at: (item: T) => string): T[] {
++  return [...items].sort((a, b) => at(a).localeCompare(at(b)) || a.id.localeCompare(b.id));
++}
++
++/**
++ * What a person would want to hear about between `prev` and `next`, oldest first.
++ *
++ * One action in the app usually touches several records at once: approving a draft adds a feed
++ * entry, moves the application, closes the approval and changes a step. Telling the same story four
++ * times would bury it, so a feed entry is the narrative for its hire, and the other changes only
++ * speak for a hire that has no feed entry in this update. Even then a hire gets one event, chosen
++ * from application, approval and step in that order.
++ */
++export function diffStates(prev: AppState, next: AppState): LiveEvent[] {
++  if (prev === next) return [];
++  const events: LiveEvent[] = [];
++  const told = new Set<Id>();
++
++  const entries = Object.values(next.agentActions).filter(
++    (action) => !(action.id in prev.agentActions),
++  );
++  for (const action of sortedByTime(entries, (item) => item.at)) {
++    events.push(agentEvent(next, action));
++    if (action.caseType === 'hire') told.add(action.caseId);
++  }
++
++  const quiet = new Map<Id, LiveEvent>();
++  const offer = (hireId: Id, event: LiveEvent) => {
++    if (!told.has(hireId) && !quiet.has(hireId)) quiet.set(hireId, event);
++  };
++
++  for (const application of Object.values(next.applications)) {
++    const before = prev.applications[application.id];
++    if (before && before.state !== application.state)
++      offer(application.hireId, applicationEvent(next, application));
++  }
++
++  for (const approval of Object.values(next.approvals)) {
++    const before = prev.approvals[approval.id];
++    if (!before ? approval.status === 'pending' : before.status !== approval.status)
++      offer(approval.hireId, approvalEvent(next, approval));
++  }
++
++  // Dependent steps unlock and re-lock as a side effect of the step someone actually changed.
++  const changedSteps = Object.values(next.steps)
++    .filter((step) => {
++      const before = prev.steps[step.id];
++      if (!before || before.status === step.status) return false;
++      return step.status !== 'locked' && !(before.status === 'locked' && step.status === 'ready');
++    })
++    .sort((a, b) => a.order - b.order);
++  for (const step of changedSteps) offer(step.hireId, stepEvent(next, step));
++
++  return [...events, ...quiet.values()];
++}
++
++/** The first `max - 1` events and one overflow event standing for the rest. */
++export function foldEvents(events: LiveEvent[], max: number = MAX_PER_UPDATE): LiveEvent[] {
++  if (events.length <= max) return events;
++  const shown = events.slice(0, max - 1);
++  const hidden = events.length - shown.length;
++  return [
++    ...shown,
++    {
++      key: `overflow:${events[0]?.key ?? ''}:${hidden}`,
++      kind: 'overflow',
++      who: '',
++      text: '',
++      tone: 'info',
++      count: hidden,
++    },
++  ];
++}
++
++export type Surface = 'newcomer' | 'dashboard';
++
++export function surfaceOf(pathname: string): Surface {
++  return pathname === '/newcomer' || pathname.startsWith('/newcomer/') ? 'newcomer' : 'dashboard';
++}
++
++/**
++ * Whether the person at this screen should hear about `event`. A phone belongs to one newcomer, so
++ * it only shows that person's events; the dashboards show everything.
++ */
++export function isRelevant(
++  event: LiveEvent,
++  surface: Surface,
++  viewedHireId: Id | undefined,
++): boolean {
++  if (event.kind === 'reset' || surface === 'dashboard') return true;
++  return viewedHireId !== undefined && event.hireId === viewedHireId;
++}
++
++export type Audience = 'newcomer' | 'employer' | 'landlord' | 'bank' | 'presenter';
++
++export function audienceOf(pathname: string): Audience {
++  const inside = (root: string) => pathname === root || pathname.startsWith(`${root}/`);
++  if (inside('/newcomer')) return 'newcomer';
++  if (inside('/employer')) return 'employer';
++  if (inside('/landlord')) return 'landlord';
++  if (inside('/bank')) return 'bank';
++  return 'presenter';
++}
++
++/** Applications that moved into a state their recipient is allowed to know about. */
++function releasedApplicationEvents(
++  prev: AppState,
++  next: AppState,
++  kind: ApplicationKind,
++): LiveEvent[] {
++  return Object.values(next.applications)
++    .filter((application) => {
++      if (application.kind !== kind) return false;
++      // A draft is private until the newcomer approves it: its recipient hears nothing about it.
++      if (application.state === 'awaiting_approval') return false;
++      return prev.applications[application.id]?.state !== application.state;
++    })
++    .sort((a, b) => a.id.localeCompare(b.id))
++    .map((application) => applicationEvent(next, application));
++}
++
++/**
++ * What THIS screen's audience may hear about between `prev` and `next`. A toast is a disclosure,
++ * so each audience sees only what its own screen already shows:
++ * - a phone shows its own person's events;
++ * - a landlord or bank hears only that an application reached them or moved on, never a draft, an
++ *   approval, a consent or an agent note about the person;
++ * - an employer hears that a journey moved, with no detail of what the agent or the person
++ *   decided, plus its own company-setup events;
++ * - everything else (the hub, the presenter tools) hears only about a reset.
++ */
++export function audienceEvents(
++  prev: AppState,
++  next: AppState,
++  audience: Audience,
++  viewedHireId: Id | undefined,
++): LiveEvent[] {
++  if (audience === 'presenter') return [];
++  if (audience === 'landlord') return releasedApplicationEvents(prev, next, 'rental');
++  if (audience === 'bank') return releasedApplicationEvents(prev, next, 'bank_account');
++  const events = diffStates(prev, next);
++  if (audience === 'newcomer')
++    return events.filter((event) => viewedHireId !== undefined && event.hireId === viewedHireId);
++  return events.flatMap((event): LiveEvent[] => {
++    if (event.kind === 'approval' || event.kind === 'application') return [];
++    if (event.kind === 'agent' && event.hireId)
++      return [
++        {
++          ...event,
++          key: `employer:${event.key}`,
++          text: 'Journey updated',
++          applicationId: undefined,
++          applicationKind: undefined,
++          tone: 'info',
++        },
++      ];
++    return [event];
++  });
++}
++
++/** Where "View" goes, or undefined when nothing sensible is left to open. */
++export function routeFor(event: LiveEvent, surface: Surface): string | undefined {
++  if (event.kind === 'reset' || event.kind === 'overflow') return undefined;
++  if (surface === 'newcomer')
++    return event.kind === 'agent' || event.kind === 'approval' ? '/newcomer/agent' : '/newcomer';
++  if (event.applicationId && event.applicationKind === 'rental')
++    return `/landlord/applications/${event.applicationId}`;
++  if (event.applicationId && event.applicationKind === 'bank_account')
++    return `/bank/applications/${event.applicationId}`;
++  if (event.hireId) return `/employer/hires/${event.hireId}`;
++  if (event.companyId) return '/employer/expansion';
++  return undefined;
++}
++
++/**
++ * Drops repeats and caps the rate. A change that was already shown within `dedupeMs` is ignored,
++ * and no more than `limit` toasts pass in any `windowMs`, so a burst of changes cannot flood the
++ * screen. Time comes in as an argument, which keeps this testable.
++ */
++export class ToastGate {
++  private readonly seen = new Map<string, number>();
++  private accepted: number[] = [];
++
++  constructor(
++    private readonly options: {
++      dedupeMs: number;
++      windowMs: number;
++      limit: number;
++    } = {
++      dedupeMs: 15_000,
++      windowMs: 10_000,
++      limit: 8,
++    },
++  ) {}
++
++  accept(event: LiveEvent, nowMs: number): boolean {
++    for (const [key, at] of this.seen)
++      if (nowMs - at >= this.options.dedupeMs) this.seen.delete(key);
++    this.accepted = this.accepted.filter((at) => nowMs - at < this.options.windowMs);
++    // The same words about the same person are one toast, even when two records produced them.
++    const echo = `${event.who}|${event.text}`;
++    if (this.seen.has(event.key) || (event.text && this.seen.has(echo))) return false;
++    if (event.kind !== 'reset' && this.accepted.length >= this.options.limit) return false;
++    this.seen.set(event.key, nowMs);
++    if (event.text) this.seen.set(echo, nowMs);
++    this.accepted.push(nowMs);
++    return true;
++  }
++
++  /** Forget everything, for example after a reset. */
++  clear(): void {
++    this.seen.clear();
++    this.accepted = [];
++  }
++}
++
++export interface ToastItem {
++  id: string;
++  event: LiveEvent;
++}
++
++/** Appends `item`, replacing one with the same event key, and keeps only the newest `max`. */
++export function pushToast(list: ToastItem[], item: ToastItem, max = 3): ToastItem[] {
++  const next = [...list.filter((entry) => entry.event.key !== item.event.key), item];
++  return next.length > max ? next.slice(next.length - max) : next;
++}
+diff --git a/apps/web/src/components/live/live-toasts.tsx b/apps/web/src/components/live/live-toasts.tsx
+index 2a0bda6..f0ce1ab 100644
+--- a/apps/web/src/components/live/live-toasts.tsx
++++ b/apps/web/src/components/live/live-toasts.tsx
+@@ -1,6 +1,263 @@
+-"use client";
++'use client';
+ 
+-/** Surfaces changes made in other windows as toasts. Replaced by the motion-and-live worker. */
++import Link from 'next/link';
++import { usePathname } from 'next/navigation';
++import { X } from 'lucide-react';
++import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
++import { cn } from '@/lib/cn';
++import { useStore } from '@/store/provider';
++import { useNewcomer } from '@/store/person';
++import {
++  audienceEvents,
++  audienceOf,
++  foldEvents,
++  isReset,
++  pushToast,
++  resetEvent,
++  routeFor,
++  type Audience,
++  surfaceOf,
++  ToastGate,
++  type Surface,
++  type ToastItem,
++  type ToastTone,
++} from './diff';
++
++/** How long a toast stays when nobody is pointing at it or reading it. */
++const AUTO_DISMISS_MS = 6000;
++
++type Lang = 'en' | 'ar';
++
++/** Interface words only. The text of an event is the app's own and stays as written. */
++const COPY = {
++  en: {
++    region: 'Live updates',
++    dismiss: 'Dismiss',
++    view: 'View',
++    reset: 'Demo reset',
++    resetDetail: 'Back to the starting data',
++    more: (count: number) => `${count} more updates`,
++  },
++  ar: {
++    region: 'تحديثات مباشرة',
++    dismiss: 'إغلاق',
++    view: 'عرض',
++    reset: 'إعادة ضبط العرض',
++    resetDetail: 'عادت البيانات إلى وضعها الأولي',
++    more: (count: number) => (count > 10 ? `${count} تحديثاً آخر` : `${count} تحديثات أخرى`),
++  },
++} as const;
++
++const DOT: Record<ToastTone, string> = {
++  success: 'bg-success-solid',
++  warning: 'bg-[rgb(var(--brand-saffron))]',
++  danger: 'bg-danger-solid',
++  info: 'bg-accent',
++};
++
++function subscribeToLang(onChange: () => void): () => void {
++  const observer = new MutationObserver(onChange);
++  observer.observe(document.documentElement, {
++    attributes: true,
++    attributeFilter: ['lang'],
++  });
++  return () => observer.disconnect();
++}
++
++function useDocumentLang(): Lang {
++  return useSyncExternalStore(
++    subscribeToLang,
++    () => (document.documentElement.lang === 'ar' ? 'ar' : 'en'),
++    () => 'en',
++  );
++}
++
++/**
++ * Says out loud what other windows just changed. It diffs each new snapshot against the last one
++ * it saw, so the state a page loads with never produces a toast, only what arrives afterwards.
++ */
+ export function LiveToasts() {
+-  return null;
++  const store = useStore();
++  const pathname = usePathname() ?? '';
++  const { hire } = useNewcomer();
++  const lang = useDocumentLang();
++  const copy = COPY[lang];
++  const surface = surfaceOf(pathname);
++  const audience = audienceOf(pathname);
++
++  const [items, setItems] = useState<ToastItem[]>([]);
++  const [gate] = useState(() => new ToastGate());
++  const counter = useRef(0);
++  const context = useRef<{
++    audience: Audience;
++    viewed: string | undefined;
++  }>({
++    audience,
++    viewed: hire?.id,
++  });
++
++  useEffect(() => {
++    context.current = { audience, viewed: hire?.id };
++  }, [audience, hire?.id]);
++
++  useEffect(() => {
++    let previous = store.getSnapshot();
++    return store.subscribe(() => {
++      const next = store.getSnapshot();
++      if (next === previous) return;
++      const before = previous;
++      previous = next;
++      const nowMs = Date.now();
++      const nextId = () => `toast-${(counter.current += 1)}`;
++
++      if (isReset(before, next)) {
++        gate.clear();
++        const event = resetEvent(next);
++        gate.accept(event, nowMs);
++        setItems([{ id: nextId(), event }]);
++        return;
++      }
++
++      const { audience: who, viewed } = context.current;
++      const fresh = audienceEvents(before.state, next.state, who, viewed).filter((event) =>
++        gate.accept(event, nowMs),
++      );
++      if (!fresh.length) return;
++      setItems((list) =>
++        foldEvents(fresh).reduce((acc, event) => pushToast(acc, { id: nextId(), event }), list),
++      );
++    });
++  }, [store, gate]);
++
++  const dismiss = useCallback(
++    (id: string) => setItems((list) => list.filter((item) => item.id !== id)),
++    [],
++  );
++
++  return (
++    <div
++      role="status"
++      aria-live="polite"
++      aria-atomic="false"
++      aria-label={copy.region}
++      className={cn(
++        'pointer-events-none fixed start-4 z-40 flex flex-col items-start gap-2',
++        'w-[min(22rem,calc(100vw-2rem))] max-sm:w-[calc(100vw-8rem)]',
++        surface === 'newcomer'
++          ? 'bottom-[calc(4.5rem+env(safe-area-inset-bottom))] md:bottom-4'
++          : 'bottom-4',
++      )}
++    >
++      {items.map((item) => (
++        <ToastCard
++          key={item.id}
++          item={item}
++          lang={lang}
++          href={routeFor(item.event, surface)}
++          currentPath={pathname}
++          onDismiss={dismiss}
++        />
++      ))}
++    </div>
++  );
++}
++
++function ToastCard({
++  item,
++  lang,
++  href,
++  currentPath,
++  onDismiss,
++}: {
++  item: ToastItem;
++  lang: Lang;
++  href: string | undefined;
++  currentPath: string;
++  onDismiss: (id: string) => void;
++}) {
++  const copy = COPY[lang];
++  const { event } = item;
++  const [hovered, setHovered] = useState(false);
++  const [focused, setFocused] = useState(false);
++  const paused = hovered || focused;
++  const remaining = useRef(AUTO_DISMISS_MS);
++
++  // Hover or keyboard focus stops the clock; leaving resumes with what was left.
++  useEffect(() => {
++    if (paused) return;
++    const startedAt = Date.now();
++    const timer = window.setTimeout(() => onDismiss(item.id), Math.max(remaining.current, 0));
++    return () => {
++      window.clearTimeout(timer);
++      remaining.current -= Date.now() - startedAt;
++    };
++  }, [paused, item.id, onDismiss]);
++
++  const showLink = Boolean(href) && href !== currentPath;
++  const title =
++    event.kind === 'reset'
++      ? copy.reset
++      : event.kind === 'overflow'
++        ? copy.more(event.count ?? 0)
++        : null;
++
++  return (
++    <div
++      onMouseEnter={() => setHovered(true)}
++      onMouseLeave={() => setHovered(false)}
++      onFocus={() => setFocused(true)}
++      onBlur={(blurEvent) => {
++        if (!blurEvent.currentTarget.contains(blurEvent.relatedTarget)) setFocused(false);
++      }}
++      onKeyDown={(keyEvent) => {
++        if (keyEvent.key === 'Escape') onDismiss(item.id);
++      }}
++      className="rasikh-toast pointer-events-auto flex w-full items-start gap-3 rounded-lg border border-edge bg-raised py-2.5 ps-3 pe-1.5 text-body text-fg shadow-pop"
++    >
++      <span
++        aria-hidden
++        className={cn('mt-[0.4375rem] size-2 shrink-0 rounded-full', DOT[event.tone])}
++      />
++      <div className="min-w-0 flex-1">
++        {title ? (
++          <p className="font-medium">
++            {title}
++            {event.kind === 'reset' ? (
++              <span className="block font-normal text-fg-tertiary">{copy.resetDetail}</span>
++            ) : null}
++          </p>
++        ) : (
++          <p dir="auto" className="line-clamp-3 break-words max-md:line-clamp-2">
++            {event.who ? (
++              <>
++                <bdi className="font-medium">{event.who}</bdi>
++                <span aria-hidden className="px-1 text-fg-tertiary">
++                  ·
++                </span>
++                <span className="sr-only">: </span>
++              </>
++            ) : null}
++            <bdi className="text-fg-secondary">{event.text}</bdi>
++          </p>
++        )}
++        {showLink && href ? (
++          <Link
++            href={href}
++            onClick={() => onDismiss(item.id)}
++            className="-mb-1 mt-0.5 inline-flex min-h-7 items-center rounded-sm text-label font-medium text-accent hover:underline max-md:-mb-3.5 max-md:-mt-1 max-md:min-h-11"
++          >
++            {copy.view}
++          </Link>
++        ) : null}
++      </div>
++      <button
++        type="button"
++        aria-label={copy.dismiss}
++        onClick={() => onDismiss(item.id)}
++        className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-fg-tertiary transition-colors hover:bg-hover hover:text-fg max-md:size-11 max-md:-my-2.5"
++      >
++        <X aria-hidden className="size-3.5" />
++      </button>
++    </div>
++  );
+ }
+-- 
+2.51.0.windows.1
+

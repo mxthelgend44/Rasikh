@@ -1,0 +1,541 @@
+From 33e15051ff4a9f6fb994522765decb134415e8fd Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 15:00:37 +0400
+Subject: [PATCH 16/18] style(employer): overview, hires, hire journey and
+ Guard page hierarchy
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/components/employer/common.tsx   | 45 +++++++---
+ .../web/src/components/employer/expansion.tsx |  8 +-
+ apps/web/src/components/employer/guard.tsx    | 64 ++++++++------
+ .../src/components/employer/hire-detail.tsx   | 23 +++--
+ apps/web/src/components/employer/hires.tsx    | 13 ++-
+ apps/web/src/components/employer/overview.tsx | 85 ++++++++++++-------
+ 6 files changed, 157 insertions(+), 81 deletions(-)
+
+diff --git a/apps/web/src/components/employer/common.tsx b/apps/web/src/components/employer/common.tsx
+index f9feb9c..b027669 100644
+--- a/apps/web/src/components/employer/common.tsx
++++ b/apps/web/src/components/employer/common.tsx
+@@ -67,13 +67,13 @@ export function EmployerHeader({
+   actions?: ReactNode;
+ }) {
+   return (
+-    <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-5 py-6 sm:px-8">
++    <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-5 py-5 sm:px-8">
+       <div className="max-w-2xl">
+-        {eyebrow && <p className="mb-2 text-label font-medium text-accent">{eyebrow}</p>}
+-        <h1 className="text-[1.75rem] font-medium leading-tight tracking-tight text-fg sm:text-[2rem]">
++        {eyebrow && <p className="mb-1.5 text-label font-medium text-accent">{eyebrow}</p>}
++        <h1 className="text-[1.5rem] font-medium leading-tight tracking-tight text-fg sm:text-[1.75rem]">
+           {title}
+         </h1>
+-        <p className="mt-2 text-body leading-6 text-fg-secondary">{description}</p>
++        <p className="mt-1.5 text-body leading-6 text-fg-secondary">{description}</p>
+       </div>
+       {actions && <div className="flex flex-wrap items-center gap-2 pt-1">{actions}</div>}
+     </header>
+@@ -117,20 +117,22 @@ export function Metric({
+   detail,
+   icon: Icon,
+   tone = 'accent',
++  href,
+ }: {
+   title: string;
+   value: ReactNode;
+   detail: string;
+   icon: LucideIcon;
+   tone?: 'accent' | 'warning' | 'success' | 'danger';
++  href?: string;
+ }) {
+-  return (
+-    <div className="relative rounded-2xl border border-edge bg-surface p-5">
++  const body = (
++    <>
+       <div className="flex items-center justify-between gap-3">
+-        <p className="text-label text-fg-secondary">{title}</p>
++        <p className="text-label font-medium text-fg-secondary">{title}</p>
+         <span
+           className={cn(
+-            'flex size-9 items-center justify-center rounded-xl',
++            'hidden size-9 shrink-0 items-center justify-center rounded-lg sm:flex',
+             tone === 'warning'
+               ? 'bg-warning-soft text-warning'
+               : tone === 'danger'
+@@ -143,11 +145,25 @@ export function Metric({
+           <Icon aria-hidden className="size-4" />
+         </span>
+       </div>
+-      <p className="mt-3 text-[2rem] font-medium leading-none tracking-tight text-fg tabular-nums">
++      <p className="mt-3 text-[2rem] font-medium leading-none sm:mt-4 sm:text-[2.5rem] tracking-tight text-fg tabular-nums">
+         {value}
+       </p>
+       <p className="mt-3 text-caption leading-5 text-fg-tertiary">{detail}</p>
+-    </div>
++    </>
++  );
++  const shell = 'relative block min-w-0 rounded-2xl border border-edge bg-surface p-4 sm:p-5';
++  return href ? (
++    <Link
++      href={href}
++      className={cn(
++        shell,
++        'transition-colors motion-reduce:transition-none hover:border-line-strong hover:bg-subtle',
++      )}
++    >
++      {body}
++    </Link>
++  ) : (
++    <div className={shell}>{body}</div>
+   );
+ }
+ 
+@@ -470,10 +486,17 @@ export function ActivityList({
+   );
+ }
+ 
+-export function JourneyArt({ compact = false }: { compact?: boolean }) {
++export function JourneyArt({
++  compact = false,
++  priority = false,
++}: {
++  compact?: boolean;
++  priority?: boolean;
++}) {
+   return (
+     <Illustration
+       variant="welcoming-hire"
++      priority={priority}
+       decorative
+       aspect="landscape"
+       fit="contain"
+diff --git a/apps/web/src/components/employer/expansion.tsx b/apps/web/src/components/employer/expansion.tsx
+index 970d678..98796f1 100644
+--- a/apps/web/src/components/employer/expansion.tsx
++++ b/apps/web/src/components/employer/expansion.tsx
+@@ -159,7 +159,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
+           )}
+         </div>
+         {!company ? (
+-          <section className="grid items-center gap-6 rounded-[1.5rem] border border-edge bg-accent-soft p-6 sm:p-8 md:grid-cols-2">
++          <section className="grid items-center gap-6 rounded-2xl border border-edge bg-accent-soft p-5 sm:p-6 md:grid-cols-2">
+             <div>
+               <Badge tone="accent" shape="pill">
+                 {e('Company → people', 'الشركة ← الفريق')}
+@@ -186,7 +186,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
+           </section>
+         ) : (
+           <>
+-            <section className="grid items-center gap-6 overflow-hidden rounded-[1.5rem] border border-accent/15 bg-accent-soft p-6 sm:p-8 lg:grid-cols-[1.2fr_1fr]">
++            <section className="grid items-center gap-6 overflow-hidden rounded-2xl border border-accent/15 bg-accent-soft p-5 sm:p-6 lg:grid-cols-[1.2fr_1fr]">
+               <div>
+                 <Badge tone="accent" shape="pill">
+                   {e('Illustrative setup', 'تأسيس توضيحي')} ·{' '}
+@@ -194,7 +194,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
+                     ? jurisdictionNames[company.recommendation.recommended]
+                     : e('Selected path', 'المسار المختار')}
+                 </Badge>
+-                <h2 className="mt-4 text-[1.65rem] font-medium leading-tight tracking-tight">
++                <h2 className="mt-3 text-[1.5rem] font-medium leading-tight tracking-tight">
+                   {company.name}
+                 </h2>
+                 <p className="mt-2 flex flex-wrap items-center gap-2 text-body text-fg-secondary">
+@@ -236,7 +236,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
+                 decorative
+                 aspect="landscape"
+                 fit="contain"
+-                className="mx-auto max-w-[430px] overflow-hidden rounded-2xl"
++                className="mx-auto max-w-[340px] overflow-hidden rounded-2xl"
+               />
+             </section>
+             <div className="grid gap-4 sm:grid-cols-3">
+diff --git a/apps/web/src/components/employer/guard.tsx b/apps/web/src/components/employer/guard.tsx
+index 0367b8b..89062d5 100644
+--- a/apps/web/src/components/employer/guard.tsx
++++ b/apps/web/src/components/employer/guard.tsx
+@@ -180,10 +180,41 @@ export function EmployerGuard() {
+             {e('Demo records', 'سجلات تجريبية')}
+           </Badge>
+         </div>
+-        <section className="grid items-center gap-5 overflow-hidden rounded-[1.5rem] border border-accent/15 bg-accent-soft p-6 md:grid-cols-[1.3fr_1fr] sm:p-8">
++        <div className="flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-danger/25 bg-danger-soft p-5 sm:p-6">
++          <div className="flex min-w-0 max-w-3xl flex-1 items-start gap-4">
++            <div className="shrink-0 border-e border-danger/25 pe-4 text-danger">
++              <p className="text-[2.25rem] font-medium leading-none tracking-tight tabular-nums">
++                {historicalEvidence.unsafeAllowsPerRun}
++                <span className="text-heading">/{historicalEvidence.attacksPerRun}</span>
++              </p>
++              <p className="mt-2 max-w-[8.5rem] text-caption leading-4">
++                {e('forbidden flows allowed per run', 'مسارات محظورة سُمح بها في كل تجربة')}
++              </p>
++            </div>
++            <div className="min-w-0">
++              <h2 className="flex items-center gap-2 text-title font-medium text-danger">
++                <TriangleAlert aria-hidden className="size-5 shrink-0" />
++                {e(
++                  'Archived evaluation: provenance failure recorded',
++                  'التقييم المؤرشف: خلل مسجل في تتبع مصدر البيانات',
++                )}
++              </h2>
++              <p className="mt-2 text-body leading-6 text-danger">
++                {e(
++                  `In this historical snapshot, each of ${historicalEvidence.runs} runs allowed ${historicalEvidence.unsafeAllowsPerRun} of ${historicalEvidence.attacksPerRun} forbidden synthetic flows. Production prompt parity was not measured.`,
++                  `في هذه اللقطة التاريخية، سمحت كل تجربة من ${historicalEvidence.runs} تجارب بـ${historicalEvidence.unsafeAllowsPerRun} من أصل ${historicalEvidence.attacksPerRun} مساراً اصطناعياً محظوراً. لم يُقَس التطابق مع تعليمات الإنتاج.`,
++                )}
++              </p>
++            </div>
++          </div>
++          <Button variant="secondary" size="sm" onClick={() => setTab('evidence')}>
++            {e('View evidence & scope', 'عرض الأدلة ونطاقها')}
++          </Button>
++        </div>
++        <section className="grid items-center gap-5 overflow-hidden rounded-2xl border border-accent/15 bg-accent-soft p-5 md:grid-cols-[1.3fr_1fr] sm:p-6">
+           <div>
+             <ShieldCheck aria-hidden className="size-6 text-accent" />
+-            <h2 className="mt-3 text-[1.65rem] font-medium leading-tight">
++            <h2 className="mt-2 text-[1.5rem] font-medium leading-tight">
+               {e('Personal data. Clear decisions.', 'بيانات شخصية. قرارات واضحة.')}
+             </h2>
+             <p className="mt-3 max-w-lg text-body leading-6 text-fg-secondary">
+@@ -192,7 +223,7 @@ export function EmployerGuard() {
+                 'اطلع على صاحب التحقق التجريبي والجهة المقترح إرسال البيانات إليها وسبب السماح أو الإيقاف. تظل الموافقة الشخصية بيد الموظف.',
+               )}
+             </p>
+-            <p className="mt-3 text-label leading-6 text-accent">
++            <p className="mt-3 text-label font-medium leading-6 text-fg">
+               {e(
+                 'This activity log is illustrative. It does not certify the current Guard integration.',
+                 'هذا السجل توضيحي. ولا يمثل اعتماداً لتكامل الحماية الحالي.',
+@@ -204,31 +235,9 @@ export function EmployerGuard() {
+             decorative
+             aspect="landscape"
+             fit="contain"
+-            className="mx-auto max-w-[360px] overflow-hidden rounded-2xl"
++            className="mx-auto max-w-[240px] overflow-hidden rounded-2xl"
+           />
+         </section>
+-        <div className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-danger/20 bg-danger-soft p-5">
+-          <div className="flex max-w-3xl items-start gap-3">
+-            <TriangleAlert aria-hidden className="mt-0.5 size-5 shrink-0 text-danger" />
+-            <div>
+-              <h2 className="text-body font-medium text-danger">
+-                {e(
+-                  'Archived evaluation: provenance failure recorded',
+-                  'التقييم المؤرشف: خلل مسجل في تتبع مصدر البيانات',
+-                )}
+-              </h2>
+-              <p className="mt-1 text-label leading-6 text-danger">
+-                {e(
+-                  `In this historical snapshot, each of ${historicalEvidence.runs} runs allowed ${historicalEvidence.unsafeAllowsPerRun} of ${historicalEvidence.attacksPerRun} forbidden synthetic flows. Production prompt parity was not measured.`,
+-                  `في هذه اللقطة التاريخية، سمحت كل تجربة من ${historicalEvidence.runs} تجارب بـ${historicalEvidence.unsafeAllowsPerRun} من أصل ${historicalEvidence.attacksPerRun} مساراً اصطناعياً محظوراً. لم يُقَس التطابق مع تعليمات الإنتاج.`,
+-                )}
+-              </p>
+-            </div>
+-          </div>
+-          <Button variant="secondary" size="sm" onClick={() => setTab('evidence')}>
+-            {e('View evidence & scope', 'عرض الأدلة ونطاقها')}
+-          </Button>
+-        </div>
+         <div className="grid gap-4 sm:grid-cols-3">
+           <Metric
+             title={e('Recorded demo checks', 'عمليات تحقق تجريبية مسجلة')}
+@@ -571,7 +580,8 @@ export function EmployerGuard() {
+                     {e('Indirect attacks allowed', 'هجمات غير مباشرة سُمح بها')}
+                   </p>
+                   <p className="mt-2 text-[2rem] font-medium text-danger">
+-                    {historicalEvidence.unsafeAllowsPerRun} / {historicalEvidence.unsafeAllowsPerRun}
++                    {historicalEvidence.unsafeAllowsPerRun} /{' '}
++                    {historicalEvidence.unsafeAllowsPerRun}
+                   </p>
+                   <p className="mt-2 text-label leading-6 text-fg-secondary">
+                     {e(
+diff --git a/apps/web/src/components/employer/hire-detail.tsx b/apps/web/src/components/employer/hire-detail.tsx
+index 7a837ac..b3c9fc7 100644
+--- a/apps/web/src/components/employer/hire-detail.tsx
++++ b/apps/web/src/components/employer/hire-detail.tsx
+@@ -290,20 +290,24 @@ export function EmployerHireDetail({ hireId }: { hireId: string }) {
+                 'تفتح الخطوات عندما تكتمل متطلباتها السابقة.',
+               )}
+             >
+-              <ol className="divide-y divide-line">
++              <ol className="p-3 sm:p-4">
+                 {steps.map((step, index) => {
+                   const actionable =
+                     (step.owner === 'employer' || step.owner === 'agent') &&
+                     ['ready', 'in_progress'].includes(step.status);
++                  const isCurrent = step.id === current?.id;
+                   return (
+-                    <li
+-                      key={step.id}
+-                      className={`p-5 ${step.id === current?.id ? 'bg-accent-soft/35' : ''}`}
+-                    >
+-                      <div className="flex gap-3">
++                    <li key={step.id} className="relative flex gap-3 pb-2 last:pb-0">
++                      {index < steps.length - 1 && (
+                         <span
+                           aria-hidden
+-                          className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full text-caption font-medium ${step.status === 'done' ? 'bg-accent text-accent-fg' : step.status === 'locked' ? 'bg-track text-fg-tertiary' : 'border border-accent/30 bg-accent-soft text-accent'}`}
++                          className={`absolute -bottom-4 start-[27px] top-12 w-0.5 rounded-full ${step.status === 'done' ? 'bg-accent' : 'bg-line-strong/40'}`}
++                        />
++                      )}
++                      <div className="flex w-full gap-3">
++                        <span
++                          aria-hidden
++                          className={`relative z-10 ms-3 mt-4 flex size-8 shrink-0 items-center justify-center rounded-full text-caption font-medium ${step.status === 'done' ? 'bg-accent text-accent-fg' : step.status === 'locked' ? 'bg-track text-fg-tertiary' : 'border border-accent/30 bg-accent-soft text-accent'}`}
+                         >
+                           {step.status === 'done' ? (
+                             <Check className="size-4" />
+@@ -313,7 +317,10 @@ export function EmployerHireDetail({ hireId }: { hireId: string }) {
+                             index + 1
+                           )}
+                         </span>
+-                        <div className="min-w-0 flex-1">
++                        <div
++                          className={`min-w-0 flex-1 rounded-xl border p-4 ${isCurrent ? 'border-accent/30 bg-accent-soft/50' : 'border-transparent'}`}
++                          aria-current={isCurrent ? 'step' : undefined}
++                        >
+                           <div className="flex flex-wrap items-center justify-between gap-2">
+                             <h3 className="text-body font-medium">{t(`step.${step.key}.title`)}</h3>
+                             <StepBadge status={step.status} />
+diff --git a/apps/web/src/components/employer/hires.tsx b/apps/web/src/components/employer/hires.tsx
+index 3475ef5..d31dadc 100644
+--- a/apps/web/src/components/employer/hires.tsx
++++ b/apps/web/src/components/employer/hires.tsx
+@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
+ import { Table, Td, Th, Tr } from '@/components/ui/table';
+ import { demoNow } from '@/domain/clock';
+ import { STEP_KEYS } from '@/domain/types';
++import { cn } from '@/lib/cn';
+ import { formatDate } from '@/lib/format';
+ import { useAppState, useConnection } from '@/store/provider';
+ import {
+@@ -356,7 +357,17 @@ export function EmployerHires() {
+                   </thead>
+                   <tbody>
+                     {rows.map((row) => (
+-                      <Tr key={row.hire.id} className="!h-20">
++                      <Tr
++                        key={row.hire.id}
++                        className={cn(
++                          '!h-20',
++                          row.steps.some((step) => step.status === 'blocked')
++                            ? 'bg-danger-soft/40'
++                            : row.steps.some((step) => step.status === 'needs_approval')
++                              ? 'bg-warning-soft/40'
++                              : '',
++                        )}
++                      >
+                         <Td>
+                           <input
+                             type="checkbox"
+diff --git a/apps/web/src/components/employer/overview.tsx b/apps/web/src/components/employer/overview.tsx
+index 25f7660..755218c 100644
+--- a/apps/web/src/components/employer/overview.tsx
++++ b/apps/web/src/components/employer/overview.tsx
+@@ -14,9 +14,9 @@ import {
+   Users,
+ } from 'lucide-react';
+ import { Badge } from '@/components/ui/badge';
+-import { Button } from '@/components/ui/button';
+ import { demoNow } from '@/domain/clock';
+ import { currentStep, employerMetrics, hireStatus, stepsOf } from '@/domain/selectors';
++import { cn } from '@/lib/cn';
+ import { formatDate } from '@/lib/format';
+ import { useAppState } from '@/store/provider';
+ import {
+@@ -38,7 +38,7 @@ import { EmployerScopePicker, useEmployerScope } from './scope';
+ export function EmployerOverview() {
+   const state = useAppState();
+   const { employerId, employer } = useEmployerScope();
+-  const { e, locale, record } = useEmployerCopy();
++  const { e, locale, record, t } = useEmployerCopy();
+   const router = useRouter();
+   const [adding, setAdding] = useState(false);
+   const now = demoNow(state);
+@@ -73,7 +73,7 @@ export function EmployerOverview() {
+     {
+       label: e('Documents', 'المستندات'),
+       keys: ['documents'],
+-      color: 'bg-warning',
++      color: 'bg-[rgb(var(--brand-saffron))]',
+       query: 'documents',
+     },
+     {
+@@ -95,7 +95,12 @@ export function EmployerOverview() {
+       color: 'bg-success',
+       query: 'housing',
+     },
+-    { label: e('Settled', 'مستقرون'), keys: [], color: 'bg-fg-secondary', query: 'settled' },
++    {
++      label: e('Settled', 'مستقرون'),
++      keys: [],
++      color: 'bg-fg-secondary',
++      query: 'settled',
++    },
+   ];
+   return (
+     <>
+@@ -109,12 +114,12 @@ export function EmployerOverview() {
+         actions={<EmployerScopePicker />}
+       />
+       <div className="space-y-6 p-5 sm:p-8">
+-        <section className="relative flex min-h-[240px] flex-col justify-between gap-4 overflow-hidden rounded-[1.5rem] border border-accent/15 bg-accent-soft px-6 py-6 md:flex-row md:items-center sm:px-8">
+-          <div className="relative z-10 max-w-lg">
+-            <Badge tone="accent" shape="pill">
++        <section className="grid overflow-hidden rounded-2xl bg-[rgb(var(--brand-ink))] text-[rgb(var(--brand-sand))] xl:grid-cols-[1fr_auto]">
++          <div className="flex flex-col justify-center p-6 sm:p-8">
++            <p className="text-label font-medium text-[rgb(var(--brand-seafoam))]">
+               {e('Employer workspace', 'مساحة صاحب العمل')} · {e('Demo', 'تجريبي')}
+-            </Badge>
+-            <h2 className="mt-4 text-[1.65rem] font-medium leading-tight tracking-tight text-fg">
++            </p>
++            <h2 className="mt-3 max-w-md text-[1.875rem] font-medium leading-tight tracking-tight">
+               {hires.length
+                 ? e(
+                     `${hires.length - metrics.settled} journeys underway.`,
+@@ -122,11 +127,11 @@ export function EmployerOverview() {
+                   )
+                 : e('Your next chapter starts here.', 'فصلك القادم يبدأ هنا.')}
+               <br />
+-              <span className="text-accent">
++              <span className="text-[rgb(var(--brand-seafoam))]">
+                 {e('One place to keep them moving.', 'مكان واحد لمتابعة تقدمها.')}
+               </span>
+             </h2>
+-            <p className="mt-3 max-w-sm text-body leading-6 text-fg-secondary">
++            <p className="mt-3 max-w-md text-body leading-6 text-[rgb(var(--brand-sand)/0.82)]">
+               {metrics.blocked
+                 ? e(
+                     `${metrics.blocked} hire needs your attention. A small next step can unlock the rest of their journey.`,
+@@ -137,25 +142,30 @@ export function EmployerOverview() {
+                     'اجمع فريقك ومهامه وتأسيس شركتك في مكان واحد.',
+                   )}
+             </p>
+-            <div className="mt-5 flex flex-wrap items-center gap-2">
+-              <Button size="lg" icon={<Plus />} onClick={() => setAdding(true)}>
++            <div className="mt-6 flex flex-wrap items-center gap-2">
++              <button
++                type="button"
++                onClick={() => setAdding(true)}
++                className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[rgb(var(--brand-sand))] px-4 text-label font-medium text-[rgb(var(--brand-ink))] transition-colors hover:bg-[rgb(var(--brand-sand)/0.88)] focus-visible:outline-[rgb(var(--brand-seafoam))]"
++              >
++                <Plus aria-hidden className="size-4" />
+                 {e('Add a hire', 'إضافة موظف')}
+-              </Button>
++              </button>
+               <Link
+                 href="/employer/expansion"
+-                className={`${linkClass} !min-h-10 border-accent/20 !bg-transparent`}
++                className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[rgb(var(--brand-sand)/0.35)] px-4 text-label font-medium text-[rgb(var(--brand-sand))] transition-colors hover:bg-[rgb(var(--brand-sand)/0.1)] focus-visible:outline-[rgb(var(--brand-seafoam))]"
+               >
+                 {e('Company setup', 'تأسيس الشركة')}
+                 <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
+               </Link>
+             </div>
+           </div>
+-          <div className="mx-auto flex w-full max-w-[300px] shrink-0 items-end justify-center md:mx-0 lg:max-w-[360px]">
+-            <JourneyArt />
++          <div className="hidden items-center p-4 xl:flex">
++            <JourneyArt priority />
+           </div>
+         </section>
+ 
+-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
++        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+           <Metric
+             title={e('People in motion', 'أشخاص في رحلة الانتقال')}
+             value={metrics.hires - metrics.settled}
+@@ -164,6 +174,7 @@ export function EmployerOverview() {
+               `${metrics.hires} موظفين إجمالاً · ${metrics.settled} مستقرين`,
+             )}
+             icon={Users}
++            href="/employer/hires"
+           />
+           <Metric
+             title={e('Needs your attention', 'يحتاج إلى متابعتك')}
+@@ -171,6 +182,7 @@ export function EmployerOverview() {
+             detail={e('Blocked cases to help move forward', 'حالات متعثرة تحتاج إلى مساعدتك')}
+             icon={CircleAlert}
+             tone={metrics.blocked ? 'danger' : 'success'}
++            href="/employer/hires?status=attention"
+           />
+           <Metric
+             title={e('Avg. days to settle', 'متوسط أيام الاستقرار')}
+@@ -187,6 +199,7 @@ export function EmployerOverview() {
+             )}
+             icon={ShieldCheck}
+             tone="warning"
++            href={pending[0] ? `/employer/hires/${pending[0].hireId}` : '/employer/hires'}
+           />
+         </div>
+ 
+@@ -207,15 +220,28 @@ export function EmployerOverview() {
+             }
+           >
+             {attention.length ? (
+-              <ul className="divide-y divide-line">
++              <ul className="divide-y divide-line overflow-hidden rounded-b-2xl">
+                 {attention.slice(0, 4).map((hire) => {
+                   const steps = stepsOf(state, hire.id);
+                   const flagged =
+                     steps.find((step) => step.status === 'blocked') ??
+                     steps.find((step) => step.status === 'needs_approval');
+                   return (
+-                    <li key={hire.id} className="p-5">
+-                      <div className="flex items-start gap-3">
++                    <li
++                      key={hire.id}
++                      className={cn(
++                        'flex flex-col gap-4 border-s-4 p-5 sm:flex-row sm:items-center',
++                        flagged?.status === 'blocked' && 'border-s-danger-solid',
++                      )}
++                      style={
++                        flagged?.status === 'blocked'
++                          ? undefined
++                          : {
++                              borderInlineStartColor: 'rgb(var(--brand-saffron))',
++                            }
++                      }
++                    >
++                      <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
+                         <Initials name={hire.fullName} />
+                         <div className="min-w-0 flex-1">
+                           <div className="flex flex-wrap items-center gap-2">
+@@ -228,9 +254,11 @@ export function EmployerOverview() {
+                             <HireStatusBadge status={hireStatus(steps)} />
+                           </div>
+                           <p className="mt-1 text-label text-fg-tertiary">
+-                            {hire.role} · {formatDate(hire.startDate, locale)}
++                            {hire.role}
++                            {flagged && ` · ${t(`step.${flagged.key}.short`)}`} ·{' '}
++                            {formatDate(hire.startDate, locale)}
+                           </p>
+-                          <p className="mt-3 text-body leading-6 text-fg-secondary">
++                          <p className="mt-2 text-body leading-6 text-fg-secondary">
+                             {flagged?.status === 'blocked'
+                               ? record(flagged.blockedReason ?? flagged.title)
+                               : record(
+@@ -243,15 +271,12 @@ export function EmployerOverview() {
+                                     e('A personal approval is pending.', 'موافقة شخصية معلقة.'),
+                                 )}
+                           </p>
+-                          <Link
+-                            href={`/employer/hires/${hire.id}`}
+-                            className="mt-3 inline-flex min-h-8 items-center gap-1.5 text-label font-medium text-accent"
+-                          >
+-                            {e('Review next step', 'مراجعة الخطوة التالية')}
+-                            <ArrowRight aria-hidden className="size-3.5 rtl:-scale-x-100" />
+-                          </Link>
+                         </div>
+                       </div>
++                      <Link href={`/employer/hires/${hire.id}`} className={`${linkClass} shrink-0`}>
++                        {e('Review next step', 'مراجعة الخطوة التالية')}
++                        <ArrowRight aria-hidden className="size-3.5 rtl:-scale-x-100" />
++                      </Link>
+                     </li>
+                   );
+                 })}
+-- 
+2.51.0.windows.1
+

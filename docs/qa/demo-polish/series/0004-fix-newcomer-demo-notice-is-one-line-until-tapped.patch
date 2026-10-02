@@ -1,0 +1,63 @@
+From 6639f7c27a246f4ffe6c022ccbbb1ad6e6504b79 Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 12:52:21 +0400
+Subject: [PATCH 04/18] fix(newcomer): demo notice is one line until tapped
+
+It took three lines on every phone screen and pushed the next action below the fold.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ .../src/components/newcomer/demo-notice.tsx   | 35 ++++++++++++++-----
+ 1 file changed, 27 insertions(+), 8 deletions(-)
+
+diff --git a/apps/web/src/components/newcomer/demo-notice.tsx b/apps/web/src/components/newcomer/demo-notice.tsx
+index dc8260b..b8839ea 100644
+--- a/apps/web/src/components/newcomer/demo-notice.tsx
++++ b/apps/web/src/components/newcomer/demo-notice.tsx
+@@ -3,16 +3,35 @@
+ import { FlaskConical } from 'lucide-react';
+ import { useI18n } from '@/lib/i18n/provider';
+ 
++const COPY = {
++  en: {
++    summary: 'Relocation demo · nothing leaves Rasikh',
++    detail:
++      'Applications and messages stay within the demo. Any live document extraction is labelled separately.',
++  },
++  ar: {
++    summary: 'عرض تجريبي للاستقرار · لا يغادر شيء راسخ',
++    detail: 'تبقى الطلبات والرسائل داخل العرض. يُميّز أي استخراج فعلي للمستندات بوضوح.',
++  },
++};
++
++/** One line until tapped, so the notice does not push every phone screen down. */
+ export function DemoNotice() {
+   const { locale } = useI18n();
++  const copy = COPY[locale === 'ar' ? 'ar' : 'en'];
+   return (
+-    <p className="flex items-start gap-2 rounded-lg bg-track px-3 py-2 text-label text-fg-secondary">
+-      <FlaskConical aria-hidden className="mt-0.5 size-4 shrink-0" />
+-      <span>
+-        {locale === 'ar'
+-          ? 'عرض تجريبي للاستقرار. تبقى الطلبات والرسائل داخل العرض. يُميّز أي استخراج فعلي للمستندات بوضوح.'
+-          : 'Relocation demo. Applications and messages stay within the demo. Any live document extraction is labelled separately.'}
+-      </span>
+-    </p>
++    <details className="group rounded-lg bg-track text-label text-fg-secondary">
++      <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 px-3 [&::-webkit-details-marker]:hidden">
++        <FlaskConical aria-hidden className="size-4 shrink-0" />
++        <span className="flex-1">{copy.summary}</span>
++        <span
++          aria-hidden
++          className="transition-transform group-open:rotate-90 rtl:group-open:-rotate-90"
++        >
++          ›
++        </span>
++      </summary>
++      <p className="px-3 pb-2.5 ps-9">{copy.detail}</p>
++    </details>
+   );
+ }
+-- 
+2.51.0.windows.1
+

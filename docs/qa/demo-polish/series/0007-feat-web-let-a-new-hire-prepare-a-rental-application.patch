@@ -1,0 +1,316 @@
+From 2843e19d1e40dc60eaea8e658a1a53c36938e77a Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 12:55:28 +0400
+Subject: [PATCH 07/18] feat(web): let a new hire prepare a rental application
+ from the agent view
+
+A hire added during the demo reached the housing step with no way to get a
+draft: only seeded hires had one. The agent view now offers a primary
+'Prepare application' action for the fixture unit, which creates the draft and
+the approval together. The risk summary is plain language and never states
+the salary or a ratio.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ .../src/components/newcomer/agent-view.tsx    |   2 +
+ .../newcomer/housing-draft-card.tsx           | 138 ++++++++++++++++++
+ apps/web/src/domain/rental-risk.test.ts       |  56 +++++++
+ apps/web/src/domain/rental-risk.ts            |  58 ++++++++
+ 4 files changed, 254 insertions(+)
+ create mode 100644 apps/web/src/components/newcomer/housing-draft-card.tsx
+ create mode 100644 apps/web/src/domain/rental-risk.test.ts
+ create mode 100644 apps/web/src/domain/rental-risk.ts
+
+diff --git a/apps/web/src/components/newcomer/agent-view.tsx b/apps/web/src/components/newcomer/agent-view.tsx
+index adde482..5a02dd6 100644
+--- a/apps/web/src/components/newcomer/agent-view.tsx
++++ b/apps/web/src/components/newcomer/agent-view.tsx
+@@ -28,6 +28,7 @@ import { useNewcomer } from '@/store/person';
+ import { useStore } from '@/store/provider';
+ import { agentText, destinationText, EVENT_COPY, knownDemoNote } from './agent-copy';
+ import { localizedRecord, translatedRecord } from './localized-record';
++import { HousingDraftCard } from './housing-draft-card';
+ import { FEED_TONE } from './status';
+ 
+ function eventDate(at: string, locale: Locale): string {
+@@ -962,6 +963,7 @@ export function AgentView() {
+           </div>
+         ) : null}
+       </div>
++      <HousingDraftCard />
+       <section className="mt-6" aria-labelledby="agent-approvals-title">
+         <h2 id="agent-approvals-title" className="text-title font-medium">
+           {t('agent.approvals')}
+diff --git a/apps/web/src/components/newcomer/housing-draft-card.tsx b/apps/web/src/components/newcomer/housing-draft-card.tsx
+new file mode 100644
+index 0000000..d48964d
+--- /dev/null
++++ b/apps/web/src/components/newcomer/housing-draft-card.tsx
+@@ -0,0 +1,138 @@
++'use client';
++
++import { useState } from 'react';
++import { DEMO_FIXTURES } from '@rasikh/shared';
++import { Button } from '@/components/ui/button';
++import { demoRentalRisk } from '@/domain/rental-risk';
++import { stepsOf } from '@/domain/selectors';
++import { formatAed } from '@/lib/format';
++import { useI18n } from '@/lib/i18n/provider';
++import { useNewcomer } from '@/store/person';
++import { useStore } from '@/store/provider';
++
++const COPY = {
++  en: {
++    eyebrow: 'Next step for your agent',
++    title: 'Prepare a rental application',
++    hint: 'The agent drafts it from your verified documents and asks for your approval. Nothing is sent until you approve.',
++    cta: 'Prepare application',
++    busy: 'Preparing…',
++    error: 'The draft could not be prepared.',
++    unit: (unit: string, bedrooms: number) =>
++      `Unit ${unit} · ${bedrooms === 0 ? 'studio' : `${bedrooms} ${bedrooms === 1 ? 'bedroom' : 'bedrooms'}`}`,
++    approvalTitle: (landlord: string) =>
++      `Approve submitting your rental application to ${landlord}?`,
++    detail: (property: string, area: string, unit: string, rent: string) =>
++      `${property}, ${area}, unit ${unit}, est. ${rent} a year. Shared: your employment letter, your passport (needs your consent) and an affordability result instead of your salary.`,
++  },
++  ar: {
++    eyebrow: 'الخطوة التالية للوكيل',
++    title: 'إعداد طلب إيجار',
++    hint: 'يعدّ الوكيل المسودة من مستنداتك الموثّقة ويطلب موافقتك. لا يُرسل شيء قبل موافقتك.',
++    cta: 'إعداد الطلب',
++    busy: 'جارٍ الإعداد…',
++    error: 'تعذّر إعداد المسودة.',
++    unit: (unit: string, bedrooms: number) =>
++      `الوحدة ${unit} · ${bedrooms === 0 ? 'استوديو' : `${bedrooms} غرف`}`,
++    approvalTitle: (landlord: string) => `الموافقة على تقديم طلب الإيجار إلى ${landlord}؟`,
++    detail: (property: string, area: string, unit: string, rent: string) =>
++      `${property}، ${area}، الوحدة ${unit}، الإيجار السنوي التقديري ${rent}. يُشارك: خطاب العمل وجواز السفر (بموافقتك) ونتيجة القدرة على السداد بدل الراتب.`,
++  },
++};
++
++/**
++ * Lets a hire whose housing step is open get a rental draft. Without it a freshly added hire
++ * reaches "Find and rent a home" and nothing can happen. It uses the fixture unit from
++ * INTEGRATION.md when present, so the demo path matches the Guard and TAMM fixtures.
++ */
++export function HousingDraftCard() {
++  const { locale, t } = useI18n();
++  const copy = COPY[locale === 'ar' ? 'ar' : 'en'];
++  const { state, hire } = useNewcomer();
++  const store = useStore();
++  const [busy, setBusy] = useState(false);
++  const [failed, setFailed] = useState<string | null>(null);
++  if (!hire) return null;
++
++  const housing = stepsOf(state, hire.id).find((step) => step.key === 'housing');
++  const open = housing?.status === 'ready' || housing?.status === 'in_progress';
++  const hasRental = Object.values(state.applications).some(
++    (application) =>
++      application.hireId === hire.id &&
++      application.kind === 'rental' &&
++      application.state !== 'declined',
++  );
++  const properties = Object.values(state.properties);
++  const property =
++    properties.find((candidate) => candidate.leaseRef === DEMO_FIXTURES.lease) ??
++    properties.find((candidate) => candidate.area === hire.preferredArea);
++  const landlord = property ? state.landlords[property.landlordId] : undefined;
++  if (!housing || !open || hasRental || !property || !landlord) return null;
++
++  const employerName = state.employers[hire.employerId]?.name ?? '';
++
++  async function prepare() {
++    if (!hire || !housing || !property || !landlord) return;
++    setBusy(true);
++    setFailed(null);
++    try {
++      await store.dispatch({
++        type: 'application.create',
++        application: {
++          hireId: hire.id,
++          kind: 'rental',
++          partyId: landlord.id,
++          propertyId: property.id,
++          employerBacked: hire.backing.status === 'backed',
++          disclosed: [
++            { label: 'employment', derived: false },
++            { label: 'passport', derived: false },
++            { label: 'salary', derived: true },
++          ],
++          risk: demoRentalRisk(hire, property, employerName),
++        },
++        approval: {
++          title: copy.approvalTitle(landlord.name),
++          detail: copy.detail(
++            property.name,
++            property.area,
++            property.unit,
++            formatAed(property.estAnnualRentAed, locale),
++          ),
++          stepId: housing.id,
++        },
++      });
++    } catch (error) {
++      setFailed(error instanceof Error ? error.message : copy.error);
++    } finally {
++      setBusy(false);
++    }
++  }
++
++  return (
++    <section
++      aria-labelledby="housing-draft-title"
++      className="mt-6 rounded-xl border border-line bg-raised p-4"
++    >
++      <p className="text-label text-fg-tertiary">{copy.eyebrow}</p>
++      <h2 id="housing-draft-title" className="mt-1 text-title font-medium">
++        {copy.title}
++      </h2>
++      <p className="mt-1 text-body text-fg-secondary">
++        <bdi>{property.name}</bdi> · {property.area} · {copy.unit(property.unit, property.bedrooms)}
++      </p>
++      <p className="mt-0.5 text-body text-fg-secondary">
++        {t('common.est')} <bdi dir="ltr">{formatAed(property.estAnnualRentAed, locale)}</bdi>
++      </p>
++      <p className="mt-2 text-body text-fg-tertiary">{copy.hint}</p>
++      <Button size="lg" className="mt-3 min-h-11" disabled={busy} onClick={() => void prepare()}>
++        {busy ? copy.busy : copy.cta}
++      </Button>
++      {failed ? (
++        <p role="alert" className="mt-2 text-body text-danger">
++          {copy.error} <bdi>{failed}</bdi>
++        </p>
++      ) : null}
++    </section>
++  );
++}
+diff --git a/apps/web/src/domain/rental-risk.test.ts b/apps/web/src/domain/rental-risk.test.ts
+new file mode 100644
+index 0000000..3532fcc
+--- /dev/null
++++ b/apps/web/src/domain/rental-risk.test.ts
+@@ -0,0 +1,56 @@
++import { describe, expect, it } from 'vitest';
++import { demoRentalRisk } from './rental-risk';
++import { createSeed } from './seed';
++
++const state = createSeed(1_700_000_000_000);
++const property = state.properties['prop_reem_2207']!;
++const hire = { ...state.hires['hire_seed_08']! };
++
++describe('demoRentalRisk', () => {
++  it('gives a reason for every point', () => {
++    const risk = demoRentalRisk(hire, property, 'Gulf Meridian Technologies');
++    expect(risk.points.length).toBeGreaterThanOrEqual(3);
++    for (const point of risk.points) expect(point.reason.length).toBeGreaterThan(20);
++  });
++
++  it('never states a salary, an income ratio or a percentage', () => {
++    for (const salary of [9_000, 18_000, 26_000, 60_000]) {
++      const risk = demoRentalRisk({ ...hire, estMonthlySalaryAed: salary }, property, 'Employer');
++      const text = [risk.headline, ...risk.points.map((point) => point.reason)].join(' ');
++      expect(text).not.toMatch(/%|AED|\d{4,}/);
++    }
++  });
++
++  it('picks the level from affordability', () => {
++    expect(demoRentalRisk({ ...hire, estMonthlySalaryAed: 40_000 }, property, 'E').level).toBe(
++      'low',
++    );
++    expect(demoRentalRisk({ ...hire, estMonthlySalaryAed: 18_000 }, property, 'E').level).toBe(
++      'moderate',
++    );
++    expect(demoRentalRisk({ ...hire, estMonthlySalaryAed: 9_000 }, property, 'E').level).toBe(
++      'elevated',
++    );
++  });
++
++  it('only mentions employer backing when the hire is backed', () => {
++    const backed = demoRentalRisk({ ...hire, backing: { status: 'backed' } }, property, 'Employer');
++    const unbacked = demoRentalRisk({ ...hire, backing: { status: 'none' } }, property, 'Employer');
++    expect(backed.points.some((point) => point.label === 'Employer backing')).toBe(true);
++    expect(unbacked.points.some((point) => point.label === 'Employer backing')).toBe(false);
++    expect(unbacked.headline).not.toMatch(/backs the hire|Employer backing/);
++  });
++
++  it('reuses the seeded sentences, so their Arabic translations apply', () => {
++    const risk = demoRentalRisk(
++      { ...hire, estMonthlySalaryAed: 40_000 },
++      property,
++      'Gulf Meridian Technologies',
++    );
++    const seeded = Object.values(state.applications)
++      .flatMap((application) => application.risk?.points ?? [])
++      .map((point) => point.reason);
++    expect(seeded).toContain(risk.points[1]?.reason);
++    expect(seeded).toContain(risk.points[2]?.reason);
++  });
++});
+diff --git a/apps/web/src/domain/rental-risk.ts b/apps/web/src/domain/rental-risk.ts
+new file mode 100644
+index 0000000..4479267
+--- /dev/null
++++ b/apps/web/src/domain/rental-risk.ts
+@@ -0,0 +1,58 @@
++import type { Hire, Property, RiskPoint, RiskSummary } from './types';
++
++/** Share of gross income the rent represents. Used to choose a result, never shown or shared. */
++function rentShare(hire: Hire, property: Property): number {
++  return property.estAnnualRentAed / (hire.estMonthlySalaryAed * 12);
++}
++
++const COMFORTABLE =
++  'Affordability is a yes with a comfortable margin. Only the yes or no result is shared, not the salary.';
++const NARROW =
++  'Affordability is a yes, but with a narrow margin: the rent is high for the recorded income. Only the yes or no result is shared, not the salary.';
++const SHORT =
++  'Affordability is a no: the rent is high for the recorded income. Only the yes or no result is shared, not the salary.';
++
++/**
++ * Demo-mode risk summary for a rental draft: plain language, a reason for every point, built only
++ * from what the application discloses (employment, passport, and an affordability result). It
++ * never states a salary or an income ratio, because the landlord is only allowed a yes or no.
++ * These sentences match the seeded ones, so their Arabic translations apply.
++ */
++export function demoRentalRisk(hire: Hire, property: Property, employerName: string): RiskSummary {
++  const share = rentShare(hire, property);
++  const level: RiskSummary['level'] =
++    share <= 0.35 ? 'low' : share <= 0.5 ? 'moderate' : 'elevated';
++  const backed = hire.backing.status === 'backed';
++
++  const points: RiskPoint[] = [];
++  if (backed) {
++    points.push({
++      label: 'Employer backing',
++      effect: 'positive',
++      reason: `${employerName} has backed this application.`,
++    });
++  }
++  points.push({
++    label: 'Rent against income',
++    effect: level === 'low' ? 'positive' : 'concern',
++    reason: level === 'low' ? COMFORTABLE : level === 'moderate' ? NARROW : SHORT,
++  });
++  points.push({
++    label: 'Documents',
++    effect: 'positive',
++    reason: 'Passport, offer letter and degree were verified and agree with each other.',
++  });
++
++  const headline =
++    level === 'low'
++      ? backed
++        ? 'Low risk. Income comfortably covers the rent and the employer backs the hire.'
++        : 'Low risk. Income comfortably covers the rent.'
++      : level === 'moderate'
++        ? backed
++          ? 'Moderate risk, mainly because rent is high against income. Employer backing offsets most of it.'
++          : 'Moderate risk, mainly because rent is high against income.'
++        : 'Elevated risk: the rent is high for the recorded income.';
++
++  return { level, headline, points, generatedBy: 'demo' };
++}
+-- 
+2.51.0.windows.1
+

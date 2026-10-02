@@ -1,0 +1,76 @@
+From 632e918f760e9a6736172634daea3e812d8945e6 Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 12:51:27 +0400
+Subject: [PATCH 2/8] fix(demo-data): landlord risk summaries no longer leak
+ salary; Anders' draft carries reasoning
+
+Seeded landlord summaries said 'Rent is about 47% of estimated gross income'. With the rent
+on screen that gives the salary away, contradicting the trust passport ('Salary: yes or no
+only') and the Guard default policy (derived signal only). They now state the affordability
+result only. The draft rental application for Anders Lindqvist (app_seed_06) had no risk
+summary, so the landlord saw 'No assessment was supplied' on the demo's central path.
+---
+ apps/web/src/components/landlord/content.ts | 8 ++++----
+ apps/web/src/domain/seed/applications.ts    | 6 ++++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/apps/web/src/components/landlord/content.ts b/apps/web/src/components/landlord/content.ts
+index 84114e0..126f9bc 100644
+--- a/apps/web/src/components/landlord/content.ts
++++ b/apps/web/src/components/landlord/content.ts
+@@ -13,8 +13,8 @@ const arabic: Record<string, string> = {
+   Cheques: 'الشيكات',
+   'Gulf Meridian Technologies has backed this application, which lowers the chance of a missed payment.':
+     'دعمت Gulf Meridian Technologies هذا الطلب، مما يقلل احتمال التأخر في السداد.',
+-  'Rent is about 47% of estimated gross income, which is on the high side for a single applicant.':
+-    'يشكل الإيجار نحو 47% من الدخل الإجمالي التقديري، وهي نسبة مرتفعة لمتقدم واحد.',
++  'Affordability is a yes, but with a narrow margin: the rent is high for the recorded income. Only the yes or no result is shared, not the salary.':
++    'نتيجة القدرة على السداد إيجابية لكن بهامش ضيق: الإيجار مرتفع قياسًا بالدخل المسجل. تُشارك النتيجة (نعم أو لا) فقط، وليس الراتب.',
+   'Passport, offer letter and degree were read and cross-checked. Names and dates agree.':
+     'قُرئت بيانات جواز السفر وعرض العمل والشهادة وقورنت. تتطابق الأسماء والتواريخ.',
+   'The visa is still being processed, so the lease start should follow its issue date.':
+@@ -23,8 +23,8 @@ const arabic: Record<string, string> = {
+     'طُلب السداد بشيكين. يوزع السداد بأربعة شيكات الدفعات ويخفف المخاطر.',
+   'Gulf Meridian Technologies has backed this application.':
+     'دعمت Gulf Meridian Technologies هذا الطلب.',
+-  'Rent is about 28% of estimated gross income, which is comfortable.':
+-    'يشكل الإيجار نحو 28% من الدخل الإجمالي التقديري، وهي نسبة مريحة.',
++  'Affordability is a yes with a comfortable margin. Only the yes or no result is shared, not the salary.':
++    'نتيجة القدرة على السداد إيجابية بهامش مريح. تُشارك النتيجة (نعم أو لا) فقط، وليس الراتب.',
+   'Passport, offer letter and degree were verified and agree with each other.':
+     'تم التحقق من جواز السفر وعرض العمل والشهادة وتطابق بياناتها.',
+   'Salary details can only be shared with landlords as a yes or no result.':
+diff --git a/apps/web/src/domain/seed/applications.ts b/apps/web/src/domain/seed/applications.ts
+index 66a5775..b95122c 100644
+--- a/apps/web/src/domain/seed/applications.ts
++++ b/apps/web/src/domain/seed/applications.ts
+@@ -40,7 +40,7 @@ const RISK_MARYAH: RiskSummary = {
+       label: 'Rent against income',
+       effect: 'concern',
+       reason:
+-        'Rent is about 47% of estimated gross income, which is on the high side for a single applicant.',
++        'Affordability is a yes, but with a narrow margin: the rent is high for the recorded income. Only the yes or no result is shared, not the salary.',
+     },
+     {
+       label: 'Documents',
+@@ -74,7 +74,8 @@ const RISK_REEM_APPROVED: RiskSummary = {
+     {
+       label: 'Rent against income',
+       effect: 'positive',
+-      reason: 'Rent is about 28% of estimated gross income, which is comfortable.',
++      reason:
++        'Affordability is a yes with a comfortable margin. Only the yes or no result is shared, not the salary.',
+     },
+     {
+       label: 'Documents',
+@@ -184,6 +185,7 @@ const APPLICATION_SEEDS: ApplicationSeed[] = [
+     partyId: 'landlord_al_reem',
+     propertyId: 'prop_maryah_1706',
+     state: 'awaiting_approval',
++    risk: RISK_REEM_APPROVED,
+   },
+   {
+     id: 'app_seed_07',
+-- 
+2.51.0.windows.1
+

@@ -1,0 +1,72 @@
+From 0dbbb9c212308d5d955dab13c33da86804e2a12b Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 12:52:21 +0400
+Subject: [PATCH 6/8] fix(landlord): singular nouns when a count is 1 ('1
+ unit', not '1 units')
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/components/landlord/applications.tsx | 2 +-
+ apps/web/src/components/landlord/leases.tsx       | 5 ++++-
+ apps/web/src/components/landlord/properties.tsx   | 2 +-
+ apps/web/src/components/landlord/viewings.tsx     | 2 +-
+ 4 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/apps/web/src/components/landlord/applications.tsx b/apps/web/src/components/landlord/applications.tsx
+index 155b7bc..a35b535 100644
+--- a/apps/web/src/components/landlord/applications.tsx
++++ b/apps/web/src/components/landlord/applications.tsx
+@@ -180,7 +180,7 @@ export function ApplicationsPage() {
+           </label>
+         </div>
+         <p className="text-label text-fg-tertiary" role="status">
+-          {rows.length} {l('applications', 'طلبات')}
++          {rows.length} {rows.length === 1 ? l('application', 'طلب') : l('applications', 'طلبات')}
+         </p>
+         {rows.length ? (
+           <ApplicationRows applications={rows} />
+diff --git a/apps/web/src/components/landlord/leases.tsx b/apps/web/src/components/landlord/leases.tsx
+index 94f5dd0..63cb0de 100644
+--- a/apps/web/src/components/landlord/leases.tsx
++++ b/apps/web/src/components/landlord/leases.tsx
+@@ -71,7 +71,10 @@ export function LeasesPage() {
+           </label>
+         </div>
+         <p role="status" className="text-label text-fg-tertiary">
+-          {rows.length} {l('recorded decisions', 'قرارات مسجلة')}
++          {rows.length}{' '}
++          {rows.length === 1
++            ? l('recorded decision', 'قرار مسجل')
++            : l('recorded decisions', 'قرارات مسجلة')}
+         </p>
+         {rows.length ? (
+           <div className="grid gap-5 xl:grid-cols-2">
+diff --git a/apps/web/src/components/landlord/properties.tsx b/apps/web/src/components/landlord/properties.tsx
+index ac210cd..60485ce 100644
+--- a/apps/web/src/components/landlord/properties.tsx
++++ b/apps/web/src/components/landlord/properties.tsx
+@@ -189,7 +189,7 @@ export function PropertiesPage() {
+           </label>
+         </div>
+         <p className="text-label text-fg-tertiary" role="status">
+-          {rows.length} {l('units', 'وحدات')} ·{' '}
++          {rows.length} {rows.length === 1 ? l('unit', 'وحدة') : l('units', 'وحدات')} ·{' '}
+           {l('Status is derived from recorded applications.', 'تُستمد الحالة من الطلبات المسجلة.')}
+         </p>
+         {rows.length ? (
+diff --git a/apps/web/src/components/landlord/viewings.tsx b/apps/web/src/components/landlord/viewings.tsx
+index 438814d..1f3551e 100644
+--- a/apps/web/src/components/landlord/viewings.tsx
++++ b/apps/web/src/components/landlord/viewings.tsx
+@@ -117,7 +117,7 @@ export function ViewingsPage({
+             ))}
+           </div>
+           <span className="text-label text-fg-tertiary" role="status">
+-            {rows.length} {l('viewings', 'معاينات')}
++            {rows.length} {rows.length === 1 ? l('viewing', 'معاينة') : l('viewings', 'معاينات')}
+           </span>
+         </div>
+         <Feedback error={mutation.error} success={mutation.success} />
+-- 
+2.51.0.windows.1
+

@@ -1,0 +1,909 @@
+From 6ea230ec2acc3e1883c4eb496c8e780567a9b8dc Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 15:00:37 +0400
+Subject: [PATCH 18/18] style(bank): permission scope first, overview and queue
+ hierarchy
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ .../bank/bank-application-detail.tsx          | 343 +++++++++++-------
+ apps/web/src/components/bank/bank-header.tsx  |  10 +-
+ .../web/src/components/bank/bank-overview.tsx | 130 ++++---
+ .../web/src/components/bank/bank-partners.tsx |  24 +-
+ apps/web/src/components/bank/bank-queue.tsx   |  41 ++-
+ apps/web/src/components/bank/bank-scope.tsx   | 104 ++++++
+ 6 files changed, 459 insertions(+), 193 deletions(-)
+ create mode 100644 apps/web/src/components/bank/bank-scope.tsx
+
+diff --git a/apps/web/src/components/bank/bank-application-detail.tsx b/apps/web/src/components/bank/bank-application-detail.tsx
+index e8d4353..0a4a639 100644
+--- a/apps/web/src/components/bank/bank-application-detail.tsx
++++ b/apps/web/src/components/bank/bank-application-detail.tsx
+@@ -7,10 +7,12 @@ import {
+   Check,
+   CheckCheck,
+   CircleAlert,
++  EyeOff,
+   FileText,
+   LockKeyhole,
+   ShieldCheck,
+ } from 'lucide-react';
++import { DATA_LABELS } from '@rasikh/shared';
+ import { Badge } from '@/components/ui/badge';
+ import { Button } from '@/components/ui/button';
+ import { policyFor } from '@/domain/policy';
+@@ -239,40 +241,90 @@ export function BankApplicationDetail({ applicationId }: { applicationId: string
+             {error}
+           </p>
+         ) : null}
+-        <section className="flex flex-wrap items-center justify-between gap-5 rounded-xl border border-line bg-subtle/60 p-5">
+-          <div className="flex min-w-0 items-center gap-4">
+-            <span
+-              aria-hidden
+-              className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-title font-semibold text-accent"
+-            >
+-              {initials(hire.fullName)}
+-            </span>
++        <section
++          className="rounded-xl border border-line bg-subtle/60 p-5 sm:p-6"
++          aria-label={text('Applicant summary', 'ملخص المتقدم')}
++        >
++          <div className="flex flex-wrap items-center justify-between gap-5">
++            <div className="flex min-w-0 items-center gap-4">
++              <span
++                aria-hidden
++                className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-title font-semibold text-accent"
++              >
++                {initials(hire.fullName)}
++              </span>
++              <div className="min-w-0">
++                <h2 className="text-heading font-medium">{hire.fullName}</h2>
++                <p className="mt-1 text-body text-fg-secondary">
++                  {hire.role} · {employer?.name}
++                </p>
++              </div>
++            </div>
++            <div className="flex flex-wrap items-center gap-2">
++              <Badge tone={applicationTone(application.state)}>
++                {applicationLabel(application.state, locale)}
++              </Badge>
++              {application.employerBacked ? (
++                <Badge tone="accent">
++                  <ShieldCheck aria-hidden className="me-1 size-3" />
++                  {text('Employer backed', 'بدعم جهة العمل')}
++                </Badge>
++              ) : null}
++            </div>
++          </div>
++          <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-5 sm:grid-cols-3 xl:grid-cols-5">
+             <div>
+-              <h2 className="text-heading font-medium">{hire.fullName}</h2>
+-              <p className="mt-1 text-body text-fg-secondary">
+-                {hire.role} · {employer?.name}
+-              </p>
+-              <p className="mt-1 text-caption text-fg-tertiary">
+-                <bdi>{application.id}</bdi> ·{' '}
++              <dt className="text-caption text-fg-tertiary">
++                {text('Received', 'تاريخ الاستلام')}
++              </dt>
++              <dd className="mt-1 text-body font-medium">
+                 {application.submittedAt
+-                  ? text('Received ', 'تم الاستلام ') + formatDate(application.submittedAt, locale)
++                  ? formatDate(application.submittedAt, locale)
+                   : text('Date unavailable', 'التاريخ غير متاح')}
+-              </p>
++              </dd>
+             </div>
+-          </div>
+-          <div className="flex flex-wrap items-center gap-2">
+-            <Badge tone={applicationTone(application.state)}>
+-              {applicationLabel(application.state, locale)}
+-            </Badge>
+-            {application.employerBacked ? (
+-              <Badge tone="accent">
+-                <ShieldCheck aria-hidden className="me-1 size-3" />
+-                {text('Employer backed', 'بدعم جهة العمل')}
+-              </Badge>
+-            ) : null}
+-          </div>
++            <div>
++              <dt className="text-caption text-fg-tertiary">{text('Reference', 'المرجع')}</dt>
++              <dd className="mt-1 break-all text-body font-medium">
++                <bdi>{application.id}</bdi>
++              </dd>
++            </div>
++            <div>
++              <dt className="text-caption text-fg-tertiary">
++                {text('Account type', 'نوع الحساب')}
++              </dt>
++              <dd className="mt-1 text-body font-medium">
++                {text('Current account · payroll onboarding', 'حساب جارٍ · تهيئة الراتب')}
++              </dd>
++            </div>
++            <div>
++              <dt className="text-caption text-fg-tertiary">
++                {text('Estimated monthly salary', 'الراتب الشهري التقديري')}
++              </dt>
++              <dd className="mt-1 text-body font-medium">
++                {labelAccess(state, application, 'salary') ? (
++                  formatAed(hire.estMonthlySalaryAed, locale)
++                ) : (
++                  <span className="inline-flex items-center gap-1.5 text-fg-secondary">
++                    <LockKeyhole aria-hidden className="size-3.5" />
++                    {text('Current permission required', 'يتطلب إذناً حالياً')}
++                  </span>
++                )}
++              </dd>
++            </div>
++            <div>
++              <dt className="text-caption text-fg-tertiary">
++                {text('Employer backing', 'دعم جهة العمل')}
++              </dt>
++              <dd className="mt-1 text-body font-medium">
++                {application.employerBacked
++                  ? text('Attached to this application', 'مرفق بهذا الطلب')
++                  : text('Not attached', 'غير مرفق')}
++              </dd>
++            </div>
++          </dl>
+         </section>
+-        <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(290px,1fr)]">
++        <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,1fr)]">
+           <div className="space-y-6">
+             <section
+               className="rounded-lg border border-line p-5"
+@@ -511,10 +563,15 @@ export function BankApplicationDetail({ applicationId }: { applicationId: string
+             </section>
+           </div>
+           <aside className="space-y-5">
+-            <section className="rounded-lg border border-accent/20 bg-accent-soft/35 p-5">
++            <section
++              className="rounded-lg border border-accent/25 bg-accent-soft/40 p-5"
++              aria-labelledby="bank-scope-title"
++            >
+               <div className="flex items-center gap-2">
+                 <ShieldCheck aria-hidden className="size-5 text-accent" />
+-                <h2 className="text-title font-medium">{text('Permission scope', 'نطاق الإذن')}</h2>
++                <h2 id="bank-scope-title" className="text-title font-medium">
++                  {text('Permission scope', 'نطاق الإذن')}
++                </h2>
+               </div>
+               <p className="mt-2 text-label leading-5 text-fg-secondary">
+                 {text(
+@@ -522,20 +579,23 @@ export function BankApplicationDetail({ applicationId }: { applicationId: string
+                   'يتحكم الوافد في الإذن. لا تستطيع هذه المراجعة البنكية توسيعه.',
+                 )}
+               </p>
+-              <div className="mt-4 space-y-3">
++              <h3 className="mt-4 text-caption font-medium text-fg-secondary">
++                {text('The bank may see', 'يمكن للبنك الاطلاع على')}
++              </h3>
++              <ul className="mt-2 divide-y divide-line rounded-md border border-line bg-surface">
+                 {application.disclosed.map((disclosure) => {
+                   const allowed = !gaps.some((gap) => gap.label === disclosure.label);
+                   return (
+-                    <div
++                    <li
+                       key={disclosure.label}
+-                      className="flex items-center justify-between gap-2 text-label"
++                      className="flex items-center justify-between gap-2 px-3 py-2 text-label"
+                     >
+                       <span>
+                         {dataLabel(disclosure.label, locale)}
+                         {disclosure.derived ? text(' · derived result', ' · نتيجة مشتقة') : ''}
+                       </span>
+                       <span
+-                        className={`inline-flex items-center gap-1 ${allowed ? 'text-success' : 'text-warning'}`}
++                        className={`inline-flex shrink-0 items-center gap-1 ${allowed ? 'text-success' : 'text-warning'}`}
+                       >
+                         {allowed ? (
+                           <Check aria-hidden className="size-3.5" />
+@@ -548,101 +608,37 @@ export function BankApplicationDetail({ applicationId }: { applicationId: string
+                             : text('Permission active', 'إذن ساري')
+                           : text('Restricted', 'مقيّد')}
+                       </span>
+-                    </div>
++                    </li>
+                   );
+                 })}
+-              </div>
+-              <p className="mt-4 border-t border-line pt-3 text-caption text-fg-tertiary">
+-                {text(
+-                  'Family, health and degree data are not available to the bank.',
+-                  'بيانات الأسرة والصحة والشهادة الأكاديمية غير متاحة للبنك.',
+-                )}
+-              </p>
+-            </section>
+-            <section className="rounded-lg border border-line p-5">
+-              <h2 className="text-title font-medium">
+-                {text('Application context', 'سياق الطلب')}
+-              </h2>
+-              <dl className="mt-4 space-y-4 text-body">
+-                <div>
+-                  <dt className="text-label text-fg-tertiary">
+-                    {text('Estimated monthly salary', 'الراتب الشهري التقديري')}
+-                  </dt>
+-                  <dd className="mt-1 font-medium">
+-                    {labelAccess(state, application, 'salary')
+-                      ? formatAed(hire.estMonthlySalaryAed, locale)
+-                      : text('Current permission required', 'يتطلب إذناً حالياً')}
+-                  </dd>
+-                </div>
+-                <div>
+-                  <dt className="text-label text-fg-tertiary">
+-                    {text('Account type', 'نوع الحساب')}
+-                  </dt>
+-                  <dd className="mt-1">
+-                    {text('Current account · payroll onboarding', 'حساب جارٍ · تهيئة الراتب')}
+-                  </dd>
+-                </div>
+-                <div>
+-                  <dt className="text-label text-fg-tertiary">
+-                    {text('Employer backing', 'دعم جهة العمل')}
+-                  </dt>
+-                  <dd className="mt-1">
+-                    {application.employerBacked
+-                      ? text('Attached to this application', 'مرفق بهذا الطلب')
+-                      : text('Not attached', 'غير مرفق')}
+-                  </dd>
+-                </div>
+-              </dl>
+-            </section>
+-            <section className="rounded-lg border border-line p-5">
+-              <h2 className="text-title font-medium">
+-                {text('Recorded Guard check', 'فحص Guard المسجل')}
+-              </h2>
+-              {check ? (
+-                <>
+-                  <Badge
+-                    className="mt-3"
+-                    tone={
+-                      check.decision === 'allow'
+-                        ? 'success'
+-                        : check.decision === 'deny'
+-                          ? 'danger'
+-                          : 'warning'
+-                    }
+-                  >
+-                    {check.decision === 'allow'
+-                      ? text('Recorded allow', 'سماح مسجل')
+-                      : check.decision === 'deny'
+-                        ? text('Recorded block', 'حظر مسجل')
+-                        : text('Recorded consent request', 'طلب إذن مسجل')}
+-                  </Badge>
+-                  <p className="mt-3 text-caption text-fg-tertiary">
+-                    {text(
+-                      'Historical recorded event; live enforcement is unverified.',
+-                      'حدث سابق مسجل؛ لم يُتحقق من التنفيذ المباشر.',
+-                    )}
+-                  </p>
+-                  <p className="mt-3 text-label leading-5 text-fg-secondary">
+-                    {riskCopy(check.reason, locale)}
+-                  </p>
+-                  <p className="mt-2 text-caption text-fg-tertiary">
+-                    {formatDate(check.at, locale)}
+-                  </p>
+-                </>
+-              ) : (
+-                <p className="mt-3 text-label leading-5 text-fg-secondary">
+-                  {text(
+-                    'No bank Guard event on file. The local permission checklist is a demo view, and does not prove a live outbound check.',
+-                    'لا يوجد حدث Guard بنكي مسجل. قائمة الأذونات المحلية عرض تجريبي ولا تثبت إجراء فحص مشاركة مباشر.',
+-                  )}
+-                </p>
+-              )}
+-              <p className="mt-3 border-t border-line pt-3 text-caption text-fg-tertiary">
+-                {text(
+-                  'The intended live sharing path is fail-closed. This demo uses recorded checks and current local permissions; live enforcement and production prompt parity remain unverified.',
+-                  'مسار المشاركة المباشر المقصود مغلق عند الفشل. يستخدم هذا العرض فحوصاً مسجلة وأذونات محلية حالية؛ لم يُتحقق من التنفيذ المباشر أو تطابق تعليمات الإنتاج.',
+-                )}
+-              </p>
++              </ul>
++              <h3 className="mt-4 text-caption font-medium text-fg-secondary">
++                {text('The bank cannot see', 'لا يمكن للبنك الاطلاع على')}
++              </h3>
++              <ul className="mt-2 divide-y divide-line rounded-md border border-line bg-surface">
++                {DATA_LABELS.filter(
++                  (label) => !application.disclosed.some((item) => item.label === label),
++                )
++                  .sort(
++                    (a, b) =>
++                      Number(policyFor(a, 'bank') === 'deny') -
++                      Number(policyFor(b, 'bank') === 'deny'),
++                  )
++                  .map((label) => (
++                    <li
++                      key={label}
++                      className="flex items-center justify-between gap-2 px-3 py-2 text-label"
++                    >
++                      <span>{dataLabel(label, locale)}</span>
++                      <span className="inline-flex shrink-0 items-center gap-1 text-fg-tertiary">
++                        <EyeOff aria-hidden className="size-3.5" />
++                        {policyFor(label, 'bank') === 'deny'
++                          ? text('Not available to banks', 'غير متاحة للبنوك')
++                          : text('Not disclosed here', 'غير مفصح عنها هنا')}
++                      </span>
++                    </li>
++                  ))}
++              </ul>
+             </section>
+             <section className="rounded-lg border border-line p-5">
+               <h2 className="text-title font-medium">
+@@ -656,6 +652,47 @@ export function BankApplicationDetail({ applicationId }: { applicationId: string
+                   'يحدث القرار المسجل خطوة البنك ومساحة جهة العمل. لا يفتح حساباً فعلياً ولا يرسل رسالة خارجية.',
+                 )}
+               </p>
++              {open ? (
++                <ul
++                  className="mt-4 space-y-2 text-label"
++                  aria-label={text('Readiness to approve', 'الجاهزية للاعتماد')}
++                >
++                  {[
++                    {
++                      ok: application.state !== 'submitted',
++                      yes: text('Review started', 'بدأت المراجعة'),
++                      no: text('Review not started', 'لم تبدأ المراجعة'),
++                    },
++                    {
++                      ok: !gaps.length,
++                      yes: text('Disclosed permissions are current', 'الأذونات المفصح عنها سارية'),
++                      no: text('A disclosed permission is not current', 'إذن مفصح عنه غير ساري'),
++                    },
++                    {
++                      ok: !guardBlocked,
++                      yes: text('No blocking Guard event recorded', 'لا يوجد حظر Guard مسجل'),
++                      no: text('A Guard event is blocking', 'يوجد حظر من Guard'),
++                    },
++                  ].map((item) => (
++                    <li
++                      key={item.yes}
++                      className={`flex items-center gap-2 ${item.ok ? 'text-fg-secondary' : 'text-warning'}`}
++                    >
++                      <span
++                        aria-hidden
++                        className={`flex size-5 shrink-0 items-center justify-center rounded-full ${item.ok ? 'bg-success-soft text-success' : 'bg-warning-soft text-warning'}`}
++                      >
++                        {item.ok ? (
++                          <Check className="size-3" />
++                        ) : (
++                          <CircleAlert className="size-3" />
++                        )}
++                      </span>
++                      {item.ok ? item.yes : item.no}
++                    </li>
++                  ))}
++                </ul>
++              ) : null}
+               {open ? (
+                 <div className="mt-4 space-y-2">
+                   <Button
+@@ -720,6 +757,56 @@ export function BankApplicationDetail({ applicationId }: { applicationId: string
+                 </p>
+               )}
+             </section>
++            <section className="rounded-lg border border-line p-5">
++              <h2 className="text-title font-medium">
++                {text('Recorded Guard check', 'فحص Guard المسجل')}
++              </h2>
++              {check ? (
++                <>
++                  <Badge
++                    className="mt-3"
++                    tone={
++                      check.decision === 'allow'
++                        ? 'success'
++                        : check.decision === 'deny'
++                          ? 'danger'
++                          : 'warning'
++                    }
++                  >
++                    {check.decision === 'allow'
++                      ? text('Recorded allow', 'سماح مسجل')
++                      : check.decision === 'deny'
++                        ? text('Recorded block', 'حظر مسجل')
++                        : text('Recorded consent request', 'طلب إذن مسجل')}
++                  </Badge>
++                  <p className="mt-3 text-caption text-fg-tertiary">
++                    {text(
++                      'Historical recorded event; live enforcement is unverified.',
++                      'حدث سابق مسجل؛ لم يُتحقق من التنفيذ المباشر.',
++                    )}
++                  </p>
++                  <p className="mt-3 text-label leading-5 text-fg-secondary">
++                    {riskCopy(check.reason, locale)}
++                  </p>
++                  <p className="mt-2 text-caption text-fg-tertiary">
++                    {formatDate(check.at, locale)}
++                  </p>
++                </>
++              ) : (
++                <p className="mt-3 text-label leading-5 text-fg-secondary">
++                  {text(
++                    'No bank Guard event on file. The local permission checklist is a demo view, and does not prove a live outbound check.',
++                    'لا يوجد حدث Guard بنكي مسجل. قائمة الأذونات المحلية عرض تجريبي ولا تثبت إجراء فحص مشاركة مباشر.',
++                  )}
++                </p>
++              )}
++              <p className="mt-3 border-t border-line pt-3 text-caption text-fg-tertiary">
++                {text(
++                  'The intended live sharing path is fail-closed. This demo uses recorded checks and current local permissions; live enforcement and production prompt parity remain unverified.',
++                  'مسار المشاركة المباشر المقصود مغلق عند الفشل. يستخدم هذا العرض فحوصاً مسجلة وأذونات محلية حالية؛ لم يُتحقق من التنفيذ المباشر أو تطابق تعليمات الإنتاج.',
++                )}
++              </p>
++            </section>
+           </aside>
+         </div>
+       </div>
+diff --git a/apps/web/src/components/bank/bank-header.tsx b/apps/web/src/components/bank/bank-header.tsx
+index 73716cc..fc369b1 100644
+--- a/apps/web/src/components/bank/bank-header.tsx
++++ b/apps/web/src/components/bank/bank-header.tsx
+@@ -23,7 +23,11 @@ export function BankHeader({
+   const pathname = usePathname();
+   const text = (en: string, ar: string) => bankText(locale, en, ar);
+   const links = [
+-    { href: '/bank', label: text('Overview', 'نظرة عامة'), active: pathname === '/bank' },
++    {
++      href: '/bank',
++      label: text('Overview', 'نظرة عامة'),
++      active: pathname === '/bank',
++    },
+     {
+       href: '/bank/applications',
+       label: text('Applications', 'الطلبات'),
+@@ -37,7 +41,7 @@ export function BankHeader({
+   ];
+   return (
+     <>
+-      <header className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-7">
++      <header className="flex flex-wrap items-center justify-between gap-4 border-line px-5 py-5 sm:px-7 md:border-b md:pb-6">
+         <div className="min-w-0">
+           <div className="mb-2 flex items-center gap-2 text-caption text-fg-tertiary">
+             <Landmark aria-hidden className="size-3.5 text-accent" />
+@@ -65,7 +69,7 @@ export function BankHeader({
+       </header>
+       <nav
+         aria-label={text('Bank workspace', 'مساحة عمل البنك')}
+-        className="flex gap-6 overflow-x-auto border-b border-line px-5 sm:px-7"
++        className="flex gap-6 overflow-x-auto border-b border-line px-5 sm:px-7 md:hidden"
+       >
+         {links.map((link) => (
+           <Link
+diff --git a/apps/web/src/components/bank/bank-overview.tsx b/apps/web/src/components/bank/bank-overview.tsx
+index 2210701..d6e203f 100644
+--- a/apps/web/src/components/bank/bank-overview.tsx
++++ b/apps/web/src/components/bank/bank-overview.tsx
+@@ -10,6 +10,7 @@ import { useAppState } from '@/store/provider';
+ import { bankApplications, bankText, consentGaps, latestDecision, OPEN_STATES } from './bank-data';
+ import { BankHeader } from './bank-header';
+ import { BankQueue } from './bank-queue';
++import { BankScopePanel } from './bank-scope';
+ 
+ export function BankOverview() {
+   const state = useAppState();
+@@ -26,7 +27,10 @@ export function BankOverview() {
+   const nextHire = next ? state.hires[next.hireId] : undefined;
+   const backed = applications.filter((application) => application.employerBacked).length;
+   const latest = approvals
+-    .map((application) => ({ application, decision: latestDecision(state, application.id) }))
++    .map((application) => ({
++      application,
++      decision: latestDecision(state, application.id),
++    }))
+     .filter((item) => item.decision)
+     .sort((a, b) => b.decision!.decidedAt.localeCompare(a.decision!.decidedAt));
+ 
+@@ -50,19 +54,21 @@ export function BankOverview() {
+       />
+       <div className="space-y-7 p-5 sm:p-7">
+         <section
+-          className="relative overflow-hidden rounded-xl border border-accent/20 bg-accent-soft p-5 sm:p-6"
++          className="overflow-hidden rounded-xl border border-accent/20 bg-accent-soft"
+           aria-labelledby="bank-priority-title"
+         >
+-          <div className="flex flex-wrap items-start justify-between gap-5">
+-            <div className="max-w-xl">
+-              <div className="mb-3 flex items-center gap-2 text-label text-accent">
+-                <span className="size-1.5 rounded-full bg-accent" aria-hidden />
+-                <span>{text('The next clear step', 'الخطوة التالية الواضحة')}</span>
+-                <span className="ms-2 text-caption text-fg-secondary">
++          <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
++            <div className="min-w-0">
++              <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-label text-accent">
++                <span className="inline-flex items-center gap-2">
++                  <span className="size-1.5 rounded-full bg-accent" aria-hidden />
++                  {text('The next clear step', 'الخطوة التالية الواضحة')}
++                </span>
++                <span className="text-caption text-fg-secondary">
+                   {formatDate(state.clock.anchor, locale)} · {text('Demo clock', 'ساعة العرض')}
+                 </span>
+               </div>
+-              <h2 id="bank-priority-title" className="text-heading font-medium">
++              <h2 id="bank-priority-title" className="text-display font-medium tracking-tight">
+                 {nextHire
+                   ? text(
+                       `${nextHire.fullName} is waiting for your review`,
+@@ -70,20 +76,51 @@ export function BankOverview() {
+                     )
+                   : text('Your review queue is up to date', 'قائمة المراجعة محدثة')}
+               </h2>
+-              <p className="mt-2 max-w-lg text-body leading-6 text-fg-secondary">
+-                {next
+-                  ? text(
+-                      'Start with the signed employment evidence, check the permission scope, then record a decision with your reasoning.',
+-                      'ابدأ بأدلة التوظيف الموقعة، وتحقق من نطاق الإذن، ثم سجل قرارك وأسبابه.',
+-                    )
+-                  : text(
+-                      'Approved decisions are reflected in the newcomer and employer workspaces. New applications will appear here.',
+-                      'تظهر القرارات المعتمدة في مساحات عمل الوافد وجهة العمل. وستظهر الطلبات الجديدة هنا.',
+-                    )}
+-              </p>
++              {next && nextHire ? (
++                <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-body text-fg-secondary">
++                  <span>{nextHire.role}</span>
++                  <span aria-hidden>·</span>
++                  <span>{state.employers[nextHire.employerId]?.name}</span>
++                  {next.submittedAt ? (
++                    <>
++                      <span aria-hidden>·</span>
++                      <span>
++                        {text('Received ', 'تم الاستلام ')}
++                        {formatDate(next.submittedAt, locale)}
++                      </span>
++                    </>
++                  ) : null}
++                </p>
++              ) : null}
++              {next ? (
++                <ol className="mt-5 space-y-2.5">
++                  {[
++                    text('Check the signed employment evidence', 'تحقق من أدلة التوظيف الموقعة'),
++                    text('Confirm the permission scope', 'تأكد من نطاق الإذن'),
++                    text('Record a decision with your reasoning', 'سجل قرارك مع أسبابه'),
++                  ].map((step, index) => (
++                    <li key={step} className="flex items-center gap-3 text-body">
++                      <span
++                        aria-hidden
++                        className="flex size-6 shrink-0 items-center justify-center rounded-full bg-surface text-caption font-medium tabular-nums text-accent"
++                      >
++                        {index + 1}
++                      </span>
++                      {step}
++                    </li>
++                  ))}
++                </ol>
++              ) : (
++                <p className="mt-3 max-w-lg text-body leading-6 text-fg-secondary">
++                  {text(
++                    'Approved decisions are reflected in the newcomer and employer workspaces. New applications will appear here.',
++                    'تظهر القرارات المعتمدة في مساحات عمل الوافد وجهة العمل. وستظهر الطلبات الجديدة هنا.',
++                  )}
++                </p>
++              )}
+               <Link
+                 href={next ? `/bank/applications/${next.id}` : '/bank/applications'}
+-                className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-accent px-4 text-body font-medium text-accent-fg hover:opacity-90"
++                className="mt-6 inline-flex h-10 items-center gap-2 rounded-md bg-accent px-4 text-body font-medium text-accent-fg transition-opacity hover:opacity-90"
+               >
+                 {text(
+                   next ? 'Review application' : 'View applications',
+@@ -92,20 +129,20 @@ export function BankOverview() {
+                 <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
+               </Link>
+             </div>
+-            <div className="flex w-full items-center gap-4 sm:w-auto">
++            <div className="flex flex-col gap-3">
+               <Illustration
+                 variant="banking"
+                 decorative
+-                aspect="square"
+-                className="max-w-[150px] rounded-lg sm:max-w-[190px]"
++                aspect="landscape"
++                className="hidden max-h-[170px] rounded-lg sm:block"
+                 priority
+               />
+-              <div className="max-w-[200px]">
++              <div className="rounded-lg border border-accent/20 bg-surface p-3.5">
+                 <p className="flex items-center gap-2 text-body font-medium">
+                   <ShieldCheck aria-hidden className="size-4 text-accent" />
+                   {text('Permission comes first', 'الإذن أولاً')}
+                 </p>
+-                <p className="mt-2 text-label leading-5 text-fg-secondary">
++                <p className="mt-1.5 text-label leading-5 text-fg-secondary">
+                   {text(
+                     'Only consented bank disclosures are visible. A bank officer cannot grant permission for an applicant.',
+                     'تظهر فقط البيانات المصرح بها للبنك. لا يمكن لموظف البنك منح الإذن نيابة عن المتقدم.',
+@@ -126,6 +163,7 @@ export function BankOverview() {
+               caption: text('Submitted and open reviews', 'طلبات مقدمة ومراجعات مفتوحة'),
+               icon: Clock3,
+               href: '/bank/applications?status=open',
++              attention: open.length > 0,
+             },
+             {
+               value: approvals.length,
+@@ -133,6 +171,7 @@ export function BankOverview() {
+               caption: text('Recorded demo decisions', 'قرارات العرض المسجلة'),
+               icon: CheckCheck,
+               href: '/bank/applications?status=approved',
++              attention: false,
+             },
+             {
+               value: waiting.length,
+@@ -140,6 +179,7 @@ export function BankOverview() {
+               caption: text('Information or consent gaps', 'نقص معلومات أو أذونات'),
+               icon: FileCheck2,
+               href: '/bank/applications?status=follow_up',
++              attention: waiting.length > 0,
+             },
+             {
+               value: `${applications.length ? Math.round((backed / applications.length) * 100) : 0}%`,
+@@ -150,18 +190,26 @@ export function BankOverview() {
+               ),
+               icon: Handshake,
+               href: '/bank/partners',
++              attention: false,
+             },
+           ].map((metric) => (
+             <Link
+               key={metric.label}
+               href={metric.href}
+-              className="rounded-lg border border-line bg-surface p-4 transition-colors hover:border-accent/40 hover:bg-subtle"
++              className="group flex flex-col rounded-lg border border-line bg-surface p-4 transition-colors duration-150 hover:border-accent/40 hover:bg-subtle"
+             >
+-              <div className="flex items-center justify-between gap-2 text-label text-fg-secondary">
+-                <span>{metric.label}</span>
+-                <metric.icon aria-hidden className="size-4 text-accent" />
++              <div className="flex items-center justify-between gap-2">
++                <span className="text-label text-fg-secondary">{metric.label}</span>
++                <span
++                  aria-hidden
++                  className="flex size-7 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent"
++                >
++                  <metric.icon className="size-4" />
++                </span>
+               </div>
+-              <p className="mt-3 text-[1.75rem] font-medium leading-9 tracking-tight">
++              <p
++                className={`mt-3 text-[1.75rem] font-medium leading-9 tracking-tight tabular-nums ${metric.attention ? 'text-accent' : ''}`}
++              >
+                 {metric.value}
+               </p>
+               <p className="mt-1 text-caption text-fg-tertiary">{metric.caption}</p>
+@@ -169,7 +217,7 @@ export function BankOverview() {
+           ))}
+         </section>
+         <BankQueue compact />
+-        <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
++        <div className="grid gap-5 lg:grid-cols-2 lg:items-start">
+           <section className="rounded-lg border border-line p-5">
+             <div className="mb-4 flex items-center justify-between">
+               <h2 className="text-title font-medium">
+@@ -214,23 +262,7 @@ export function BankOverview() {
+               </p>
+             )}
+           </section>
+-          <section className="rounded-lg border border-line p-5">
+-            <h2 className="text-title font-medium">
+-              {text('What the bank can see', 'ما يمكن للبنك الاطلاع عليه')}
+-            </h2>
+-            <p className="mt-3 text-body leading-6 text-fg-secondary">
+-              {text(
+-                'Employment may be shared. Passport, salary, Emirates ID, address and bank statements need an active bank permission and an application disclosure. Family, degree and health information stay outside this workspace.',
+-                'يمكن مشاركة بيانات التوظيف. يحتاج جواز السفر والراتب والهوية والعنوان وكشوف الحساب إلى إذن بنكي ساري وإفصاح في الطلب. لا تظهر معلومات الأسرة والشهادة الأكاديمية والصحة في هذه المساحة.',
+-              )}
+-            </p>
+-            <div className="mt-4 border-t border-line pt-3 text-caption text-fg-tertiary">
+-              {text(
+-                'Demo review workflow. Guard remains the authority for outbound sharing; live Guard and production prompt parity are unverified.',
+-                'مسار مراجعة تجريبي. يبقى Guard مرجع مشاركة البيانات خارجياً؛ لم يُتحقق من Guard المباشر أو تطابق تعليمات الإنتاج.',
+-              )}
+-            </div>
+-          </section>
++          <BankScopePanel />
+         </div>
+       </div>
+     </>
+diff --git a/apps/web/src/components/bank/bank-partners.tsx b/apps/web/src/components/bank/bank-partners.tsx
+index a58c0cc..2cfcbbe 100644
+--- a/apps/web/src/components/bank/bank-partners.tsx
++++ b/apps/web/src/components/bank/bank-partners.tsx
+@@ -68,22 +68,22 @@ export function BankPartners() {
+               )}
+             </p>
+           </div>
+-          <div className="flex gap-6">
+-            <div>
+-              <p className="text-[1.75rem] font-medium">{activeEmployers.length}</p>
+-              <p className="mt-1 text-label text-fg-secondary">
++          <dl className="flex rounded-lg border border-accent/20 bg-surface">
++            <div className="flex flex-col-reverse px-5 py-4">
++              <dt className="mt-1 text-label text-fg-secondary">
+                 {text('With applications', 'لديها طلبات')}
+-              </p>
++              </dt>
++              <dd className="text-display font-medium tabular-nums">{activeEmployers.length}</dd>
+             </div>
+-            <div>
+-              <p className="text-[1.75rem] font-medium">
+-                {applications.filter((application) => application.employerBacked).length}
+-              </p>
+-              <p className="mt-1 text-label text-fg-secondary">
++            <div className="flex flex-col-reverse border-s border-accent/20 px-5 py-4">
++              <dt className="mt-1 text-label text-fg-secondary">
+                 {text('Backed applications', 'طلبات مدعومة')}
+-              </p>
++              </dt>
++              <dd className="text-display font-medium tabular-nums">
++                {applications.filter((application) => application.employerBacked).length}
++              </dd>
+             </div>
+-          </div>
++          </dl>
+         </section>
+         <section aria-labelledby="bank-employer-directory">
+           <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
+diff --git a/apps/web/src/components/bank/bank-queue.tsx b/apps/web/src/components/bank/bank-queue.tsx
+index 12fc743..723f893 100644
+--- a/apps/web/src/components/bank/bank-queue.tsx
++++ b/apps/web/src/components/bank/bank-queue.tsx
+@@ -296,7 +296,46 @@ export function BankQueue({
+         </p>
+       ) : null}
+       <div className="overflow-x-auto rounded-lg border border-line">
+-        <table className="w-full min-w-[740px] border-collapse text-body">
++        <ul className="divide-y divide-line md:hidden">
++          {visible.map((application) => {
++            const hire = state.hires[application.hireId];
++            if (!hire) return null;
++            const gaps = consentGaps(state, application);
++            return (
++              <li key={application.id}>
++                <Link
++                  href={`/bank/applications/${application.id}`}
++                  className="block px-4 py-4 hover:bg-subtle/70"
++                >
++                  <span className="flex items-center gap-3">
++                    <span
++                      aria-hidden
++                      className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-caption font-semibold text-accent"
++                    >
++                      {initials(hire.fullName)}
++                    </span>
++                    <span className="min-w-0 flex-1">
++                      <span className="block font-medium">{hire.fullName}</span>
++                      <span className="mt-0.5 block text-caption text-fg-tertiary">
++                        {hire.role} · {state.employers[hire.employerId]?.name}
++                      </span>
++                    </span>
++                    <Badge tone={applicationTone(application.state)}>
++                      {applicationLabel(application.state, locale)}
++                    </Badge>
++                  </span>
++                  <span className="mt-3 flex items-end justify-between gap-3">
++                    <ReviewSignals application={application} gaps={gaps.length} locale={locale} />
++                    <span className="shrink-0 text-caption text-fg-secondary">
++                      {application.submittedAt ? formatDate(application.submittedAt, locale) : '—'}
++                    </span>
++                  </span>
++                </Link>
++              </li>
++            );
++          })}
++        </ul>
++        <table className="hidden w-full min-w-[740px] border-collapse text-body md:table">
+           <caption className="sr-only">
+             {text('Bank account application queue', 'قائمة طلبات الحساب البنكي')}
+           </caption>
+diff --git a/apps/web/src/components/bank/bank-scope.tsx b/apps/web/src/components/bank/bank-scope.tsx
+new file mode 100644
+index 0000000..cc5e45e
+--- /dev/null
++++ b/apps/web/src/components/bank/bank-scope.tsx
+@@ -0,0 +1,104 @@
++'use client';
++
++import { Check, EyeOff, LockKeyhole } from 'lucide-react';
++import { DATA_LABELS, type DataLabel } from '@rasikh/shared';
++import { policyFor } from '@/domain/policy';
++import { useI18n } from '@/lib/i18n/provider';
++import { bankText, dataLabel } from './bank-data';
++
++type Group = 'allow' | 'consent' | 'deny';
++
++/** Group every data label by the bank column of the product policy. Guard stays the authority. */
++function groupLabels() {
++  const groups: Record<Group, DataLabel[]> = {
++    allow: [],
++    consent: [],
++    deny: [],
++  };
++  for (const label of DATA_LABELS) {
++    const policy = policyFor(label, 'bank');
++    groups[policy === 'allow' ? 'allow' : policy === 'consent' ? 'consent' : 'deny'].push(label);
++  }
++  return groups;
++}
++
++/**
++ * What a bank officer may and may not see, at a glance. It reads the same policy matrix as the
++ * newcomer's trust passport, so the three groups can never drift from the real rules.
++ */
++export function BankScopePanel() {
++  const { locale } = useI18n();
++  const text = (en: string, ar: string) => bankText(locale, en, ar);
++  const groups = groupLabels();
++  const rows: {
++    key: Group;
++    icon: typeof Check;
++    tile: string;
++    title: string;
++    hint: string;
++  }[] = [
++    {
++      key: 'allow',
++      icon: Check,
++      tile: 'bg-success-soft text-success',
++      title: text('Shared by policy', 'تسمح بها السياسة'),
++      hint: text('Employment may be shared.', 'يمكن مشاركة بيانات التوظيف.'),
++    },
++    {
++      key: 'consent',
++      icon: LockKeyhole,
++      tile: 'bg-warning-soft text-warning',
++      title: text('Needs the newcomer’s permission', 'تحتاج إلى إذن الوافد'),
++      hint: text(
++        'An active bank permission and an application disclosure are both required.',
++        'يلزم إذن بنكي ساري وإفصاح في الطلب معاً.',
++      ),
++    },
++    {
++      key: 'deny',
++      icon: EyeOff,
++      tile: 'bg-track text-fg-secondary',
++      title: text('Outside this workspace', 'خارج هذه المساحة'),
++      hint: text('Never shown to a bank officer.', 'لا تظهر لموظف البنك.'),
++    },
++  ];
++  return (
++    <section className="rounded-lg border border-line p-5" aria-labelledby="bank-scope-title">
++      <h2 id="bank-scope-title" className="text-title font-medium">
++        {text('What the bank can see', 'ما يمكن للبنك الاطلاع عليه')}
++      </h2>
++      <ul className="mt-4 space-y-4">
++        {rows.map((row) => (
++          <li key={row.key} className="flex items-start gap-3">
++            <span
++              aria-hidden
++              className={`flex size-8 shrink-0 items-center justify-center rounded-md ${row.tile}`}
++            >
++              <row.icon className="size-4" />
++            </span>
++            <div className="min-w-0">
++              <h3 className="text-body font-medium">{row.title}</h3>
++              <p className="mt-0.5 text-label leading-5 text-fg-secondary">{row.hint}</p>
++              <ul className="mt-2 flex flex-wrap gap-1.5">
++                {groups[row.key].map((label) => (
++                  <li
++                    key={label}
++                    className="rounded-full border border-line bg-subtle px-2.5 py-0.5 text-label text-fg-secondary"
++                  >
++                    {dataLabel(label, locale)}
++                  </li>
++                ))}
++              </ul>
++            </div>
++          </li>
++        ))}
++      </ul>
++      <p className="mt-5 border-t border-line pt-3 text-caption text-fg-tertiary">
++        {text(
++          'Demo review workflow. Guard remains the authority for outbound sharing; live Guard and production prompt parity are unverified.',
++          'مسار مراجعة تجريبي. يبقى Guard مرجع مشاركة البيانات خارجياً؛ لم يُتحقق من Guard المباشر أو تطابق تعليمات الإنتاج.',
++        )}
++      </p>
++    </section>
++  );
++}
+-- 
+2.51.0.windows.1
+

@@ -1,0 +1,215 @@
+From 9198995a16dd7e79243e9ae22b08cfb623545c2b Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 14:43:52 +0400
+Subject: [PATCH 11/18] docs: README for judges: the idea, how it works,
+ privacy evidence, what is real
+
+Replaces the developer-only README. Matches the platform as built: Vertex AI
+for optional live AI (the old text said OpenAI), the current Guard evidence
+and its limits, and the demo hub and guided tour.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ README.md | 164 +++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 120 insertions(+), 44 deletions(-)
+
+diff --git a/README.md b/README.md
+index 0990ca7..958ce2d 100644
+--- a/README.md
++++ b/README.md
+@@ -1,72 +1,148 @@
+ # Rasikh
+ 
+-The landing OS for Abu Dhabi. Rasikh helps companies set up here and helps their people settle in, with one AI agent running every step across employer, newcomer, landlord and bank.
++**The landing OS for Abu Dhabi.** One shared, live record and one AI agent that walks a newcomer, their employer, their landlord and their bank through every step of moving here, with the person's approval before the agent acts and a privacy policy that decides what each party may see.
+ 
+-Hackathon prototype for Hub71 and OpenAI. External parties (TAMM, UAE PASS, landlords, banks) are mocked.
++Hackathon prototype for Hub71 and OpenAI. TAMM, UAE PASS, landlords and banks are simulated. See [What is real and what is simulated](#what-is-real-and-what-is-simulated).
+ 
+-## Layout
++> **بالعربية.** راسخ نظام تشغيل للاستقرار في أبوظبي: يجمع صاحب العمل والوافد والمؤجّر والبنك في سجلّ واحد مباشر، ويعمل وكيل ذكي على إنجاز الخطوات المترابطة (التأشيرة، الهوية الإماراتية، السكن، الحساب البنكي، التأمين). الوكيل يقترح والوافد يوافق، وتحدّد سياسة خصوصية ما يُشارك مع كل جهة: لا يرى المؤجّر راتبك، بل نتيجة «نعم/لا» لقدرتك على السداد. الجهات الخارجية (TAMM وUAE PASS) محاكاة في هذا النموذج الأولي.
+ 
+-| Path                    | What                                                                                  |
+-| ----------------------- | ------------------------------------------------------------------------------------- |
+-| `apps/web`              | Next.js app: newcomer, employer, expansion, landlord and bank surfaces, and the agent |
+-| `packages/shared`       | Contract types shared by every part                                                   |
+-| `packages/rasikh-guard` | Policy sidecar that checks every outbound agent action                                |
+-| `packages/tamm-mcp`     | MCP server over a mocked TAMM service catalogue                                       |
++## The idea in one minute
+ 
+-How the parts talk to each other is defined in [INTEGRATION.md](INTEGRATION.md). Design rules are in [DESIGN.md](DESIGN.md), the system in [ARCHITECTURE.md](ARCHITECTURE.md), the demo in [DEMO.md](DEMO.md), status in [PROGRESS.md](PROGRESS.md) and reasoning in [DECISIONS.md](DECISIONS.md).
++**The problem.** Moving to Abu Dhabi is not one task. It is a chain of dependent steps spread across parties that do not share a record: the employer, the immigration and ID services, a landlord, a bank, an insurer. The Emirates ID application needs the visa. The bank account needs the Emirates ID application. Family sponsorship needs a registered tenancy. Each step produces the documents the next one needs, so a missing document or a silent delay at one party stalls everything after it, and nobody can see why. The newcomer waits without knowing what for. The employer cannot tell where a hire is stuck. And along the way people hand passports and salary details to strangers.
+ 
+-## Requirements
++**The idea.** Give everyone in the chain the same live record, and put an agent in the middle that does the legwork. Three principles make it different from a checklist:
+ 
+-- Node 22 or later
+-- npm 10 or later
++1. **A roadmap that understands dependencies.** Steps unlock when their prerequisites are done, and every step explains in plain language why it is there. A hire's stage and status are derived from the steps, so the dashboards cannot drift from reality.
++2. **The agent proposes, the person decides.** The agent reads documents, drafts applications and asks. Nothing is sent until the newcomer approves, and the approval card shows who receives it, what is attached and what is deliberately left out.
++3. **Privacy decided by policy, not by the agent.** Every piece of personal data carries a label (passport, salary, health and so on). A policy sidecar, [Rasikh Guard](packages/rasikh-guard), decides for each label and each destination whether it may leave: allowed, needs the person's consent, only as a derived result, or never. A landlord gets "affordability: yes", never the salary.
+ 
+-## Install and run
++**Why Abu Dhabi.** The steps, services and vocabulary are local: TAMM, UAE PASS, Emirates ID, Tawtheeq tenancy registration, Abu Dhabi neighbourhoods, AED, English and Arabic with full right-to-left support. A second module helps a foreign company open an Abu Dhabi branch and then moves its first employees into the same relocation pipeline.
++
++## Try it in three minutes
+ 
+ ```bash
+ npm install
+-cp apps/web/.env.example apps/web/.env.local
+-npm run dev
++npm run dev          # http://127.0.0.1:3000
++```
++
++Open `/`. It is the demo hub: one distinct link per person, and a guided tour for the presenter.
++
++| Who | Link | What they do |
++| --- | --- | --- |
++| Newcomer (phone app) | `/newcomer?as=anders` | Follows the roadmap, reviews documents, approves what the agent drafts, controls consent |
++| Employer | `/employer` | Sees every hire move through its steps, adds hires, backs them, sets up an Abu Dhabi branch |
++| Landlord | `/landlord` | Receives applications with a written risk reasoning and decides |
++| Bank | `/bank` | Receives account applications with permission scope shown first |
++| Presenter | `/?tour=demo` | A guided tour that tells the story in three minutes (`/?tour=features` covers everything) |
++| Reset | `/design-system/state` | Restores the demo to its starting state in every open window |
++
++The story: the newcomer opens the approval the agent drafted, turns off passport consent to see the approval blocked with the reason, turns it back on and approves. The landlord's window shows the application at once, with the risk reasoning and no salary. The landlord decides, and the employer's dashboard and the newcomer's roadmap move without anyone touching them.
++
++Every window keeps its own person, so the newcomer, landlord and employer can sit side by side.
++
++## The surfaces
++
++| Surface | Audience | Highlights |
++| --- | --- | --- |
++| Newcomer | The hire, on a phone | Dependency-aware roadmap, document review with a human confirmation gate, agent activity feed with approval cards, trust passport (consent per recipient, revocable) |
++| Employer | HR, the paying customer | Pipeline and blockers, hire detail with the full journey, employer backing, company expansion (setup roadmap and team move), Guard log |
++| Landlord | A property manager | Applications with risk level and a reason for every point, properties, leases, viewings |
++| Bank | An account officer | Onboarding queue, review signals, partner employers |
++
++All four read and write one data model, and a change in one window reaches the others in tens of milliseconds (measured in two real browser windows on a laptop).
++
++## How it works
++
++```
++ browsers (newcomer, employer, landlord, bank)
++        |   POST /api/actions          ^  SSE /api/events (full snapshots)
++        v                              |
++ Next.js app ── one in-memory store: pure reducers, a revision per change
++        |
++        |  agent (demo mode: cached and deterministic; live mode: Vertex AI, optional)
++        |        every call that would send labelled data asks first:
++        v
++ Rasikh Guard  ──  policy matrix: 9 data labels x 7 destinations, fail-closed
++        |
++        v
++ TAMM MCP server (mock catalogue)   ·   simulated UAE PASS
+ ```
+ 
+-The app is at http://127.0.0.1:3000.
++- **Shared record.** `apps/web/src/domain` holds the model (hires, steps, documents, approvals, applications, decisions, consents, Guard checks, companies), the roadmap logic and the reducers. Everything is a pure function from state and action to state, which is what makes the live sync and the reset trivial to reason about.
++- **The agent.** It explains every output in short plain sentences. In the default demo mode its responses are cached and deterministic, so the demo never depends on a network. Live mode, when enabled, uses Gemini on Vertex AI for document extraction and for explaining the next step; it is authorised by Guard first and sends only what the policy allows (documents for extraction only).
++- **Contract.** The three parts (app, Guard, TAMM MCP) talk through a written contract, [INTEGRATION.md](INTEGRATION.md), with shared types in `packages/shared`.
+ 
+-## Environment
++## Privacy and security
+ 
+-Set in `apps/web/.env.local`. See also INTEGRATION.md section 7.
++Rasikh Guard is a fork of [OpenAPPA](https://github.com/archestra-ai/OpenAPPA) (MIT), and in spirit it works like a policy engine such as Open Policy Agent: the policy is data, one component decides, and the decision is logged with a reason.
+ 
+-| Variable           | Purpose                                                              | Default                     |
+-| ------------------ | -------------------------------------------------------------------- | --------------------------- |
+-| `OPENAI_API_KEY`   | Live AI mode. Server-side only, never prefixed with `NEXT_PUBLIC_`.  | none                        |
+-| `RASIKH_AI_MODE`   | `demo` for cached deterministic responses, `live` for the OpenAI API | `demo`                      |
+-| `RASIKH_GUARD_URL` | Rasikh Guard sidecar                                                 | `http://localhost:8787`     |
+-| `TAMM_MCP_URL`     | TAMM MCP server                                                      | `http://localhost:8790/mcp` |
+-| `RASIKH_DEMO_MODE` | `1` enables the dev reset and advance endpoints                      | `0`                         |
++- **Labels follow data.** Anything the agent reads is labelled, and the labels travel with it into later calls, so data cannot be laundered by re-declaring it.
++- **Per label, per destination.** Passport and Emirates ID need consent before a landlord or bank sees them; salary reaches a landlord only as a derived yes or no; bank statements never go to TAMM; health data goes only to insurance services; a degree never goes to a landlord.
++- **Consent is narrow.** One label, one destination, revocable, and it cannot unlock a cell the policy denies.
++- **Fail-closed.** If Guard is unreachable, the action does not happen.
++- **Visible.** The trust passport shows the person what they have allowed and lets them revoke it. The Guard log shows every check with its reason.
+ 
+-## Demo mode
++**What the evidence shows, honestly.** An earlier archived evaluation failed: it allowed 12 of 25 forbidden synthetic flows. After hardening, the deployed Guard release (contract 1.2.0) was run on 2 October 2026 against the same 25 synthetic attack cases, three times, over HTTP: 75 of 75 attempts were denied, with no forbidden allows, and 99 contract-conformance checks passed with none failing (3 skipped). This is a measurement of the policy decision only. We did **not** measure model obedience, end-to-end exfiltration, the security of the whole app or production prompt parity, so we do not claim the agent is proven safe. The Guard page in the app shows the evidence and its limits, and the archived failure stays on record.
+ 
+-Demo mode runs the same flows with cached, realistic responses, so the demo never depends on network or latency. It is the default (`RASIKH_AI_MODE=demo`) and needs no API key. The in-app toggle switches between demo and live. The demo script is in [DEMO.md](DEMO.md).
++## What is real and what is simulated
+ 
+-## Scripts
++| Real in this prototype | Simulated |
++| --- | --- |
++| The shared data model, dependency-aware roadmap, reducers and live sync | TAMM: a mock catalogue behind a real MCP server (every response says `mock`) |
++| The approval flow, consent model and trust passport | UAE PASS sign-in |
++| The Guard policy engine and its decisions | Landlords, banks and their decisions beyond the seed data |
++| English and Arabic with right-to-left layout, light and dark themes | Document extraction in demo mode: suggested fields come from the hire profile, with illustrative confidence |
++| Optional live AI through Vertex AI, behind Guard | Money figures are illustrative estimates; state is in memory and resets with the server |
+ 
+-| Command                                   | Does                                                          |
+-| ----------------------------------------- | ------------------------------------------------------------- |
+-| `npm run dev`                             | Start the web app                                             |
+-| `npm run build`                           | Production build                                              |
+-| `npm run lint`                            | ESLint across workspaces                                      |
+-| `npm run typecheck`                       | TypeScript across workspaces                                  |
+-| `npm run format:check`                    | Prettier check                                                |
+-| `node scripts/capture.mjs --path <route>` | Screenshot a route at reference size (see DESIGN.md)          |
+-| `node scripts/sync-check.mjs`             | Open two browser tabs, change a record in one, time the other |
++Nothing in the demo sends anything outside it.
+ 
+-## Troubleshooting
++## Quality
+ 
+-- A new Tailwind class does not render: stop the dev server, delete `apps/web/.next`, start again.
+-- Git Bash rewrites arguments that start with `/`. Pass `--path employer/hires` to the capture script without a leading slash.
++- Type-checked TypeScript across workspaces and a unit test suite for the domain, the reducers, the API routes, the policy mirror and the AI boundary.
++- Accessibility: the main screens of all four surfaces were checked with axe-core (WCAG 2.1 AA) in English and Arabic, light and dark, at phone and desktop width.
++- Browser-tested journeys: the full newcomer to landlord to employer flow, consent revocation, the blocked approval, cross-window sync and reset.
++
++```bash
++npm run typecheck     # TypeScript across workspaces
++npm run lint
++npm test -w @rasikh/web
++```
+ 
+ ## Design
+ 
+-The design system and how to compare screens against the references are in [DESIGN.md](DESIGN.md). The live specimen is at `/design-system`.
++A calm, dense, document-like interface, not a generic dashboard. Petrol `#0B6B78`, sand `#F6E7CD`, seafoam `#A5D9D0`, coral `#E98565`, saffron `#E4AD42` and deep ink `#173C47`, with doorway and journey illustrations. All spacing uses logical properties so Arabic needs no overrides. Rules and measurements are in [DESIGN.md](DESIGN.md); the live specimen is at `/design-system`.
++
++## Run the pieces
++
++| Variable | Purpose | Default |
++| --- | --- | --- |
++| `RASIKH_AI_ENABLED` | `1` turns on live AI (server-side only) | off: deterministic demo mode |
++| `GOOGLE_CLOUD_PROJECT`, `VERTEX_MODEL` | Vertex AI project and model for live AI | none |
++| `RASIKH_GUARD_URL` | Rasikh Guard sidecar | `http://localhost:8787` |
++| `TAMM_MCP_URL` | TAMM MCP server | `http://localhost:8790/mcp` |
++| `RASIKH_DEMO_MODE` | `1` enables the dev reset and advance endpoints on Guard and TAMM | `0` |
++
++No key is needed for the demo. To run the real services:
++
++```bash
++cd packages/rasikh-guard && RASIKH_DEMO_MODE=1 cargo run --release -p rasikh-guard   # or: docker compose up --build
++cd packages/tamm-mcp && npm install && RASIKH_DEMO_MODE=1 npm run dev
++```
++
++## Repository
++
++| Path | What |
++| --- | --- |
++| `apps/web` | The Next.js app: all four surfaces, the agent, the live sync, the demo hub and guided tour |
++| `packages/shared` | Contract types and closed enums shared by every part |
++| `packages/rasikh-guard` | The policy sidecar (Rust, OpenAPPA fork) |
++| `packages/tamm-mcp` | The TAMM MCP server over a mock catalogue |
++| `INTEGRATION.md` | The contract between app, Guard and TAMM MCP |
++| `ARCHITECTURE.md`, `DESIGN.md`, `DECISIONS.md`, `DEMO.md`, `PROGRESS.md` | System, design rules, reasoning, demo script, status |
+ 
+-## Status
++## Limits and what comes next
+ 
+-See [PROGRESS.md](PROGRESS.md).
++- Guard's measured evidence covers its policy decisions on synthetic attacks. End-to-end safety of the agent has not been measured and is the first thing to test next.
++- TAMM and UAE PASS are simulated. A real integration needs agreements and credentials we do not have.
++- State is in memory by design for the demo. A real deployment needs a database and real authentication.
++- Many parties a newcomer must deal with are not on TAMM and have no API. The plan is a browser companion that guides the person through those sites without acting for them; a prototype is on the branch `qa/live-tamm-demo`.
+-- 
+2.51.0.windows.1
+

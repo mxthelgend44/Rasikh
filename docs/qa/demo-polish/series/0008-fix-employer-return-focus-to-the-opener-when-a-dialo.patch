@@ -1,0 +1,36 @@
+From 2c6723befcec96b0e252883382cd3624982f49c3 Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 13:06:18 +0400
+Subject: [PATCH 08/18] fix(employer): return focus to the opener when a dialog
+ closes
+
+The employer Modal is unmounted on close, so the browser had no dialog left to
+restore focus from and focus fell back to the start of the page. Seven dialogs
+(add hire, expansion, Guard, hire detail) share it. Remember the opener and
+refocus it on cleanup, as ui/dialog.tsx already does.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/components/employer/common.tsx | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/apps/web/src/components/employer/common.tsx b/apps/web/src/components/employer/common.tsx
+index 97cffce..f9feb9c 100644
+--- a/apps/web/src/components/employer/common.tsx
++++ b/apps/web/src/components/employer/common.tsx
+@@ -368,9 +368,12 @@ export function Modal({
+   const { e } = useEmployerCopy();
+   useEffect(() => {
+     const dialog = ref.current;
++    // The dialog is unmounted on close, so the browser has no dialog left to hand focus back from.
++    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+     dialog?.showModal();
+     return () => {
+       if (dialog?.open) dialog.close();
++      if (opener?.isConnected) opener.focus();
+     };
+   }, []);
+   return (
+-- 
+2.51.0.windows.1
+

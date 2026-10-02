@@ -1,0 +1,46 @@
+From 77cc0163836a21466c2c3fe331645e17bff61423 Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 12:52:21 +0400
+Subject: [PATCH 5/8] =?UTF-8?q?fix(web):=20newcomer=20tab=20title=20no=20l?=
+ =?UTF-8?q?onger=20reads=20'Rasikh=20=C2=B7=20Rasikh';=20add=20app=20icon?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The nested layout title default was wrapped by the root template. The missing favicon
+caused a 404 on every page load.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/app/icon.svg            | 5 +++++
+ apps/web/src/app/newcomer/layout.tsx | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+ create mode 100644 apps/web/src/app/icon.svg
+
+diff --git a/apps/web/src/app/icon.svg b/apps/web/src/app/icon.svg
+new file mode 100644
+index 0000000..abfa498
+--- /dev/null
++++ b/apps/web/src/app/icon.svg
+@@ -0,0 +1,5 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
++  <rect width="24" height="24" rx="6" fill="#0B6B78"/>
++  <path d="M6.25 18V11.25a5.75 5.75 0 0 1 11.5 0V18" fill="none" stroke="#F6E7CD" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
++  <circle cx="12" cy="14.25" r="1.75" fill="#F6E7CD"/>
++</svg>
+diff --git a/apps/web/src/app/newcomer/layout.tsx b/apps/web/src/app/newcomer/layout.tsx
+index a9e7ee6..a791a60 100644
+--- a/apps/web/src/app/newcomer/layout.tsx
++++ b/apps/web/src/app/newcomer/layout.tsx
+@@ -4,7 +4,7 @@ import { NewcomerShell } from '@/components/newcomer/newcomer-shell';
+ import { LOCALE_COOKIE, parseLocale } from '@/lib/i18n';
+ import { I18nProvider } from '@/lib/i18n/provider';
+ 
+-export const metadata: Metadata = { title: { default: 'Rasikh', template: '%s · Rasikh' } };
++export const metadata: Metadata = { title: 'Your relocation' };
+ 
+ export default async function NewcomerLayout({ children }: { children: React.ReactNode }) {
+   const locale = parseLocale((await cookies()).get(LOCALE_COOKIE)?.value);
+-- 
+2.51.0.windows.1
+

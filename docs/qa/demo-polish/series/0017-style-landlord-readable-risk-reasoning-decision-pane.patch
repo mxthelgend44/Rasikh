@@ -1,0 +1,1450 @@
+From 88fe92ce018238759b6f83f3e752b319977b0d3e Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 15:00:37 +0400
+Subject: [PATCH 17/18] style(landlord): readable risk reasoning, decision
+ panel, scannable lists
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ .../src/components/landlord/applications.tsx  | 760 +++++++++++++-----
+ .../src/components/landlord/illustration.tsx  | 138 ++++
+ apps/web/src/components/landlord/leases.tsx   |  23 +-
+ apps/web/src/components/landlord/overview.tsx |  22 +-
+ .../src/components/landlord/properties.tsx    |  87 +-
+ apps/web/src/components/landlord/shared.tsx   |  70 +-
+ apps/web/src/components/landlord/viewings.tsx |   6 +-
+ 7 files changed, 834 insertions(+), 272 deletions(-)
+ create mode 100644 apps/web/src/components/landlord/illustration.tsx
+
+diff --git a/apps/web/src/components/landlord/applications.tsx b/apps/web/src/components/landlord/applications.tsx
+index a35b535..424bbd0 100644
+--- a/apps/web/src/components/landlord/applications.tsx
++++ b/apps/web/src/components/landlord/applications.tsx
+@@ -2,24 +2,38 @@
+ 
+ import Link from 'next/link';
+ import { useState } from 'react';
+-import { ArrowLeft, CheckCircle2, FileText, Info, LockKeyhole, ShieldAlert } from 'lucide-react';
++import {
++  AlertTriangle,
++  ArrowLeft,
++  BadgeCheck,
++  Check,
++  CircleDot,
++  FileText,
++  LockKeyhole,
++  Minus,
++  ShieldAlert,
++} from 'lucide-react';
+ import { Avatar } from '@/components/ui/avatar';
+ import { Badge } from '@/components/ui/badge';
+ import { Button } from '@/components/ui/button';
+ import { EmptyState } from '@/components/ui/empty-state';
+ import { Table, Td, Th, Tr } from '@/components/ui/table';
+ import { useAppState } from '@/store/provider';
+-import type { Application, Decision } from '@/domain/types';
++import type { Application, Decision, RiskPoint, RiskSummary } from '@/domain/types';
+ import { formatAed, formatDate } from '@/lib/format';
++import { cn } from '@/lib/cn';
+ import { policyFor } from '@/domain/policy';
+ import { recordText } from './content';
++import { PropertyIllustration } from './illustration';
+ import {
+   ActionLink,
++  BackedChip,
+   bedroomLabel,
+   controlClass,
+   Feedback,
+   latestDecision,
+   linkClass,
++  RiskBadge,
+   SearchField,
+   SectionTitle,
+   StateBadge,
+@@ -33,91 +47,181 @@ import {
+ export const reviewable = (application: Application) =>
+   ['submitted', 'under_review', 'needs_info'].includes(application.state);
+ 
+-export function ApplicationRows({ applications }: { applications: Application[] }) {
++/** One place that resolves everything a list row or card shows about an application. */
++function useRowModel() {
+   const state = useAppState();
+   const { locale, l } = useLandlordLocale();
++  return (application: Application) => {
++    const hire = state.hires[application.hireId];
++    const property = application.propertyId ? state.properties[application.propertyId] : undefined;
++    const disclosed = application.state !== 'awaiting_approval';
++    return {
++      hire,
++      property,
++      disclosed,
++      name: disclosed
++        ? (hire?.fullName ?? l('Applicant unavailable', 'المتقدم غير متاح'))
++        : l('Awaiting applicant approval', 'بانتظار موافقة المتقدم'),
++      employer: disclosed
++        ? (state.employers[hire?.employerId ?? '']?.name ??
++          l('Employer not recorded', 'جهة العمل غير مسجلة'))
++        : l('Details have not been released', 'لم تُشارك التفاصيل بعد'),
++      unitLine: property
++        ? `${l('Unit', 'الوحدة')} ${property.unit} · ${bedroomLabel(property.bedrooms, locale)}`
++        : '—',
++      received: application.submittedAt
++        ? formatDate(application.submittedAt, locale)
++        : l('Not submitted', 'لم يُرسل'),
++    };
++  };
++}
++
++function ApplicantMark({ name, disclosed }: { name: string; disclosed: boolean }) {
++  return disclosed ? (
++    <Avatar name={name} className="size-10 bg-accent-soft text-accent" />
++  ) : (
++    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-track">
++      <LockKeyhole aria-hidden className="size-4 text-fg-tertiary" />
++    </span>
++  );
++}
++
++function AssessmentCell({ application }: { application: Application }) {
++  const { l } = useLandlordLocale();
++  if (application.state === 'awaiting_approval')
++    return (
++      <span className="text-caption text-fg-tertiary">{l('Not shared yet', 'لم تُشارك بعد')}</span>
++    );
+   return (
+-    <div className="overflow-x-auto rounded-lg border border-edge">
+-      <Table className="min-w-[680px]">
+-        <thead>
+-          <tr>
+-            <Th>{l('Applicant', 'المتقدم')}</Th>
+-            <Th>{l('Property', 'العقار')}</Th>
+-            <Th>{l('Status', 'الحالة')}</Th>
+-            <Th>{l('Received', 'تاريخ الاستلام')}</Th>
+-            <Th>
+-              <span className="sr-only">{l('Open application', 'فتح الطلب')}</span>
+-            </Th>
+-          </tr>
+-        </thead>
+-        <tbody>
+-          {applications.map((application) => {
+-            const hire = state.hires[application.hireId];
+-            const property = application.propertyId
+-              ? state.properties[application.propertyId]
+-              : undefined;
+-            const disclosed = application.state !== 'awaiting_approval';
+-            return (
+-              <Tr key={application.id} className="h-[4.5rem]">
+-                <Td>
+-                  <div className="flex items-center gap-3">
+-                    {disclosed && hire ? (
+-                      <Avatar name={hire.fullName} className="size-9 bg-accent-soft text-accent" />
+-                    ) : (
+-                      <span className="flex size-9 items-center justify-center rounded-full bg-track">
+-                        <LockKeyhole aria-hidden className="size-4 text-fg-tertiary" />
+-                      </span>
+-                    )}
+-                    <div>
+-                      <Link
+-                        href={`/landlord/applications/${application.id}`}
+-                        className="font-medium text-fg hover:text-accent"
+-                      >
+-                        {disclosed
+-                          ? (hire?.fullName ?? l('Applicant unavailable', 'المتقدم غير متاح'))
+-                          : l('Awaiting applicant approval', 'بانتظار موافقة المتقدم')}
+-                      </Link>
+-                      <p className="mt-1 text-caption text-fg-tertiary">
+-                        {disclosed
+-                          ? (state.employers[hire?.employerId ?? '']?.name ??
+-                            l('Employer not recorded', 'جهة العمل غير مسجلة'))
+-                          : l('Details have not been released', 'لم تُشارك التفاصيل بعد')}
+-                      </p>
+-                    </div>
+-                  </div>
+-                </Td>
+-                <Td>
+-                  <span className="text-fg">
+-                    {property?.name ?? l('Property not recorded', 'العقار غير مسجل')}
+-                  </span>
+-                  <p className="mt-1 text-caption text-fg-tertiary">
+-                    {property
+-                      ? `${l('Unit', 'الوحدة')} ${property.unit} · ${bedroomLabel(property.bedrooms, locale)}`
+-                      : '—'}
+-                  </p>
+-                </Td>
+-                <Td>
+-                  <StateBadge state={application.state} />
+-                </Td>
+-                <Td className="whitespace-nowrap text-label text-fg-secondary">
+-                  {application.submittedAt
+-                    ? formatDate(application.submittedAt, locale)
+-                    : l('Not submitted', 'لم يُرسل')}
+-                </Td>
+-                <Td>
+-                  <ActionLink href={`/landlord/applications/${application.id}`}>
+-                    {reviewable(application) ? l('Review', 'مراجعة') : l('View', 'عرض')}
+-                  </ActionLink>
+-                </Td>
+-              </Tr>
+-            );
+-          })}
+-        </tbody>
+-      </Table>
++    <div className="flex flex-col items-start gap-1.5">
++      {application.risk ? (
++        <RiskBadge level={application.risk.level} />
++      ) : (
++        <span className="text-caption text-fg-tertiary">{l('No assessment', 'لا يوجد تقييم')}</span>
++      )}
++      <BackedChip backed={application.employerBacked} />
+     </div>
+   );
+ }
+ 
++export function ApplicationRows({ applications }: { applications: Application[] }) {
++  const { l } = useLandlordLocale();
++  const model = useRowModel();
++  return (
++    <>
++      <div className="hidden overflow-hidden rounded-lg border border-edge xl:block">
++        <Table>
++          <thead>
++            <tr>
++              <Th>{l('Applicant', 'المتقدم')}</Th>
++              <Th>{l('Property', 'العقار')}</Th>
++              <Th>{l('Assessment', 'التقييم')}</Th>
++              <Th>{l('Status', 'الحالة')}</Th>
++              <Th>{l('Received', 'تاريخ الاستلام')}</Th>
++              <Th>
++                <span className="sr-only">{l('Open application', 'فتح الطلب')}</span>
++              </Th>
++            </tr>
++          </thead>
++          <tbody>
++            {applications.map((application) => {
++              const m = model(application);
++              const needsYou = reviewable(application);
++              return (
++                <Tr key={application.id} className="h-[4.75rem]">
++                  <Td className="relative">
++                    {needsYou ? (
++                      <span
++                        aria-hidden
++                        className="absolute inset-y-3 start-0 w-0.5 rounded-full bg-accent"
++                      />
++                    ) : null}
++                    <div className="flex items-center gap-3">
++                      <ApplicantMark
++                        name={m.hire?.fullName ?? ''}
++                        disclosed={m.disclosed && !!m.hire}
++                      />
++                      <div className="min-w-0">
++                        <Link
++                          href={`/landlord/applications/${application.id}`}
++                          className="font-medium text-fg hover:text-accent"
++                        >
++                          {m.name}
++                        </Link>
++                        <p className="mt-0.5 text-caption text-fg-tertiary">{m.employer}</p>
++                      </div>
++                    </div>
++                  </Td>
++                  <Td>
++                    <span className="text-fg">
++                      {m.property?.name ?? l('Property not recorded', 'العقار غير مسجل')}
++                    </span>
++                    <p className="mt-0.5 text-caption text-fg-tertiary">{m.unitLine}</p>
++                  </Td>
++                  <Td>
++                    <AssessmentCell application={application} />
++                  </Td>
++                  <Td>
++                    <StateBadge state={application.state} />
++                  </Td>
++                  <Td className="whitespace-nowrap text-label text-fg-secondary">{m.received}</Td>
++                  <Td>
++                    <ActionLink href={`/landlord/applications/${application.id}`}>
++                      {needsYou ? l('Review', 'مراجعة') : l('View', 'عرض')}
++                    </ActionLink>
++                  </Td>
++                </Tr>
++              );
++            })}
++          </tbody>
++        </Table>
++      </div>
++      <ul className="grid gap-3 md:grid-cols-2 xl:hidden">
++        {applications.map((application) => {
++          const m = model(application);
++          const needsYou = reviewable(application);
++          return (
++            <li
++              key={application.id}
++              className={cn(
++                'flex flex-col gap-3 rounded-lg border p-4',
++                needsYou ? 'border-accent/40 bg-accent-soft/40' : 'border-edge',
++              )}
++            >
++              <div className="flex items-start gap-3">
++                <ApplicantMark name={m.hire?.fullName ?? ''} disclosed={m.disclosed && !!m.hire} />
++                <div className="min-w-0 flex-1">
++                  <Link
++                    href={`/landlord/applications/${application.id}`}
++                    className="font-medium text-fg hover:text-accent"
++                  >
++                    {m.name}
++                  </Link>
++                  <p className="mt-0.5 text-caption text-fg-tertiary">{m.employer}</p>
++                </div>
++                <StateBadge state={application.state} />
++              </div>
++              <div>
++                <p className="text-body text-fg">
++                  {m.property?.name ?? l('Property not recorded', 'العقار غير مسجل')}
++                </p>
++                <p className="mt-0.5 text-caption text-fg-tertiary">{m.unitLine}</p>
++              </div>
++              <AssessmentCell application={application} />
++              <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-3">
++                <span className="text-label text-fg-secondary">{m.received}</span>
++                <ActionLink href={`/landlord/applications/${application.id}`}>
++                  {needsYou ? l('Review', 'مراجعة') : l('View', 'عرض')}
++                </ActionLink>
++              </div>
++            </li>
++          );
++        })}
++      </ul>
++    </>
++  );
++}
++
+ export function ApplicationsPage() {
+   const { applications } = usePortfolio();
+   const { l } = useLandlordLocale();
+@@ -140,6 +244,32 @@ export function ApplicationsPage() {
+         application.state === filter)
+     );
+   });
++  const tiles = [
++    {
++      key: 'review',
++      label: l('Needs your review', 'بانتظار مراجعتك'),
++      count: applications.filter(reviewable).length,
++      dot: 'bg-accent',
++    },
++    {
++      key: 'awaiting_approval',
++      label: l('Waiting on applicant', 'بانتظار المتقدم'),
++      count: applications.filter((a) => a.state === 'awaiting_approval').length,
++      dot: 'bg-[rgb(var(--brand-saffron))]',
++    },
++    {
++      key: 'terms_offered',
++      label: l('Terms offered', 'شروط مقدمة'),
++      count: applications.filter((a) => a.state === 'terms_offered').length,
++      dot: 'bg-[rgb(var(--brand-seafoam))]',
++    },
++    {
++      key: 'approved',
++      label: l('Approved', 'معتمد'),
++      count: applications.filter((a) => a.state === 'approved').length,
++      dot: 'bg-success-solid',
++    },
++  ];
+   return (
+     <>
+       <Title
+@@ -151,6 +281,33 @@ export function ApplicationsPage() {
+         )}
+       />
+       <div className="space-y-5 px-4 pb-8 sm:px-6">
++        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
++          {tiles.map((tile) => {
++            const active = filter === tile.key;
++            return (
++              <button
++                key={tile.key}
++                type="button"
++                aria-pressed={active}
++                onClick={() => setFilter(active ? 'all' : tile.key)}
++                className={cn(
++                  'rounded-lg border p-4 text-start transition-colors motion-reduce:transition-none',
++                  active
++                    ? 'border-accent bg-accent-soft'
++                    : 'border-edge hover:border-line-strong hover:bg-subtle',
++                )}
++              >
++                <span className="flex items-center gap-2 text-label text-fg-secondary">
++                  <span aria-hidden className={cn('size-2 rounded-full', tile.dot)} />
++                  {tile.label}
++                </span>
++                <span className="mt-2 block text-display font-medium tracking-tight">
++                  {tile.count}
++                </span>
++              </button>
++            );
++          })}
++        </div>
+         <div className="flex flex-wrap gap-3">
+           <SearchField
+             value={query}
+@@ -216,6 +373,160 @@ export function ApplicationsPage() {
+   );
+ }
+ 
++const levelRank: Record<RiskSummary['level'], number> = {
++  low: 1,
++  moderate: 2,
++  elevated: 3,
++};
++
++/** Three-step level indicator. The label next to it carries the meaning, colour only reinforces it. */
++function RiskMeter({ level }: { level: RiskSummary['level'] }) {
++  const { l } = useLandlordLocale();
++  const rank = levelRank[level];
++  const fill =
++    level === 'low'
++      ? 'bg-success-solid'
++      : level === 'moderate'
++        ? 'bg-[rgb(var(--brand-saffron))]'
++        : 'bg-danger-solid';
++  return (
++    <span
++      role="img"
++      aria-label={`${l('Risk level', 'مستوى المخاطر')} ${rank} ${l('of', 'من')} 3`}
++      className="flex items-center gap-1"
++    >
++      {[1, 2, 3].map((step) => (
++        <span
++          key={step}
++          className={cn('h-2 w-9 rounded-full', step <= rank ? fill : 'bg-line-strong/30')}
++        />
++      ))}
++    </span>
++  );
++}
++
++function RiskPointRow({ point }: { point: RiskPoint }) {
++  const { locale, l } = useLandlordLocale();
++  const kind =
++    point.effect === 'positive'
++      ? {
++          Icon: Check,
++          tile: 'bg-success-soft text-success',
++          text: 'text-success',
++          label: l('Supports approval', 'يدعم الاعتماد'),
++        }
++      : point.effect === 'concern'
++        ? {
++            Icon: AlertTriangle,
++            tile: 'bg-warning-soft text-warning',
++            text: 'text-warning',
++            label: l('Worth checking', 'يستحق المراجعة'),
++          }
++        : {
++            Icon: Minus,
++            tile: 'bg-track text-fg-secondary',
++            text: 'text-fg-tertiary',
++            label: l('Neutral', 'محايد'),
++          };
++  return (
++    <li className="flex gap-3 px-4 py-4 sm:px-5">
++      <span
++        className={cn(
++          'mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full',
++          kind.tile,
++        )}
++      >
++        <kind.Icon aria-hidden className="size-4" />
++      </span>
++      <div className="min-w-0 flex-1">
++        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
++          <h3 className="text-body font-medium" dir="auto">
++            {recordText(point.label, locale)}
++          </h3>
++          <span className={cn('text-caption font-medium', kind.text)}>{kind.label}</span>
++        </div>
++        <p className="mt-1 text-body text-fg-secondary" dir="auto">
++          {recordText(point.reason, locale)}
++        </p>
++      </div>
++    </li>
++  );
++}
++
++function RiskPanel({ risk }: { risk: RiskSummary }) {
++  const { locale, l } = useLandlordLocale();
++  const positives = risk.points.filter((p) => p.effect === 'positive').length;
++  const concerns = risk.points.filter((p) => p.effect === 'concern').length;
++  return (
++    <div className="overflow-hidden rounded-lg border border-edge">
++      <div className="space-y-4 border-b border-line bg-subtle p-5">
++        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
++          <RiskMeter level={risk.level} />
++          <RiskBadge level={risk.level} />
++          <span className="ms-auto flex flex-wrap items-center gap-x-4 gap-y-1 text-label text-fg-secondary">
++            <span className="inline-flex items-center gap-1.5">
++              <Check aria-hidden className="size-4 text-success" />
++              {positives} {l('supporting', 'داعمة')}
++            </span>
++            <span className="inline-flex items-center gap-1.5">
++              <AlertTriangle aria-hidden className="size-4 text-warning" />
++              {concerns} {l('to check', 'للمراجعة')}
++            </span>
++          </span>
++        </div>
++        <p className="max-w-2xl text-title font-medium text-fg" dir="auto">
++          {recordText(risk.headline, locale)}
++        </p>
++      </div>
++      <ul className="divide-y divide-line">
++        {risk.points.map((point) => (
++          <RiskPointRow key={point.label} point={point} />
++        ))}
++      </ul>
++    </div>
++  );
++}
++
++function EmployerBackingCard({ backed, employer }: { backed: boolean; employer: string }) {
++  const { l } = useLandlordLocale();
++  return (
++    <section className="rounded-lg border border-edge p-5">
++      <div className="flex items-start gap-3">
++        <span
++          className={cn(
++            'flex size-9 shrink-0 items-center justify-center rounded-lg',
++            backed ? 'bg-accent-soft text-accent' : 'bg-track text-fg-tertiary',
++          )}
++        >
++          <BadgeCheck aria-hidden className="size-5" />
++        </span>
++        <div className="min-w-0">
++          <h2 className="text-title font-medium">{l('Employer backing', 'دعم جهة العمل')}</h2>
++          <div className="mt-1.5 flex flex-wrap items-center gap-2">
++            <Badge tone={backed ? 'accent' : 'neutral'}>
++              {backed
++                ? l('Employer backed', 'مدعوم من جهة العمل')
++                : l('No backing recorded', 'لم يُسجل دعم')}
++            </Badge>
++            <span className="text-label text-fg-secondary">{employer}</span>
++          </div>
++        </div>
++      </div>
++      <p className="mt-3 text-body text-fg-secondary">
++        {backed
++          ? l(
++              'The employer has backed this application, which lowers the chance of a missed payment.',
++              'دعمت جهة العمل هذا الطلب، مما يقلل احتمال التأخر في السداد.',
++            )
++          : l(
++              'No backing is recorded. Base your decision on the assessment and disclosure.',
++              'لا يوجد دعم مسجل. استند في قرارك إلى التقييم والمعلومات المشتركة.',
++            )}
++      </p>
++    </section>
++  );
++}
++
+ export function ApplicationDetail({ id }: { id: string }) {
+   const state = useAppState();
+   const { landlordId } = usePortfolio();
+@@ -247,6 +558,7 @@ export function ApplicationDetail({ id }: { id: string }) {
+     );
+   const hire = state.hires[application.hireId];
+   const property = state.properties[application.propertyId ?? ''];
++  const employerName = state.employers[hire?.employerId ?? '']?.name ?? '—';
+   const draft = application.state === 'awaiting_approval';
+   const decisions = Object.values(state.decisions)
+     .filter((d) => d.applicationId === id)
+@@ -262,25 +574,98 @@ export function ApplicationDetail({ id }: { id: string }) {
+           {l('Applications', 'طلبات الإيجار')}
+         </Link>
+       </div>
+-      <Title
+-        eyebrow={`${l('Application', 'الطلب')} · ${application.id}`}
+-        title={
+-          draft
+-            ? l('Applicant approval pending', 'بانتظار موافقة المتقدم')
+-            : (hire?.fullName ?? l('Rental application', 'طلب إيجار'))
+-        }
+-        description={
+-          draft
+-            ? l(
+-                'The applicant has not released this application. Review and decision controls unlock after approval.',
+-                'لم يوافق المتقدم على مشاركة الطلب بعد. تتاح المراجعة والقرارات بعد موافقته.',
+-              )
+-            : `${state.employers[hire?.employerId ?? '']?.name ?? ''} · ${hire?.role ?? ''}`
+-        }
+-        action={<StateBadge state={application.state} />}
+-      />
+-      <div className="grid gap-6 px-4 pb-8 sm:px-6 xl:grid-cols-[minmax(0,1fr)_360px]">
++      <header className="flex flex-wrap items-start justify-between gap-4 px-4 pb-6 pt-4 sm:px-6">
++        <div className="flex min-w-0 items-center gap-4">
++          {draft || !hire ? (
++            <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-track">
++              <LockKeyhole aria-hidden className="size-6 text-fg-tertiary" />
++            </span>
++          ) : (
++            <Avatar
++              name={hire.fullName}
++              className="size-14 bg-accent-soft text-title text-accent"
++            />
++          )}
++          <div className="min-w-0">
++            <p className="mb-1 text-label font-medium text-accent">
++              {l('Application', 'الطلب')} · <span dir="ltr">{application.id}</span>
++            </p>
++            <h1 className="text-display font-medium tracking-tight text-fg sm:text-[1.75rem] sm:leading-9">
++              {draft
++                ? l('Applicant approval pending', 'بانتظار موافقة المتقدم')
++                : (hire?.fullName ?? l('Rental application', 'طلب إيجار'))}
++            </h1>
++            <p className="mt-1 text-body text-fg-secondary">
++              {draft
++                ? l(
++                    'The applicant has not released this application. Review and decision controls unlock after approval.',
++                    'لم يوافق المتقدم على مشاركة الطلب بعد. تتاح المراجعة والقرارات بعد موافقته.',
++                  )
++                : `${employerName} · ${hire?.role ?? ''}`}
++            </p>
++          </div>
++        </div>
++        <StateBadge state={application.state} />
++      </header>
++      {!draft ? (
++        <dl className="mx-4 mb-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-edge bg-edge sm:mx-6 lg:grid-cols-4">
++          <div className="bg-surface p-4">
++            <dt className="text-label text-fg-tertiary">{l('Assessment', 'التقييم')}</dt>
++            <dd className="mt-2">
++              {application.risk ? (
++                <RiskBadge level={application.risk.level} />
++              ) : (
++                <span className="text-body text-fg-tertiary">—</span>
++              )}
++            </dd>
++          </div>
++          <div className="bg-surface p-4">
++            <dt className="text-label text-fg-tertiary">
++              {l('Employer backing', 'دعم جهة العمل')}
++            </dt>
++            <dd className="mt-2">
++              <BackedChip backed={application.employerBacked} />
++            </dd>
++          </div>
++          <div className="bg-surface p-4">
++            <dt className="text-label text-fg-tertiary">{l('Received', 'تاريخ الاستلام')}</dt>
++            <dd className="mt-2 text-body font-medium">
++              {application.submittedAt ? formatDate(application.submittedAt, locale) : '—'}
++            </dd>
++          </div>
++          <div className="bg-surface p-4">
++            <dt className="text-label text-fg-tertiary">
++              {l('Estimated annual rent', 'الإيجار السنوي التقديري')}
++            </dt>
++            <dd className="mt-2 text-body font-medium">
++              {property ? formatAed(property.estAnnualRentAed, locale) : '—'}
++            </dd>
++          </div>
++        </dl>
++      ) : null}
++      <div className="grid gap-6 px-4 pb-8 sm:px-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+         <div className="min-w-0 space-y-7">
++          {!draft ? (
++            <section>
++              <SectionTitle
++                title={l('Application assessment', 'تقييم الطلب')}
++                description={l(
++                  'Illustrative assessment with the reasoning supplied in the application.',
++                  'تقييم توضيحي وأسباب مسجلة ضمن الطلب.',
++                )}
++              />
++              {application.risk ? (
++                <RiskPanel risk={application.risk} />
++              ) : (
++                <p className="rounded-lg bg-subtle p-4 text-body text-fg-secondary">
++                  {l(
++                    'No assessment was supplied for this application. Base your decision on the available disclosure and records.',
++                    'لم يُرفق تقييم لهذا الطلب. استند إلى المعلومات والسجلات المتاحة عند اتخاذ القرار.',
++                  )}
++                </p>
++              )}
++            </section>
++          ) : null}
+           <section className="rounded-lg border border-edge p-5">
+             <SectionTitle
+               title={l('Property and lease', 'العقار والإيجار')}
+@@ -292,12 +677,17 @@ export function ApplicationDetail({ id }: { id: string }) {
+                 ) : undefined
+               }
+             />
+-            <h3 className="text-title font-medium">{property?.name ?? '—'}</h3>
+-            <p className="mt-1 text-body text-fg-secondary">
+-              {property
+-                ? `${property.area} · ${l('Unit', 'الوحدة')} ${property.unit} · ${bedroomLabel(property.bedrooms, locale)}`
+-                : '—'}
+-            </p>
++            <div className="flex gap-4">
++              {property ? <PropertyIllustration property={property} compact /> : null}
++              <div className="min-w-0">
++                <h3 className="text-title font-medium">{property?.name ?? '—'}</h3>
++                <p className="mt-1 text-body text-fg-secondary">
++                  {property
++                    ? `${property.area} · ${l('Unit', 'الوحدة')} ${property.unit} · ${bedroomLabel(property.bedrooms, locale)}`
++                    : '—'}
++                </p>
++              </div>
++            </div>
+             <div className="mt-5 grid gap-4 border-t border-line pt-4 sm:grid-cols-2">
+               <div>
+                 <p className="text-label text-fg-tertiary">
+@@ -329,60 +719,6 @@ export function ApplicationDetail({ id }: { id: string }) {
+             </div>
+           ) : (
+             <>
+-              <section>
+-                <SectionTitle
+-                  title={l('Application assessment', 'تقييم الطلب')}
+-                  description={l(
+-                    'Illustrative assessment with the reasoning supplied in the application.',
+-                    'تقييم توضيحي وأسباب مسجلة ضمن الطلب.',
+-                  )}
+-                />
+-                {application.risk ? (
+-                  <div className="rounded-lg border border-edge">
+-                    <div className="border-b border-line bg-subtle p-5">
+-                      <Badge tone={application.risk.level === 'low' ? 'success' : 'warning'}>
+-                        {application.risk.level === 'low'
+-                          ? l('Low risk', 'مخاطر منخفضة')
+-                          : application.risk.level === 'moderate'
+-                            ? l('Moderate risk', 'مخاطر متوسطة')
+-                            : l('Elevated risk', 'مخاطر مرتفعة')}
+-                      </Badge>
+-                      <p className="mt-3 text-body text-fg-secondary" dir="auto">
+-                        {recordText(application.risk.headline, locale)}
+-                      </p>
+-                    </div>
+-                    <div className="divide-y divide-line">
+-                      {application.risk.points.map((point) => (
+-                        <div key={point.label} className="flex gap-3 p-4">
+-                          {point.effect === 'positive' ? (
+-                            <CheckCircle2
+-                              aria-hidden
+-                              className="mt-0.5 size-4 shrink-0 text-success"
+-                            />
+-                          ) : (
+-                            <Info aria-hidden className="mt-0.5 size-4 shrink-0 text-warning" />
+-                          )}
+-                          <div>
+-                            <h3 className="text-body font-medium" dir="auto">
+-                              {recordText(point.label, locale)}
+-                            </h3>
+-                            <p className="mt-1 text-body text-fg-secondary" dir="auto">
+-                              {recordText(point.reason, locale)}
+-                            </p>
+-                          </div>
+-                        </div>
+-                      ))}
+-                    </div>
+-                  </div>
+-                ) : (
+-                  <p className="rounded-lg bg-subtle p-4 text-body text-fg-secondary">
+-                    {l(
+-                      'No assessment was supplied for this application. Base your decision on the available disclosure and records.',
+-                      'لم يُرفق تقييم لهذا الطلب. استند إلى المعلومات والسجلات المتاحة عند اتخاذ القرار.',
+-                    )}
+-                  </p>
+-                )}
+-              </section>
+               <section>
+                 <SectionTitle
+                   title={l('Recorded application disclosure', 'المعلومات المشتركة المسجلة')}
+@@ -476,8 +812,8 @@ export function ApplicationDetail({ id }: { id: string }) {
+             </section>
+           ) : null}
+         </div>
+-        <aside className="min-w-0 space-y-5">
+-          <section className="rounded-lg border border-edge bg-subtle p-5">
++        <aside className="min-w-0 space-y-5 xl:sticky xl:top-4 xl:self-start">
++          <section className="rounded-lg border border-accent/40 bg-surface p-5">
+             <h2 className="text-title font-medium">{l('Your decision', 'قرارك')}</h2>
+             <div className="mt-3">
+               <Feedback error={mutation.error} success={mutation.success} />
+@@ -509,17 +845,7 @@ export function ApplicationDetail({ id }: { id: string }) {
+             )}
+           </section>
+           {!draft ? (
+-            <section className="rounded-lg border border-edge p-5">
+-              <h2 className="text-title font-medium">{l('Employer backing', 'دعم جهة العمل')}</h2>
+-              <Badge tone={application.employerBacked ? 'accent' : 'neutral'} className="mt-3">
+-                {application.employerBacked
+-                  ? l('Employer backed', 'مدعوم من جهة العمل')
+-                  : l('No backing recorded', 'لم يُسجل دعم')}
+-              </Badge>
+-              <p className="mt-3 text-label text-fg-secondary">
+-                {state.employers[hire?.employerId ?? '']?.name ?? '—'}
+-              </p>
+-            </section>
++            <EmployerBackingCard backed={application.employerBacked} employer={employerName} />
+           ) : null}
+           {property && !draft ? (
+             <section className="rounded-lg border border-edge p-5">
+@@ -610,6 +936,39 @@ function DecisionForm({
+   const valid =
+     note.trim().length >= 8 &&
+     (!needsTerms || Boolean(property?.chequeOptions.includes(Number(cheques))));
++  const outcomeHint: Record<Decision['outcome'], string> = {
++    terms_offered: l(
++      'The applicant sees your terms and must accept them before the lease is approved.',
++      'يطلع المتقدم على شروطك ويجب أن يوافق عليها قبل اعتماد الإيجار.',
++    ),
++    approved: l(
++      'Approves the application on the cheque schedule below.',
++      'يعتمد الطلب وفق جدول الشيكات أدناه.',
++    ),
++    info_requested: l(
++      'Pauses the review until the applicant adds the missing details.',
++      'يوقف المراجعة إلى أن يضيف المتقدم المعلومات الناقصة.',
++    ),
++    declined: l(
++      'Closes the application. Your reason is recorded in the decision history.',
++      'يغلق الطلب ويُسجل سببك في سجل القرارات.',
++    ),
++  };
++  const suggestedNote: Record<Decision['outcome'], string> = {
++    terms_offered: l(
++      'Lease offered on the selected cheque schedule. Please review and accept to proceed.',
++      'عرض إيجار وفق جدول الشيكات المحدد. يرجى المراجعة والموافقة للمتابعة.',
++    ),
++    approved: l('Approved on the terms shown.', 'تم الاعتماد وفق الشروط المعروضة.'),
++    info_requested: l(
++      'Please share the missing details so the review can be completed.',
++      'يرجى تزويدنا بالمعلومات الناقصة لإتمام المراجعة.',
++    ),
++    declined: l(
++      'We are unable to proceed with this application for this unit.',
++      'تعذر المضي في هذا الطلب لهذه الوحدة.',
++    ),
++  };
+   async function submit(e: React.FormEvent) {
+     e.preventDefault();
+     if (!valid) return;
+@@ -652,10 +1011,14 @@ function DecisionForm({
+             : l('Start review', 'بدء المراجعة')}
+         </Button>
+       ) : null}
+-      <label className="block space-y-2">
+-        <span className="text-label font-medium">{l('Outcome', 'القرار')}</span>
++      <div className="block space-y-2">
++        <label htmlFor="decision-outcome" className="block text-label font-medium">
++          {l('Outcome', 'القرار')}
++        </label>
+         <select
++          id="decision-outcome"
+           value={outcome}
++          aria-describedby="decision-outcome-hint"
+           onChange={(e) => {
+             setOutcome(e.target.value as Decision['outcome']);
+             mutation.clear();
+@@ -667,7 +1030,11 @@ function DecisionForm({
+           <option value="info_requested">{l('Request information', 'طلب معلومات')}</option>
+           <option value="declined">{l('Decline application', 'رفض الطلب')}</option>
+         </select>
+-      </label>
++        <p id="decision-outcome-hint" className="flex gap-2 text-caption text-fg-tertiary">
++          <CircleDot aria-hidden className="mt-0.5 size-3.5 shrink-0" />
++          {outcomeHint[outcome]}
++        </p>
++      </div>
+       {needsTerms ? (
+         <label className="block space-y-2">
+           <span className="text-label font-medium">{l('Cheque schedule', 'عدد الشيكات')}</span>
+@@ -684,13 +1051,23 @@ function DecisionForm({
+           </select>
+         </label>
+       ) : null}
+-      <label className="block space-y-2">
+-        <span className="text-label font-medium">
+-          {needsTerms
+-            ? l('Lease note and conditions', 'ملاحظات الإيجار وشروطه')
+-            : l('Reason or requested information', 'السبب أو المعلومات المطلوبة')}
+-        </span>
++      <div className="space-y-2">
++        <div className="flex flex-wrap items-center justify-between gap-2">
++          <label htmlFor="decision-note" className="text-label font-medium">
++            {needsTerms
++              ? l('Lease note and conditions', 'ملاحظات الإيجار وشروطه')
++              : l('Reason or requested information', 'السبب أو المعلومات المطلوبة')}
++          </label>
++          <button
++            type="button"
++            onClick={() => setNote(suggestedNote[outcome])}
++            className="rounded text-caption font-medium text-accent hover:underline"
++          >
++            {l('Use suggested note', 'استخدم ملاحظة مقترحة')}
++          </button>
++        </div>
+         <textarea
++          id="decision-note"
+           required
+           minLength={8}
+           maxLength={1000}
+@@ -702,18 +1079,13 @@ function DecisionForm({
+             'وضح القرار والخطوات التالية…',
+           )}
+         />
+-      </label>
+-      <p className="text-caption text-fg-tertiary">
+-        {l(
+-          'This records a decision in the demo and updates the applicant’s roadmap. It sends no external message.',
+-          'يسجل القرار في العرض ويحدث خارطة المتقدم. لا يُرسل أي رسالة خارجية.',
+-        )}
+-      </p>
++      </div>
+       <Button
+         type="submit"
+-        className="h-10 w-full"
++        className="h-11 w-full"
+         variant={outcome === 'declined' ? 'destructive' : 'primary'}
+         disabled={!valid || mutation.pending}
++        aria-describedby="decision-footnote"
+       >
+         {mutation.pending
+           ? l('Saving…', 'جارٍ الحفظ…')
+@@ -725,6 +1097,18 @@ function DecisionForm({
+                 ? l('Save information request', 'حفظ طلب المعلومات')
+                 : l('Save decline', 'حفظ الرفض')}
+       </Button>
++      <p id="decision-footnote" className="text-caption text-fg-tertiary">
++        {!valid
++          ? l(
++              'Add a note of at least 8 characters to enable saving. ',
++              'أضف ملاحظة من 8 أحرف على الأقل لتفعيل الحفظ. ',
++            )
++          : ''}
++        {l(
++          'This records a decision in the demo and updates the applicant’s roadmap. It sends no external message.',
++          'يسجل القرار في العرض ويحدث خارطة المتقدم. لا يُرسل أي رسالة خارجية.',
++        )}
++      </p>
+     </form>
+   );
+ }
+diff --git a/apps/web/src/components/landlord/illustration.tsx b/apps/web/src/components/landlord/illustration.tsx
+new file mode 100644
+index 0000000..280c760
+--- /dev/null
++++ b/apps/web/src/components/landlord/illustration.tsx
+@@ -0,0 +1,138 @@
++import { cn } from '@/lib/cn';
++import type { Property } from '@/domain/types';
++
++/** Stable small integer from a string, so every unit keeps the same picture between renders. */
++function seed(text: string) {
++  let h = 2166136261;
++  for (let i = 0; i < text.length; i += 1) {
++    h ^= text.charCodeAt(i);
++    h = Math.imul(h, 16777619);
++  }
++  return h >>> 0;
++}
++
++const sand = 'fill-[rgb(var(--brand-sand))] dark:fill-[rgb(var(--brand-ink))]';
++const seafoam = 'fill-[rgb(var(--brand-seafoam))]';
++const petrol = 'fill-[rgb(var(--brand-petrol))]';
++const ink = 'fill-[rgb(var(--brand-ink))]';
++const coral = 'fill-[rgb(var(--brand-coral))]';
++const saffron = 'fill-[rgb(var(--brand-saffron))]';
++
++/** Three colourways from the brand palette. Each pairs a sky, a facade and a window colour. */
++const PALETTES = [
++  {
++    frame: 'bg-[rgb(var(--brand-sand))] dark:bg-[rgb(var(--subtle))]',
++    sky: sand,
++    far: 'fill-[rgb(var(--brand-seafoam))] opacity-[0.45] dark:opacity-[0.1]',
++    ground: 'fill-[rgb(var(--brand-seafoam))] opacity-[0.7] dark:opacity-[0.15]',
++    facade: seafoam,
++    window: ink,
++    accent: coral,
++    sun: saffron,
++  },
++  {
++    frame: 'bg-[rgb(var(--brand-seafoam))] dark:bg-[rgb(var(--subtle))]',
++    sky: 'fill-[rgb(var(--brand-seafoam))] opacity-[0.45] dark:fill-[rgb(var(--brand-ink))] dark:opacity-100',
++    far: 'fill-[rgb(var(--brand-sand))] dark:opacity-[0.1]',
++    ground: 'fill-[rgb(var(--brand-sand))] dark:opacity-[0.15]',
++    facade: petrol,
++    window: 'fill-[rgb(var(--brand-sand))]',
++    accent: saffron,
++    sun: coral,
++  },
++  {
++    frame: 'bg-[rgb(var(--brand-sand))] dark:bg-[rgb(var(--subtle))]',
++    sky: sand,
++    far: 'fill-[rgb(var(--brand-coral))] opacity-[0.25] dark:opacity-[0.1]',
++    ground: 'fill-[rgb(var(--brand-seafoam))] opacity-[0.6] dark:opacity-[0.15]',
++    facade: ink,
++    window: 'fill-[rgb(var(--brand-sand))]',
++    accent: saffron,
++    sun: coral,
++  },
++] as const;
++
++/**
++ * A flat doorway-and-building picture drawn from the brand palette. Height, width and the
++ * number of floors follow the unit size, and the colourway follows the unit id, so a row
++ * of properties reads as different buildings rather than one repeated tile.
++ */
++export function PropertyIllustration({
++  property,
++  compact = false,
++  className,
++}: {
++  property: Property;
++  compact?: boolean;
++  className?: string;
++}) {
++  const n = seed(property.id);
++  const p = PALETTES[n % PALETTES.length];
++  const kind = property.bedrooms <= 1 ? 'tower' : property.bedrooms === 2 ? 'midrise' : 'villa';
++  const groundY = 112;
++  const w = kind === 'tower' ? 60 : kind === 'midrise' ? 108 : 124;
++  const floors = kind === 'tower' ? 6 + (n % 2) : kind === 'midrise' ? 4 + (n % 2) : 2;
++  const cols = kind === 'tower' ? 3 : kind === 'midrise' ? 5 : 6;
++  const rowH = kind === 'villa' ? 14 : 11;
++  const h = floors * rowH + 14;
++  const x = (240 - w) / 2 + ((n >> 3) % 3) * 8 - 8;
++  const y = groundY - h;
++  const gap = (w - 16) / cols;
++  const lit = (n >> 5) % (floors * cols);
++  const doorX = x + w / 2 - 8;
++  return (
++    <div
++      aria-hidden
++      className={cn(
++        'relative isolate overflow-hidden rounded-lg',
++        p.frame,
++        compact ? 'h-20 w-24 shrink-0' : 'aspect-[5/3] w-full',
++        className,
++      )}
++    >
++      <svg
++        viewBox="0 0 240 144"
++        preserveAspectRatio="xMidYMid slice"
++        className="absolute inset-0 size-full"
++        focusable="false"
++      >
++        <rect width="240" height="144" className={p.sky} />
++        <circle cx={32 + ((n >> 2) % 4) * 52} cy="30" r="12" className={p.sun} />
++        <rect x="14" y={groundY - 44} width="34" height="44" rx="2" className={p.far} />
++        <rect x="196" y={groundY - 62} width="30" height="62" rx="2" className={p.far} />
++        <rect y={groundY} width="240" height="32" className={p.ground} />
++        <rect x="0" y={groundY} width="240" height="2" className={ink} opacity="0.12" />
++        <path
++          d={
++            kind === 'villa'
++              ? `M${x} ${y + 6} Q${x + w / 2} ${y - 14} ${x + w} ${y + 6} V${groundY} H${x} Z`
++              : `M${x} ${y + 3} a3 3 0 0 1 3-3 H${x + w - 3} a3 3 0 0 1 3 3 V${groundY} H${x} Z`
++          }
++          className={p.facade}
++        />
++        {Array.from({ length: floors * cols }, (_, i) => {
++          const col = i % cols;
++          const row = Math.floor(i / cols);
++          return (
++            <rect
++              key={i}
++              x={x + 8 + col * gap + 1.5}
++              y={y + 8 + row * rowH}
++              width={Math.max(gap - 5, 5)}
++              height={rowH - 5}
++              rx="1.5"
++              className={i === lit ? p.accent : p.window}
++              opacity={i === lit ? 1 : 0.78}
++            />
++          );
++        })}
++        <path
++          d={`M${doorX} ${groundY} V${groundY - 14} a8 8 0 0 1 16 0 V${groundY} Z`}
++          className="fill-[rgb(var(--brand-ink))]"
++        />
++        <circle cx={x + w + 18} cy={groundY - 9} r="9" className={petrol} opacity="0.85" />
++        <rect x={x + w + 17} y={groundY - 6} width="2" height="6" className={ink} />
++      </svg>
++    </div>
++  );
++}
+diff --git a/apps/web/src/components/landlord/leases.tsx b/apps/web/src/components/landlord/leases.tsx
+index 63cb0de..cd0caa9 100644
+--- a/apps/web/src/components/landlord/leases.tsx
++++ b/apps/web/src/components/landlord/leases.tsx
+@@ -2,6 +2,7 @@
+ 
+ import { useState } from 'react';
+ import { FileCheck } from 'lucide-react';
++import { Avatar } from '@/components/ui/avatar';
+ import { Button } from '@/components/ui/button';
+ import { EmptyState } from '@/components/ui/empty-state';
+ import { formatAed } from '@/lib/format';
+@@ -85,13 +86,21 @@ export function LeasesPage() {
+               return (
+                 <article key={decision.id} className="rounded-lg border border-edge p-5">
+                   <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+-                    <div>
+-                      <h2 className="text-title font-medium">
+-                        {hire?.fullName ?? l('Applicant unavailable', 'المتقدم غير متاح')}
+-                      </h2>
+-                      <p className="mt-1 text-label text-fg-secondary">
+-                        {property?.name ?? '—'} · {l('Unit', 'الوحدة')} {property?.unit ?? '—'}
+-                      </p>
++                    <div className="flex min-w-0 items-center gap-3">
++                      {hire ? (
++                        <Avatar
++                          name={hire.fullName}
++                          className="size-10 bg-accent-soft text-accent"
++                        />
++                      ) : null}
++                      <div className="min-w-0">
++                        <h2 className="text-title font-medium">
++                          {hire?.fullName ?? l('Applicant unavailable', 'المتقدم غير متاح')}
++                        </h2>
++                        <p className="mt-0.5 text-label text-fg-secondary">
++                          {property?.name ?? '—'} · {l('Unit', 'الوحدة')} {property?.unit ?? '—'}
++                        </p>
++                      </div>
+                     </div>
+                     <ActionLink href={`/landlord/applications/${decision.applicationId}`}>
+                       {l('Application', 'الطلب')}
+diff --git a/apps/web/src/components/landlord/overview.tsx b/apps/web/src/components/landlord/overview.tsx
+index 70d8b9c..25e2b7d 100644
+--- a/apps/web/src/components/landlord/overview.tsx
++++ b/apps/web/src/components/landlord/overview.tsx
+@@ -8,14 +8,16 @@ import { formatAed, formatDate } from '@/lib/format';
+ import { ApplicationRows, reviewable } from './applications';
+ import {
+   ActionLink,
++  BackedChip,
+   bedroomLabel,
+   propertyStatus,
++  RiskBadge,
+   SectionTitle,
+   Title,
+   useLandlordLocale,
+   usePortfolio,
+ } from './shared';
+-import { PropertyIllustration } from './properties';
++import { PropertyIllustration } from './illustration';
+ 
+ export function LandlordOverview() {
+   const { state, properties, applications } = usePortfolio();
+@@ -117,6 +119,12 @@ export function LandlordOverview() {
+                     ? `${focusProperty.name} · ${l('Unit', 'الوحدة')} ${focusProperty.unit}`
+                     : l('Property not recorded', 'العقار غير مسجل')}
+                 </p>
++                {focused.risk ? (
++                  <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
++                    <RiskBadge level={focused.risk.level} />
++                    <BackedChip backed={focused.employerBacked} />
++                  </div>
++                ) : null}
+                 <p className="mt-3 max-w-xl text-body text-fg-secondary">
+                   {l(
+                     'Review the disclosed evidence and payment schedule. Save an approval, offer revised terms, or request more information.',
+@@ -163,19 +171,25 @@ export function LandlordOverview() {
+             >
+               {approvedUnits.length ? (
+                 <span
+-                  style={{ width: `${(approvedUnits.length / properties.length) * 100}%` }}
++                  style={{
++                    width: `${(approvedUnits.length / properties.length) * 100}%`,
++                  }}
+                   className="bg-accent"
+                 />
+               ) : null}
+               {inReview.length ? (
+                 <span
+-                  style={{ width: `${(inReview.length / properties.length) * 100}%` }}
++                  style={{
++                    width: `${(inReview.length / properties.length) * 100}%`,
++                  }}
+                   className="bg-[#E4AD42]"
+                 />
+               ) : null}
+               {available.length ? (
+                 <span
+-                  style={{ width: `${(available.length / properties.length) * 100}%` }}
++                  style={{
++                    width: `${(available.length / properties.length) * 100}%`,
++                  }}
+                   className="bg-[#A5D9D0]"
+                 />
+               ) : null}
+diff --git a/apps/web/src/components/landlord/properties.tsx b/apps/web/src/components/landlord/properties.tsx
+index 60485ce..d88cf3e 100644
+--- a/apps/web/src/components/landlord/properties.tsx
++++ b/apps/web/src/components/landlord/properties.tsx
+@@ -7,8 +7,8 @@ import type { AbuDhabiArea, Property } from '@/domain/types';
+ import { Button } from '@/components/ui/button';
+ import { EmptyState } from '@/components/ui/empty-state';
+ import { formatAed } from '@/lib/format';
+-import { cn } from '@/lib/cn';
+ import { ApplicationRows } from './applications';
++import { PropertyIllustration } from './illustration';
+ import {
+   ActionLink,
+   bedroomLabel,
+@@ -35,50 +35,6 @@ const areas: AbuDhabiArea[] = [
+   'Al Maryah Island',
+ ];
+ 
+-export function PropertyIllustration({
+-  property,
+-  compact = false,
+-}: {
+-  property: Property;
+-  compact?: boolean;
+-}) {
+-  const villa = property.bedrooms >= 3;
+-  return (
+-    <div
+-      aria-hidden
+-      className={cn(
+-        'relative overflow-hidden rounded-lg bg-[#F6E7CD] dark:bg-[#233F46]',
+-        compact ? 'h-20 w-24 shrink-0' : 'h-36 w-full',
+-      )}
+-    >
+-      <span className="absolute inset-x-0 bottom-0 h-1/4 bg-[#A5D9D0]/70 dark:bg-[#A5D9D0]/15" />
+-      <div
+-        className={cn(
+-          'absolute bottom-[18%] start-[24%] border-2 border-[#173C47]/60 bg-[#A5D9D0] dark:border-[#A5D9D0]/50 dark:bg-[#0B6B78]',
+-          villa ? 'h-[42%] w-[58%] rounded-t-[18px]' : 'h-[75%] w-[45%] rounded-t-[6px]',
+-        )}
+-      >
+-        <div
+-          className={cn('grid h-[72%] gap-[5px] p-[8px]', villa ? 'grid-cols-3' : 'grid-cols-3')}
+-        >
+-          {Array.from({ length: villa ? 6 : 12 }, (_, i) => (
+-            <span
+-              key={i}
+-              className={cn(
+-                'rounded-t-[4px]',
+-                i % 5 === 0 ? 'bg-[#E98565]' : 'bg-[#173C47]/70 dark:bg-[#F6E7CD]/55',
+-              )}
+-            />
+-          ))}
+-        </div>
+-        <span className="absolute bottom-0 start-[42%] h-[20%] w-[18%] rounded-t-full bg-[#173C47]/70" />
+-      </div>
+-      <span className="absolute bottom-[15%] start-[12%] h-[25%] w-[8%] rounded-t-full bg-[#0B6B78] dark:bg-[#A5D9D0]" />
+-      <span className="absolute start-[74%] top-[16%] size-5 rounded-full bg-[#E4AD42]" />
+-    </div>
+-  );
+-}
+-
+ export function PropertiesPage() {
+   const { state, properties, landlordId } = usePortfolio();
+   const { locale, l } = useLandlordLocale();
+@@ -193,15 +149,21 @@ export function PropertiesPage() {
+           {l('Status is derived from recorded applications.', 'تُستمد الحالة من الطلبات المسجلة.')}
+         </p>
+         {rows.length ? (
+-          <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
++          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+             {rows.map((property) => (
+-              <article key={property.id} className="overflow-hidden rounded-lg border border-edge">
+-                <div className="p-3">
+-                  <PropertyIllustration property={property} />
++              <article
++                key={property.id}
++                className="overflow-hidden rounded-lg border border-edge transition-colors hover:border-line-strong motion-reduce:transition-none"
++              >
++                <div className="relative">
++                  <PropertyIllustration property={property} className="rounded-none" />
++                  <span className="absolute start-3 top-3 inline-flex rounded bg-surface shadow-sm">
++                    <PropertyBadge state={state} property={property} />
++                  </span>
+                 </div>
+-                <div className="p-5 pt-2">
++                <div className="p-5">
+                   <div className="flex items-start justify-between gap-3">
+-                    <div>
++                    <div className="min-w-0">
+                       <h2 className="text-title font-medium">
+                         <Link
+                           href={`/landlord/properties/${property.id}`}
+@@ -214,20 +176,17 @@ export function PropertiesPage() {
+                         {property.area} · {l('Unit', 'الوحدة')} {property.unit}
+                       </p>
+                     </div>
+-                    <span className="rounded-md bg-track px-2 py-1 text-caption">
++                    <span className="shrink-0 rounded-md bg-track px-2 py-1 text-caption">
+                       {bedroomLabel(property.bedrooms, locale)}
+                     </span>
+                   </div>
+-                  <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
+-                    <div>
+-                      <p className="text-caption text-fg-tertiary">
+-                        {l('Est. annual rent', 'الإيجار السنوي التقديري')}
+-                      </p>
+-                      <p className="mt-1 text-heading font-medium">
+-                        {formatAed(property.estAnnualRentAed, locale)}
+-                      </p>
+-                    </div>
+-                    <PropertyBadge state={state} property={property} />
++                  <div className="mt-4">
++                    <p className="text-caption text-fg-tertiary">
++                      {l('Est. annual rent', 'الإيجار السنوي التقديري')}
++                    </p>
++                    <p className="mt-1 text-heading font-medium">
++                      {formatAed(property.estAnnualRentAed, locale)}
++                    </p>
+                   </div>
+                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3">
+                     <span className="text-caption text-fg-secondary">
+@@ -336,8 +295,8 @@ export function PropertyDetail({ id }: { id: string }) {
+             <PropertyForm key={property.id} property={property} onDone={() => setEditing(false)} />
+           </section>
+         ) : null}
+-        <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
+-          <PropertyIllustration property={property} />
++        <div className="grid gap-5 lg:grid-cols-[380px_minmax(0,1fr)]">
++          <PropertyIllustration property={property} className="min-h-44 lg:aspect-auto lg:h-full" />
+           <section className="rounded-lg border border-edge p-5">
+             <div className="flex flex-wrap items-center justify-between gap-3">
+               <h2 className="text-title font-medium">{l('Unit details', 'تفاصيل الوحدة')}</h2>
+diff --git a/apps/web/src/components/landlord/shared.tsx b/apps/web/src/components/landlord/shared.tsx
+index 30b50dc..6e8f739 100644
+--- a/apps/web/src/components/landlord/shared.tsx
++++ b/apps/web/src/components/landlord/shared.tsx
+@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
+ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+ import {
+   ArrowUpRight,
++  BadgeCheck,
+   Building2,
+   CalendarDays,
+   Check,
+@@ -17,7 +18,14 @@ import { useAppState, useConnection, useStore } from '@/store/provider';
+ import { useI18n } from '@/lib/i18n/provider';
+ import { Badge, type BadgeTone } from '@/components/ui/badge';
+ import { cn } from '@/lib/cn';
+-import type { Application, AppState, Decision, Locale, Property } from '@/domain/types';
++import type {
++  Application,
++  AppState,
++  Decision,
++  Locale,
++  Property,
++  RiskSummary,
++} from '@/domain/types';
+ 
+ const PortfolioContext = createContext<{
+   landlordId: string;
+@@ -77,11 +85,31 @@ export function LandlordFrame({ children }: { children: ReactNode }) {
+   const { l } = useLandlordLocale();
+   const connection = useConnection();
+   const links = [
+-    { href: '/landlord', label: l('Overview', 'نظرة عامة'), icon: LayoutDashboard },
+-    { href: '/landlord/applications', label: l('Applications', 'طلبات الإيجار'), icon: FileText },
+-    { href: '/landlord/properties', label: l('Properties', 'العقارات'), icon: Building2 },
+-    { href: '/landlord/viewings', label: l('Viewings', 'المعاينات'), icon: CalendarDays },
+-    { href: '/landlord/leases', label: l('Lease decisions', 'قرارات الإيجار'), icon: Check },
++    {
++      href: '/landlord',
++      label: l('Overview', 'نظرة عامة'),
++      icon: LayoutDashboard,
++    },
++    {
++      href: '/landlord/applications',
++      label: l('Applications', 'طلبات الإيجار'),
++      icon: FileText,
++    },
++    {
++      href: '/landlord/properties',
++      label: l('Properties', 'العقارات'),
++      icon: Building2,
++    },
++    {
++      href: '/landlord/viewings',
++      label: l('Viewings', 'المعاينات'),
++      icon: CalendarDays,
++    },
++    {
++      href: '/landlord/leases',
++      label: l('Lease decisions', 'قرارات الإيجار'),
++      icon: Check,
++    },
+   ];
+   return (
+     <PortfolioContext.Provider value={{ landlordId, setLandlordId }}>
+@@ -150,7 +178,7 @@ export function LandlordFrame({ children }: { children: ReactNode }) {
+               : l('Connecting to live updates', 'جارٍ الاتصال بالتحديثات')}
+         </span>
+       </div>
+-      {children}
++      <div className="pb-16">{children}</div>
+     </PortfolioContext.Provider>
+   );
+ }
+@@ -212,7 +240,7 @@ export function SearchField({
+   label: string;
+ }) {
+   return (
+-    <label className="relative block min-w-0 flex-1">
++    <label className="relative block min-w-[14rem] flex-1">
+       <span className="sr-only">{label}</span>
+       <Search
+         aria-hidden
+@@ -244,6 +272,32 @@ export function StateBadge({ state }: { state: Application['state'] }) {
+   return <Badge tone={tone}>{l(en, ar)}</Badge>;
+ }
+ 
++export function RiskBadge({ level }: { level: RiskSummary['level'] }) {
++  const { l } = useLandlordLocale();
++  const labels: Record<RiskSummary['level'], [string, string, BadgeTone]> = {
++    low: ['Low risk', 'مخاطر منخفضة', 'success'],
++    moderate: ['Moderate risk', 'مخاطر متوسطة', 'warning'],
++    elevated: ['Elevated risk', 'مخاطر مرتفعة', 'danger'],
++  };
++  const [en, ar, tone] = labels[level];
++  return <Badge tone={tone}>{l(en, ar)}</Badge>;
++}
++
++/** Small marker for applications that the employer has agreed to stand behind. */
++export function BackedChip({ backed }: { backed: boolean }) {
++  const { l } = useLandlordLocale();
++  return backed ? (
++    <span className="inline-flex items-center gap-1 text-caption font-medium text-accent">
++      <BadgeCheck aria-hidden className="size-3.5" />
++      {l('Employer backed', 'مدعوم من جهة العمل')}
++    </span>
++  ) : (
++    <span className="text-caption text-fg-tertiary">
++      {l('No employer backing', 'بلا دعم من جهة العمل')}
++    </span>
++  );
++}
++
+ export function latestDecision(state: AppState, applicationId: string): Decision | undefined {
+   return Object.values(state.decisions)
+     .filter((d) => d.applicationId === applicationId)
+diff --git a/apps/web/src/components/landlord/viewings.tsx b/apps/web/src/components/landlord/viewings.tsx
+index 1f3551e..cbab5c6 100644
+--- a/apps/web/src/components/landlord/viewings.tsx
++++ b/apps/web/src/components/landlord/viewings.tsx
+@@ -336,7 +336,11 @@ function ViewingForm({
+             type: 'viewing.update',
+             landlordId: viewing.landlordId,
+             viewingId: viewing.id,
+-            patch: { startsAt, durationMinutes: Number(duration), note: note.trim() },
++            patch: {
++              startsAt,
++              durationMinutes: Number(duration),
++              note: note.trim(),
++            },
+           }
+         : {
+             type: 'viewing.create',
+-- 
+2.51.0.windows.1
+

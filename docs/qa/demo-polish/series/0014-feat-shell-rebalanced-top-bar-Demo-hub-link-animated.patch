@@ -1,0 +1,508 @@
+From a8fa32aa9020c96ddd3e73aa6892fb6296b551b6 Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 15:00:36 +0400
+Subject: [PATCH 14/18] feat(shell): rebalanced top bar, Demo hub link,
+ animated sidebar indicator
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/components/shell/app-shell.tsx |  15 +--
+ apps/web/src/components/shell/nav-link.tsx  |  49 ++++++-
+ apps/web/src/components/shell/shell-copy.ts |  23 ++++
+ apps/web/src/components/shell/sidebar.tsx   | 141 +++++++++++++++-----
+ apps/web/src/components/shell/top-bar.tsx   |  97 ++++++++++----
+ 5 files changed, 251 insertions(+), 74 deletions(-)
+ create mode 100644 apps/web/src/components/shell/shell-copy.ts
+
+diff --git a/apps/web/src/components/shell/app-shell.tsx b/apps/web/src/components/shell/app-shell.tsx
+index c3630da..7f5e57a 100644
+--- a/apps/web/src/components/shell/app-shell.tsx
++++ b/apps/web/src/components/shell/app-shell.tsx
+@@ -82,18 +82,19 @@ function ShellContent({ surface, children, organizationLabel }: AppShellProps) {
+         onOpenNav={() => setDrawerOpen(true)}
+         navOpen={drawerOpen}
+         user={config.user}
++        sidebarCollapsed={railCollapsed}
++        onToggleSidebar={toggleCollapsed}
+       />
+       <div className="flex min-h-0 flex-1">
+         <aside
+           className={cn(
+-            'hidden shrink-0 transition-[width] duration-200 md:block',
++            'hidden shrink-0 md:block motion-safe:transition-[width] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.2,0.8,0.2,1)]',
+             railCollapsed ? 'w-sidebar-rail' : 'w-sidebar',
+           )}
+         >
+           <Sidebar
+             groups={config.nav}
+             collapsed={railCollapsed}
+-            onToggleCollapsed={toggleCollapsed}
+             onNavigate={() => setDrawerOpen(false)}
+           />
+         </aside>
+@@ -104,14 +105,10 @@ function ShellContent({ surface, children, organizationLabel }: AppShellProps) {
+           description={org}
+           closeLabel={t('shell.closeNav')}
+           size="sm"
+-          className="w-72 [&>div>div]:p-0"
++          side="start"
++          className="w-72 [&>div]:min-h-full [&>div>div]:flex [&>div>div]:flex-col [&>div>div]:p-0"
+         >
+-          <Sidebar
+-            groups={config.nav}
+-            collapsed={false}
+-            onToggleCollapsed={toggleCollapsed}
+-            onNavigate={() => setDrawerOpen(false)}
+-          />
++          <Sidebar groups={config.nav} collapsed={false} onNavigate={() => setDrawerOpen(false)} />
+         </Drawer>
+         <div className="min-w-0 flex-1 pb-[var(--sheet-inset)] pe-[var(--sheet-inset)] max-md:ps-[var(--sheet-inset)]">
+           <main
+diff --git a/apps/web/src/components/shell/nav-link.tsx b/apps/web/src/components/shell/nav-link.tsx
+index 020b3b8..212c719 100644
+--- a/apps/web/src/components/shell/nav-link.tsx
++++ b/apps/web/src/components/shell/nav-link.tsx
+@@ -1,19 +1,25 @@
+ 'use client';
+ 
+ import Link from 'next/link';
++import { LayoutGrid } from 'lucide-react';
+ import { cn } from '@/lib/cn';
+ import type { NavItem } from '@/config/surfaces';
+ import { useI18n } from '@/lib/i18n/provider';
+ import { navLabel } from './nav-labels';
++import { SHELL_COPY } from './shell-copy';
+ 
+ export interface NavLinkProps {
+   item: NavItem;
+   active: boolean;
+   collapsed: boolean;
+   onNavigate?: () => void;
++  /** The sidebar draws the active plate itself, so the row only changes its text and icon. */
++  indicator?: boolean;
+ }
+ 
+-export function NavLink({ item, active, collapsed, onNavigate }: NavLinkProps) {
++const ROW = 'rasikh-nav-link flex h-[1.875rem] items-center rounded-md text-body transition-colors';
++
++export function NavLink({ item, active, collapsed, onNavigate, indicator = false }: NavLinkProps) {
+   const Icon = item.icon;
+   const { t } = useI18n();
+   const label = navLabel(item.label, t);
+@@ -24,13 +30,48 @@ export function NavLink({ item, active, collapsed, onNavigate }: NavLinkProps) {
+       title={collapsed ? label : undefined}
+       onClick={onNavigate}
+       className={cn(
+-        'rasikh-nav-link flex h-[1.875rem] items-center rounded-md text-body text-fg transition-colors',
++        ROW,
+         collapsed ? 'justify-center' : 'gap-2 px-2.5',
+-        active ? 'bg-selected font-medium' : 'hover:bg-hover',
++        active
++          ? cn('font-medium text-fg', !indicator && 'bg-selected')
++          : 'text-fg-secondary hover:bg-hover hover:text-fg',
+       )}
+     >
+-      <Icon aria-hidden className="size-5 shrink-0" />
++      <Icon
++        aria-hidden
++        className={cn(
++          'size-5 shrink-0 transition-colors',
++          active ? 'text-accent' : 'text-fg-tertiary',
++        )}
++      />
+       <span className={cn('truncate', collapsed && 'sr-only')}>{label}</span>
+     </Link>
+   );
+ }
++
++/** Quiet way back to the presentation hub, shown in the sidebar footer. */
++export function HubLink({
++  collapsed,
++  onNavigate,
++}: {
++  collapsed: boolean;
++  onNavigate?: () => void;
++}) {
++  const { locale } = useI18n();
++  const copy = SHELL_COPY[locale];
++  return (
++    <Link
++      href="/"
++      title={collapsed ? copy.hub : undefined}
++      onClick={onNavigate}
++      className={cn(
++        ROW,
++        'text-fg-tertiary hover:bg-hover hover:text-fg',
++        collapsed ? 'justify-center' : 'gap-2 px-2.5',
++      )}
++    >
++      <LayoutGrid aria-hidden className="size-5 shrink-0" />
++      <span className={cn('truncate', collapsed && 'sr-only')}>{copy.hub}</span>
++    </Link>
++  );
++}
+diff --git a/apps/web/src/components/shell/shell-copy.ts b/apps/web/src/components/shell/shell-copy.ts
+new file mode 100644
+index 0000000..c7c3e76
+--- /dev/null
++++ b/apps/web/src/components/shell/shell-copy.ts
+@@ -0,0 +1,23 @@
++import type { Locale } from '@/domain/types';
++
++/**
++ * Strings that belong to the shell only. They live beside the shell instead of in the shared
++ * catalogs, so the shell can change without touching them.
++ */
++export interface ShellCopy {
++  /** Link back to the demo hub. */
++  hub: string;
++  /** Longer accessible description of the hub link. */
++  hubHint: string;
++}
++
++export const SHELL_COPY: Record<Locale, ShellCopy> = {
++  en: {
++    hub: 'Demo hub',
++    hubHint: 'Back to the demo hub',
++  },
++  ar: {
++    hub: 'مركز العرض التجريبي',
++    hubHint: 'العودة إلى مركز العرض التجريبي',
++  },
++};
+diff --git a/apps/web/src/components/shell/sidebar.tsx b/apps/web/src/components/shell/sidebar.tsx
+index 5f4e8f4..333b48f 100644
+--- a/apps/web/src/components/shell/sidebar.tsx
++++ b/apps/web/src/components/shell/sidebar.tsx
+@@ -1,14 +1,15 @@
+ 'use client';
+ 
++import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+ import { usePathname } from 'next/navigation';
+-import { PanelLeft } from 'lucide-react';
+-import { Button } from '@/components/ui/button';
+-import { NavLink } from '@/components/shell/nav-link';
++import { HubLink, NavLink } from '@/components/shell/nav-link';
+ import { navLabel } from '@/components/shell/nav-labels';
+ import type { NavGroup, NavItem } from '@/config/surfaces';
+ import { cn } from '@/lib/cn';
+ import { useI18n } from '@/lib/i18n/provider';
+ 
++const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
++
+ function isActive(pathname: string, item: NavItem): boolean {
+   if (item.match === 'exact') return pathname === item.href;
+   return pathname === item.href || pathname.startsWith(`${item.href}/`);
+@@ -17,12 +18,16 @@ function isActive(pathname: string, item: NavItem): boolean {
+ export interface SidebarProps {
+   groups: NavGroup[];
+   collapsed: boolean;
+-  onToggleCollapsed: () => void;
+   /** Called after a link is followed, so a mobile drawer can close itself. */
+   onNavigate?: () => void;
+ }
+ 
+-export function Sidebar({ groups, collapsed, onToggleCollapsed, onNavigate }: SidebarProps) {
++interface Plate {
++  top: number;
++  height: number;
++}
++
++export function Sidebar({ groups, collapsed, onNavigate }: SidebarProps) {
+   const pathname = usePathname();
+   const { t } = useI18n();
+   // A group's sibling can be a longer match; only the most specific item is current.
+@@ -31,42 +36,106 @@ export function Sidebar({ groups, collapsed, onToggleCollapsed, onNavigate }: Si
+     .filter((item) => isActive(pathname, item))
+     .sort((a, b) => b.href.length - a.href.length)[0];
+ 
++  const list = useRef<HTMLDivElement>(null);
++  const rows = useRef(new Map<string, HTMLLIElement>());
++  const [plate, setPlate] = useState<Plate | null>(null);
++  // The first placement must not animate from nowhere; later moves slide.
++  const [settled, setSettled] = useState(false);
++  const currentHref = current?.href;
++
++  useIsomorphicLayoutEffect(() => {
++    const measure = () => {
++      const row = currentHref ? rows.current.get(currentHref) : undefined;
++      setPlate((previous) => {
++        if (!row) return null;
++        const next = { top: row.offsetTop, height: row.offsetHeight };
++        return previous && previous.top === next.top && previous.height === next.height
++          ? previous
++          : next;
++      });
++    };
++    measure();
++    const node = list.current;
++    if (!node || typeof ResizeObserver === 'undefined') return;
++    const observer = new ResizeObserver(measure);
++    observer.observe(node);
++    return () => observer.disconnect();
++  }, [currentHref, collapsed, groups]);
++
++  useEffect(() => {
++    if (!plate || settled) return;
++    const frame = requestAnimationFrame(() => setSettled(true));
++    return () => cancelAnimationFrame(frame);
++  }, [plate, settled]);
++
+   return (
+-    <div className="flex h-full flex-col">
++    <div className="flex h-full min-h-0 flex-1 flex-col">
+       <nav
+         aria-label={t('shell.primary')}
+-        className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 pt-3"
++        className="relative min-h-0 flex-1 overflow-y-auto px-3 pb-3 pt-3"
+       >
+-        {groups.map((group) => (
+-          <section key={group.label} className="mt-5 first:mt-0">
+-            <h2 className={cn('mb-2 px-3 text-label text-fg-tertiary', collapsed && 'sr-only')}>
+-              {navLabel(group.label, t)}
+-            </h2>
+-            <ul className="flex flex-col gap-1.5">
+-              {group.items.map((item) => (
+-                <li key={item.href}>
+-                  <NavLink
+-                    item={item}
+-                    active={item === current}
+-                    collapsed={collapsed}
+-                    onNavigate={onNavigate}
+-                  />
+-                </li>
+-              ))}
+-            </ul>
+-          </section>
+-        ))}
++        <div ref={list} className="relative">
++          <span
++            aria-hidden
++            data-ready={settled || undefined}
++            className={cn(
++              'pointer-events-none absolute end-0 start-0 top-0 rounded-md bg-selected opacity-0',
++              'data-[ready=true]:motion-safe:transition-[transform,height,opacity] data-[ready=true]:motion-safe:duration-300 data-[ready=true]:motion-safe:ease-[cubic-bezier(0.2,0.8,0.2,1)]',
++              plate && 'opacity-100',
++            )}
++            style={
++              plate
++                ? {
++                    height: plate.height,
++                    transform: `translateY(${plate.top}px)`,
++                  }
++                : undefined
++            }
++          >
++            <span className="absolute inset-y-1.5 start-0 w-0.5 rounded-full bg-accent" />
++          </span>
++          {groups.map((group, index) => (
++            <section
++              key={group.label}
++              className={cn(
++                index > 0 && 'mt-5',
++                collapsed && index > 0 && 'border-t border-line pt-3',
++              )}
++            >
++              <h2
++                className={cn(
++                  'mb-2 px-3 text-label font-medium text-fg-tertiary',
++                  collapsed && 'sr-only',
++                )}
++              >
++                {navLabel(group.label, t)}
++              </h2>
++              <ul className="flex flex-col gap-1.5">
++                {group.items.map((item) => (
++                  <li
++                    key={item.href}
++                    ref={(node) => {
++                      if (node) rows.current.set(item.href, node);
++                      else rows.current.delete(item.href);
++                    }}
++                    className="relative"
++                  >
++                    <NavLink
++                      item={item}
++                      active={item === current}
++                      collapsed={collapsed}
++                      indicator={plate !== null}
++                      onNavigate={onNavigate}
++                    />
++                  </li>
++                ))}
++              </ul>
++            </section>
++          ))}
++        </div>
+       </nav>
+-      <div className={cn('p-3', collapsed && 'flex justify-center')}>
+-        <Button
+-          variant="ghost"
+-          iconOnly
+-          aria-label={t(collapsed ? 'shell.expandNav' : 'shell.collapseNav')}
+-          aria-expanded={!collapsed}
+-          icon={<PanelLeft className="rtl:-scale-x-100" />}
+-          onClick={onToggleCollapsed}
+-          className="max-md:hidden"
+-        />
++      <div className="shrink-0 border-t border-line px-3 py-3">
++        <HubLink collapsed={collapsed} onNavigate={onNavigate} />
+       </div>
+     </div>
+   );
+diff --git a/apps/web/src/components/shell/top-bar.tsx b/apps/web/src/components/shell/top-bar.tsx
+index f0a5037..520230b 100644
+--- a/apps/web/src/components/shell/top-bar.tsx
++++ b/apps/web/src/components/shell/top-bar.tsx
+@@ -1,14 +1,21 @@
+-"use client";
++'use client';
+ 
+-import Link from "next/link";
+-import { Menu as MenuIcon } from "lucide-react";
+-import { Avatar } from "@/components/ui/avatar";
+-import { Button } from "@/components/ui/button";
+-import { BrandMark } from "@/components/shell/brand-mark";
+-import { OrgSwitcher } from "@/components/shell/org-switcher";
+-import { ThemeToggle } from "@/components/shell/theme-toggle";
+-import type { SurfaceId } from "@/config/surfaces";
+-import { useI18n } from "@/lib/i18n/provider";
++import Link from 'next/link';
++import {
++  ChevronRight,
++  LayoutGrid,
++  Menu as MenuIcon,
++  PanelLeftClose,
++  PanelLeftOpen,
++} from 'lucide-react';
++import { Avatar } from '@/components/ui/avatar';
++import { Button } from '@/components/ui/button';
++import { BrandMark } from '@/components/shell/brand-mark';
++import { OrgSwitcher } from '@/components/shell/org-switcher';
++import { SHELL_COPY } from '@/components/shell/shell-copy';
++import { ThemeToggle } from '@/components/shell/theme-toggle';
++import type { SurfaceId } from '@/config/surfaces';
++import { useI18n } from '@/lib/i18n/provider';
+ 
+ export interface TopBarProps {
+   surface: SurfaceId;
+@@ -18,6 +25,9 @@ export interface TopBarProps {
+   onOpenNav: () => void;
+   navOpen: boolean;
+   user: string;
++  /** Desktop rail state. When `onToggleSidebar` is set a collapse control joins the bar. */
++  sidebarCollapsed?: boolean;
++  onToggleSidebar?: () => void;
+ }
+ 
+ export function TopBar({
+@@ -28,34 +38,61 @@ export function TopBar({
+   onOpenNav,
+   navOpen,
+   user,
++  sidebarCollapsed = false,
++  onToggleSidebar,
+ }: TopBarProps) {
+   const { t, locale, setLocale } = useI18n();
+-  const nextLocale = locale === "ar" ? "en" : "ar";
++  const copy = SHELL_COPY[locale];
++  const nextLocale = locale === 'ar' ? 'en' : 'ar';
++  // Phones have room for the surface name only; wider screens show the full workspace label.
++  const shortName =
++    surface === 'employer'
++      ? t('shell.employer')
++      : surface === 'landlord'
++        ? t('shell.landlord')
++        : surface === 'bank'
++          ? t('shell.bank')
++          : org;
+   return (
+     <header className="flex h-topbar shrink-0 items-center gap-1 px-4 max-sm:px-3">
+       <Button
+         variant="ghost"
+         iconOnly
+-        aria-label={t("shell.openNav")}
++        aria-label={t('shell.openNav')}
+         aria-expanded={navOpen}
+         icon={<MenuIcon />}
+         onClick={onOpenNav}
+         className="me-1 md:hidden"
+       />
++      {onToggleSidebar ? (
++        <Button
++          variant="ghost"
++          iconOnly
++          aria-label={t(sidebarCollapsed ? 'shell.expandNav' : 'shell.collapseNav')}
++          aria-expanded={!sidebarCollapsed}
++          icon={
++            sidebarCollapsed ? (
++              <PanelLeftOpen className="rtl:-scale-x-100" />
++            ) : (
++              <PanelLeftClose className="rtl:-scale-x-100" />
++            )
++          }
++          onClick={onToggleSidebar}
++          className="me-1 text-fg-secondary max-md:hidden"
++        />
++      ) : null}
+       <Link
+         href="/"
+-        className="flex items-center gap-2 rounded-md py-1 pe-2 ps-1 text-body font-medium text-fg"
++        className="flex shrink-0 items-center gap-2 rounded-md py-1 pe-2 ps-1 text-body font-medium text-fg"
+       >
+         <BrandMark />
+-        <span className="max-sm:sr-only">{t("app.name")}</span>
++        <span className="max-sm:sr-only">{t('app.name')}</span>
+       </Link>
+-      <span
++      <ChevronRight
+         aria-hidden
+-        className="px-0.5 text-body text-fg-placeholder max-sm:hidden"
+-      >
+-        /
+-      </span>
+-      <div className="hidden min-w-0 sm:block">
++        className="size-3.5 shrink-0 text-fg-placeholder rtl:-scale-x-100"
++      />
++      <div className="min-w-0 max-sm:hidden">
+         <OrgSwitcher
+           orgs={orgs}
+           value={org}
+@@ -63,19 +100,29 @@ export function TopBar({
+           interactive={Boolean(onOrgChange)}
+         />
+       </div>
++      <span className="min-w-0 truncate px-1.5 text-body font-medium text-fg-secondary sm:hidden">
++        {shortName}
++      </span>
+       <div className="min-w-0 flex-1" />
++      <Link
++        href="/"
++        aria-label={copy.hubHint}
++        title={copy.hubHint}
++        className="rasikh-button inline-flex h-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-2.5 text-body font-medium text-fg-secondary transition-colors hover:bg-hover hover:text-fg max-md:w-8 max-md:px-0"
++      >
++        <LayoutGrid aria-hidden className="size-4" />
++        <span className="max-md:sr-only">{copy.hub}</span>
++      </Link>
+       <Button
+         variant="ghost"
+-        aria-label={t("common.language")}
++        aria-label={t('common.language')}
+         lang={nextLocale}
+         onClick={() => setLocale(nextLocale)}
+       >
+-        {nextLocale === "ar" ? "العربية" : "English"}
++        {nextLocale === 'ar' ? 'العربية' : 'English'}
+       </Button>
+       <ThemeToggle
+-        label={(next) =>
+-          t(next === "dark" ? "common.theme.toDark" : "common.theme.toLight")
+-        }
++        label={(next) => t(next === 'dark' ? 'common.theme.toDark' : 'common.theme.toLight')}
+       />
+       <Avatar name={user} className="ms-1 max-sm:hidden" />
+     </header>
+-- 
+2.51.0.windows.1
+
