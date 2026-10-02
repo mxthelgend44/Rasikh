@@ -1,0 +1,302 @@
+{
+  "_about": "MOCK catalogue for the Rasikh demo. Service names and entities are real; every fee, processing time, requirement list and review script is illustrative (marked \"illustrative\": true) and is NOT an official statement of fees, durations or legal requirements. Always confirm on TAMM or the entity's own portal.",
+  "services": [
+    {
+      "service_id": "svc_residency_visa_employment",
+      "name": "Issue Residence Visa for an Employee",
+      "entity": "Federal Authority for Identity, Citizenship, Customs and Port Security (ICP)",
+      "audience": "individual",
+      "tags": ["residency", "visa", "employment"],
+      "keywords": ["residence", "residency", "visa", "work visa", "employee", "stamping"],
+      "summary": "Issue a residence visa for a newly hired employee sponsored by their employer.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_passport", "description": "Passport copy, valid for at least six months", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_entry_permit", "description": "Entry permit or current visa status", "labels": [], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_employment_contract", "description": "Signed employment contract or offer letter", "labels": ["employment"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_medical_fitness", "description": "Medical fitness test completed at an approved screening centre (the centre sends results directly)", "labels": [], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": 1000, "note": "Illustrative figure for the demo, not the official fee.", "illustrative": true },
+      "processing_time": { "text": "Around 5 working days (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "An officer is reviewing the application." },
+        { "status": "needs_info", "note": "Please confirm the medical fitness test has been completed." },
+        { "status": "under_review", "note": "Additional information received. Review resumed." },
+        { "status": "approved", "note": "Residence visa approved." }
+      ]
+    },
+    {
+      "service_id": "svc_emirates_id_new",
+      "name": "Apply for a New Emirates ID Card",
+      "entity": "Federal Authority for Identity, Citizenship, Customs and Port Security (ICP)",
+      "audience": "individual",
+      "tags": ["identity", "residency"],
+      "keywords": ["emirates id", "id card", "identity", "biometrics"],
+      "summary": "Apply for an Emirates ID card for a new resident, including biometrics capture.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_passport", "description": "Passport copy", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_residence_visa", "description": "Residence visa application or approval reference", "labels": [], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_photo", "description": "Recent personal photo", "labels": [], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": 370, "note": "Illustrative figure for the demo, not the official fee.", "illustrative": true },
+      "processing_time": { "text": "Around 7 working days after biometrics (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "Biometrics appointment confirmed. Application under review." },
+        { "status": "approved", "note": "Emirates ID approved. The card will be delivered." }
+      ]
+    },
+    {
+      "service_id": "svc_tawtheeq_registration",
+      "name": "Register a Tenancy Contract (Tawtheeq)",
+      "entity": "Department of Municipalities and Transport (DMT)",
+      "audience": "individual",
+      "tags": ["housing", "tenancy"],
+      "keywords": ["tenancy", "tenancy contract", "tawtheeq", "rent", "lease", "housing", "apartment"],
+      "summary": "Register a residential tenancy contract through Tawtheeq so it is officially recorded.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_passport", "description": "Tenant passport copy", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_emirates_id", "description": "Tenant Emirates ID, or the application reference if pending", "labels": ["emirates_id"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_tenancy_contract", "description": "Signed tenancy contract with the landlord", "labels": ["address"], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Fee depends on the contract; illustrative, check TAMM for the current amount.", "illustrative": true },
+      "processing_time": { "text": "Usually the same day (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "Contract details are being verified with the landlord's record." },
+        { "status": "approved", "note": "Tenancy contract registered in Tawtheeq." }
+      ]
+    },
+    {
+      "service_id": "svc_health_insurance_enrolment",
+      "name": "Health Insurance Enrolment for a Resident",
+      "entity": "Department of Health - Abu Dhabi (DoH)",
+      "audience": "individual",
+      "tags": ["health", "insurance"],
+      "keywords": ["health insurance", "insurance", "medical", "health card"],
+      "summary": "Enrol a new resident in a health insurance plan as required for residency in Abu Dhabi.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_emirates_id", "description": "Emirates ID or application reference", "labels": ["emirates_id"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_employment", "description": "Employer details (employer-sponsored plans)", "labels": ["employment"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_medical_declaration", "description": "Medical declaration form", "labels": ["health"], "mandatory": false, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Premium depends on the plan and insurer; illustrative.", "illustrative": true },
+      "processing_time": { "text": "Around 2 working days (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "The insurer is reviewing the enrolment." },
+        { "status": "approved", "note": "Health insurance active." }
+      ]
+    },
+    {
+      "service_id": "svc_family_visa_sponsorship",
+      "name": "Sponsor Family Members for Residence",
+      "entity": "Federal Authority for Identity, Citizenship, Customs and Port Security (ICP)",
+      "audience": "individual",
+      "tags": ["residency", "visa", "family"],
+      "keywords": ["family", "spouse", "children", "dependants", "sponsor"],
+      "summary": "Sponsor a spouse or children to live in Abu Dhabi on the resident's visa.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_sponsor_passport", "description": "Sponsor passport and residence details", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_family_documents", "description": "Marriage or birth certificates for each family member", "labels": ["family"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_salary_proof", "description": "Proof of salary meeting the sponsorship threshold", "labels": ["salary"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_tenancy", "description": "Registered tenancy contract (Tawtheeq)", "labels": ["address"], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Fee varies by number of dependants; illustrative.", "illustrative": true },
+      "processing_time": { "text": "Around 10 working days (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "Sponsorship documents are being reviewed." },
+        { "status": "needs_info", "note": "Please provide attested birth certificates." },
+        { "status": "under_review", "note": "Additional information received. Review resumed." },
+        { "status": "approved", "note": "Family residence approved." }
+      ]
+    },
+    {
+      "service_id": "svc_school_registration",
+      "name": "Register a Student in a Private School",
+      "entity": "Abu Dhabi Department of Education and Knowledge (ADEK)",
+      "audience": "individual",
+      "tags": ["education", "family"],
+      "keywords": ["school", "student", "enrolment", "education", "child"],
+      "summary": "Register a child in a private school in Abu Dhabi.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_child_passport", "description": "Child passport copy", "labels": ["passport", "family"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_previous_records", "description": "Previous school reports and transfer certificate", "labels": [], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_address", "description": "Proof of address in Abu Dhabi", "labels": ["address"], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Tuition is set per school; illustrative.", "illustrative": true },
+      "processing_time": { "text": "Depends on seat availability (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "The school is reviewing the registration." },
+        { "status": "approved", "note": "Seat offered. The school will contact you." }
+      ]
+    },
+    {
+      "service_id": "svc_trade_name_reservation",
+      "name": "Reserve a Trade Name",
+      "entity": "Abu Dhabi Department of Economic Development (ADDED)",
+      "audience": "business",
+      "tags": ["business", "licensing", "trade_name"],
+      "keywords": ["trade name", "company name", "business name", "reserve"],
+      "summary": "Reserve a trade name for a new mainland business before applying for a licence.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_owner_id", "description": "Owner passport or Emirates ID", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_proposed_name", "description": "Proposed name in English and Arabic", "labels": [], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Illustrative; confirm the current fee on TAMM.", "illustrative": true },
+      "processing_time": { "text": "Usually within 1 working day (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "The name is being checked against naming rules." },
+        { "status": "approved", "note": "Trade name reserved." }
+      ]
+    },
+    {
+      "service_id": "svc_economic_license_new",
+      "name": "Issue a New Economic Licence",
+      "entity": "Abu Dhabi Department of Economic Development (ADDED)",
+      "audience": "business",
+      "tags": ["business", "licensing"],
+      "keywords": ["economic licence", "economic license", "business licence", "trade licence", "mainland", "license"],
+      "summary": "Issue a mainland economic licence for a new business in Abu Dhabi.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_trade_name", "description": "Reserved trade name", "labels": [], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_partner_ids", "description": "Passport or Emirates ID for every partner", "labels": ["passport", "emirates_id"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_premises", "description": "Registered tenancy contract for the business premises", "labels": ["address"], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Depends on activity and premises; illustrative.", "illustrative": true },
+      "processing_time": { "text": "Around 3 to 5 working days (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "Licence application under review." },
+        { "status": "needs_info", "note": "Please upload the registered premises tenancy contract." },
+        { "status": "under_review", "note": "Additional information received. Review resumed." },
+        { "status": "approved", "note": "Economic licence issued." }
+      ]
+    },
+    {
+      "service_id": "svc_establishment_card",
+      "name": "Issue an Establishment Card",
+      "entity": "Federal Authority for Identity, Citizenship, Customs and Port Security (ICP)",
+      "audience": "business",
+      "tags": ["business", "immigration"],
+      "keywords": ["establishment card", "immigration card", "company card"],
+      "summary": "Register the company with immigration so it can sponsor employee visas.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_license", "description": "Valid economic or free zone licence", "labels": [], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_signatory_id", "description": "Authorised signatory passport and Emirates ID", "labels": ["passport", "emirates_id"], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Illustrative; confirm the current fee with ICP.", "illustrative": true },
+      "processing_time": { "text": "Around 3 working days (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "Establishment details under review." },
+        { "status": "approved", "note": "Establishment card issued." }
+      ]
+    },
+    {
+      "service_id": "svc_visa_quota",
+      "name": "Request an Employee Visa Quota",
+      "entity": "Ministry of Human Resources and Emiratisation (MoHRE)",
+      "audience": "business",
+      "tags": ["business", "immigration", "employment"],
+      "keywords": ["visa quota", "quota", "work permit", "hiring", "employees"],
+      "summary": "Request the number of employee visas the company may sponsor. The responsible authority can differ for free zone companies.",
+      "channel": "tamm",
+      "requirements": [
+        { "requirement_id": "req_establishment_card", "description": "Establishment card", "labels": [], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_premises", "description": "Premises tenancy contract (quota is often linked to office size)", "labels": ["address"], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Illustrative; depends on company classification.", "illustrative": true },
+      "processing_time": { "text": "Around 5 working days (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "Quota request under review." },
+        { "status": "approved", "note": "Visa quota approved." }
+      ]
+    },
+    {
+      "service_id": "svc_adgm_company_registration",
+      "name": "Register a Company in ADGM",
+      "entity": "Abu Dhabi Global Market (ADGM) Registration Authority",
+      "audience": "business",
+      "tags": ["business", "licensing", "free_zone"],
+      "keywords": ["adgm", "financial free zone", "company registration", "al maryah"],
+      "summary": "Incorporate a company in the ADGM financial free zone. Handled on the ADGM portal, not TAMM.",
+      "channel": "entity_portal",
+      "requirements": [
+        { "requirement_id": "req_shareholder_ids", "description": "Passport copies of shareholders and directors", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_business_plan", "description": "Business plan", "labels": [], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Set by ADGM; illustrative.", "illustrative": true },
+      "processing_time": { "text": "Varies by activity (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "Registration Authority review in progress." },
+        { "status": "approved", "note": "Company incorporated." }
+      ]
+    },
+    {
+      "service_id": "svc_kezad_business_license",
+      "name": "Apply for a KEZAD Business Licence",
+      "entity": "KEZAD Group (Khalifa Economic Zones Abu Dhabi)",
+      "audience": "business",
+      "tags": ["business", "licensing", "free_zone", "industrial"],
+      "keywords": ["kezad", "industrial", "logistics", "khalifa economic zones", "warehouse"],
+      "summary": "Licence a business in the KEZAD industrial and logistics zones. Handled on the KEZAD portal, not TAMM.",
+      "channel": "entity_portal",
+      "requirements": [
+        { "requirement_id": "req_owner_ids", "description": "Owner passport copies", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_activity", "description": "Description of planned activities", "labels": [], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Set by KEZAD; illustrative.", "illustrative": true },
+      "processing_time": { "text": "Varies by activity (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "KEZAD licensing review in progress." },
+        { "status": "approved", "note": "KEZAD licence issued." }
+      ]
+    },
+    {
+      "service_id": "svc_masdar_freezone_registration",
+      "name": "Register a Company in Masdar City Free Zone",
+      "entity": "Masdar City Free Zone",
+      "audience": "business",
+      "tags": ["business", "licensing", "free_zone", "technology"],
+      "keywords": ["masdar", "clean tech", "sustainability", "technology", "startup"],
+      "summary": "Set up a company in Masdar City Free Zone. Handled on the Masdar City Free Zone portal, not TAMM.",
+      "channel": "entity_portal",
+      "requirements": [
+        { "requirement_id": "req_shareholder_ids", "description": "Shareholder passport copies", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_business_plan", "description": "Business plan", "labels": [], "mandatory": true, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Set by Masdar City Free Zone; illustrative.", "illustrative": true },
+      "processing_time": { "text": "Varies by package (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "Free zone registration review in progress." },
+        { "status": "approved", "note": "Company registered in Masdar City Free Zone." }
+      ]
+    },
+    {
+      "service_id": "svc_twofour54_media_license",
+      "name": "Apply for a twofour54 Media Zone Licence",
+      "entity": "twofour54",
+      "audience": "business",
+      "tags": ["business", "licensing", "free_zone", "media"],
+      "keywords": ["twofour54", "media", "gaming", "content", "creative"],
+      "summary": "Licence a media, gaming or creative business with twofour54. Handled on the twofour54 portal, not TAMM.",
+      "channel": "entity_portal",
+      "requirements": [
+        { "requirement_id": "req_owner_ids", "description": "Owner passport copies", "labels": ["passport"], "mandatory": true, "illustrative": true },
+        { "requirement_id": "req_portfolio", "description": "Company profile or portfolio", "labels": [], "mandatory": false, "illustrative": true }
+      ],
+      "fee": { "amount_aed": null, "note": "Set by twofour54; illustrative.", "illustrative": true },
+      "processing_time": { "text": "Varies by licence type (illustrative)", "illustrative": true },
+      "review_script": [
+        { "status": "under_review", "note": "twofour54 licensing review in progress." },
+        { "status": "rejected", "note": "The proposed activity is outside the media zone's permitted activities." }
+      ]
+    }
+  ],
+  "taken_trade_names": ["Falcon Trading", "Desert Rose Consulting", "Corniche Ventures", "Saadiyat Labs"],
+  "restricted_trade_name_terms": ["abu dhabi", "emirates", "uae", "government", "ministry", "royal", "federal"]
+}
