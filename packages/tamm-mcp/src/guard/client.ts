@@ -13,10 +13,7 @@ export interface GuardCheckRequest {
   destination: "tamm";
   data_labels: DataLabel[];
   payload_refs: PayloadRef[];
-  /**
-   * Tags of the TAMM service involved, so Guard can apply "insurance services only".
-   * Not in contract 1.0.0 (proposed for 1.1.0); a 1.0.0 Guard ignores it and fails closed for health.
-   */
+  /** Tags of the TAMM service involved (contract 1.1.0), so Guard can apply "insurance services only". */
   service_tags?: string[];
 }
 

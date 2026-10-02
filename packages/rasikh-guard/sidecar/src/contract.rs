@@ -4,7 +4,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Contract version this sidecar implements.
-pub const CONTRACT_VERSION: &str = "1.0.0";
+pub const CONTRACT_VERSION: &str = "1.1.0";
 
 /// The kinds of personal data Guard tracks.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
@@ -123,8 +123,8 @@ pub struct ObserveRequest {
     pub payload_refs: Vec<PayloadRef>,
 }
 
-/// `POST /check` request. `service_tags` is not in contract 1.0.0: it is proposed for 1.1.0 so
-/// the "insurance services only" rule can be evaluated. Without it, that rule denies.
+/// `POST /check` request. `service_tags` (optional, contract 1.1.0) carries the TAMM service's
+/// tags so the "insurance services only" rule can be evaluated; without it that rule denies.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CheckRequest {

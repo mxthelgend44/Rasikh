@@ -105,7 +105,7 @@ flipping `passport -> school` to `allow` in the TOML fails 4 adversarial tests, 
 - **Granularity is per payload ref, not per value.** Guard cannot see content, so it trusts the app to describe outbound
   content with refs. A ref that was never observed is taken at its declared labels; only ref-less calls inherit the
   whole session.
-- **`service_tags` on `/check`** is outside contract 1.0.0 and has been proposed for 1.1.0. Without it, health to TAMM is always denied.
+- **`service_tags` on `/check`** (contract 1.1.0) is optional. A caller that omits it gets deny for health to TAMM.
 - **Strict input:** unknown JSON fields are rejected with `invalid_request`, and callers treat that as deny.
 - State is in memory, so a restart clears sessions, consents and logs.
 

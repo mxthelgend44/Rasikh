@@ -5,7 +5,7 @@ in the style of TAMM. **There is no public TAMM API in use: everything is served
 tool response carries `"mock": true`, and every fee, duration and document carries `"illustrative": true`. None of it is
 an official statement of fees, durations or legal requirements.
 
-The contract is in the repo-root [`INTEGRATION.md`](../../INTEGRATION.md), section 4. This package implements v1.0.0.
+The contract is in the repo-root [`INTEGRATION.md`](../../INTEGRATION.md), section 4. This package implements v1.1.0.
 
 ## Tools
 
@@ -94,9 +94,7 @@ HTTP tests run the Express app on a random port and use the SDK's Streamable HTT
 - Mock only. The catalogue, naming rules and review scripts are illustrative, and state is in memory, so a restart clears it.
 - Free zone services (ADGM, KEZAD, Masdar City Free Zone, twofour54) are handled on those entities' own portals in reality.
   The mock lists them so the expansion demo can route to them.
-- **Health to TAMM:** the "insurance services only" rule needs Guard to know the service's tags, which the 1.0.0
-  `/check` request cannot carry. This server sends an extra `service_tags` field (proposed for contract 1.1.0). A Guard that
-  ignores it falls back to deny, so it fails closed.
+- **Health to TAMM** passes Guard only with the service's `service_tags` (contract 1.1.0), which this server always sends.
 - Read-only tools do not call Guard, because the contract gives them no `guard_session_id`. A personal detail typed into a
   `search_services` query is therefore not checked.
 - No per-user ownership check on `get_application_status`: any valid simulated session can read any application id.
