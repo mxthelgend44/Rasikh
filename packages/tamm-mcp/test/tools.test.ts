@@ -176,6 +176,21 @@ describe("get_application_status", () => {
     );
   });
 
+  it("hides an application from anyone but its submitter and applicant", async () => {
+    const started = await h.call("start_application", {
+      service_id: "svc_residency_visa",
+      applicant_ref: "hire_demo_002",
+      documents: [PASSPORT],
+      uaepass_session: h.login("business", "company_demo_001"),
+      guard_session_id: GS,
+    });
+    const applicationId = started.body.application_id as string;
+    const read = (subject: string) =>
+      h.call("get_application_status", { application_id: applicationId, uaepass_session: h.login("individual", subject) });
+    assert.equal((await read("hire_demo_002")).isError, false, "the applicant can read it");
+    assertError(await read("hire_demo_003"), "unknown_application");
+  });
+
   it("reports unknown_application", async () => {
     assertError(
       await h.call("get_application_status", { application_id: "app_tw_9999", uaepass_session: h.login() }),

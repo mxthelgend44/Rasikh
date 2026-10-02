@@ -1,0 +1,23 @@
+# Rasikh integrations: Guard sidecar + mock TAMM MCP, wired together.
+#   docker compose -f packages/compose.yaml up --build
+# Guard: http://localhost:8787   TAMM MCP: http://localhost:8790/mcp
+# Demo mode is on by default (deterministic TAMM progression, /dev/reset on both).
+services:
+  rasikh-guard:
+    build: ./rasikh-guard
+    image: ghcr.io/mxthelgend44/rasikh-guard:latest
+    ports:
+      - "8787:8787"
+    environment:
+      RASIKH_DEMO_MODE: "${RASIKH_DEMO_MODE:-1}"
+
+  tamm-mcp:
+    build: ./tamm-mcp
+    image: ghcr.io/mxthelgend44/rasikh-tamm-mcp:latest
+    ports:
+      - "8790:8790"
+    environment:
+      RASIKH_DEMO_MODE: "${RASIKH_DEMO_MODE:-1}"
+      RASIKH_GUARD_URL: http://rasikh-guard:8787
+    depends_on:
+      - rasikh-guard

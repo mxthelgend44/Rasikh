@@ -65,12 +65,15 @@ export interface TradeNameCheck {
 export interface ApplicationRequest {
   service_id: string;
   applicant_ref: string;
+  /** UAE PASS subject that submitted the application. */
+  submitted_by: string;
   documents: PayloadRef[];
 }
 
 export interface TenancyRequest {
   lease_ref: string;
   applicant_ref: string;
+  submitted_by: string;
   documents: PayloadRef[];
 }
 
@@ -83,8 +86,11 @@ export interface TammBackend {
   getServiceRequirements(serviceId: string): Promise<ServiceRequirements | undefined>;
   /** Submits an application. The caller has already authenticated and Guard-checked it. */
   startApplication(request: ApplicationRequest): Promise<Application>;
-  /** Current state of an application, or `undefined` if the id is unknown. */
-  getApplication(applicationId: string): Promise<Application | undefined>;
+  /**
+   * Current state of an application, or `undefined` if the id is unknown or `subjectRef` is
+   * neither its submitter nor its applicant (unknown and not-yours look the same).
+   */
+  getApplication(applicationId: string, subjectRef: string): Promise<Application | undefined>;
   /** Availability check for a proposed trade name. */
   checkTradeName(name: string): Promise<TradeNameCheck>;
   /** Registers a tenancy contract through Tawtheeq. The caller has already Guard-checked it. */

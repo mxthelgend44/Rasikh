@@ -54,10 +54,11 @@ export function registerRegisterTenancyTawtheeq(server: McpServer, ctx: ToolCont
           serviceId: TAWTHEEQ_SERVICE_ID,
           documents: docs,
         },
-        async () => {
+        async (session) => {
           const application = await ctx.backend.registerTenancy({
             lease_ref: args.lease_ref,
             applicant_ref: args.applicant_ref,
+            submitted_by: session.subject_ref,
             documents: docs,
           });
           return ok({ application_id: application.application_id, status: application.status });

@@ -25,6 +25,12 @@ export interface DemoControls {
   reset(): void;
 }
 
+/** An application plus the UAE PASS subjects allowed to read it. */
+interface OwnedApplication {
+  tracked: TrackedApplication;
+  parties: ReadonlySet<string>;
+}
+
 export interface MockTammBackendOptions {
   progression: Progression;
   catalogue?: Catalogue;
@@ -36,7 +42,7 @@ export class MockTammBackend implements TammBackend, DemoControls {
   private readonly catalogue: Catalogue;
   private readonly progression: Progression;
   private readonly now: () => number;
-  private readonly applications = new Map<string, TrackedApplication>();
+  private readonly applications = new Map<string, OwnedApplication>();
   private sequence = 0;
 
   constructor(options: MockTammBackendOptions) {
@@ -81,17 +87,17 @@ export class MockTammBackend implements TammBackend, DemoControls {
     this.sequence += 1;
     const applicationId = `app_${service.application_prefix}_${String(this.sequence).padStart(4, "0")}`;
     const tracked = submit(applicationId, service.service_id, service.review_script, this.progression, this.now());
-    this.applications.set(applicationId, tracked);
+    this.applications.set(applicationId, { tracked, parties: new Set([request.submitted_by, request.applicant_ref]) });
     return structuredClone(tracked.application);
   }
 
-  async getApplication(applicationId: string): Promise<Application | undefined> {
-    const tracked = this.applications.get(applicationId);
-    if (!tracked) {
+  async getApplication(applicationId: string, subjectRef: string): Promise<Application | undefined> {
+    const owned = this.applications.get(applicationId);
+    if (!owned || !owned.parties.has(subjectRef)) {
       return undefined;
     }
-    catchUp(tracked, this.progression, this.now());
-    return structuredClone(tracked.application);
+    catchUp(owned.tracked, this.progression, this.now());
+    return structuredClone(owned.tracked.application);
   }
 
   async checkTradeName(name: string): Promise<TradeNameCheck> {
@@ -106,17 +112,18 @@ export class MockTammBackend implements TammBackend, DemoControls {
     return this.startApplication({
       service_id: TAWTHEEQ_SERVICE_ID,
       applicant_ref: request.applicant_ref,
+      submitted_by: request.submitted_by,
       documents: request.documents,
     });
   }
 
   advance(applicationId: string): Application | undefined {
-    const tracked = this.applications.get(applicationId);
-    if (!tracked) {
+    const owned = this.applications.get(applicationId);
+    if (!owned) {
       return undefined;
     }
-    advance(tracked, this.now());
-    return structuredClone(tracked.application);
+    advance(owned.tracked, this.now());
+    return structuredClone(owned.tracked.application);
   }
 
   reset(): void {

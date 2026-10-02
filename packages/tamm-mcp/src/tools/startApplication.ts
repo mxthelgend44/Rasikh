@@ -31,10 +31,11 @@ export function registerStartApplication(server: McpServer, ctx: ToolContext): v
           serviceId: args.service_id,
           documents: args.documents,
         },
-        async () => {
+        async (session) => {
           const application = await ctx.backend.startApplication({
             service_id: args.service_id,
             applicant_ref: args.applicant_ref,
+            submitted_by: session.subject_ref,
             documents: args.documents,
           });
           return ok({ application_id: application.application_id, status: application.status });

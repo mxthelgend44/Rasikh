@@ -73,8 +73,8 @@ describe("Guard integration (data-sending tools)", () => {
           denied: true,
           guard: { decision, reason: "Not allowed.", policy_rule: "health.tamm.insurance_only" },
         });
-        assert.equal(await h.backend.getApplication("app_rv_0001"), undefined);
-        assert.equal(await h.backend.getApplication("app_tw_0001"), undefined);
+        assert.equal(await h.backend.getApplication("app_rv_0001", "hire_demo_001"), undefined);
+        assert.equal(await h.backend.getApplication("app_tw_0001", "hire_demo_001"), undefined);
         await h.close();
       });
     }
@@ -85,7 +85,7 @@ describe("Guard integration (data-sending tools)", () => {
     const { body, isError } = await h.call("start_application", startApplication(h.login(), "svc_emirates_id", [PASSPORT]));
     assert.equal(isError, true);
     assert.equal(body.error?.code, "guard_unavailable");
-    assert.equal(await h.backend.getApplication("app_eid_0001"), undefined);
+    assert.equal(await h.backend.getApplication("app_eid_0001", "hire_demo_001"), undefined);
     await h.close();
   });
 

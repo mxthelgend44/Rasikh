@@ -18,6 +18,8 @@ and the vendored files are listed in [UPSTREAM.md](UPSTREAM.md).
 ```sh
 cd packages/rasikh-guard
 docker compose up --build                            # one command; demo mode on, http://localhost:8787
+docker compose -f ../compose.yaml up --build         # Guard + TAMM MCP wired together
+docker run -p 8787:8787 -e RASIKH_DEMO_MODE=1 ghcr.io/mxthelgend44/rasikh-guard   # published image
 # or without Docker:
 RASIKH_DEMO_MODE=1 cargo run --release -p rasikh-guard
 ```
@@ -42,7 +44,12 @@ RASIKH_DEMO_MODE=1 cargo run --release -p rasikh-guard
 2. **Each label against the matrix.** The effects are `allow`, `deny`, `consent`, `derived_only`, `extraction_only`
    (`tool == extract_document`), `redacted_only` and `insurance_only` (`tool == start_application` and the service tag
    is `insurance`).
-3. **The most severe outcome wins:** deny, then needs_consent, then allow. `blocked_labels` lists every non-allow label.
+3. **The OpenAPPA gate.** `sidecar/src/appa.rs` turns each flowing label into an `appa_engine::label::Label` whose
+   audience is the set of destinations that label may reach in this call's context (literal readers such as
+   `rasikh-landlord`). The call's label is the engine's restrictive meet (`Label::combine`, which intersects audiences),
+   and **only a folded audience that admits the destination yields `allow`**. Mutation check: making the gate refuse
+   everything fails 55 of the 104 tests.
+4. **Explanation when the gate refuses:** deny wins over needs_consent. `blocked_labels` lists every non-allow label.
    The first such label in contract order supplies `reason` (plain language) and `policy_rule`
    (`<label>.<destination>.<effect>`, e.g. `passport.landlord.requires_consent`).
 
@@ -56,7 +63,7 @@ refuses unknown keys, labels, destinations or effects, and any missing cell, so 
 ## Test
 
 ```sh
-cargo test --workspace          # vendored upstream suites (571) + Rasikh Guard (101)
+cargo test --workspace          # vendored upstream suites (571) + Rasikh Guard (104)
 cargo test -p rasikh-guard      # Rasikh Guard only
 ```
 
@@ -103,10 +110,9 @@ flipping `passport -> school` to `allow` in the TOML fails 4 adversarial tests, 
 
 ## Known limits
 
-- **The vendored OpenAPPA engine is not on the decision path yet.** Decisions come from the Rasikh matrix evaluator in
-  `sidecar/`, which takes the same approach (labels follow observed data into the agent's later calls, then are
-  checked where the data leaves). Compiling the Rasikh matrix into OpenAPPA's policy dialect and driving `appa-engine`
-  per check is open work (see `packages/DEVIN_LOG.md`).
+- **OpenAPPA is used for its label algebra, not its full runtime.** Every allow goes through `appa_engine::label`
+  (the audience meet). The engine's trajectory replay, tool contracts and remedy plans need the OpenAPPA runtime, which
+  is not vendored; Guard's own session store plays that role (observations, consents, log).
 - **Granularity is per payload ref, not per value.** Guard cannot see content. Any unobserved ref inherits the whole
   session, which is safe but coarse: if the session has read a bank statement, a TAMM call that includes an unobserved
   ref is denied. The app should `/observe` every document it holds as it reads it.

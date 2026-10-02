@@ -64,6 +64,8 @@ npm run dev                          # Streamable HTTP on http://localhost:8790/
 RASIKH_DEMO_MODE=1 npm run dev       # deterministic demo mode
 npm run dev:stdio                    # also serves MCP over stdio (HTTP dev endpoints stay up)
 npm run build && npm start           # compiled
+docker compose -f ../compose.yaml up --build   # with the Guard sidecar, demo mode on
+docker run -p 8790:8790 -e RASIKH_DEMO_MODE=1 ghcr.io/mxthelgend44/rasikh-tamm-mcp   # published image
 ```
 
 | Variable            | Default                     | Meaning                                       |
@@ -97,5 +99,6 @@ HTTP tests run the Express app on a random port and use the SDK's Streamable HTT
 - **Health to TAMM** passes Guard only with the service's `service_tags` (contract 1.1.0), which this server always sends.
 - Read-only tools do not call Guard, because the contract gives them no `guard_session_id`. A personal detail typed into a
   `search_services` query is therefore not checked.
-- No per-user ownership check on `get_application_status`: any valid simulated session can read any application id.
+- `get_application_status` answers only the UAE PASS subject that submitted the application, or its `applicant_ref`.
+  Anyone else gets `unknown_application`, so an id's existence is not revealed.
 - Enums mirror `packages/shared` as zod schemas in `src/contract.ts`. This package is not an npm workspace yet (DECISIONS.md).
