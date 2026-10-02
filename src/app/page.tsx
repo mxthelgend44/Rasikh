@@ -10,7 +10,12 @@ import {
 } from 'lucide-react';
 import '@fontsource-variable/inter';
 import './landing.css';
+import { Faq } from '@/components/landing/faq';
 import { GuardDemo } from '@/components/landing/guard-demo';
+import { HowItWorks } from '@/components/landing/how-it-works';
+import { ParallaxHeroImage, ScrollProgress, WordReveal } from '@/components/landing/motion-bits';
+import { Proof } from '@/components/landing/proof';
+import { Readiness } from '@/components/landing/readiness';
 import { Journeys } from '@/components/landing/journeys';
 import { Reveal } from '@/components/landing/reveal';
 import { SiteHeader } from '@/components/landing/site-header';
@@ -33,31 +38,19 @@ const setupSteps = ['Trade name', 'Economic licence', 'Establishment card', 'Vis
 export default function LandingPage() {
   return (
     <div className="lp" id="top">
+      <ScrollProgress />
       <SiteHeader />
 
       <main>
         <section className="lp-hero" aria-labelledby="hero-title">
-          <div className="lp-hero-media" aria-hidden="true">
-            <Image
-              src="/images/corniche-arrival.webp"
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="lp-hero-image"
-            />
-          </div>
+          <ParallaxHeroImage src="/images/corniche-arrival.webp" />
           <div className="lp-shell lp-hero-grid">
             <div className="lp-hero-copy">
               <p className="lp-eyebrow lp-rise" style={{ animationDelay: '80ms' }}>
                 Relocation and company landing · Abu Dhabi
               </p>
-              <h1
-                id="hero-title"
-                className="lp-display lp-rise"
-                style={{ animationDelay: '160ms' }}
-              >
-                Arrive already <em>settled</em>.
+              <h1 id="hero-title" className="lp-display">
+                <WordReveal text="Arrive already settled." accent={['settled']} />
               </h1>
               <p className="lp-lede lp-rise" style={{ animationDelay: '260ms' }}>
                 Rasikh turns a move to Abu Dhabi into one plan. Visa, home, bank and school follow
@@ -128,6 +121,15 @@ export default function LandingPage() {
             <Journeys />
           </Reveal>
         </section>
+        <section className="lp-section lp-shell" id="how" aria-labelledby="how-title">
+          <Reveal className="lp-section-head">
+            <p className="lp-eyebrow">How it works</p>
+            <h2 id="how-title" className="lp-heading">
+              Four steps from offer to settled.
+            </h2>
+          </Reveal>
+          <HowItWorks />
+        </section>
 
         <section className="lp-privacy" id="privacy" aria-labelledby="privacy-title">
           <div className="lp-shell lp-privacy-grid">
@@ -160,6 +162,29 @@ export default function LandingPage() {
               <GuardDemo />
             </Reveal>
           </div>
+        </section>
+
+        <section
+          className="lp-section lp-shell lp-services"
+          id="services"
+          aria-labelledby="services-title"
+        >
+          <Reveal className="lp-services-copy">
+            <p className="lp-eyebrow">Every service, in order</p>
+            <h2 id="services-title" className="lp-heading">
+              Know what is missing before you apply.
+            </h2>
+            <p className="lp-body">
+              Each service lists what it needs and what must come first. Tick what you already have:
+              Rasikh shows what is still missing, so you never queue for a step that is not ready.
+            </p>
+            <p className="lp-small">
+              Example uses Rasikh&apos;s catalogue; requirements are illustrative.
+            </p>
+          </Reveal>
+          <Reveal delay={140}>
+            <Readiness />
+          </Reveal>
         </section>
 
         <section
@@ -213,6 +238,35 @@ export default function LandingPage() {
                 <ShieldCheck size={16} aria-hidden="true" /> HR sees progress, not private documents
               </li>
             </ul>
+          </Reveal>
+        </section>
+        <section className="lp-proof-band" id="proof" aria-labelledby="proof-title">
+          <div className="lp-shell">
+            <Reveal className="lp-section-head">
+              <p className="lp-eyebrow is-light">Tested like it matters</p>
+              <h2 id="proof-title" className="lp-heading is-light">
+                Every way we could find to leak your data is refused.
+              </h2>
+            </Reveal>
+            <Reveal delay={120}>
+              <Proof />
+            </Reveal>
+          </div>
+        </section>
+
+        <section
+          className="lp-section lp-shell lp-faq-section"
+          id="faq"
+          aria-labelledby="faq-title"
+        >
+          <Reveal className="lp-section-head">
+            <p className="lp-eyebrow">Questions</p>
+            <h2 id="faq-title" className="lp-heading">
+              What people ask first.
+            </h2>
+          </Reveal>
+          <Reveal delay={120}>
+            <Faq />
           </Reveal>
         </section>
 

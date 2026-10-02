@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 const links = [
-  { href: '#journeys', label: 'Journeys' },
+  { href: '#how', label: 'How it works' },
   { href: '#privacy', label: 'Privacy' },
   { href: '#companies', label: 'For companies' },
+  { href: '/pitch', label: 'Pitch' },
 ];
 
 /** Transparent over the hero, frosted once the page scrolls. */
