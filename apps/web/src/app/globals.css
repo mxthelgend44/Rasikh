@@ -47,15 +47,15 @@
   --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.1), 0 0 0 1px rgb(0 0 0 / 0.04);
   --shadow-dialog: 0 16px 48px rgb(0 0 0 / 0.16), 0 0 0 1px rgb(0 0 0 / 0.04);
 
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Consolas, monospace;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 
   --sidebar-width: 13.65rem;
   --sidebar-rail-width: 3.5rem;
   --topbar-height: 3.4rem;
   --sheet-inset: 0.5rem;
   --sheet-radius: 0.5rem;
-  --icon-stroke: 1.75;
+  --icon-stroke: 1.65;
 }
 
 .dark {

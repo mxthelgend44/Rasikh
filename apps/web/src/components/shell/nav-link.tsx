@@ -19,11 +19,11 @@ export function NavLink({ item, active, collapsed, onNavigate }: NavLinkProps) {
       onClick={onNavigate}
       className={cn(
         'flex h-[1.875rem] items-center rounded-md text-body text-fg transition-colors',
-        collapsed ? 'justify-center' : 'gap-2.5 px-2.5',
+        collapsed ? 'justify-center' : 'gap-2 px-2.5',
         active ? 'bg-selected' : 'hover:bg-hover',
       )}
     >
-      <Icon aria-hidden className="size-4 shrink-0" />
+      <Icon aria-hidden className="size-5 shrink-0" />
       <span className={cn('truncate', collapsed && 'sr-only')}>{item.label}</span>
     </Link>
   );

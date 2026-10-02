@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import '@fontsource-variable/inter';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
 import './globals.css';
 import { THEME_BOOT } from '@/lib/theme-boot';
 

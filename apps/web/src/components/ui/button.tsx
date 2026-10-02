@@ -48,7 +48,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       )}
       {...rest}
     >
-      {icon ? <span aria-hidden className="flex size-4 items-center justify-center">{icon}</span> : null}
+      {icon ? <span aria-hidden className="flex size-4 items-center justify-center [&>svg]:size-4">
+          {icon}
+        </span> : null}
       {iconOnly ? null : children}
     </button>
   );
