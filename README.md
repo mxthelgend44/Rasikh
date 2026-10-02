@@ -55,6 +55,16 @@ Demo mode runs the same flows with cached, realistic responses, so the demo neve
 | `npm run lint` | ESLint across workspaces |
 | `npm run typecheck` | TypeScript across workspaces |
 | `npm run format:check` | Prettier check |
+| `node scripts/capture.mjs --path <route>` | Screenshot a route at reference size (see DESIGN.md) |
+
+## Troubleshooting
+
+- A new Tailwind class does not render: stop the dev server, delete `apps/web/.next`, start again.
+- Git Bash rewrites arguments that start with `/`. Pass `--path employer/hires` to the capture script without a leading slash.
+
+## Design
+
+The design system and how to compare screens against the references are in [DESIGN.md](DESIGN.md). The live specimen is at `/design-system`.
 
 ## Status
 

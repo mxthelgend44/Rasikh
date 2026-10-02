@@ -23,6 +23,24 @@ Every assumption and design or technical decision, with one line of reasoning. N
 - **Rasikh keeps its own brand.** Same design language (layout, spacing, type, restraint), original name, mark and copy. No OpenAI logos or product names in the UI.
 - **fpga-simulator's purple accent is not carried over.** The brief bans purple and blue accents; Rasikh gets one restrained accent of its own (recorded in DESIGN.md).
 
+- **The captures are 1.27x, so 1 CSS px = 1.27 screenshot px.** Two known ChatGPT constants fix it (260px sidebar = 330px, 768px thread column = 974px) and Platform lands on clean values at that scale (45px rows, 36px nav pitch, 32px controls). fpga-simulator's earlier "40px controls, 15px body" came from reading the captures as 1x and run about 25% too large, so its token values are not ported. My first estimate of 1.25 was off by 1.6% and is superseded.
+- **Geometry tokens are in `rem`.** One root `font-size` rescales the whole UI if a demo screen needs it. Everything is currently 16px root.
+- **UI font is Geist, not the references' proprietary grotesque.** Rendered 14 candidates beside reference crops at matched size; Geist's widths were within 1% (Inter was 3.5% wide, and is the default of generic AI-built UIs). Self-hosted so the demo never needs a font CDN.
+- **Accent is petrol `#0b6b78`.** Not purple or blue (banned), not green (collides with success), not warm orange (reads as another product). Used only for focus, links, "employer backed", the current roadmap step and data. The references have no coloured chrome, so this stays small.
+- **Token names are semantic and unprefixed** (`canvas`, `surface`, `fg`, `selected`...). fpga's `bench-*` prefix leaked its domain. Type size names live in one file and feed both Tailwind and `cn()`, because tailwind-merge treats unknown `text-*` classes as colours and silently drops one of two.
+- **Page headers have no description line.** The Platform reference puts intro text in the body, not under the title, and keeps the header a fixed 56px with a divider.
+- **Contrast beats fidelity in three places.** Tertiary text `#6e6e6e` (reference `#848484` is 3.4:1 on the grey frame), placeholders 4.5:1, and the green toast is not copied (reference white-on-green is 2.5:1). Everything else follows the references.
+- **Dark hover, some dark borders and the status tints are estimated.** The dark references contain no hover, focus, toggle-on or status elements; those are derived from the light/dark pairs and marked estimated in `docs/reference-audit/measure-color-dark.md`.
+- **A `/design-system` route lives inside the real shell.** It is both the specimen for later sessions and the evidence for each session's quality gate. `noindex`.
+- **`scripts/capture.mjs` drives headless Edge/Chrome over CDP** (Node 22 global WebSocket, no new dependency) to reproduce reference-sized captures in either theme, direction or viewport.
+
+## Shell
+
+- **Org switcher and persona are static config for now** (`config/surfaces.ts`). Employer lists two organisations so the two demo paths can be switched from the top bar once Session 2 wires the store; until then switching only changes the label.
+- **Top-bar links switch between employer, landlord and bank.** They mirror the reference's "Dashboard / API Docs" slot and double as the live-demo view switcher. The newcomer app is a separate mobile shell (Session 3) and is not linked until it exists.
+- **Placeholder pages show a designed empty state with no button.** A call to action that goes nowhere is worse than none.
+- **The collapse state is stored in `localStorage` and applied after mount**, so server and client markup always agree.
+
 ## Scope update: Abu Dhabi and company expansion
 
 - **Abu Dhabi context is applied from the first seed file, not retrofitted.** Session 8 becomes an audit of that, not a rewrite. Retrofitting names, areas and flows across finished screens is more expensive and error-prone.
@@ -37,6 +55,11 @@ Every assumption and design or technical decision, with one line of reasoning. N
 - **Integration clients live in `apps/web/src/integrations/{guard,tamm}` with a stub and a live implementation behind one interface.** Stubs return realistic responses so the app works before the real packages land (Session 10).
 - **The Guard client fails closed.** Unreachable or erroring Guard is treated as `deny`, as INTEGRATION.md 3.1 requires.
 - **The trust passport is the source of Guard consent.** Each (label, destination) toggle maps to one `POST /consent` or `DELETE /consent/{id}`.
+
+### Working tree
+
+- **Devin switched this shared working tree to `devin/integrations`, so this session's commits land on that branch too.** Files are staged by explicit path, never `git add -A`, so neither side commits the other's work. Separate worktrees per agent (as the `rasikh-engine-evals` one already is) would be cleaner; say if you want this session moved to its own branch.
+- **If a new Tailwind token class does not render, delete `apps/web/.next`.** Next's persistent cache served a stale Tailwind result after the config changed (a `bg-danger-solid` button rendered invisible).
 
 ### Contract coordination (action needed from the project owner)
 
