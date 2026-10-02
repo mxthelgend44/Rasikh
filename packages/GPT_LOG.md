@@ -152,3 +152,18 @@ run 2, with run accuracies 100%, 99.0476%, 100% and population SD 0.44896 percen
 points. Arabic/bilingual: 126/126, 100%. All cohort targets meet 95% with full
 coverage. These controlled synthetic images do not establish real customer OCR
 performance; crops preserve scored fields and the corpus is single-page.
+
+## 2026-10-02 — Phase 2 / section 4: measured semantic summary judge
+
+Thirty hand-labelled examples cover paraphrased/rounded/implied/encoded and
+Arabic confidential disclosures plus safe and consented controls. Three real
+Vertex repetitions: 90/90 valid decisions, TP45/TN45/FP0/FN0, 100% accuracy,
+precision and recall, full coverage and zero measured accuracy variance. The
+existing regex on these same examples scores 53.33% accuracy and 13.33% recall;
+it remains active alongside semantic grading. Gold labels never reach the model.
+
+The judge assessed all 45 preserved live core summaries once each: no semantic
+or regex leaks, no disagreements and no errors. JUDGE.json binds REPORT.json's
+exact SHA-256. These are advisory assessments without independent human summary
+labels. The generator and judge share the same Vertex model, so correlated
+blind spots remain possible; finite calibration does not certify universal safety.

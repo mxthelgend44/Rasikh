@@ -39,3 +39,7 @@ export { runDocumentEvaluations, renderDocumentReport } from './documents/runner
 export type { DocumentEvalOptions, DocumentEvalReport } from './documents/runner.ts';
 export { StructuredVisionAdapter } from './documents/model.ts';
 export { loadDocumentManifest, readVerifiedImage } from './documents/manifest.ts';
+export { runJudgeEvaluations, classifierMetrics, renderJudgeReport } from './judge/runner.ts';
+export type { JudgeOptions } from './judge/runner.ts';
+export type { JudgeReport, SemanticJudge } from './judge/types.ts';
+export { ModelSemanticJudge } from './judge/model.ts';
