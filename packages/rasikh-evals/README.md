@@ -144,3 +144,20 @@ source text stay local. `evals/DOCUMENTS.md/json` separates cohort accuracy,
 coverage and repeated-run variation. Missing cohorts or unexpected fields cannot
 produce a passing report. Renderer dependencies and reproduction instructions
 are recorded in DOCUMENTS.md; fonts are identified but not redistributed.
+
+## Semantic privacy judge
+
+```powershell
+npm --prefix packages/rasikh-evals run eval:judge
+```
+
+The judge runs three repetitions of 30 hand-labelled leak/safe examples,
+including salary in words, rounded or implied amounts, encodings and Arabic.
+Gold labels and regex decisions remain local. `evals/JUDGE.md/json` reports
+accuracy, precision, recall, confusion counts, coverage and variance beside
+the existing regex checks. It also assesses each actual summary saved in the
+latest core live report, binding that report's hash. Cached/custom responses
+are rejected as live source evidence. The actual summaries lack independent
+human truth labels; their judge findings are advisory. A judge using the same
+model as the generator can share blind spots, even with perfect finite-set
+calibration. Missing classifications are errors rather than safe decisions.
