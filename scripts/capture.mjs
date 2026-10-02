@@ -93,14 +93,17 @@ try {
   const loadWaiters = [];
   socket.onmessage = ({ data }) => {
     const message = JSON.parse(data);
-    if (message.method === 'Page.loadEventFired') loadWaiters.splice(0).forEach((resolve) => resolve());
+    if (message.method === 'Page.loadEventFired')
+      loadWaiters.splice(0).forEach((resolve) => resolve());
     else pending.get(message.id)?.(message);
   };
   const loaded = () => new Promise((resolve) => loadWaiters.push(resolve));
   const send = (method, params = {}) =>
     new Promise((resolve, reject) => {
       const id = ++nextId;
-      pending.set(id, (message) => (message.error ? reject(new Error(message.error.message)) : resolve(message.result)));
+      pending.set(id, (message) =>
+        message.error ? reject(new Error(message.error.message)) : resolve(message.result),
+      );
       socket.send(JSON.stringify({ id, method, params }));
     });
 
@@ -131,12 +134,17 @@ try {
   }
 
   if (process.env.CAPTURE_DEBUG) {
-    const state = await send('Runtime.evaluate', { expression: "JSON.stringify({ls: localStorage.getItem('rasikh-theme'), cls: document.documentElement.className})" });
+    const state = await send('Runtime.evaluate', {
+      expression:
+        "JSON.stringify({ls: localStorage.getItem('rasikh-theme'), cls: document.documentElement.className})",
+    });
     console.log(state.result.value);
   }
   const { data } = await send('Page.captureScreenshot', { format: 'png' });
   writeFileSync(options.out, Buffer.from(data, 'base64'));
-  console.log(`${options.out} (${Math.round(options.width * options.dpr)}x${Math.round(options.height * options.dpr)})`);
+  console.log(
+    `${options.out} (${Math.round(options.width * options.dpr)}x${Math.round(options.height * options.dpr)})`,
+  );
   socket.close();
 } finally {
   child.kill();

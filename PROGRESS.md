@@ -8,19 +8,19 @@ Session 1 (recon and design system) is finishing. Reference recon is running (su
 
 ## Session plan
 
-| # | Session | Status |
-|---|---|---|
-| 1 | Recon and design system, scaffold, base shell | In progress |
-| 2 | Data model and live sync (Abu Dhabi seed data, Expansion and Guard entities included) | Next |
-| 3 | Newcomer app | Planned |
-| 4 | Employer dashboard | Planned |
-| 5 | Landlord and bank dashboards | Planned |
-| 6 | AI agent (extraction, roadmap, loop with tools, risk summaries, demo mode) | Planned |
-| 7 | Demo polish, both paths scripted, reset button, QA | Planned |
-| 8 | Abu Dhabi context pass across all existing screens and data | Planned |
-| 9 | Company expansion module | Planned |
-| 10 | Integration clients, stubs, Guard log, blocked-action demo moment | Planned |
-| 11 | Swap stubs for the real packages once they land, end-to-end test of both demo paths | Planned |
+| #   | Session                                                                               | Status      |
+| --- | ------------------------------------------------------------------------------------- | ----------- |
+| 1   | Recon and design system, scaffold, base shell                                         | In progress |
+| 2   | Data model and live sync (Abu Dhabi seed data, Expansion and Guard entities included) | Next        |
+| 3   | Newcomer app                                                                          | Planned     |
+| 4   | Employer dashboard                                                                    | Planned     |
+| 5   | Landlord and bank dashboards                                                          | Planned     |
+| 6   | AI agent (extraction, roadmap, loop with tools, risk summaries, demo mode)            | Planned     |
+| 7   | Demo polish, both paths scripted, reset button, QA                                    | Planned     |
+| 8   | Abu Dhabi context pass across all existing screens and data                           | Planned     |
+| 9   | Company expansion module                                                              | Planned     |
+| 10  | Integration clients, stubs, Guard log, blocked-action demo moment                     | Planned     |
+| 11  | Swap stubs for the real packages once they land, end-to-end test of both demo paths   | Planned     |
 
 Note on Session 8: Abu Dhabi context is applied from the Session 2 seed onward, so Session 8 is an audit of names, areas, copy, currency and date formats, not a retrofit.
 

@@ -5,13 +5,7 @@
  * Fees and durations are illustrative and carry `illustrative: true`.
  */
 
-import type {
-  ApplicationStatus,
-  Audience,
-  DataLabel,
-  GuardDecision,
-  PayloadRef,
-} from './contract';
+import type { ApplicationStatus, Audience, DataLabel, GuardDecision, PayloadRef } from './contract';
 
 export const TAMM_TOOLS = [
   'search_services',

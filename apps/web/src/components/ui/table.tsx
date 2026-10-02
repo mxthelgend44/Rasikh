@@ -12,7 +12,10 @@ export function Table({ className, ...rest }: HTMLAttributes<HTMLTableElement>) 
 export function Tr({ className, ...rest }: HTMLAttributes<HTMLTableRowElement>) {
   return (
     <tr
-      className={cn('h-[2.8125rem] border-b border-edge transition-colors hover:bg-subtle', className)}
+      className={cn(
+        'h-[2.8125rem] border-b border-edge transition-colors hover:bg-subtle',
+        className,
+      )}
       {...rest}
     />
   );
@@ -57,7 +60,8 @@ export function Th({ align = 'start', sort, onSort, className, children, ...rest
             aria-hidden
             className={cn(
               'size-3 text-fg-tertiary transition-opacity',
-              sort === 'none' && 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100',
+              sort === 'none' &&
+                'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100',
             )}
           />
         </button>

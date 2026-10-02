@@ -33,12 +33,7 @@ export function Sidebar({ groups, collapsed, onToggleCollapsed, onNavigate }: Si
       <nav aria-label="Primary" className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 pt-3">
         {groups.map((group) => (
           <section key={group.label} className="mt-5 first:mt-0">
-            <h2
-              className={cn(
-                'mb-2 px-3 text-label text-fg-tertiary',
-                collapsed && 'sr-only',
-              )}
-            >
+            <h2 className={cn('mb-2 px-3 text-label text-fg-tertiary', collapsed && 'sr-only')}>
               {group.label}
             </h2>
             <ul className="flex flex-col gap-1.5">

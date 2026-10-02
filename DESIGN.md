@@ -25,32 +25,32 @@ The reference captures are a 1512px viewport resized to 1920px, so **1 CSS px = 
 
 Tokens are RGB channels, so Tailwind alpha works (`bg-fg/10`). Dark is a tonal ladder, not an inversion. All values below were measured from the references except where marked.
 
-| Token | Light | Dark | Role |
-|---|---|---|---|
-| `canvas` | `#f3f3f3` | `#131313` | Frame: sidebar and top bar |
-| `surface` | `#ffffff` | `#212121` | The content sheet and cards |
-| `raised` | `#ffffff` | `#303030` | Menus, dialogs, popovers |
-| `subtle` | `#f9f9f9` | `#262626` | Table header band, row hover (estimated dark) |
-| `hover` | `#ebebeb` | `#2a2a2a` | Hover plate (estimated) |
-| `selected` | `#e0e0e0` | `#303030` | Active nav row |
-| `track` | `#eeeeee` | `#303030` | Segmented track, neutral label fill |
-| `line` | `#f0f0f0` | `#3a3a3a` | Dividers, header rule |
-| `edge` | `#ececec` | `#1c1c1c` | Sheet and card outline |
-| `line-strong` | `#d5d5d5` | `#555555` | Control outline |
-| `fg` | `#0d0d0d` | `#ffffff` | Text |
-| `fg-secondary` | `#444444` | `#c9c9c9` | Secondary text |
-| `fg-tertiary` | `#6e6e6e` | `#9e9e9e` | Group labels, descriptions |
-| `fg-placeholder` | `#767676` | `#8c8c8f` | Placeholders |
-| `solid` / `solid-fg` | `#171717` / `#ffffff` | `#f3f3f3` / `#000000` | Primary button. Inverts in dark |
-| `accent` / `accent-soft` | `#0b6b78` / `#e3f1f3` | `#62c1ce` / `#16313a` | Single accent (Rasikh's own) |
+| Token                    | Light                 | Dark                  | Role                                          |
+| ------------------------ | --------------------- | --------------------- | --------------------------------------------- |
+| `canvas`                 | `#f3f3f3`             | `#131313`             | Frame: sidebar and top bar                    |
+| `surface`                | `#ffffff`             | `#212121`             | The content sheet and cards                   |
+| `raised`                 | `#ffffff`             | `#303030`             | Menus, dialogs, popovers                      |
+| `subtle`                 | `#f9f9f9`             | `#262626`             | Table header band, row hover (estimated dark) |
+| `hover`                  | `#ebebeb`             | `#2a2a2a`             | Hover plate (estimated)                       |
+| `selected`               | `#e0e0e0`             | `#303030`             | Active nav row                                |
+| `track`                  | `#eeeeee`             | `#303030`             | Segmented track, neutral label fill           |
+| `line`                   | `#f0f0f0`             | `#3a3a3a`             | Dividers, header rule                         |
+| `edge`                   | `#ececec`             | `#1c1c1c`             | Sheet and card outline                        |
+| `line-strong`            | `#d5d5d5`             | `#555555`             | Control outline                               |
+| `fg`                     | `#0d0d0d`             | `#ffffff`             | Text                                          |
+| `fg-secondary`           | `#444444`             | `#c9c9c9`             | Secondary text                                |
+| `fg-tertiary`            | `#6e6e6e`             | `#9e9e9e`             | Group labels, descriptions                    |
+| `fg-placeholder`         | `#767676`             | `#8c8c8f`             | Placeholders                                  |
+| `solid` / `solid-fg`     | `#171717` / `#ffffff` | `#f3f3f3` / `#000000` | Primary button. Inverts in dark               |
+| `accent` / `accent-soft` | `#0b6b78` / `#e3f1f3` | `#62c1ce` / `#16313a` | Single accent (Rasikh's own)                  |
 
 Status, always tint fill with same-hue text and no border:
 
-| Tone | Light fill / text | Dark fill / text |
-|---|---|---|
+| Tone    | Light fill / text     | Dark fill / text      |
+| ------- | --------------------- | --------------------- |
 | success | `#e2f3e6` / `#0b672b` | `#1e3528` / `#35c387` |
 | warning | `#ffe8c5` / `#7a520f` | `#453823` / `#ffae2d` |
-| danger | `#ffe2e3` / `#871d1b` | `#402423` / `#ff6b64` |
+| danger  | `#ffe2e3` / `#871d1b` | `#402423` / `#ff6b64` |
 
 Solid fills (destructive button, toasts): danger `#e12e2a`, success `#008735`.
 
@@ -60,34 +60,34 @@ Solid fills (destructive button, toasts): danger `#e12e2a`, success `#008735`.
 
 Font: **Geist Variable** (self-hosted via `@fontsource-variable/geist`), mono **Geist Mono Variable**. The reference grotesque is proprietary. Geist was chosen after rendering the leading free candidates beside reference crops at matched size: its widths land within 1% of the reference (Inter ran 3.5% wide) and it has the same neutral letterforms. Arabic companion font is chosen in Session 3.
 
-| Class | Size / line | Use |
-|---|---|---|
-| `text-caption` | 12 / 16 | Badges, helper text, timestamps |
-| `text-label` | 13 / 18 | Group labels, table headers, descriptions |
-| `text-body` | 14 / 20 | Default text, nav, controls, table cells |
-| `text-title` | 16 / 24 | Dialog and empty-state titles |
-| `text-heading` | 20 / 28 | Page titles, weight 500 |
-| `text-display` | 24 / 32 | Hero statements, large figures |
+| Class          | Size / line | Use                                       |
+| -------------- | ----------- | ----------------------------------------- |
+| `text-caption` | 12 / 16     | Badges, helper text, timestamps           |
+| `text-label`   | 13 / 18     | Group labels, table headers, descriptions |
+| `text-body`    | 14 / 20     | Default text, nav, controls, table cells  |
+| `text-title`   | 16 / 24     | Dialog and empty-state titles             |
+| `text-heading` | 20 / 28     | Page titles, weight 500                   |
+| `text-display` | 24 / 32     | Hero statements, large figures            |
 
 Weights: 400 body, 500 titles, active labels and buttons, 600 only for avatars. No uppercase tracked labels except where a reference shows one. The type size names are declared once in `src/design/scale.ts` and shared with `cn()`, because tailwind-merge otherwise treats every unknown `text-*` as a colour and silently drops one of two classes.
 
 ## Geometry (CSS px)
 
-| Item | Value |
-|---|---|
-| Sidebar width | 218 (collapsed rail 56) |
-| Top bar height | 54, no border, same colour as the sidebar |
-| Content sheet | Flush to the sidebar and top bar, 8 from the right and bottom, radius 8, 1px `edge` border, no shadow |
-| Page header | 56 high, 24 side padding, 1px `line` divider full-bleed |
-| Nav row | 30 high, 36 pitch, radius 8, 10 side padding, 20px icon box |
-| Group label | 13px `fg-tertiary`, 12px above the first row, 20px between groups |
-| Controls | 32 high (md), 28 (sm), 40 (lg), radius 8 |
-| Table | Header band 30 high `subtle`; rows 45; row rule `edge`; cell inset 20; numbers right-aligned |
-| Status label | 20 high, radius 4 (pill in the newcomer app), 12px 500 |
-| Avatar | 28 circle, initials 12px 600 |
-| Empty state | 40px tile radius 8, 20px glyph, 16px gap to a 16px title, 14px description, one button |
-| Page content | 24 padding; forms 600 centred; sections 44-48 apart |
-| Spacing scale | 4 · 8 · 12 · 16 · 20 · 24 · 32 · 44 |
+| Item           | Value                                                                                                 |
+| -------------- | ----------------------------------------------------------------------------------------------------- |
+| Sidebar width  | 218 (collapsed rail 56)                                                                               |
+| Top bar height | 54, no border, same colour as the sidebar                                                             |
+| Content sheet  | Flush to the sidebar and top bar, 8 from the right and bottom, radius 8, 1px `edge` border, no shadow |
+| Page header    | 56 high, 24 side padding, 1px `line` divider full-bleed                                               |
+| Nav row        | 30 high, 36 pitch, radius 8, 10 side padding, 20px icon box                                           |
+| Group label    | 13px `fg-tertiary`, 12px above the first row, 20px between groups                                     |
+| Controls       | 32 high (md), 28 (sm), 40 (lg), radius 8                                                              |
+| Table          | Header band 30 high `subtle`; rows 45; row rule `edge`; cell inset 20; numbers right-aligned          |
+| Status label   | 20 high, radius 4 (pill in the newcomer app), 12px 500                                                |
+| Avatar         | 28 circle, initials 12px 600                                                                          |
+| Empty state    | 40px tile radius 8, 20px glyph, 16px gap to a 16px title, 14px description, one button                |
+| Page content   | 24 padding; forms 600 centred; sections 44-48 apart                                                   |
+| Spacing scale  | 4 · 8 · 12 · 16 · 20 · 24 · 32 · 44                                                                   |
 
 Radius scale: 4 label, 6 default, 8 controls and sheet, 12 cards and dialogs, 16 large.
 

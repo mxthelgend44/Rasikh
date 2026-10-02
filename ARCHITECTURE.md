@@ -33,14 +33,14 @@ data/                    Seed data with Abu Dhabi context (Session 2)
 
 ## Surfaces
 
-| Surface | Audience | Form factor | Route (planned) |
-|---|---|---|---|
-| Newcomer | Hire | Mobile-first web, EN/AR | `/newcomer` |
-| Employer | HR and the paying customer | Desktop | `/employer` |
-| Expansion (inside employer) | Company opening an Abu Dhabi branch | Desktop | `/employer/expansion` |
-| Landlord | Property manager | Desktop | `/landlord` |
-| Bank | Account officer | Desktop | `/bank` |
-| Guard log | Newcomer and employer | Both | inside newcomer and employer |
+| Surface                     | Audience                            | Form factor             | Route (planned)              |
+| --------------------------- | ----------------------------------- | ----------------------- | ---------------------------- |
+| Newcomer                    | Hire                                | Mobile-first web, EN/AR | `/newcomer`                  |
+| Employer                    | HR and the paying customer          | Desktop                 | `/employer`                  |
+| Expansion (inside employer) | Company opening an Abu Dhabi branch | Desktop                 | `/employer/expansion`        |
+| Landlord                    | Property manager                    | Desktop                 | `/landlord`                  |
+| Bank                        | Account officer                     | Desktop                 | `/bank`                      |
+| Guard log                   | Newcomer and employer               | Both                    | inside newcomer and employer |
 
 All surfaces read and write one data model and update live.
 

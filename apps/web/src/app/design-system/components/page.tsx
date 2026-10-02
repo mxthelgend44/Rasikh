@@ -22,11 +22,46 @@ interface SampleHire {
 
 /** Page-local sample rows for the gallery only. The real seed arrives with the data model. */
 const HIRES: SampleHire[] = [
-  { name: 'Aditi Rao', role: 'Backend engineer', from: 'Bengaluru', stage: 'Emirates ID', tone: 'accent', days: 9 },
-  { name: 'Samuel Okoye', role: 'Registered nurse', from: 'Lagos', stage: 'Blocked', tone: 'danger', days: 21 },
-  { name: 'Mei Lin Tan', role: 'Data scientist', from: 'Singapore', stage: 'Housing', tone: 'neutral', days: 14 },
-  { name: 'Carlos Mendes', role: 'Site engineer', from: 'São Paulo', stage: 'Settled', tone: 'success', days: 26 },
-  { name: 'Fatima El Idrissi', role: 'Primary teacher', from: 'Casablanca', stage: 'Documents', tone: 'warning', days: 3 },
+  {
+    name: 'Aditi Rao',
+    role: 'Backend engineer',
+    from: 'Bengaluru',
+    stage: 'Emirates ID',
+    tone: 'accent',
+    days: 9,
+  },
+  {
+    name: 'Samuel Okoye',
+    role: 'Registered nurse',
+    from: 'Lagos',
+    stage: 'Blocked',
+    tone: 'danger',
+    days: 21,
+  },
+  {
+    name: 'Mei Lin Tan',
+    role: 'Data scientist',
+    from: 'Singapore',
+    stage: 'Housing',
+    tone: 'neutral',
+    days: 14,
+  },
+  {
+    name: 'Carlos Mendes',
+    role: 'Site engineer',
+    from: 'São Paulo',
+    stage: 'Settled',
+    tone: 'success',
+    days: 26,
+  },
+  {
+    name: 'Fatima El Idrissi',
+    role: 'Primary teacher',
+    from: 'Casablanca',
+    stage: 'Documents',
+    tone: 'warning',
+    days: 3,
+  },
 ];
 
 type SortKey = 'name' | 'days';

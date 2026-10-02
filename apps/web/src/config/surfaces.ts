@@ -62,7 +62,9 @@ export const SURFACES: Record<SurfaceId, Surface> = {
       },
       {
         label: 'Safety',
-        items: [{ label: 'Guard log', href: '/employer/guard', icon: ShieldCheck, match: 'prefix' }],
+        items: [
+          { label: 'Guard log', href: '/employer/guard', icon: ShieldCheck, match: 'prefix' },
+        ],
       },
     ],
   },
@@ -112,7 +114,12 @@ export const SURFACES: Record<SurfaceId, Surface> = {
       {
         label: 'Library',
         items: [
-          { label: 'Components', href: '/design-system/components', icon: LayoutGrid, match: 'prefix' },
+          {
+            label: 'Components',
+            href: '/design-system/components',
+            icon: LayoutGrid,
+            match: 'prefix',
+          },
         ],
       },
     ],

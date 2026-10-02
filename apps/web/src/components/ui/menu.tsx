@@ -1,6 +1,13 @@
 'use client';
 
-import { useId, useRef, useState, type ButtonHTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
+import {
+  useId,
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useDismiss } from '@/lib/use-dismiss';
@@ -36,7 +43,9 @@ export function Menu({ label, items, trigger, align = 'start' }: MenuProps) {
   useDismiss(open, region, () => close(true));
 
   const enabled = () =>
-    Array.from(list.current?.querySelectorAll<HTMLElement>('[role="menuitem"]:not([disabled])') ?? []);
+    Array.from(
+      list.current?.querySelectorAll<HTMLElement>('[role="menuitem"]:not([disabled])') ?? [],
+    );
 
   const focusItem = (index: number) => {
     const nodes = enabled();

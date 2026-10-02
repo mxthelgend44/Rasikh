@@ -41,10 +41,21 @@ const SIGNAL: Swatch[] = [
   { name: 'danger-soft', className: 'bg-danger-soft' },
 ];
 
-const SIZE_SPECIMEN: Record<(typeof TEXT_SIZES)[number], { className: string; px: string; use: string }> = {
+const SIZE_SPECIMEN: Record<
+  (typeof TEXT_SIZES)[number],
+  { className: string; px: string; use: string }
+> = {
   caption: { className: 'text-caption', px: '12 / 16', use: 'Badges, helper text, timestamps' },
-  label: { className: 'text-label', px: '13 / 18', use: 'Group labels, table headers, descriptions' },
-  body: { className: 'text-body', px: '14 / 20', use: 'Default text, navigation, controls, table cells' },
+  label: {
+    className: 'text-label',
+    px: '13 / 18',
+    use: 'Group labels, table headers, descriptions',
+  },
+  body: {
+    className: 'text-body',
+    px: '14 / 20',
+    use: 'Default text, navigation, controls, table cells',
+  },
   title: { className: 'text-title', px: '16 / 24', use: 'Dialog and empty-state titles' },
   heading: { className: 'text-heading', px: '20 / 28', use: 'Page titles' },
   display: { className: 'text-display', px: '24 / 32', use: 'Hero statements, large figures' },
@@ -82,7 +93,9 @@ export default function TokensPage() {
             {TEXT_SIZES.map((size) => (
               <li key={size} className="flex items-baseline gap-4 px-4 py-3">
                 <span className="w-20 shrink-0 text-label text-fg-tertiary">{size}</span>
-                <span className={`min-w-0 flex-1 truncate text-fg ${SIZE_SPECIMEN[size].className}`}>
+                <span
+                  className={`min-w-0 flex-1 truncate text-fg ${SIZE_SPECIMEN[size].className}`}
+                >
                   Your move, in the right order
                 </span>
                 <span className="hidden shrink-0 text-label text-fg-tertiary sm:block">
