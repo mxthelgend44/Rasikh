@@ -1,0 +1,28 @@
+[package]
+name = "rasikh-guard"
+description = "Rasikh Guard: label x destination flow policy and HTTP sidecar (INTEGRATION.md section 3)"
+version = "0.1.0"
+edition.workspace = true
+publish = false
+license = "MIT"
+
+[[bin]]
+name = "rasikh-guard"
+path = "src/main.rs"
+
+[dependencies]
+axum = { version = "0.8", default-features = false, features = ["json", "tokio", "http1", "query"] }
+chrono = { version = "0.4", default-features = false, features = ["std", "clock"] }
+rand = "0.9"
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { version = "1", features = ["rt-multi-thread", "net", "macros", "signal"] }
+toml = { workspace = true }
+
+[dev-dependencies]
+http-body-util = "0.1"
+tower = { version = "0.5", features = ["util"] }
+
+[lints]
+workspace = true
