@@ -53,3 +53,28 @@ The contract-only proposal is on `gpt/engine-contract`, editing INTEGRATION.md o
 with the Rasikh Engine function signatures/type proposal and version 1.1.0. Active
 shared/runtime responses remain 1.0.0 pending review/merge. Both branches share the
 same repository history; no remote is available to open or merge real PRs.
+
+## 2026-10-02 — Milestone 4: evaluation harness
+
+Built `@rasikh/evals` with 20 synthetic text documents (105 expected fields), 15
+static engine-grounded roadmap cases, 15 recipient summaries (60 required facts),
+and 25 hard-deny Guard attacks (13 direct, 12 indirect). Demo responses are stored
+independently; engine goldens do not regenerate from the engine during scoring.
+
+One command writes Markdown and JSON reports, with evidence scope suitable for the
+future Quality screen. Injectable app functions, a proposed app HTTP transport, direct
+OpenAI Responses and Guard HTTP adapters support live mode. Raw credentials and API
+error bodies are never logged. Unavailable services are errors, not policy denials.
+
+Verification: 18 harness tests and strict TypeScript pass. Demo run: 75/75 passing,
+105/105 fields, 15/15 ordered roadmaps/blockers, 60/60 summary facts, no forbidden
+summary content, and 25 cached Guard denials. Live Guard probe: incomplete, 25 errors,
+0 verified checks/denials, leak rate null. OpenAI key/model and app eval endpoint are
+not configured, so no live AI result is claimed. Engine total: 69 tests passing.
+
+Known limits: synthetic text fixtures do not measure OCR/Arabic/layout quality; summary
+grading uses reviewed regexes, not a semantic judge; Guard attack coverage is finite.
+Services and app integration remain owned by the other agents. The root workspace list
+still excludes these packages; standalone prefix commands work without changing it.
+
+All milestone descriptions are saved under each package's `review/MILESTONES.md`.

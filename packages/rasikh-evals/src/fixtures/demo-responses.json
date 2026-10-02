@@ -1,0 +1,1160 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic": true,
+  "description": "Authored synthetic cache for repeatable harness self-checks. Not recorded live model or Guard responses.",
+  "extraction": {
+    "doc_passport_hire_demo_001": {
+      "full_name": "Alex Demo",
+      "passport_number": "FAKE-P-001",
+      "nationality": "Exampleland",
+      "date_of_birth": "1994-02-03",
+      "expiry_date": "2031-04-05"
+    },
+    "doc_passport_hire_demo_002": {
+      "full_name": "Mira Sample",
+      "passport_number": "FAKE-P-002",
+      "nationality": "Test Republic",
+      "date_of_birth": "1990-11-09",
+      "expiry_date": "2030-08-17"
+    },
+    "doc_passport_hire_demo_003": {
+      "full_name": "Noor Example",
+      "passport_number": "FAKE-P-003",
+      "nationality": "Demo Islands",
+      "date_of_birth": "1988-06-20",
+      "expiry_date": "2029-12-31"
+    },
+    "doc_passport_hire_demo_004": {
+      "full_name": "Luca Fiction",
+      "passport_number": "FAKE-P-004",
+      "nationality": "Fiction Federation",
+      "date_of_birth": null,
+      "expiry_date": "2032-01-10"
+    },
+    "doc_passport_eval_005": {
+      "full_name": "Rowan Test-Case",
+      "passport_number": "FAKE-P-005",
+      "nationality": "Sample State",
+      "date_of_birth": "1998-03-15",
+      "expiry_date": "2028-09-04"
+    },
+    "doc_offer_eval_001": {
+      "employee_name": "Alex Demo",
+      "employer": "Northwind Demo Analytics",
+      "role": "Software Engineer",
+      "start_date": "2026-11-01",
+      "monthly_salary_aed": 24000
+    },
+    "doc_offer_eval_002": {
+      "employee_name": "Mira Sample",
+      "employer": "Fiction Labs",
+      "role": "Data Analyst",
+      "start_date": "2026-12-15",
+      "monthly_salary_aed": 15000
+    },
+    "doc_offer_eval_003": {
+      "employee_name": "Noor Example",
+      "employer": "Sample Systems",
+      "role": "Product Designer",
+      "start_date": "2027-01-05",
+      "monthly_salary_aed": 18500
+    },
+    "doc_offer_eval_004": {
+      "employee_name": "Luca Fiction",
+      "employer": "Demo Media",
+      "role": "Producer",
+      "start_date": null,
+      "monthly_salary_aed": 13000
+    },
+    "doc_offer_eval_005": {
+      "employee_name": "Rowan Test-Case",
+      "employer": "Northwind Demo Analytics",
+      "role": "Research Engineer",
+      "start_date": "2026-10-20",
+      "monthly_salary_aed": 22000
+    },
+    "doc_degree_eval_001": {
+      "full_name": "Alex Demo",
+      "institution": "Example University",
+      "degree": "Bachelor of Science",
+      "field": "Computer Science",
+      "award_date": "2016-06-30"
+    },
+    "doc_degree_eval_002": {
+      "full_name": "Mira Sample",
+      "institution": "Sample Institute",
+      "degree": "Master of Science",
+      "field": "Statistics",
+      "award_date": "2015-07-15"
+    },
+    "doc_degree_eval_003": {
+      "full_name": "Noor Example",
+      "institution": "Fiction School of Design",
+      "degree": "Bachelor of Arts",
+      "field": "Design",
+      "award_date": "2010-05-28"
+    },
+    "doc_degree_eval_004": {
+      "full_name": "Luca Fiction",
+      "institution": "Demo Academy",
+      "degree": "Diploma",
+      "field": "Media Production",
+      "award_date": null
+    },
+    "doc_degree_eval_005": {
+      "full_name": "Rowan Test-Case",
+      "institution": "Test University",
+      "degree": "Doctor of Philosophy",
+      "field": "Machine Learning",
+      "award_date": "2024-08-01"
+    },
+    "doc_bank_eval_001": {
+      "account_holder": "Alex Demo",
+      "bank": "Fiction Bank",
+      "account_number": "FAKE-ACCT-001",
+      "period_start": "2026-09-01",
+      "period_end": "2026-09-30",
+      "closing_balance_aed": 48200.5
+    },
+    "doc_bank_eval_002": {
+      "account_holder": "Mira Sample",
+      "bank": "Demo Bank",
+      "account_number": "FAKE-ACCT-002",
+      "period_start": "2026-08-01",
+      "period_end": "2026-08-31",
+      "closing_balance_aed": 12750
+    },
+    "doc_bank_eval_003": {
+      "account_holder": "Noor Example",
+      "bank": "Sample Savings",
+      "account_number": "FAKE-ACCT-003",
+      "period_start": "2026-07-01",
+      "period_end": "2026-07-31",
+      "closing_balance_aed": -125.75
+    },
+    "doc_bank_eval_004": {
+      "account_holder": "Luca Fiction",
+      "bank": "Demo Credit",
+      "account_number": "FAKE-ACCT-004",
+      "period_start": "2026-06-01",
+      "period_end": "2026-06-30",
+      "closing_balance_aed": null
+    },
+    "doc_bank_eval_005": {
+      "account_holder": "Rowan Test-Case",
+      "bank": "Fiction Bank",
+      "account_number": "FAKE-ACCT-005",
+      "period_start": "2026-05-01",
+      "period_end": "2026-05-31",
+      "closing_balance_aed": 0
+    }
+  },
+  "roadmap": {
+    "roadmap_individual_start": {
+      "step_ids": [
+        "collect_documents",
+        "residency_visa",
+        "health_insurance",
+        "emirates_id",
+        "housing_search",
+        "tawtheeq_register",
+        "bank_account",
+        "fully_settled"
+      ],
+      "blockers": [
+        {
+          "step_id": "collect_documents",
+          "unmet_dependencies": [],
+          "missing_documents": ["passport", "employment"]
+        },
+        {
+          "step_id": "residency_visa",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": ["passport", "employment"]
+        },
+        {
+          "step_id": "health_insurance",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": ["passport"]
+        },
+        {
+          "step_id": "emirates_id",
+          "unmet_dependencies": ["residency_visa"],
+          "missing_documents": ["passport"]
+        },
+        {
+          "step_id": "housing_search",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "tawtheeq_register",
+          "unmet_dependencies": ["residency_visa", "housing_search"],
+          "missing_documents": ["passport", "emirates_id"]
+        },
+        {
+          "step_id": "bank_account",
+          "unmet_dependencies": ["emirates_id"],
+          "missing_documents": ["emirates_id", "employment"]
+        },
+        {
+          "step_id": "fully_settled",
+          "unmet_dependencies": ["tawtheeq_register", "health_insurance", "bank_account"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_individual_documents": {
+      "step_ids": [
+        "collect_documents",
+        "residency_visa",
+        "health_insurance",
+        "emirates_id",
+        "housing_search",
+        "tawtheeq_register",
+        "bank_account",
+        "fully_settled"
+      ],
+      "blockers": [
+        {
+          "step_id": "residency_visa",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "health_insurance",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "emirates_id",
+          "unmet_dependencies": ["residency_visa"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "housing_search",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "tawtheeq_register",
+          "unmet_dependencies": ["residency_visa", "housing_search"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "bank_account",
+          "unmet_dependencies": ["emirates_id"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_settled",
+          "unmet_dependencies": ["tawtheeq_register", "health_insurance", "bank_account"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_individual_residency_done": {
+      "step_ids": [
+        "collect_documents",
+        "residency_visa",
+        "health_insurance",
+        "emirates_id",
+        "housing_search",
+        "tawtheeq_register",
+        "bank_account",
+        "fully_settled"
+      ],
+      "blockers": [
+        {
+          "step_id": "tawtheeq_register",
+          "unmet_dependencies": ["housing_search"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "bank_account",
+          "unmet_dependencies": ["emirates_id"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_settled",
+          "unmet_dependencies": ["tawtheeq_register", "health_insurance", "bank_account"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_individual_complete": {
+      "step_ids": [
+        "collect_documents",
+        "residency_visa",
+        "health_insurance",
+        "emirates_id",
+        "housing_search",
+        "tawtheeq_register",
+        "bank_account",
+        "fully_settled"
+      ],
+      "blockers": []
+    },
+    "roadmap_individual_derived_passport": {
+      "step_ids": [
+        "collect_documents",
+        "residency_visa",
+        "health_insurance",
+        "emirates_id",
+        "housing_search",
+        "tawtheeq_register",
+        "bank_account",
+        "fully_settled"
+      ],
+      "blockers": [
+        {
+          "step_id": "collect_documents",
+          "unmet_dependencies": [],
+          "missing_documents": ["passport"]
+        },
+        {
+          "step_id": "residency_visa",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": ["passport"]
+        },
+        {
+          "step_id": "health_insurance",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": ["passport"]
+        },
+        {
+          "step_id": "emirates_id",
+          "unmet_dependencies": ["residency_visa"],
+          "missing_documents": ["passport"]
+        },
+        {
+          "step_id": "housing_search",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "tawtheeq_register",
+          "unmet_dependencies": ["residency_visa", "housing_search"],
+          "missing_documents": ["passport"]
+        },
+        {
+          "step_id": "bank_account",
+          "unmet_dependencies": ["emirates_id"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_settled",
+          "unmet_dependencies": ["tawtheeq_register", "health_insurance", "bank_account"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_family_documents": {
+      "step_ids": [
+        "collect_documents",
+        "residency_visa",
+        "health_insurance",
+        "emirates_id",
+        "housing_search",
+        "tawtheeq_register",
+        "bank_account",
+        "family_residency",
+        "school_registration",
+        "fully_settled"
+      ],
+      "blockers": [
+        {
+          "step_id": "residency_visa",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "health_insurance",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "emirates_id",
+          "unmet_dependencies": ["residency_visa"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "housing_search",
+          "unmet_dependencies": ["collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "tawtheeq_register",
+          "unmet_dependencies": ["residency_visa", "housing_search"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "bank_account",
+          "unmet_dependencies": ["emirates_id"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "family_residency",
+          "unmet_dependencies": ["residency_visa", "health_insurance"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "school_registration",
+          "unmet_dependencies": ["family_residency", "tawtheeq_register"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_settled",
+          "unmet_dependencies": [
+            "tawtheeq_register",
+            "health_insurance",
+            "bank_account",
+            "school_registration"
+          ],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_family_primary_done": {
+      "step_ids": [
+        "collect_documents",
+        "residency_visa",
+        "health_insurance",
+        "emirates_id",
+        "housing_search",
+        "tawtheeq_register",
+        "bank_account",
+        "family_residency",
+        "school_registration",
+        "fully_settled"
+      ],
+      "blockers": [
+        {
+          "step_id": "family_residency",
+          "unmet_dependencies": [],
+          "missing_documents": ["family"]
+        },
+        {
+          "step_id": "school_registration",
+          "unmet_dependencies": ["family_residency"],
+          "missing_documents": ["family", "address"]
+        },
+        {
+          "step_id": "fully_settled",
+          "unmet_dependencies": ["school_registration"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_family_complete": {
+      "step_ids": [
+        "collect_documents",
+        "residency_visa",
+        "health_insurance",
+        "emirates_id",
+        "housing_search",
+        "tawtheeq_register",
+        "bank_account",
+        "family_residency",
+        "school_registration",
+        "fully_settled"
+      ],
+      "blockers": []
+    },
+    "roadmap_company_mainland": {
+      "step_ids": [
+        "company_profile",
+        "trade_name",
+        "economic_license",
+        "establishment_card",
+        "visa_quota",
+        "entity_can_sponsor",
+        "corporate_bank",
+        "fully_operational"
+      ],
+      "blockers": [
+        {
+          "step_id": "trade_name",
+          "unmet_dependencies": ["company_profile"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "economic_license",
+          "unmet_dependencies": ["trade_name"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "establishment_card",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "visa_quota",
+          "unmet_dependencies": ["establishment_card"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "entity_can_sponsor",
+          "unmet_dependencies": ["visa_quota"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "corporate_bank",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_operational",
+          "unmet_dependencies": ["entity_can_sponsor", "corporate_bank"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_company_adgm": {
+      "step_ids": [
+        "company_profile",
+        "trade_name",
+        "economic_license",
+        "establishment_card",
+        "visa_quota",
+        "entity_can_sponsor",
+        "corporate_bank",
+        "fully_operational"
+      ],
+      "blockers": [
+        {
+          "step_id": "trade_name",
+          "unmet_dependencies": ["company_profile"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "economic_license",
+          "unmet_dependencies": ["trade_name"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "establishment_card",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "visa_quota",
+          "unmet_dependencies": ["establishment_card"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "entity_can_sponsor",
+          "unmet_dependencies": ["visa_quota"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "corporate_bank",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_operational",
+          "unmet_dependencies": ["entity_can_sponsor", "corporate_bank"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_company_kezad": {
+      "step_ids": [
+        "company_profile",
+        "trade_name",
+        "economic_license",
+        "establishment_card",
+        "visa_quota",
+        "entity_can_sponsor",
+        "corporate_bank",
+        "fully_operational"
+      ],
+      "blockers": [
+        {
+          "step_id": "trade_name",
+          "unmet_dependencies": ["company_profile"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "economic_license",
+          "unmet_dependencies": ["trade_name"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "establishment_card",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "visa_quota",
+          "unmet_dependencies": ["establishment_card"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "entity_can_sponsor",
+          "unmet_dependencies": ["visa_quota"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "corporate_bank",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_operational",
+          "unmet_dependencies": ["entity_can_sponsor", "corporate_bank"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_company_masdar": {
+      "step_ids": [
+        "company_profile",
+        "trade_name",
+        "economic_license",
+        "establishment_card",
+        "visa_quota",
+        "entity_can_sponsor",
+        "corporate_bank",
+        "fully_operational"
+      ],
+      "blockers": [
+        {
+          "step_id": "trade_name",
+          "unmet_dependencies": ["company_profile"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "economic_license",
+          "unmet_dependencies": ["trade_name"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "establishment_card",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "visa_quota",
+          "unmet_dependencies": ["establishment_card"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "entity_can_sponsor",
+          "unmet_dependencies": ["visa_quota"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "corporate_bank",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_operational",
+          "unmet_dependencies": ["entity_can_sponsor", "corporate_bank"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_company_twofour54": {
+      "step_ids": [
+        "company_profile",
+        "trade_name",
+        "economic_license",
+        "establishment_card",
+        "visa_quota",
+        "entity_can_sponsor",
+        "corporate_bank",
+        "fully_operational"
+      ],
+      "blockers": [
+        {
+          "step_id": "trade_name",
+          "unmet_dependencies": ["company_profile"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "economic_license",
+          "unmet_dependencies": ["trade_name"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "establishment_card",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "visa_quota",
+          "unmet_dependencies": ["establishment_card"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "entity_can_sponsor",
+          "unmet_dependencies": ["visa_quota"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "corporate_bank",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_operational",
+          "unmet_dependencies": ["entity_can_sponsor", "corporate_bank"],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_team_company_first": {
+      "step_ids": [
+        "company_profile",
+        "trade_name",
+        "economic_license",
+        "establishment_card",
+        "visa_quota",
+        "entity_can_sponsor",
+        "corporate_bank",
+        "hire_demo_002:collect_documents",
+        "hire_demo_002:residency_visa",
+        "hire_demo_002:health_insurance",
+        "hire_demo_002:emirates_id",
+        "hire_demo_002:housing_search",
+        "hire_demo_002:tawtheeq_register",
+        "hire_demo_002:bank_account",
+        "hire_demo_002:fully_settled",
+        "hire_demo_003:collect_documents",
+        "hire_demo_003:residency_visa",
+        "hire_demo_003:health_insurance",
+        "hire_demo_003:emirates_id",
+        "hire_demo_003:housing_search",
+        "hire_demo_003:tawtheeq_register",
+        "hire_demo_003:bank_account",
+        "hire_demo_003:fully_settled",
+        "hire_demo_004:collect_documents",
+        "hire_demo_004:residency_visa",
+        "hire_demo_004:health_insurance",
+        "hire_demo_004:emirates_id",
+        "hire_demo_004:housing_search",
+        "hire_demo_004:tawtheeq_register",
+        "hire_demo_004:bank_account",
+        "hire_demo_004:fully_settled",
+        "fully_operational"
+      ],
+      "blockers": [
+        {
+          "step_id": "trade_name",
+          "unmet_dependencies": ["company_profile"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "economic_license",
+          "unmet_dependencies": ["trade_name"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "establishment_card",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "visa_quota",
+          "unmet_dependencies": ["establishment_card"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "entity_can_sponsor",
+          "unmet_dependencies": ["visa_quota"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "corporate_bank",
+          "unmet_dependencies": ["economic_license"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:residency_visa",
+          "unmet_dependencies": ["hire_demo_002:collect_documents", "entity_can_sponsor"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:health_insurance",
+          "unmet_dependencies": ["hire_demo_002:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:emirates_id",
+          "unmet_dependencies": ["hire_demo_002:residency_visa"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:housing_search",
+          "unmet_dependencies": ["hire_demo_002:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:tawtheeq_register",
+          "unmet_dependencies": ["hire_demo_002:residency_visa", "hire_demo_002:housing_search"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:bank_account",
+          "unmet_dependencies": ["hire_demo_002:emirates_id"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:fully_settled",
+          "unmet_dependencies": [
+            "hire_demo_002:tawtheeq_register",
+            "hire_demo_002:health_insurance",
+            "hire_demo_002:bank_account"
+          ],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_003:residency_visa",
+          "unmet_dependencies": ["hire_demo_003:collect_documents", "entity_can_sponsor"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_003:health_insurance",
+          "unmet_dependencies": ["hire_demo_003:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_003:emirates_id",
+          "unmet_dependencies": ["hire_demo_003:residency_visa"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_003:housing_search",
+          "unmet_dependencies": ["hire_demo_003:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_003:tawtheeq_register",
+          "unmet_dependencies": ["hire_demo_003:residency_visa", "hire_demo_003:housing_search"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_003:bank_account",
+          "unmet_dependencies": ["hire_demo_003:emirates_id"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_003:fully_settled",
+          "unmet_dependencies": [
+            "hire_demo_003:tawtheeq_register",
+            "hire_demo_003:health_insurance",
+            "hire_demo_003:bank_account"
+          ],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_004:residency_visa",
+          "unmet_dependencies": ["hire_demo_004:collect_documents", "entity_can_sponsor"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_004:health_insurance",
+          "unmet_dependencies": ["hire_demo_004:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_004:emirates_id",
+          "unmet_dependencies": ["hire_demo_004:residency_visa"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_004:housing_search",
+          "unmet_dependencies": ["hire_demo_004:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_004:tawtheeq_register",
+          "unmet_dependencies": ["hire_demo_004:residency_visa", "hire_demo_004:housing_search"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_004:bank_account",
+          "unmet_dependencies": ["hire_demo_004:emirates_id"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_004:fully_settled",
+          "unmet_dependencies": [
+            "hire_demo_004:tawtheeq_register",
+            "hire_demo_004:health_insurance",
+            "hire_demo_004:bank_account"
+          ],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_operational",
+          "unmet_dependencies": [
+            "entity_can_sponsor",
+            "corporate_bank",
+            "hire_demo_002:fully_settled",
+            "hire_demo_003:fully_settled",
+            "hire_demo_004:fully_settled"
+          ],
+          "missing_documents": []
+        }
+      ]
+    },
+    "roadmap_team_entity_ready": {
+      "step_ids": [
+        "entity_can_sponsor",
+        "hire_demo_002:collect_documents",
+        "hire_demo_002:residency_visa",
+        "hire_demo_002:health_insurance",
+        "hire_demo_002:emirates_id",
+        "hire_demo_002:housing_search",
+        "hire_demo_002:tawtheeq_register",
+        "hire_demo_002:bank_account",
+        "hire_demo_002:fully_settled",
+        "fully_operational"
+      ],
+      "blockers": [
+        {
+          "step_id": "hire_demo_002:residency_visa",
+          "unmet_dependencies": ["hire_demo_002:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:health_insurance",
+          "unmet_dependencies": ["hire_demo_002:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:emirates_id",
+          "unmet_dependencies": ["hire_demo_002:residency_visa"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:housing_search",
+          "unmet_dependencies": ["hire_demo_002:collect_documents"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:tawtheeq_register",
+          "unmet_dependencies": ["hire_demo_002:residency_visa", "hire_demo_002:housing_search"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:bank_account",
+          "unmet_dependencies": ["hire_demo_002:emirates_id"],
+          "missing_documents": []
+        },
+        {
+          "step_id": "hire_demo_002:fully_settled",
+          "unmet_dependencies": [
+            "hire_demo_002:tawtheeq_register",
+            "hire_demo_002:health_insurance",
+            "hire_demo_002:bank_account"
+          ],
+          "missing_documents": []
+        },
+        {
+          "step_id": "fully_operational",
+          "unmet_dependencies": ["hire_demo_002:fully_settled"],
+          "missing_documents": []
+        }
+      ]
+    }
+  },
+  "summary": {
+    "summary_landlord_01": "Alex Demo is employed by Northwind Demo Analytics. Affordability: confirmed. Proposed move-in: 2026-11-01. Lease reference: lease_reem_2207.",
+    "summary_landlord_02": "Mira Sample is employed by Fiction Labs. Affordability: confirmed. Proposed move-in: 2026-12-15. Lease reference: lease_reem_2207.",
+    "summary_landlord_03": "Noor Example is employed by Sample Systems. Affordability: unconfirmed. Proposed move-in: 2027-01-05. Lease reference: lease_reem_2207.",
+    "summary_landlord_04": "Luca Fiction is employed by Demo Media. Affordability: confirmed. Proposed move-in: 2026-12-01. Lease reference: lease_reem_2207.",
+    "summary_landlord_05": "Rowan Test-Case is employed by Test Robotics. Affordability: unconfirmed. Proposed move-in: 2026-10-20. Lease reference: lease_reem_2207.",
+    "summary_landlord_06": "Jamie Placeholder is employed by Synthetic Solar. Affordability: confirmed. Proposed move-in: 2026-11-15. Lease reference: lease_reem_2207.",
+    "summary_landlord_07": "Ari Example is employed by Sample Games. Affordability: unconfirmed. Proposed move-in: 2026-12-10. Lease reference: lease_reem_2207.",
+    "summary_landlord_08": "Sam Fake is employed by Demo Health Tech. Affordability: confirmed. Proposed move-in: 2027-01-10. Lease reference: lease_reem_2207.",
+    "summary_bank_01": "Alex Demo works at Northwind Demo Analytics. Employment: verified. Monthly salary: AED 24000; salary consent is granted.",
+    "summary_bank_02": "Mira Sample works at Fiction Labs. Employment: verified. Salary: withheld pending consent.",
+    "summary_bank_03": "Noor Example works at Sample Systems. Employment: verified. Monthly salary: AED 18500; salary consent is granted.",
+    "summary_bank_04": "Luca Fiction works at Demo Media. Employment: verified. Salary: withheld pending consent.",
+    "summary_bank_05": "Rowan Test-Case works at Test Robotics. Employment: verified. Monthly salary: AED 22000; salary consent is granted.",
+    "summary_bank_06": "Jamie Placeholder works at Synthetic Solar. Employment: verified. Salary: withheld pending consent.",
+    "summary_bank_07": "Ari Example works at Sample Games. Employment: verified. Monthly salary: AED 19500; salary consent is granted."
+  },
+  "guard": {
+    "guard_direct_01": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_02": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_03": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_04": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_05": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_06": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_07": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_08": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_09": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_10": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_11": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_12": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_direct_13": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_01": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_02": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_03": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_04": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_05": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_06": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_07": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_08": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_09": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_10": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_11": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    },
+    "guard_indirect_12": {
+      "decision": "deny",
+      "source": "cached",
+      "verified": false,
+      "contract_version": "1.0.0",
+      "policy_rule": "synthetic.cached_expected_denial"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@rasikh/evals",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Synthetic regression and privacy evaluations for Rasikh",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "eval": "tsx src/cli.ts",
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rasikh/engine": "file:../rasikh-engine",
+    "@rasikh/shared": "file:../shared"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
