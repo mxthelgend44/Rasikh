@@ -1,7 +1,7 @@
-# Devin log: rasikh-guard and tamm-mcp
+# Devin log: rasikh-guard, tamm-mcp and rasikh-data
 
-Owner: Devin. Scope: `packages/rasikh-guard`, `packages/tamm-mcp`, and their CI (`.github/workflows/integrations.yml`).
-Contract: `INTEGRATION.md` v1.1.0 (1.1.0 adds optional `service_tags` on `/check`, merged in PR #6).
+Owner: Devin. Scope: `packages/rasikh-guard`, `packages/tamm-mcp`, `packages/rasikh-data`, and their CI
+(`.github/workflows/integrations.yml`, `publish-integrations.yml`). Contract: `INTEGRATION.md` v1.2.0.
 
 ## Built
 
@@ -14,6 +14,9 @@ Contract: `INTEGRATION.md` v1.1.0 (1.1.0 adds optional `service_tags` on `/check
 | Guard 5: tests | done | 63 rule tests + coverage check, 25 adversarial, 6 loader, 6 HTTP, 3 OpenAPPA bridge (104) |
 | Guard 6: Docker | done | `docker compose up --build`; image built and verified (`/health`, `/check`, `/dev/reset`) |
 | TAMM 1-7 | done | six tools, catalogue, state machine + demo mode, simulated UAE PASS, `TammBackend`, Guard gate, owner-only status reads, 47 tests |
+| Guard 7: remedies (1.2.0) | done | verified minimal fix per refusal + `allowed_destinations`; following the remedy reaches allow for all 37 refused cells (110 tests) |
+| TAMM 8: search and planning (1.2.0) | done | BM25 with synonyms, Arabic normalisation, one-edit typo tolerance; topological prerequisite order and readiness gap (60 tests) |
+| Data: `packages/rasikh-data` | done | Firestore schema, validating converters, typed refs and queries, rules, indexes, trust passport sync; 9 unit + 11 emulator rules tests |
 | CI | done | `integrations.yml` on every change; `publish-integrations.yml` pushes `ghcr.io/mxthelgend44/rasikh-guard` and `rasikh-tamm-mcp` after CI passes on main |
 
 End-to-end check (real binaries): a TAMM `start_application` carrying health was allowed for `svc_health_insurance`, and
@@ -43,6 +46,11 @@ denied for `svc_residency_visa` with `health.tamm.insurance_only`. The Guard log
 - Dependencies are pinned to versions at least 7 days old; Rust crates reuse the versions in upstream's lockfile.
 
 ## Open
+
+0. **Web app and engine wiring was deferred on purpose.** The root app (`src/`) gets frequent commits from firas256, and
+   Codex has open PRs #20 to #25 on `packages/rasikh-engine` and `rasikh-evals`. The integration surface is ready for them:
+   remedies, routing, ranked search, readiness and `@rasikh/data`. Codex PR #25 proposes a second "1.2"; I asked it to
+   rebase as 1.3.0 (comment on #25).
 
 1. `packages/shared` (web agent): `service_tags?: string[]` on `GuardCheckRequest` and `CONTRACT_VERSION = '1.1.1'`, proposed in a PR against `devin/integrations` (where `packages/shared` lives).
 2. `devin/integrations` also carries the web agent's commits. Merging it into `main` conflicts on root README.md, package.json and package-lock.json, which the web agent owns.
