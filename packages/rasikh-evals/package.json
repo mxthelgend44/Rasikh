@@ -11,6 +11,7 @@
     "eval": "tsx src/cli.ts",
     "eval:live": "node scripts/with-guard.mjs -- node --import tsx src/cli.ts --mode live --provider vertex --runs 3",
     "eval:guard": "node scripts/with-guard.mjs",
+    "eval:injection": "node scripts/with-guard.mjs -- node --import tsx src/injection/cli.ts live",
     "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
