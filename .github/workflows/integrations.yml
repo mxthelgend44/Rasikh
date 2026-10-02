@@ -1,0 +1,43 @@
+# CI for the Devin-owned packages: packages/rasikh-guard (Rust) and packages/tamm-mcp (TypeScript).
+name: integrations
+
+on:
+  push:
+    paths: ["packages/rasikh-guard/**", "packages/tamm-mcp/**", ".github/workflows/integrations.yml"]
+  pull_request:
+    paths: ["packages/rasikh-guard/**", "packages/tamm-mcp/**", ".github/workflows/integrations.yml"]
+
+jobs:
+  rasikh-guard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/rasikh-guard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/rasikh-guard
+      - run: cargo fmt -p rasikh-guard --check
+      - run: cargo clippy -p rasikh-guard --all-targets --locked -- -D warnings
+      - run: cargo test --workspace --locked
+
+  tamm-mcp:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/tamm-mcp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/tamm-mcp/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
