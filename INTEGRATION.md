@@ -1,6 +1,6 @@
 # INTEGRATION.md
 
-Contract version: **1.1.0**
+Contract version: **1.1.1**
 Status: active
 
 This file is the single source of truth for how the three parts of Rasikh talk to each other. Every agent working on this repo builds against it exactly.
@@ -177,6 +177,7 @@ Field rules:
 - `blocked_labels` lists only the labels that caused a non-allow decision.
 - `consent_request` is present only when `decision` is `needs_consent`.
 - Guard evaluates `data_labels` **plus** everything observed in the session that could flow into this call. Declaring fewer labels than were read does not make a leak pass.
+- A payload ref that was observed carries its observed labels and `derived` flag. A payload ref that was **never observed**, or a call with no payload refs, is treated as content the agent produced: everything observed in the session flows into it, and an unobserved `derived: true` is ignored. So the app must `POST /observe` every redacted ref and every derived signal it creates before the agent sends it.
 - `service_tags` (optional, added in 1.1.0): tags of the TAMM service the call targets, for example `["health", "insurance"]`. TAMM MCP sends it on every `destination: "tamm"` check. Guard needs it for the "insurance services only" rule in 3.4; when it is absent, that rule denies.
 
 #### `POST /consent`
@@ -249,9 +250,9 @@ Product defaults for the demo. They are not legal statements and the policy file
 
 Meaning of the special cells:
 - **consent:** returns `needs_consent` until a matching `/consent` exists.
-- **derived signal only:** raw values are denied. A payload ref with `derived: true` (for example "affordability: yes") is allowed.
+- **derived signal only:** raw values are denied. A payload ref with `derived: true` (for example "affordability: yes") is allowed, if the app observed it as derived.
 - **extraction only:** allowed only when `tool` is `extract_document`. Any other tool sending this label to `llm_provider` is denied.
-- **redacted:** allowed only if the payload ref has the label removed by the app's redaction step (the app sends the redacted ref, whose `labels` no longer include it). Unredacted is denied.
+- **redacted:** allowed only if the payload ref has the label removed by the app's redaction step (the app observes and then sends the redacted ref, whose `labels` no longer include it). Unredacted is denied.
 - **insurance services only:** allowed only when `tool` is `start_application` and the TAMM service is tagged `insurance`.
 
 ## 4. TAMM MCP server
@@ -486,5 +487,6 @@ All errors use `ErrorBody` from section 2.
 
 ## 8. Changelog
 
+- **1.1.1** Clarification: how observed data flows into a check. Unobserved refs inherit the session, and redacted refs and derived signals must be observed before they are sent. Found by the independent Guard evaluation (12 of 25 attacks used a fresh unlabelled summary ref).
 - **1.1.0** Additive: optional `service_tags` on `POST /check`, so Guard can evaluate "insurance services only". Without it the rule can't be evaluated, because `/check` does not say which TAMM service a call targets.
 - **1.0.0** Initial contract: Guard sidecar with observe, check, consent and log; TAMM MCP tools; shared types; demo fixtures.
