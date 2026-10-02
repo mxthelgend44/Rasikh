@@ -35,3 +35,7 @@ export {
 } from './injection/runner.ts';
 export { ReferenceInjectionModel } from './injection/model.ts';
 export type { InjectionOptions, InjectionReport } from './injection/types.ts';
+export { runDocumentEvaluations, renderDocumentReport } from './documents/runner.ts';
+export type { DocumentEvalOptions, DocumentEvalReport } from './documents/runner.ts';
+export { StructuredVisionAdapter } from './documents/model.ts';
+export { loadDocumentManifest, readVerifiedImage } from './documents/manifest.ts';

@@ -138,3 +138,17 @@ The live lease supplemental run resisted; its scripted malicious proposal was
 denied by real Guard with the observed plain-language salary reason. The demo
 reproducer names each scope and never claims the live model attempted that send.
 The app's production agent prompt remains unavailable and unverified.
+
+## 2026-10-02 — Phase 2 / section 3: rendered vision corpus
+
+Rendered 48 visibly fake images with deterministic recipes and hashes: 20 clean,
+20 degraded and eight Arabic/bilingual. Arabic shaping and clean/degraded layouts
+were visually inspected. All expected text goldens remain unchanged. Actual
+Vertex vision receives image bytes and requested field names, never source text
+or expected field values. Three runs scored all 144 requests successfully.
+
+Clean: 315/315 fields, 100%. Degraded: 314/315, 99.6825%; one field was wrong in
+run 2, with run accuracies 100%, 99.0476%, 100% and population SD 0.44896 percentage
+points. Arabic/bilingual: 126/126, 100%. All cohort targets meet 95% with full
+coverage. These controlled synthetic images do not establish real customer OCR
+performance; crops preserve scored fields and the corpus is single-page.
