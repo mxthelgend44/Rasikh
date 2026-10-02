@@ -1,0 +1,264 @@
+{
+  "schema": 1,
+  "scenario": "tawtheeq",
+  "recordedAt": "2026-10-02T11:03:56.139Z",
+  "mock": true,
+  "steps": [
+    {
+      "n": 1,
+      "atMs": 6,
+      "ms": 1,
+      "kind": "guard.session",
+      "title": "Open a Guard session for hire_demo_001",
+      "actor": "app",
+      "request": {
+        "case_id": "hire_demo_001",
+        "case_type": "hire"
+      },
+      "response": {
+        "session_id": "gs_ef4…"
+      },
+      "mock": true
+    },
+    {
+      "n": 2,
+      "atMs": 9,
+      "ms": 3,
+      "kind": "guard.observe",
+      "title": "The agent reads the passport, the Emirates ID and the lease (labels only)",
+      "actor": "agent",
+      "request": {
+        "session_id": "gs_ef4…",
+        "source": "newcomer",
+        "payload_refs": [
+          {
+            "ref": "doc_passport_hire_demo_001",
+            "labels": [
+              "passport"
+            ]
+          },
+          {
+            "ref": "doc_emirates_id_hire_demo_001",
+            "labels": [
+              "emirates_id"
+            ]
+          },
+          {
+            "ref": "lease_reem_2207",
+            "labels": [
+              "address"
+            ]
+          }
+        ]
+      },
+      "response": {
+        "recorded": true
+      },
+      "mock": true
+    },
+    {
+      "n": 3,
+      "atMs": 12,
+      "ms": 2,
+      "kind": "tamm.login",
+      "title": "Sign in with UAE PASS (simulated)",
+      "actor": "app",
+      "request": {
+        "subject_ref": "hire_demo_001",
+        "audience": "individual"
+      },
+      "response": {
+        "simulated": true,
+        "uaepass_session": "(hidden)"
+      },
+      "mock": true
+    },
+    {
+      "n": 4,
+      "atMs": 23,
+      "ms": 11,
+      "kind": "tamm.tool",
+      "title": "Agent calls register_tenancy_tawtheeq on the TAMM mock",
+      "actor": "agent",
+      "request": {
+        "tool": "register_tenancy_tawtheeq",
+        "arguments": {
+          "lease_ref": "lease_reem_2207",
+          "applicant_ref": "hire_demo_001",
+          "uaepass_session": "(hidden)",
+          "guard_session_id": "gs_ef4…"
+        }
+      },
+      "response": {
+        "mock": true,
+        "application_id": "app_tw_0001",
+        "status": "submitted"
+      },
+      "status": "submitted",
+      "mock": true
+    },
+    {
+      "n": 5,
+      "atMs": 25,
+      "ms": 1,
+      "kind": "guard.check",
+      "title": "Guard's decision on that call: allow",
+      "actor": "guard",
+      "request": {
+        "tool": "register_tenancy_tawtheeq",
+        "destination": "tamm",
+        "data_labels": [
+          "passport",
+          "emirates_id",
+          "address"
+        ],
+        "service_tags": [
+          "housing"
+        ],
+        "sent_by": "TAMM MCP, before it acts"
+      },
+      "response": {
+        "check_id": "chk_e0e70374",
+        "decision": "allow",
+        "reason": "Sharing your passport with TAMM is allowed.",
+        "policy_rule": "passport.tamm.allowed",
+        "source": "Guard log for this session"
+      },
+      "decision": {
+        "decision": "allow",
+        "reason": "Sharing your passport with TAMM is allowed.",
+        "policy_rule": "passport.tamm.allowed"
+      },
+      "mock": true
+    },
+    {
+      "n": 6,
+      "atMs": 32,
+      "ms": 7,
+      "kind": "tamm.status",
+      "title": "Agent reads the application status",
+      "actor": "agent",
+      "request": {
+        "tool": "get_application_status",
+        "arguments": {
+          "application_id": "app_tw_0001",
+          "uaepass_session": "(hidden)"
+        }
+      },
+      "response": {
+        "mock": true,
+        "application_id": "app_tw_0001",
+        "status": "submitted",
+        "history": [
+          {
+            "status": "submitted"
+          }
+        ]
+      },
+      "status": "submitted",
+      "mock": true
+    },
+    {
+      "n": 7,
+      "atMs": 35,
+      "ms": 2,
+      "kind": "tamm.advance",
+      "title": "Demo control: the mock moves the application forward",
+      "actor": "tamm",
+      "request": {
+        "application_id": "app_tw_0001",
+        "demo_control": "POST /dev/advance (demo mode only)"
+      },
+      "response": {
+        "status": "under_review"
+      },
+      "status": "under_review",
+      "mock": true
+    },
+    {
+      "n": 8,
+      "atMs": 40,
+      "ms": 5,
+      "kind": "tamm.status",
+      "title": "Agent reads the application status again",
+      "actor": "agent",
+      "request": {
+        "tool": "get_application_status",
+        "arguments": {
+          "application_id": "app_tw_0001",
+          "uaepass_session": "(hidden)"
+        }
+      },
+      "response": {
+        "mock": true,
+        "application_id": "app_tw_0001",
+        "status": "under_review",
+        "history": [
+          {
+            "status": "submitted"
+          },
+          {
+            "status": "under_review"
+          }
+        ]
+      },
+      "status": "under_review",
+      "mock": true
+    },
+    {
+      "n": 9,
+      "atMs": 42,
+      "ms": 2,
+      "kind": "tamm.advance",
+      "title": "Demo control: the mock moves the application forward again",
+      "actor": "tamm",
+      "request": {
+        "application_id": "app_tw_0001",
+        "demo_control": "POST /dev/advance (demo mode only)"
+      },
+      "response": {
+        "status": "approved"
+      },
+      "status": "approved",
+      "mock": true
+    },
+    {
+      "n": 10,
+      "atMs": 47,
+      "ms": 4,
+      "kind": "tamm.status",
+      "title": "Agent reads the final status",
+      "actor": "agent",
+      "request": {
+        "tool": "get_application_status",
+        "arguments": {
+          "application_id": "app_tw_0001",
+          "uaepass_session": "(hidden)"
+        }
+      },
+      "response": {
+        "mock": true,
+        "application_id": "app_tw_0001",
+        "status": "approved",
+        "history": [
+          {
+            "status": "submitted"
+          },
+          {
+            "status": "under_review"
+          },
+          {
+            "status": "approved"
+          }
+        ]
+      },
+      "status": "approved",
+      "mock": true
+    }
+  ],
+  "done": {
+    "outcome": "allowed",
+    "ms": 47,
+    "summary": "Guard allowed the call (passport.tamm.allowed). The mock TAMM created app_tw_0001 and it went submitted, under_review, approved. All of this is mock data; no real TAMM request was made."
+  }
+}

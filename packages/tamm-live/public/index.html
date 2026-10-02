@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live TAMM request · Rasikh</title>
+<meta name="description" content="Presenter console: an AI agent's request to a mock TAMM, checked by Rasikh Guard before any personal data is sent.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M5 29V14a11 11 0 0 1 22 0v15z' fill='%230B6B78'/%3E%3Cpath d='M11 29V15a5 5 0 0 1 10 0v14z' fill='%23F6E7CD'/%3E%3C/svg%3E">
+<script>
+  /* apply the saved theme before first paint */
+  try { var t = localStorage.getItem('rasikh-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip" href="#trace-heading">Skip to the trace</a>
+
+<header class="top">
+  <div class="brand">
+    <svg width="38" height="38" viewBox="0 0 32 32" role="img" aria-label="Rasikh doorway mark">
+      <path d="M4 29V14.5a12 12 0 0 1 24 0V29z" fill="currentColor"/>
+      <path d="M10.5 29V15.5a5.5 5.5 0 0 1 11 0V29z" fill="var(--surface-2)"/>
+      <path d="M2 29.5h28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="brand-name">Rasikh</span>
+    <span class="brand-sep" aria-hidden="true">/</span>
+    <h1>Live TAMM request</h1>
+  </div>
+  <div class="top-right">
+    <div class="health" id="health" aria-label="Service health">
+      <span class="dot-item" id="h-guard" data-state="unknown"><span class="dot" aria-hidden="true"></span><strong>Guard</strong> <span class="st-text">checking</span> <span class="where"></span></span>
+      <span class="dot-item" id="h-tamm" data-state="unknown"><span class="dot" aria-hidden="true"></span><strong>TAMM mock</strong> <span class="st-text">checking</span> <span class="where"></span></span>
+    </div>
+    <button type="button" class="btn quiet small" id="theme-btn" aria-pressed="false">Dark mode</button>
+  </div>
+</header>
+
+<div class="honest" role="note">
+  <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>
+  <span>Mock TAMM · simulated UAE PASS · Guard policy is a product default; end-to-end safety is not proven</span>
+</div>
+
+<main class="layout" id="main">
+  <aside class="rail" aria-label="Scenarios">
+    <div class="rail-head"><h2>Scenarios</h2><div class="rail-toggles"><button type="button" class="btn quiet small toggle" id="fast-btn" aria-pressed="false">Fast</button><button type="button" class="btn quiet small toggle" id="details-btn" aria-pressed="false">Hide details</button></div></div>
+    <div class="scenarios" id="scenarios"><p class="reset-msg" id="scn-loading">Loading scenarios.</p></div>
+  </aside>
+
+  <section aria-labelledby="trace-heading">
+    <h2 id="trace-heading" class="sr-only">Trace</h2>
+    <div class="bar" id="bar">
+      <div class="bar-row">
+        <div class="bar-title" id="bar-title"><span>No run yet</span></div>
+        <div class="bar-spacer">
+          <button type="button" class="btn quiet small" id="reset-btn">Reset demo <kbd>R</kbd></button>
+          <button type="button" class="btn danger small" id="stop-btn" disabled>Stop <kbd>Esc</kbd></button>
+        </div>
+      </div>
+      <div class="stepper" id="stepper" role="group" aria-label="TAMM application status, mock">
+        <span class="stepper-label">TAMM (mock)</span>
+        <span class="st" data-key="submitted" data-state="todo"><span class="tick" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5l2.5 2.5 4.5-5.5"/></svg></span>Submitted</span>
+        <span class="st-link" data-state="todo" aria-hidden="true"></span>
+        <span class="st" data-key="under_review" data-state="todo"><span class="tick" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5l2.5 2.5 4.5-5.5"/></svg></span>Under review</span>
+        <span class="st-link" data-state="todo" aria-hidden="true"></span>
+        <span class="st" data-key="approved" data-state="todo"><span class="tick" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5l2.5 2.5 4.5-5.5"/></svg></span>Approved</span>
+        <span class="stepper-extra" id="stepper-extra"></span>
+        <span class="stepper-note" id="stepper-note">No application yet.</span>
+      </div>
+    </div>
+
+    <div class="empty" id="empty">
+      <h3>Pick a scenario, then press Run live</h3>
+      <p>Each run shows the agent's request, Rasikh Guard's decision and what the mock TAMM did, one step at a time. Steps appear about every 0.7 seconds so the room can follow. Fast removes the pause.</p>
+      <p class="reset-msg" id="reset-msg"></p>
+      <p class="keys">Keys: <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> run a scenario, <kbd>R</kbd> reset, <kbd>Esc</kbd> stop.</p>
+    </div>
+
+    <div class="timeline" id="timeline" role="log" aria-label="Request trace" aria-relevant="additions"></div>
+
+    <div class="outcome" id="outcome" hidden></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>TAMM here is a mock. No public TAMM API is used and no real government request is made. Fees, durations and statuses are illustrative, and UAE PASS is simulated.</p>
+  <p>The policy matrix is a product default, not a legal statement. An archived evaluation allowed 12 of 25 forbidden synthetic flows; a newer measurement of the deployed release denied all 25 in each of 3 runs (75 of 75), over HTTP only. A run on this page shows one policy decision. It does not show that the agent is safe end to end.</p>
+</footer>
+
+<div class="sr-only" id="live" role="status" aria-live="polite" aria-atomic="true"></div>
+<script src="app.js"></script>
+</body>
+</html>

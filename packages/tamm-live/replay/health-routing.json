@@ -1,0 +1,236 @@
+{
+  "schema": 1,
+  "scenario": "health-routing",
+  "recordedAt": "2026-10-02T11:03:56.196Z",
+  "mock": true,
+  "steps": [
+    {
+      "n": 1,
+      "atMs": 4,
+      "ms": 1,
+      "kind": "guard.session",
+      "title": "Open a Guard session for hire_demo_001",
+      "actor": "app",
+      "request": {
+        "case_id": "hire_demo_001",
+        "case_type": "hire"
+      },
+      "response": {
+        "session_id": "gs_442…"
+      },
+      "mock": true
+    },
+    {
+      "n": 2,
+      "atMs": 6,
+      "ms": 2,
+      "kind": "guard.observe",
+      "title": "The agent reads a health declaration (label only)",
+      "actor": "agent",
+      "request": {
+        "session_id": "gs_442…",
+        "source": "newcomer",
+        "payload_refs": [
+          {
+            "ref": "doc_health_declaration_hire_demo_001",
+            "labels": [
+              "health"
+            ]
+          }
+        ]
+      },
+      "response": {
+        "recorded": true
+      },
+      "mock": true
+    },
+    {
+      "n": 3,
+      "atMs": 8,
+      "ms": 2,
+      "kind": "tamm.login",
+      "title": "Sign in with UAE PASS (simulated)",
+      "actor": "app",
+      "request": {
+        "subject_ref": "hire_demo_001",
+        "audience": "individual"
+      },
+      "response": {
+        "simulated": true,
+        "uaepass_session": "(hidden)"
+      },
+      "mock": true
+    },
+    {
+      "n": 4,
+      "atMs": 14,
+      "ms": 6,
+      "kind": "tamm.tool",
+      "title": "Agent sends the health declaration with a residency visa application",
+      "actor": "agent",
+      "request": {
+        "tool": "start_application",
+        "arguments": {
+          "service_id": "svc_residency_visa",
+          "applicant_ref": "hire_demo_001",
+          "documents": [
+            {
+              "ref": "doc_health_declaration_hire_demo_001",
+              "labels": [
+                "health"
+              ]
+            }
+          ],
+          "uaepass_session": "(hidden)",
+          "guard_session_id": "gs_442…"
+        }
+      },
+      "response": {
+        "mock": true,
+        "denied": true,
+        "guard": {
+          "decision": "deny",
+          "reason": "Health details can only be shared for insurance services.",
+          "policy_rule": "health.tamm.insurance_only"
+        }
+      },
+      "mock": true
+    },
+    {
+      "n": 5,
+      "atMs": 16,
+      "ms": 1,
+      "kind": "guard.check",
+      "title": "Guard's decision on that call: deny",
+      "actor": "guard",
+      "request": {
+        "tool": "start_application",
+        "destination": "tamm",
+        "data_labels": [
+          "health"
+        ],
+        "service_tags": [
+          "residency",
+          "visa"
+        ],
+        "sent_by": "TAMM MCP, before it acts"
+      },
+      "response": {
+        "check_id": "chk_5f81923a",
+        "decision": "deny",
+        "reason": "Health details can only be shared for insurance services.",
+        "policy_rule": "health.tamm.insurance_only",
+        "blocked_labels": [
+          "health"
+        ],
+        "source": "Guard log for this session"
+      },
+      "decision": {
+        "decision": "deny",
+        "reason": "Health details can only be shared for insurance services.",
+        "policy_rule": "health.tamm.insurance_only",
+        "blocked_labels": [
+          "health"
+        ]
+      },
+      "mock": true
+    },
+    {
+      "n": 6,
+      "atMs": 21,
+      "ms": 5,
+      "kind": "tamm.tool",
+      "title": "Agent sends the same health declaration with a health insurance application",
+      "actor": "agent",
+      "request": {
+        "tool": "start_application",
+        "arguments": {
+          "service_id": "svc_health_insurance",
+          "applicant_ref": "hire_demo_001",
+          "documents": [
+            {
+              "ref": "doc_health_declaration_hire_demo_001",
+              "labels": [
+                "health"
+              ]
+            }
+          ],
+          "uaepass_session": "(hidden)",
+          "guard_session_id": "gs_442…"
+        }
+      },
+      "response": {
+        "mock": true,
+        "application_id": "app_hi_0002",
+        "status": "submitted"
+      },
+      "status": "submitted",
+      "mock": true
+    },
+    {
+      "n": 7,
+      "atMs": 23,
+      "ms": 1,
+      "kind": "guard.check",
+      "title": "Guard's decision on that call: allow",
+      "actor": "guard",
+      "request": {
+        "tool": "start_application",
+        "destination": "tamm",
+        "data_labels": [
+          "health"
+        ],
+        "service_tags": [
+          "health",
+          "insurance"
+        ],
+        "sent_by": "TAMM MCP, before it acts"
+      },
+      "response": {
+        "check_id": "chk_1ac14cf2",
+        "decision": "allow",
+        "reason": "Sharing your health details with TAMM is allowed.",
+        "policy_rule": "health.tamm.insurance_only",
+        "source": "Guard log for this session"
+      },
+      "decision": {
+        "decision": "allow",
+        "reason": "Sharing your health details with TAMM is allowed.",
+        "policy_rule": "health.tamm.insurance_only"
+      },
+      "mock": true
+    },
+    {
+      "n": 8,
+      "atMs": 28,
+      "ms": 5,
+      "kind": "tamm.status",
+      "title": "Agent reads the insurance application status",
+      "actor": "agent",
+      "request": {
+        "tool": "get_application_status",
+        "arguments": {
+          "application_id": "app_hi_0002",
+          "uaepass_session": "(hidden)"
+        }
+      },
+      "response": {
+        "mock": true,
+        "application_id": "app_hi_0002",
+        "status": "submitted",
+        "history": [
+          {
+            "status": "submitted"
+          }
+        ]
+      },
+      "status": "submitted",
+      "mock": true
+    }
+  ],
+  "done": {
+    "outcome": "mixed",
+    "ms": 28,
+    "summary": "Refused for the residency visa (health.tamm.insurance_only), accepted for health insurance (app_hi_0002 created in the mock)."
+  }
+}

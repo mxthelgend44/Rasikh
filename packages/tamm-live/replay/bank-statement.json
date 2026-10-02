@@ -1,0 +1,159 @@
+{
+  "schema": 1,
+  "scenario": "bank-statement",
+  "recordedAt": "2026-10-02T11:03:56.163Z",
+  "mock": true,
+  "steps": [
+    {
+      "n": 1,
+      "atMs": 3,
+      "ms": 1,
+      "kind": "guard.session",
+      "title": "Open a Guard session for hire_demo_001",
+      "actor": "app",
+      "request": {
+        "case_id": "hire_demo_001",
+        "case_type": "hire"
+      },
+      "response": {
+        "session_id": "gs_f97…"
+      },
+      "mock": true
+    },
+    {
+      "n": 2,
+      "atMs": 4,
+      "ms": 1,
+      "kind": "guard.observe",
+      "title": "The agent reads a bank statement (label only)",
+      "actor": "agent",
+      "request": {
+        "session_id": "gs_f97…",
+        "source": "newcomer",
+        "payload_refs": [
+          {
+            "ref": "doc_bank_statement_hire_demo_001",
+            "labels": [
+              "bank_statement"
+            ]
+          }
+        ]
+      },
+      "response": {
+        "recorded": true
+      },
+      "mock": true
+    },
+    {
+      "n": 3,
+      "atMs": 7,
+      "ms": 2,
+      "kind": "tamm.login",
+      "title": "Sign in with UAE PASS (simulated)",
+      "actor": "app",
+      "request": {
+        "subject_ref": "hire_demo_001",
+        "audience": "individual"
+      },
+      "response": {
+        "simulated": true,
+        "uaepass_session": "(hidden)"
+      },
+      "mock": true
+    },
+    {
+      "n": 4,
+      "atMs": 15,
+      "ms": 8,
+      "kind": "tamm.tool",
+      "title": "Agent calls start_application (residency visa) with the bank statement attached",
+      "actor": "agent",
+      "request": {
+        "tool": "start_application",
+        "arguments": {
+          "service_id": "svc_residency_visa",
+          "applicant_ref": "hire_demo_001",
+          "documents": [
+            {
+              "ref": "doc_bank_statement_hire_demo_001",
+              "labels": [
+                "bank_statement"
+              ]
+            }
+          ],
+          "uaepass_session": "(hidden)",
+          "guard_session_id": "gs_f97…"
+        }
+      },
+      "response": {
+        "mock": true,
+        "denied": true,
+        "guard": {
+          "decision": "deny",
+          "reason": "Your bank statement can't be shared with TAMM.",
+          "policy_rule": "bank_statement.tamm.denied"
+        }
+      },
+      "mock": true
+    },
+    {
+      "n": 5,
+      "atMs": 17,
+      "ms": 1,
+      "kind": "guard.check",
+      "title": "Guard's decision on that call: deny",
+      "actor": "guard",
+      "request": {
+        "tool": "start_application",
+        "destination": "tamm",
+        "data_labels": [
+          "bank_statement"
+        ],
+        "service_tags": [
+          "residency",
+          "visa"
+        ],
+        "sent_by": "TAMM MCP, before it acts"
+      },
+      "response": {
+        "check_id": "chk_a9ca32b3",
+        "decision": "deny",
+        "reason": "Your bank statement can't be shared with TAMM.",
+        "policy_rule": "bank_statement.tamm.denied",
+        "blocked_labels": [
+          "bank_statement"
+        ],
+        "source": "Guard log for this session"
+      },
+      "decision": {
+        "decision": "deny",
+        "reason": "Your bank statement can't be shared with TAMM.",
+        "policy_rule": "bank_statement.tamm.denied",
+        "blocked_labels": [
+          "bank_statement"
+        ]
+      },
+      "mock": true
+    },
+    {
+      "n": 6,
+      "atMs": 17,
+      "ms": 0,
+      "kind": "note",
+      "title": "Proof that nothing was created in the mock TAMM",
+      "actor": "app",
+      "request": {},
+      "response": {
+        "denied": true,
+        "application_id_in_result": false,
+        "meaning": "The tool result carries denied: true and no application_id, because the mock backend is only called after Guard allows."
+      },
+      "mock": true
+    }
+  ],
+  "done": {
+    "outcome": "blocked",
+    "ms": 17,
+    "summary": "Guard denied sending the bank statement to TAMM (bank_statement.tamm.denied). The tool result has denied: true and no application_id, so nothing was created in the mock."
+  }
+}

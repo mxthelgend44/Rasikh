@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ar="تسجيل الدخول بالهوية الرقمية (تجريبي)">Sign in with UAE PASS (mock)</title>
+<link rel="stylesheet" href="/shared/portal.css">
+<script src="/shared/portal.js" defer></script>
+</head>
+<body data-portal="icp">
+<a class="skip" href="#main" data-ar="انتقل إلى المحتوى">Skip to content</a>
+<div class="mock-banner" role="note"><span data-ar="بوابة تجريبية لعرض راسخ، وليست موقعًا حكوميًا أو مصرفيًا حقيقيًا">MOCK PORTAL for the Rasikh demo, not a real government or bank site</span></div>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="/icp/"><span class="mark" aria-hidden="true">ID</span><span><span data-ar="خدمات الهوية">Identity services</span><small data-ar="تجريبي">mock</small></span></a>
+    <button type="button" class="lang-toggle" id="lang-toggle" lang="ar">العربية</button>
+  </div>
+</header>
+<main id="main" class="wrap">
+  <h1 data-ar="تسجيل الدخول بالهوية الرقمية">Sign in with UAE PASS</h1>
+  <div class="note warn" role="note" data-ar="هذا نموذج تجريبي لا يقبل شيئًا حقيقيًا ولا يتحقق من أي قيمة. اكتب بنفسك قيمة وهمية أو اتركه فارغًا ثم تابع. لا تُدخل رقمك السري الحقيقي.">This is a mock form. It accepts nothing real and checks nothing. Type a made-up value yourself, or leave it empty, then continue. Do not enter your real PIN.</div>
+  <form id="signin" class="card" novalidate>
+    <div class="field">
+      <label for="uaepass-user"><span data-ar="اسم المستخدم أو رقم الهاتف (تجريبي)">Username or mobile number (mock)</span></label>
+      <input type="text" id="uaepass-user" name="uaepassUser" autocomplete="off" inputmode="text">
+      <p class="pd" data-ar="معلومة شخصية: لن يقرأ المساعد هذا الحقل.">Personal data: the helper will not read this field.</p>
+    </div>
+    <div class="field">
+      <label for="uaepass-pin"><span data-ar="الرقم السري (تجريبي)">PIN (mock)</span></label>
+      <input type="password" id="uaepass-pin" name="uaepassPin" autocomplete="off">
+      <p class="pd" data-ar="معلومة سرية: يتجاهل المساعد هذا الحقل تمامًا.">Secret: the helper ignores this field completely.</p>
+    </div>
+    <button type="button" class="btn" id="signin-continue" data-ar="متابعة">Continue</button>
+  </form>
+</main>
+<footer class="site-foot"><div class="wrap" data-ar="موقع تجريبي لعرض راسخ.">Mock site for the Rasikh demo.</div></footer>
+<script src="signin.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ar="فتح حساب جارٍ (تجريبي)">Open a current account (mock)</title>
+<link rel="stylesheet" href="/shared/portal.css">
+<script src="/shared/portal.js" defer></script>
+</head>
+<body data-portal="bank">
+<a class="skip" href="#main" data-ar="انتقل إلى المحتوى">Skip to content</a>
+<div class="mock-banner" role="note"><span data-ar="بوابة تجريبية لعرض راسخ، وليست موقعًا حكوميًا أو مصرفيًا حقيقيًا">MOCK PORTAL for the Rasikh demo, not a real government or bank site</span></div>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="/bank/"><span class="mark" aria-hidden="true">DB</span><span><span data-ar="مصرف الكثبان">Dunes Bank</span><small data-ar="تجريبي، مصرف وهمي">mock, a made-up bank</small></span></a>
+    <button type="button" class="lang-toggle" id="lang-toggle" lang="ar">العربية</button>
+  </div>
+</header>
+<main id="main" class="wrap">
+  <h1 id="wiz-title" data-ar="افتح حسابًا جاريًا">Open a current account</h1>
+  <p class="lede" data-ar="الحقول المعلَّمة بنجمة (*) إلزامية. لا يُرسَل شيء في هذه النسخة التجريبية.">Fields marked with a star (*) are required. Nothing is sent in this mock version.</p>
+  <form id="wizard" class="card" novalidate aria-labelledby="wiz-title">
+    <ol class="stepper" id="stepper" aria-label="Progress" data-ar-aria="التقدم"></ol>
+    <div id="err-summary" class="err-summary" role="alert" hidden></div>
+    <div id="step-host"></div>
+    <div class="wizard-nav">
+      <button type="button" class="btn secondary" id="back" data-ar="رجوع">Back</button>
+      <button type="button" class="btn" id="next" data-ar="متابعة">Continue</button>
+    </div>
+  </form>
+</main>
+<footer class="site-foot"><div class="wrap" data-ar="موقع تجريبي لعرض راسخ. لا يُرسَل شيء.">Mock site for the Rasikh demo. Nothing is sent.</div></footer>
+
+<template id="tpl-personal">
+  <h2 class="step-title" data-ar="الخطوة 1: البيانات الشخصية">Step 1: Personal details</h2>
+  <div class="field">
+    <label for="b-name"><span data-ar="الاسم الكامل">Full name</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="b-name" name="fullName" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="b-dob"><span data-ar="تاريخ الميلاد">Date of birth</span> <span aria-hidden="true">*</span></label>
+    <input type="date" id="b-dob" name="dob" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="b-eid"><span data-ar="رقم بطاقة الهوية">Identity card number</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="b-eid" name="eid" required autocomplete="off">
+    <p class="pd" data-ar="معلومة شخصية: لن يقرأ المساعد هذا الحقل.">Personal data: the helper will not read this field.</p>
+  </div>
+  <div class="field">
+    <label for="b-mobile"><span data-ar="رقم الهاتف المحمول">Mobile number</span> <span aria-hidden="true">*</span></label>
+    <input type="tel" id="b-mobile" name="mobile" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="b-email"><span data-ar="البريد الإلكتروني">Email</span> <span aria-hidden="true">*</span></label>
+    <input type="email" id="b-email" name="email" required autocomplete="off">
+  </div>
+</template>
+
+<template id="tpl-employer">
+  <h2 class="step-title" data-ar="الخطوة 2: خطاب جهة العمل">Step 2: Employer letter</h2>
+  <div class="field">
+    <label for="b-employer"><span data-ar="اسم جهة العمل">Employer name</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="b-employer" name="employer" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="b-letter"><span data-ar="خطاب جهة العمل (شهادة راتب)">Employer letter (salary certificate)</span> <span aria-hidden="true">*</span></label>
+    <p class="hint" id="letter-hint" data-ar="ملف PDF أو صورة، حديث وموقّع (قاعدة تجريبية).">A PDF or image, recent and signed (a mock rule).</p>
+    <input type="file" id="b-letter" name="letter" accept="application/pdf,image/png,image/jpeg" required aria-describedby="letter-hint">
+    <p class="pd" data-ar="معلومة شخصية: لا يقرأ المساعد الملف ولا اسمه.">Personal data: the helper does not read the file or its name.</p>
+  </div>
+</template>
+
+<template id="tpl-income">
+  <h2 class="step-title" data-ar="الخطوة 3: مصدر الدخل">Step 3: Source of income</h2>
+  <div class="field">
+    <label for="b-source"><span data-ar="مصدر الدخل الرئيسي">Main source of income</span> <span aria-hidden="true">*</span></label>
+    <select id="b-source" name="source" required>
+      <option value="" data-ar="اختر المصدر">Choose a source</option>
+      <option value="salary" data-ar="راتب">Salary</option>
+      <option value="business" data-ar="نشاط تجاري">Business</option>
+      <option value="savings" data-ar="مدخرات">Savings</option>
+      <option value="other" data-ar="مصدر آخر">Something else</option>
+    </select>
+  </div>
+  <div id="source-extra" aria-live="polite"></div>
+  <template id="tpl-src-other"><div class="dyn"><div class="field"><label for="b-source-desc"><span data-ar="صف مصدر دخلك">Describe your source of income</span> <span aria-hidden="true">*</span></label><textarea id="b-source-desc" name="sourceDesc" required></textarea></div></div></template>
+  <div class="field">
+    <span class="lbl" id="range-l"><span data-ar="الدخل الشهري المتوقع">Expected monthly income</span> <span aria-hidden="true">*</span></span>
+    <div class="lb" data-listbox data-required>
+      <button type="button" role="combobox" id="b-range" aria-haspopup="listbox" aria-expanded="false" aria-controls="range-list" aria-labelledby="range-l range-v"><span id="range-v" data-value-text data-ar="اختر الفئة">Choose a range</span></button>
+      <ul role="listbox" id="range-list" aria-labelledby="range-l" hidden>
+        <li role="option" id="r-1" data-value="r1" data-ar="أقل من 5,000 درهم">Under AED 5,000</li>
+        <li role="option" id="r-2" data-value="r2" data-ar="من 5,000 إلى 15,000 درهم">AED 5,000 to 15,000</li>
+        <li role="option" id="r-3" data-value="r3" data-ar="أكثر من 15,000 درهم">Over AED 15,000</li>
+      </ul>
+      <input type="hidden" name="range" value="">
+    </div>
+  </div>
+</template>
+
+<template id="tpl-fatca">
+  <h2 class="step-title" data-ar="الخطوة 4: إقرار الإقامة الضريبية">Step 4: Tax residence declaration</h2>
+  <p data-ar="تطلب المصارف هذه المعلومة لأغراض الامتثال الضريبي الدولي.">Banks ask this for international tax-compliance reasons.</p>
+  <fieldset>
+    <legend><span data-ar="هل أنت مقيم لأغراض ضريبية في دولة أخرى غير الإمارات؟">Are you a tax resident of any country other than the UAE?</span> <span aria-hidden="true">*</span></legend>
+    <div class="choice"><input type="radio" id="tx-no" name="taxOther" value="no" required><label for="tx-no" data-ar="لا">No</label></div>
+    <div class="choice"><input type="radio" id="tx-yes" name="taxOther" value="yes"><label for="tx-yes" data-ar="نعم">Yes</label></div>
+  </fieldset>
+  <div id="tax-extra" aria-live="polite"></div>
+  <template id="tpl-tx-yes"><div class="dyn"><div class="field"><label for="b-tax-country"><span data-ar="دولة الإقامة الضريبية">Country of tax residence</span> <span aria-hidden="true">*</span></label><input type="text" id="b-tax-country" name="taxCountry" required autocomplete="off"></div><div class="field"><label for="b-tin"><span data-ar="رقم التعريف الضريبي">Tax identification number</span> <span aria-hidden="true">*</span></label><input type="text" id="b-tin" name="tin" required autocomplete="off"><p class="pd" data-ar="معلومة شخصية: لن يقرأ المساعد هذا الحقل.">Personal data: the helper will not read this field.</p></div></div></template>
+  <div class="choice"><input type="checkbox" id="b-fatca-ok" name="fatcaOk" required><label for="b-fatca-ok" data-ar="أقرّ بأن إجاباتي عن الإقامة الضريبية صحيحة، وسأبلغ المصرف إن تغيرت.">I confirm my answers about tax residence are correct, and I will tell the bank if they change.</label></div>
+</template>
+
+<template id="tpl-review">
+  <h2 class="step-title" data-ar="الخطوة 5: المراجعة والإرسال">Step 5: Review and submit</h2>
+  <p data-ar="راجع ما أدخلته. لا يعرض هذا الملخص إلا الأسماء العامة للحقول.">Review what you entered. This summary shows only the general field names.</p>
+  <dl class="summary">
+    <dt data-ar="البيانات الشخصية">Personal details</dt><dd data-ar="مكتملة">Completed</dd>
+    <dt data-ar="خطاب جهة العمل">Employer letter</dt><dd data-ar="مرفوع">Attached</dd>
+    <dt data-ar="مصدر الدخل">Source of income</dt><dd data-ar="مكتمل">Completed</dd>
+    <dt data-ar="إقرار الإقامة الضريبية">Tax residence declaration</dt><dd data-ar="مكتمل">Completed</dd>
+  </dl>
+  <p><button type="button" class="btn secondary" id="b-terms-open" data-ar="قراءة شروط الحساب">Read the account terms</button></p>
+  <div class="choice"><input type="checkbox" id="b-agree" name="agree"><label for="b-agree" data-ar="قرأت شروط الحساب وأوافق عليها.">I have read the account terms and I agree to them.</label></div>
+  <p class="note warn" data-ar="هذا زر الإرسال النهائي. لن يضغط عليه المساعد: أنت من يقرر.">This is the final Submit button. The helper will never press it: you decide.</p>
+  <button type="button" class="btn" id="submit" data-submit data-final disabled data-ar="إرسال طلب فتح الحساب">Submit account application</button>
+</template>
+
+<dialog id="dlg-terms" aria-labelledby="dlg-terms-title">
+  <div class="dlg">
+    <h2 id="dlg-terms-title" data-ar="شروط الحساب (تجريبية)">Account terms (mock)</h2>
+    <p data-ar="نص تجريبي: قد تُفرض رسوم شهرية إذا نزل الرصيد عن حد معين، ويحق للمصرف طلب مستندات إضافية. لا قيمة قانونية لهذا النص.">Sample text: monthly fees may apply if the balance falls below a limit, and the bank may ask for extra documents. This text has no legal value.</p>
+    <div class="dlg-actions"><button type="button" class="btn" data-close="ok" data-autofocus data-ar="إغلاق">Close</button></div>
+  </div>
+</dialog>
+<script src="apply.js" defer></script>
+</body>
+</html>

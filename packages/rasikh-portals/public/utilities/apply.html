@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ar="فتح حساب جديد (تجريبي)">Open a new account (mock)</title>
+<link rel="stylesheet" href="/shared/portal.css">
+<script src="/shared/portal.js" defer></script>
+</head>
+<body data-portal="utilities">
+<a class="skip" href="#main" data-ar="انتقل إلى المحتوى">Skip to content</a>
+<div class="mock-banner" role="note"><span data-ar="بوابة تجريبية لعرض راسخ، وليست موقعًا حكوميًا أو مصرفيًا حقيقيًا">MOCK PORTAL for the Rasikh demo, not a real government or bank site</span></div>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="/utilities/"><span class="mark" aria-hidden="true">W&amp;P</span><span><span data-ar="خدمات المياه والكهرباء">Water and power services</span><small data-ar="تجريبي">mock</small></span></a>
+    <button type="button" class="lang-toggle" id="lang-toggle" lang="ar">العربية</button>
+  </div>
+</header>
+<main id="main" class="wrap">
+  <h1 id="wiz-title" data-ar="فتح حساب جديد">Open a new account</h1>
+  <p class="lede" data-ar="الحقول المعلَّمة بنجمة (*) إلزامية. لا يُرسَل شيء في هذه النسخة التجريبية.">Fields marked with a star (*) are required. Nothing is sent in this mock version.</p>
+  <form id="wizard" class="card" novalidate aria-labelledby="wiz-title">
+    <ol class="stepper" id="stepper" aria-label="Progress" data-ar-aria="التقدم"></ol>
+    <div id="err-summary" class="err-summary" role="alert" hidden></div>
+    <div id="step-host"></div>
+    <div class="wizard-nav">
+      <button type="button" class="btn secondary" id="back" data-ar="رجوع">Back</button>
+      <button type="button" class="btn" id="next" data-ar="متابعة">Continue</button>
+    </div>
+  </form>
+</main>
+<footer class="site-foot"><div class="wrap" data-ar="موقع تجريبي لعرض راسخ. لا يُرسَل شيء.">Mock site for the Rasikh demo. Nothing is sent.</div></footer>
+
+<template id="tpl-premise">
+  <h2 class="step-title" data-ar="الخطوة 1: العقد والعقار">Step 1: Tenancy and premise</h2>
+  <div class="field">
+    <label for="tenancy-no"><span data-ar="رقم عقد الإيجار">Tenancy contract number</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="tenancy-no" name="tenancyNo" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="premise-no"><span data-ar="رقم العقار">Premise number</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="premise-no" name="premiseNo" required autocomplete="off" aria-describedby="premise-hint">
+    <p class="hint" id="premise-hint" data-ar="عادةً عشرة أرقام (قاعدة تجريبية).">Usually ten digits (a mock rule).</p>
+    <button type="button" class="btn secondary" id="premise-help" data-ar="أين أجد رقم العقار؟">Where do I find the premise number?</button>
+  </div>
+  <div class="field">
+    <span class="lbl" id="ptype-l"><span data-ar="نوع العقار">Premise type</span> <span aria-hidden="true">*</span></span>
+    <div class="lb" data-listbox data-required>
+      <button type="button" role="combobox" id="ptype" aria-haspopup="listbox" aria-expanded="false" aria-controls="ptype-list" aria-labelledby="ptype-l ptype-v"><span id="ptype-v" data-value-text data-ar="اختر نوع العقار">Choose premise type</span></button>
+      <ul role="listbox" id="ptype-list" aria-labelledby="ptype-l" hidden>
+        <li role="option" id="pt-apt" data-value="apartment" data-ar="شقة">Apartment</li>
+        <li role="option" id="pt-vil" data-value="villa" data-ar="فيلا">Villa</li>
+        <li role="option" id="pt-shr" data-value="shared" data-ar="سكن مشترك">Shared accommodation</li>
+      </ul>
+      <input type="hidden" name="premiseType" value="">
+    </div>
+  </div>
+</template>
+
+<template id="tpl-holder">
+  <h2 class="step-title" data-ar="الخطوة 2: صاحب الحساب">Step 2: Account holder</h2>
+  <div class="field">
+    <label for="holder-name"><span data-ar="اسم صاحب الحساب">Account holder name</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="holder-name" name="holderName" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="holder-id"><span data-ar="رقم الهوية">Identity number</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="holder-id" name="holderId" required autocomplete="off">
+    <p class="pd" data-ar="معلومة شخصية: لن يقرأ المساعد هذا الحقل.">Personal data: the helper will not read this field.</p>
+  </div>
+  <div class="field">
+    <label for="holder-phone"><span data-ar="رقم الهاتف">Phone number</span> <span aria-hidden="true">*</span></label>
+    <input type="tel" id="holder-phone" name="holderPhone" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="holder-email"><span data-ar="البريد الإلكتروني (اختياري)">Email (optional)</span></label>
+    <input type="email" id="holder-email" name="holderEmail" autocomplete="off">
+  </div>
+</template>
+
+<template id="tpl-meter">
+  <h2 class="step-title" data-ar="الخطوة 3: بيانات العدّاد">Step 3: Meter details</h2>
+  <div class="field">
+    <label for="meter-type"><span data-ar="نوع العدّاد">Meter type</span> <span aria-hidden="true">*</span></label>
+    <select id="meter-type" name="meterType" required>
+      <option value="" data-ar="اختر النوع">Choose a type</option>
+      <option value="both" data-ar="كهرباء ومياه">Electricity and water</option>
+      <option value="water" data-ar="مياه فقط">Water only</option>
+    </select>
+  </div>
+  <fieldset>
+    <legend><span data-ar="هل لديك رقم العدّاد؟">Do you have the meter number?</span> <span aria-hidden="true">*</span></legend>
+    <div class="choice"><input type="radio" id="m-yes" name="hasMeter" value="yes" required><label for="m-yes" data-ar="نعم">Yes</label></div>
+    <div class="choice"><input type="radio" id="m-no" name="hasMeter" value="no"><label for="m-no" data-ar="لا">No</label></div>
+  </fieldset>
+  <div id="meter-extra" aria-live="polite"></div>
+  <template id="tpl-m-yes"><div class="dyn"><div class="field"><label for="meter-no"><span data-ar="رقم العدّاد">Meter number</span> <span aria-hidden="true">*</span></label><input type="text" id="meter-no" name="meterNo" required autocomplete="off"></div><div class="field"><label for="meter-read"><span data-ar="القراءة الحالية">Current reading</span></label><input type="number" id="meter-read" name="meterRead" min="0" autocomplete="off"></div></div></template>
+  <template id="tpl-m-no"><div class="dyn"><p data-ar="لا بأس. سيحدد الفني العدّاد عند الزيارة. سيُطلب منك وصف موقعه.">That is fine. A technician will identify the meter on the visit. You will be asked to describe where it is.</p><div class="field"><label for="meter-loc"><span data-ar="موقع العدّاد">Where the meter is</span></label><input type="text" id="meter-loc" name="meterLoc" autocomplete="off"></div></div></template>
+</template>
+
+<template id="tpl-payment">
+  <h2 class="step-title" data-ar="الخطوة 4: طريقة الدفع">Step 4: Payment method</h2>
+  <fieldset>
+    <legend><span data-ar="كيف تدفع الفواتير؟">How will you pay your bills?</span> <span aria-hidden="true">*</span></legend>
+    <div class="choice"><input type="radio" id="pm-dd" name="payMethod" value="debit" required><label for="pm-dd" data-ar="خصم مباشر من حساب مصرفي">Direct debit from a bank account</label></div>
+    <div class="choice"><input type="radio" id="pm-card" name="payMethod" value="card"><label for="pm-card" data-ar="الدفع بالبطاقة عند كل فاتورة">Pay by card each time a bill arrives</label></div>
+    <div class="choice"><input type="radio" id="pm-cash" name="payMethod" value="counter"><label for="pm-cash" data-ar="الدفع في مركز الخدمة">Pay at a service centre</label></div>
+  </fieldset>
+  <div id="pay-extra" aria-live="polite"></div>
+  <template id="tpl-pm-debit"><div class="dyn"><div class="field"><label for="iban"><span data-ar="رقم الحساب الدولي (IBAN)">Bank account number (IBAN)</span> <span aria-hidden="true">*</span></label><input type="text" id="iban" name="iban" required autocomplete="off"><p class="pd" data-ar="معلومة مصرفية: لن يقرأ المساعد هذا الحقل.">Banking data: the helper will not read this field.</p></div></div></template>
+</template>
+
+<template id="tpl-submit">
+  <h2 class="step-title" data-ar="الخطوة 5: الشروط والإرسال">Step 5: Terms and submit</h2>
+  <p data-ar="اقرأ الشروط، ثم وافق عليها. زر الإرسال لا يعمل إلا بعد الموافقة.">Read the terms, then agree. The Submit button works only after you agree.</p>
+  <p><button type="button" class="btn secondary" id="terms-open" data-ar="قراءة الشروط">Read the terms</button></p>
+  <div class="choice"><input type="checkbox" id="agree-terms" name="agreeTerms"><label for="agree-terms" data-ar="أوافق على شروط الخدمة.">I agree to the terms of service.</label></div>
+  <p class="note warn" data-ar="هذا زر الإرسال النهائي. لن يضغط عليه المساعد: أنت من يقرر.">This is the final Submit button. The helper will never press it: you decide.</p>
+  <button type="button" class="btn" id="submit" data-submit data-final disabled data-ar="إرسال طلب الحساب">Submit account request</button>
+</template>
+
+<dialog id="dlg-premise" aria-labelledby="dlg-premise-title">
+  <div class="dlg">
+    <h2 id="dlg-premise-title" data-ar="أين أجد رقم العقار؟">Where do I find the premise number?</h2>
+    <p data-ar="في هذا الموقع التجريبي: ابحث عن «رقم العقار» في أعلى فاتورة سابقة، أو اسأل المالك. هذه المعلومة قد تختلف في المواقع الحقيقية.">On this mock site: look for "Premise number" at the top of an earlier bill, or ask your landlord. This may differ on real sites.</p>
+    <div class="dlg-actions"><button type="button" class="btn" data-close="ok" data-autofocus data-ar="إغلاق المساعدة">Close help</button></div>
+  </div>
+</dialog>
+<dialog id="dlg-terms" aria-labelledby="dlg-terms-title">
+  <div class="dlg">
+    <h2 id="dlg-terms-title" data-ar="شروط الخدمة (تجريبية)">Terms of service (mock)</h2>
+    <p data-ar="نص تجريبي: تلتزم بدفع الفواتير في موعدها وبإبلاغ الجهة عند ترك العقار. لا قيمة قانونية لهذا النص.">Sample text: you agree to pay bills on time and to tell the provider when you leave the property. This text has no legal value.</p>
+    <div class="dlg-actions"><button type="button" class="btn" data-close="ok" data-autofocus data-ar="إغلاق">Close</button></div>
+  </div>
+</dialog>
+<script src="apply.js" defer></script>
+</body>
+</html>

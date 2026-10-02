@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-ar="طلب بطاقة الهوية (تجريبي)">Emirates ID application (mock)</title>
+<link rel="stylesheet" href="/shared/portal.css">
+<script src="/shared/portal.js" defer></script>
+</head>
+<body data-portal="icp">
+<a class="skip" href="#main" data-ar="انتقل إلى المحتوى">Skip to content</a>
+<div class="mock-banner" role="note"><span data-ar="بوابة تجريبية لعرض راسخ، وليست موقعًا حكوميًا أو مصرفيًا حقيقيًا">MOCK PORTAL for the Rasikh demo, not a real government or bank site</span></div>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="/icp/"><span class="mark" aria-hidden="true">ID</span><span><span data-ar="خدمات الهوية">Identity services</span><small data-ar="تجريبي">mock</small></span></a>
+    <button type="button" class="lang-toggle" id="lang-toggle" lang="ar">العربية</button>
+  </div>
+</header>
+<main id="main" class="wrap">
+  <h1 id="wiz-title" data-ar="طلب بطاقة الهوية">Emirates ID application</h1>
+  <p class="lede" data-ar="الحقول المعلَّمة بنجمة (*) إلزامية. لا يُرسَل شيء في هذه النسخة التجريبية.">Fields marked with a star (*) are required. Nothing is sent in this mock version.</p>
+  <form id="wizard" class="card" novalidate aria-labelledby="wiz-title">
+    <ol class="stepper" id="stepper" aria-label="Progress" data-ar-aria="التقدم"></ol>
+    <div id="err-summary" class="err-summary" role="alert" hidden></div>
+    <div id="step-host"></div>
+    <div class="wizard-nav">
+      <button type="button" class="btn secondary" id="back" data-ar="رجوع">Back</button>
+      <button type="button" class="btn" id="next" data-ar="متابعة">Continue</button>
+    </div>
+  </form>
+</main>
+<footer class="site-foot"><div class="wrap" data-ar="موقع تجريبي لعرض راسخ. لا يُرسَل شيء.">Mock site for the Rasikh demo. Nothing is sent.</div></footer>
+
+<!-- Step 1 -->
+<template id="tpl-applicant">
+  <h2 class="step-title" data-ar="الخطوة 1: بيانات مقدم الطلب">Step 1: Applicant details</h2>
+  <div class="field">
+    <label for="full-name"><span data-ar="الاسم الكامل (كما في جواز السفر)">Full name (as in passport)</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="full-name" name="fullName" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="dob"><span data-ar="تاريخ الميلاد">Date of birth</span> <span aria-hidden="true">*</span></label>
+    <input type="date" id="dob" name="dob" required autocomplete="off">
+  </div>
+  <div class="field">
+    <span class="lbl" id="nat-l"><span data-ar="الجنسية">Nationality</span> <span aria-hidden="true">*</span></span>
+    <div class="lb" data-listbox data-required>
+      <button type="button" role="combobox" id="nat" aria-haspopup="listbox" aria-expanded="false" aria-controls="nat-list" aria-labelledby="nat-l nat-v"><span id="nat-v" data-value-text data-ar="اختر الجنسية">Choose nationality</span></button>
+      <ul role="listbox" id="nat-list" aria-labelledby="nat-l" hidden>
+        <li role="option" id="nat-eg" data-value="EG" data-ar="مصر">Egypt</li>
+        <li role="option" id="nat-in" data-value="IN" data-ar="الهند">India</li>
+        <li role="option" id="nat-jo" data-value="JO" data-ar="الأردن">Jordan</li>
+        <li role="option" id="nat-pk" data-value="PK" data-ar="باكستان">Pakistan</li>
+        <li role="option" id="nat-ph" data-value="PH" data-ar="الفلبين">Philippines</li>
+        <li role="option" id="nat-gb" data-value="GB" data-ar="المملكة المتحدة">United Kingdom</li>
+        <li role="option" id="nat-xx" data-value="XX" data-ar="أخرى">Other</li>
+      </ul>
+      <input type="hidden" name="nationality" value="">
+    </div>
+  </div>
+  <div class="field">
+    <label for="passport-no"><span data-ar="رقم جواز السفر">Passport number</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="passport-no" name="passportNo" required autocomplete="off">
+    <p class="pd" data-ar="معلومة شخصية: لن يقرأ المساعد هذا الحقل.">Personal data: the helper will not read this field.</p>
+  </div>
+  <div class="field">
+    <label for="mobile"><span data-ar="رقم الهاتف المحمول">Mobile number</span> <span aria-hidden="true">*</span></label>
+    <input type="tel" id="mobile" name="mobile" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="email"><span data-ar="البريد الإلكتروني (اختياري)">Email (optional)</span></label>
+    <input type="email" id="email" name="email" autocomplete="off">
+  </div>
+</template>
+
+<!-- Step 2 -->
+<template id="tpl-documents">
+  <h2 class="step-title" data-ar="الخطوة 2: الصورة ونسخة جواز السفر">Step 2: Photo and passport copy</h2>
+  <div class="field">
+    <label for="photo-file"><span data-ar="الصورة الشخصية">Personal photo</span> <span aria-hidden="true">*</span></label>
+    <p class="hint" id="photo-hint" data-ar="صورة بخلفية بيضاء بصيغة JPG أو PNG (قاعدة تجريبية).">White background, JPG or PNG (a mock rule).</p>
+    <input type="file" id="photo-file" name="photo" accept="image/png,image/jpeg" required aria-describedby="photo-hint">
+    <p class="pd" data-ar="معلومة شخصية: لا يقرأ المساعد الملف ولا اسمه.">Personal data: the helper does not read the file or its name.</p>
+  </div>
+  <div class="field">
+    <label for="passport-file"><span data-ar="نسخة من جواز السفر">Passport copy</span> <span aria-hidden="true">*</span></label>
+    <p class="hint" id="pp-hint" data-ar="صفحة البيانات كاملة بصيغة PDF أو صورة (قاعدة تجريبية).">The full data page as PDF or image (a mock rule).</p>
+    <input type="file" id="passport-file" name="passportCopy" accept="application/pdf,image/png,image/jpeg" required aria-describedby="pp-hint">
+    <p class="pd" data-ar="معلومة شخصية: لا يقرأ المساعد الملف ولا اسمه.">Personal data: the helper does not read the file or its name.</p>
+  </div>
+</template>
+
+<!-- Step 3 -->
+<template id="tpl-visa">
+  <h2 class="step-title" data-ar="الخطوة 3: بيانات تأشيرة الإقامة">Step 3: Residency visa details</h2>
+  <div class="field">
+    <label for="visa-file-no"><span data-ar="رقم ملف التأشيرة">Visa file number</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="visa-file-no" name="visaFileNo" required autocomplete="off">
+    <p class="pd" data-ar="معلومة شخصية: لن يقرأ المساعد هذا الحقل.">Personal data: the helper will not read this field.</p>
+  </div>
+  <div class="field">
+    <label for="visa-expiry"><span data-ar="تاريخ انتهاء التأشيرة">Visa expiry date</span> <span aria-hidden="true">*</span></label>
+    <input type="date" id="visa-expiry" name="visaExpiry" required autocomplete="off">
+  </div>
+  <fieldset>
+    <legend><span data-ar="من يكفل إقامتك؟">Who sponsors your residency?</span> <span aria-hidden="true">*</span></legend>
+    <div class="choice"><input type="radio" id="sp-employer" name="sponsor" value="employer" required><label for="sp-employer" data-ar="جهة العمل">Employer</label></div>
+    <div class="choice"><input type="radio" id="sp-family" name="sponsor" value="family"><label for="sp-family" data-ar="أحد أفراد الأسرة">A family member</label></div>
+    <div class="choice"><input type="radio" id="sp-investor" name="sponsor" value="investor"><label for="sp-investor" data-ar="مستثمر أو مالك منشأة">Investor or business owner</label></div>
+  </fieldset>
+  <div id="sponsor-extra" aria-live="polite"></div>
+  <template id="tpl-sp-employer"><div class="dyn"><div class="field"><label for="est-no"><span data-ar="رقم بطاقة المنشأة">Establishment card number</span> <span aria-hidden="true">*</span></label><input type="text" id="est-no" name="estNo" required autocomplete="off"></div></div></template>
+  <template id="tpl-sp-family"><div class="dyn"><div class="field"><label for="sponsor-id"><span data-ar="رقم هوية الكفيل">Sponsor's identity number</span> <span aria-hidden="true">*</span></label><input type="text" id="sponsor-id" name="sponsorId" required autocomplete="off"><p class="pd" data-ar="معلومة شخصية: لن يقرأ المساعد هذا الحقل.">Personal data: the helper will not read this field.</p></div></div></template>
+  <template id="tpl-sp-investor"><div class="dyn"><div class="field"><label for="licence-no"><span data-ar="رقم الرخصة التجارية">Trade licence number</span> <span aria-hidden="true">*</span></label><input type="text" id="licence-no" name="licenceNo" required autocomplete="off"></div></div></template>
+</template>
+
+<!-- Step 4 -->
+<template id="tpl-address">
+  <h2 class="step-title" data-ar="الخطوة 4: عنوان التسليم">Step 4: Delivery address</h2>
+  <div class="field">
+    <label for="emirate"><span data-ar="الإمارة">Emirate</span> <span aria-hidden="true">*</span></label>
+    <select id="emirate" name="emirate" required>
+      <option value="" data-ar="اختر الإمارة">Choose emirate</option>
+      <option value="AD" data-ar="أبوظبي">Abu Dhabi</option>
+      <option value="DU" data-ar="دبي">Dubai</option>
+      <option value="SH" data-ar="الشارقة">Sharjah</option>
+      <option value="OT" data-ar="أخرى">Other</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="area"><span data-ar="المنطقة">Area</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="area" name="area" required autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="street"><span data-ar="الشارع والمبنى والشقة">Street, building and flat</span> <span aria-hidden="true">*</span></label>
+    <input type="text" id="street" name="street" required autocomplete="off">
+    <p class="pd" data-ar="معلومة شخصية: لن يقرأ المساعد هذا الحقل.">Personal data: the helper will not read this field.</p>
+  </div>
+  <div class="field">
+    <label for="notes"><span data-ar="ملاحظات للمندوب (اختياري)">Notes for the courier (optional)</span></label>
+    <textarea id="notes" name="notes"></textarea>
+  </div>
+</template>
+
+<!-- Step 5 -->
+<template id="tpl-declaration">
+  <h2 class="step-title" data-ar="الخطوة 5: الإقرار">Step 5: Declaration</h2>
+  <p data-ar="اقرأ الإقرار ثم ضع علامة. زر المتابعة لا يعمل إلا بعد ذلك.">Read the declaration, then tick the box. The Continue button works only after that.</p>
+  <div class="choice"><input type="checkbox" id="declare" name="declare"><label for="declare" data-ar="أُقرّ بأن المعلومات التي أدخلتها صحيحة وكاملة، وأتحمل مسؤولية صحتها.">I declare that the information I entered is correct and complete, and I accept responsibility for it.</label></div>
+</template>
+
+<!-- Step 6 -->
+<template id="tpl-payment">
+  <h2 class="step-title" data-ar="الخطوة 6: ملخص الدفع">Step 6: Payment summary</h2>
+  <table class="fees">
+    <caption data-ar="الرسوم (مبالغ تجريبية)">Fees (mock amounts)</caption>
+    <thead><tr><th scope="col" data-ar="البند">Item</th><th scope="col" data-ar="المبلغ">Amount</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" data-ar="رسوم الإصدار">Issuing fee</th><td data-ar="100 درهم">AED 100</td></tr>
+      <tr><th scope="row" data-ar="رسوم الخدمة">Service fee</th><td data-ar="40 درهم">AED 40</td></tr>
+      <tr><th scope="row" data-ar="التوصيل">Delivery</th><td data-ar="20 درهم">AED 20</td></tr>
+      <tr><th scope="row" data-ar="الإجمالي">Total</th><td data-ar="160 درهم">AED 160</td></tr>
+    </tbody>
+  </table>
+  <fieldset>
+    <legend><span data-ar="طريقة الدفع (تجريبية، لا يُخصَم شيء)">Payment method (mock, nothing is charged)</span> <span aria-hidden="true">*</span></legend>
+    <div class="choice"><input type="radio" id="pay-online" name="payMethod" value="online" required><label for="pay-online" data-ar="الدفع عبر الإنترنت">Pay online</label></div>
+    <div class="choice"><input type="radio" id="pay-centre" name="payMethod" value="centre"><label for="pay-centre" data-ar="الدفع في مركز الخدمة">Pay at the service centre</label></div>
+  </fieldset>
+  <p class="note warn" data-ar="هذا زر الإرسال النهائي. لن يضغط عليه المساعد: أنت من يقرر.">This is the final Submit button. The helper will never press it: you decide.</p>
+  <button type="button" class="btn" id="submit" data-submit data-final data-ar="تقديم الطلب">Submit application</button>
+</template>
+
+<!-- Modal: confirm delivery address (opens when you continue from step 4) -->
+<dialog id="dlg-address" aria-labelledby="dlg-address-title">
+  <div class="dlg">
+    <h2 id="dlg-address-title" data-ar="تأكيد عنوان التسليم">Confirm your delivery address</h2>
+    <p data-ar="سيصل البطاقة إلى هذا العنوان. تأكد من صحته قبل المتابعة.">Your card will be delivered to this address. Check it before you continue.</p>
+    <p id="dlg-address-text" class="note"></p>
+    <div class="dlg-actions">
+      <button type="button" class="btn secondary" data-close="edit" data-ar="تعديل">Edit</button>
+      <button type="button" class="btn" data-close="confirm" data-autofocus data-ar="تأكيد ومتابعة">Confirm and continue</button>
+    </div>
+  </div>
+</dialog>
+<script src="apply.js" defer></script>
+</body>
+</html>
