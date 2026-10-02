@@ -1,0 +1,15 @@
+{
+  "name": "@rasikh/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic, illustrative Abu Dhabi journey planning and matching. No IO or LLM calls.",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": { "@rasikh/shared": "file:../shared" },
+  "devDependencies": { "@types/node": "^22.0.0", "tsx": "^4.21.0", "typescript": "5.9.3" },
+  "engines": { "node": ">=22.0.0" }
+}
