@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Rasikh Guide",
+  "version": "0.1.0",
+  "minimum_chrome_version": "116",
+  "description": "Walks you through websites that have no API, one step at a time. It points at the right control and explains it in English or Arabic. You do every click.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "http://localhost:8796/*",
+    "http://127.0.0.1:8796/*"
+  ],
+  "optional_host_permissions": [
+    "http://localhost:8793/*",
+    "http://127.0.0.1:8793/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "src/panel/index.html"
+  },
+  "action": {
+    "default_title": "Open Rasikh Guide"
+  },
+  "options_page": "src/options/options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'none'; connect-src 'self' http://localhost:8796 http://127.0.0.1:8796"
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  }
+}

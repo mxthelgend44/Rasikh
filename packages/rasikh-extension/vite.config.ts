@@ -1,0 +1,21 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { crx } from "@crxjs/vite-plugin";
+import manifest from "./manifest.json";
+
+export default defineConfig({
+  plugins: [react(), crx({ manifest: manifest as any })],
+  resolve: {
+    alias: { "@shared": "/src/shared" }
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        sidepanel: "src/panel/index.html",
+        options: "src/options/options.html"
+      }
+    },
+    target: "es2022",
+    sourcemap: true
+  }
+});

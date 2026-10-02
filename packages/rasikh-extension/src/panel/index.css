@@ -1,0 +1,62 @@
+/* Rasikh Guide panel. Logical CSS properties only (no left/right/margin-left etc.) so Arabic RTL is correct. */
+:root {
+  --petrol: #0b6b78;
+  --sand: #f6e7cd;
+  --seafoam: #a5d9d0;
+  --coral: #e98565;
+  --saffron: #e4ad42;
+  --ink: #173c47;
+  --card: #fffdf8;
+  --line: #d9c9aa;
+  --muted: #4a6670;
+}
+* { box-sizing: border-box; }
+html, body, #root { min-block-size: 100%; margin: 0; }
+body {
+  background: var(--sand);
+  color: var(--ink);
+  font: 14px/1.5 system-ui, "Segoe UI", Tahoma, "Noto Naskh Arabic", sans-serif;
+}
+.app { display: flex; flex-direction: column; gap: 12px; padding: 14px; max-inline-size: 460px; margin-inline: auto; }
+.top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.brand { display: flex; align-items: center; gap: 10px; min-inline-size: 0; }
+.brand .mark { inline-size: 34px; block-size: 34px; flex: none; }
+.brand p { margin: 0; }
+h1 { margin: 0; font-size: 20px; letter-spacing: 0; }
+h2 { margin: 0 0 6px; font-size: 13px; font-weight: 650; letter-spacing: .02em; color: var(--petrol); }
+p { margin: 0 0 8px; }
+.muted { color: var(--muted); font-size: 13px; }
+.eyebrow { color: var(--petrol); font-weight: 600; font-size: 12px; text-transform: none; margin-block-end: 2px; }
+.sr { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.badge { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 8px; border-inline-start: 4px solid var(--petrol); background: var(--seafoam); margin: 0; }
+.badge-ai { border-inline-start-color: var(--saffron); background: #f8e7bd; }
+.badge span { font-size: 12px; }
+.host { font-weight: 600; unicode-bidi: plaintext; text-align: start; }
+.message { font-size: 15px; }
+.note { padding: 6px 10px; border-inline-start: 3px solid var(--saffron); background: #fbf1d6; border-radius: 4px; }
+.note.ok { border-inline-start-color: var(--petrol); background: #e3f3ef; }
+.alert { padding: 8px 12px; border-inline-start: 4px solid var(--coral); background: #fde9e2; border-radius: 4px; margin: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 8px; }
+.row.between { justify-content: space-between; align-items: center; }
+.packs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.pack-name { font-weight: 600; margin: 0; }
+.btn {
+  appearance: none; border: 1px solid var(--petrol); background: var(--petrol); color: #fff;
+  padding: 7px 12px; border-radius: 6px; font: inherit; font-weight: 600; cursor: pointer; min-block-size: 36px;
+}
+.btn:hover:not(:disabled) { background: #095762; }
+.btn:focus-visible, select:focus-visible { outline: 3px solid var(--saffron); outline-offset: 2px; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-quiet { background: transparent; color: var(--petrol); }
+.btn-quiet:hover:not(:disabled) { background: #e3f3ef; }
+.btn-link { background: transparent; border-color: transparent; color: var(--petrol); text-decoration: underline; padding-inline: 0; }
+select { font: inherit; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+.foot { font-size: 12px; color: var(--muted); }
+.foot p { margin-block-end: 4px; }
+.settings { max-inline-size: 640px; padding: 24px; }
+.settings ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.settings li { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+@media (prefers-reduced-motion: no-preference) {
+  .btn { transition: background-color .12s ease; }
+}
