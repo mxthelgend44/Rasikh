@@ -2,7 +2,7 @@
 
 Use one recent case per interview. Aim for **8 minutes**: 30 seconds to open, 6 minutes for the six questions, 90 seconds for follow-ups. Do not describe Rasikh until after the questions. Ask “What happened next?”, “How long?”, and “How much?” only when needed. Record estimates as estimates.
 
-Opening: “We are learning how moves to Abu Dhabi actually happen. Please use one recent case. I am not pitching anything. Exact dates and costs help, and estimates are fine.”
+Opening: “We are learning how moves to Abu Dhabi actually happen. Please use one recent case. I am not pitching anything. Dates, waiting periods and actions taken help, and estimates are fine.”
 
 ## HR team members who hire from abroad
 
@@ -17,7 +17,7 @@ Opening: “We are learning how moves to Abu Dhabi actually happen. Please use o
 
 1. When did you move, and what were the first things you needed to arrange after accepting the offer or deciding to come?
 2. Walk me through the actual order of your visa, ID, housing, bank, insurance, and school steps, where relevant. What could start before you arrived?
-3. Tell me about one step that took longer than expected. What did you do while you waited, and what did it cost you?
+3. Tell me about one step that took longer than expected. What were you waiting for, and what did you have to do while you waited?
 4. Who helped you, including your employer, friends, agents, or paid services? What did each person actually do?
 5. What did you pay yourself for setup or help, and what did your employer cover or reimburse? Rough amounts are fine.
 6. Looking back, what was still unclear after arrival, and what would you do differently on another move?
@@ -28,7 +28,7 @@ Opening: “We are learning how moves to Abu Dhabi actually happen. Please use o
 2. From the first decision to your first operating day, what were the major steps and dates?
 3. Where did progress slow down? What depended on that step, including staff hiring or relocation?
 4. Who did the work internally and externally? Which advisers or PRO services did you pay for, and how much?
-5. What did delays cost in staff time, launch timing, or cash? Estimates are useful.
+5. How did any delay affect staff time or the launch date? Estimates are useful.
 6. If you opened another branch, what support would you buy again or change? Who owns that budget and signs off?
 
 ## One-page interview record
@@ -57,7 +57,7 @@ Verbatim quote 2 and context:
 
 Current helpers and alternatives:
 Paid to whom / amount / period / who reimbursed:
-Staff hours, out-of-pocket cost, and other measurable impact:
+Elapsed days, handoff waits, staff hours, and other measurable impact:
 Which figures were observed, and which were estimates?
 
 Buying evidence: actual recent purchase / future trigger / budget owner / approver:
