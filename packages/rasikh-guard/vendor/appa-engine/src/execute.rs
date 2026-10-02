@@ -1,0 +1,224 @@
+//! The mandate envelope: what an authority's approval may admit.
+
+use serde::{Deserialize, Serialize};
+use thiserror::Error;
+
+use crate::check::Gap;
+use crate::label::{Evaluation, MembershipContext};
+use crate::names::AuthorityName;
+use crate::plan::{NeededAtoms, gap_cover};
+use crate::registry::Registry;
+
+/// One authority's approval of the exact canonical call an offer names.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AuthorityEvidence {
+    pub offer: crate::value::OfferId,
+    pub authority: AuthorityName,
+    pub covers: Vec<Gap>,
+    pub reviewed: AuthorityReview,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AuthorityReview {
+    pub tool: crate::value::ToolName,
+    pub trajectory_label: crate::label::Label,
+}
+
+#[derive(Debug, Error, PartialEq, Eq)]
+pub enum PlanError {
+    #[error("no authority registered as {0}")]
+    UnknownAuthority(String),
+    #[error("a ruling claims a gap the current block does not carry")]
+    RulingClaimsAbsentGap(Gap),
+    #[error("requirement gap not covered by any supplied ruling")]
+    GapUncovered(Gap),
+    #[error("a ruling by {authority} claims a gap its mandate does not cover")]
+    RulingExceedsMandate { authority: String },
+    #[error("the supplied rulings do not realize the chosen plan's grouped assignment exactly")]
+    RulingAssignmentMismatch,
+    #[error("a ruling's recorded review does not match the live state it would admit")]
+    ReviewMismatch,
+    #[error("this authority response was approved for a different offer")]
+    EvidenceOfferMismatch,
+    #[error("the supplied evidence leaves a mandate's audience membership undecided")]
+    MembershipNeeded(crate::label::MembershipNeeded),
+}
+
+/// The mandate envelope of a released block: no ruling claims a gap the block
+/// does not carry or its authority's mandate does not reach, and every requirement gap is claimed
+/// by one that does. Shared by live execution and by the transition validator, so the envelope a
+/// persisted release is held to is the one the live path enforced.
+pub(crate) fn rulings_cover<'a>(
+    registry: &Registry,
+    contract: &crate::contract::ToolAnnotation,
+    block: &crate::check::RawBlock,
+    rulings: impl Iterator<Item = (&'a AuthorityName, &'a [Gap])> + Clone,
+    context: &MembershipContext<'_>,
+) -> Result<(), PlanError> {
+    let mut needs = NeededAtoms::default();
+    for (authority, covers) in rulings.clone() {
+        let registered = registry
+            .authority(authority)
+            .ok_or_else(|| PlanError::UnknownAuthority(authority.as_str().to_string()))?;
+        for gap in covers {
+            if !block.requirement_gaps.contains(gap) {
+                return Err(PlanError::RulingClaimsAbsentGap(gap.clone()));
+            }
+            match gap_cover(registered, gap, &contract.tags, context) {
+                Evaluation::Holds => {}
+                Evaluation::Fails => {
+                    return Err(PlanError::RulingExceedsMandate {
+                        authority: authority.as_str().to_string(),
+                    });
+                }
+                // An undecided cover is a missing answer, never an exceeded mandate: the
+                // atoms aggregate and refuse after every definitive judgment has its say.
+                Evaluation::Needs(needed) => needs.absorb(needed),
+            }
+        }
+    }
+    for gap in &block.requirement_gaps {
+        if !rulings.clone().any(|(_, covers)| covers.contains(gap)) {
+            return Err(PlanError::GapUncovered(gap.clone()));
+        }
+    }
+    needs.refuse_if_any().map_err(PlanError::MembershipNeeded)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::authority::{Attends, Authority, Mandate, Scope};
+    use crate::contract::{Delta, LabelRequirements, Requires, ToolAnnotation};
+    use crate::fact::EffectSet;
+    use crate::label::Trust;
+    use crate::names::MarkName;
+    use crate::value::ToolName;
+
+    const SUSPICIOUS: Trust = Trust::new(0);
+    const TRUSTED: Trust = Trust::new(1);
+
+    fn chain() -> crate::registry::TrustChain {
+        crate::registry::TrustChain::new(vec!["suspicious".into(), "trusted".into()])
+    }
+
+    fn floor_gap() -> Gap {
+        Gap::TrustFloor {
+            required: TRUSTED,
+            actual: SUSPICIOUS,
+        }
+    }
+
+    fn wire() -> ToolAnnotation {
+        ToolAnnotation {
+            description: Some("A test tool.".to_string()),
+            name: ToolName::new("wire"),
+            tags: vec![],
+            delta: Delta::NONE,
+            parameters: crate::params::ToolParameters::open(),
+            emits: EffectSet::default(),
+            requires: Requires {
+                label: LabelRequirements {
+                    trust_floor: Some(TRUSTED),
+                    audience: vec![],
+                },
+                ..Requires::default()
+            },
+        }
+    }
+
+    fn registry() -> Registry {
+        let officer = Authority {
+            name: AuthorityName::new("officer"),
+            mandate: Mandate {
+                trust_ceiling: Some(TRUSTED),
+                ..Mandate::default()
+            },
+            scope: Scope::default(),
+            hint: None,
+        };
+        let attester = Authority {
+            name: AuthorityName::new("attester"),
+            mandate: Mandate {
+                attends: Attends::Named(vec![MarkName::new("signoff")]),
+                ..Mandate::default()
+            },
+            scope: Scope::default(),
+            hint: None,
+        };
+        Registry::build_covered(crate::registry::RegistryConfig {
+            trust_chain: chain(),
+            tools: vec![crate::contract::ToolDeclaration::Declared(wire())],
+            annotators: vec![],
+            authorities: vec![officer, attester],
+            sanitizers: vec![],
+            audience: crate::audience::AudienceConfig::default(),
+        })
+        .unwrap()
+    }
+
+    fn block(gaps: Vec<Gap>) -> crate::check::RawBlock {
+        crate::check::RawBlock {
+            requirement_gaps: gaps,
+            narrowing: None,
+        }
+    }
+
+    fn envelope(authority: &str, covers: &[Gap], block: &crate::check::RawBlock) -> Result<(), PlanError> {
+        let registry = registry();
+        let name = AuthorityName::new(authority);
+        let parts = crate::label::TestContext::default();
+        rulings_cover(
+            &registry,
+            registry.tool(&ToolName::new("wire")).unwrap().declared().unwrap(),
+            block,
+            [(&name, covers)].into_iter(),
+            &parts.context(),
+        )
+    }
+
+    #[test]
+    fn a_mandate_that_reaches_the_gap_admits_it() {
+        assert_eq!(envelope("officer", &[floor_gap()], &block(vec![floor_gap()])), Ok(()));
+    }
+
+    #[test]
+    fn a_gap_no_ruling_claims_is_refused() {
+        let registry = registry();
+        let parts = crate::label::TestContext::default();
+        let refused = rulings_cover(
+            &registry,
+            registry.tool(&ToolName::new("wire")).unwrap().declared().unwrap(),
+            &block(vec![floor_gap()]),
+            std::iter::empty(),
+            &parts.context(),
+        );
+        assert_eq!(refused, Err(PlanError::GapUncovered(floor_gap())));
+    }
+
+    #[test]
+    fn a_ruling_claiming_a_gap_the_block_does_not_carry_is_refused() {
+        assert_eq!(
+            envelope("officer", &[floor_gap()], &block(vec![])),
+            Err(PlanError::RulingClaimsAbsentGap(floor_gap()))
+        );
+    }
+
+    #[test]
+    fn a_ruling_outside_its_authoritys_mandate_is_refused() {
+        assert_eq!(
+            envelope("attester", &[floor_gap()], &block(vec![floor_gap()])),
+            Err(PlanError::RulingExceedsMandate {
+                authority: "attester".to_string()
+            })
+        );
+    }
+
+    #[test]
+    fn a_ruling_by_an_unregistered_authority_is_refused() {
+        assert_eq!(
+            envelope("ghost", &[floor_gap()], &block(vec![floor_gap()])),
+            Err(PlanError::UnknownAuthority("ghost".to_string()))
+        );
+    }
+}
