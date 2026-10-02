@@ -1,7 +1,7 @@
-From 0a3e259ceb2eb01da72d73a82920613c481e6353 Mon Sep 17 00:00:00 2001
+From cc003207863211b55712a890841e43e24862bb2a Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 12:52:21 +0400
-Subject: [PATCH 06/18] fix(landlord): singular nouns when a count is 1 ('1
+Subject: [PATCH 06/20] fix(landlord): singular nouns when a count is 1 ('1
  unit', not '1 units')
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>

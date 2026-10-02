@@ -1,7 +1,7 @@
-From 88fe92ce018238759b6f83f3e752b319977b0d3e Mon Sep 17 00:00:00 2001
+From aafda6a010a2055b0da7074e4e9624f786427f8b Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 15:00:37 +0400
-Subject: [PATCH 17/18] style(landlord): readable risk reasoning, decision
+Subject: [PATCH 17/20] style(landlord): readable risk reasoning, decision
  panel, scannable lists
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>

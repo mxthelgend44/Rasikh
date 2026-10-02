@@ -1,0 +1,229 @@
+From dbc9f57a8e3155f946af9cc31544aa968ddf9e7f Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 15:20:14 +0400
+Subject: [PATCH 19/20] fix(employer): keep the live overview hero; drop
+ overlapping polish; JourneyArt priority prop
+
+Codex reworked the employer hero artwork in parallel (bleed illustration, JourneyArt
+props), so this branch takes the live overview.tsx unchanged and keeps only the
+non-overlapping employer changes.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/components/employer/common.tsx   |  2 +
+ apps/web/src/components/employer/overview.tsx | 75 +++++++------------
+ 2 files changed, 27 insertions(+), 50 deletions(-)
+
+diff --git a/apps/web/src/components/employer/common.tsx b/apps/web/src/components/employer/common.tsx
+index 0383abc..e8c73a9 100644
+--- a/apps/web/src/components/employer/common.tsx
++++ b/apps/web/src/components/employer/common.tsx
+@@ -489,9 +489,11 @@ export function ActivityList({
+ export function JourneyArt({
+   compact = false,
+   bleed = false,
++  priority = false,
+ }: {
+   compact?: boolean;
+   bleed?: boolean;
++  priority?: boolean;
+ }) {
+   return (
+     <Illustration
+diff --git a/apps/web/src/components/employer/overview.tsx b/apps/web/src/components/employer/overview.tsx
+index b79677d..6631059 100644
+--- a/apps/web/src/components/employer/overview.tsx
++++ b/apps/web/src/components/employer/overview.tsx
+@@ -14,9 +14,9 @@ import {
+   Users,
+ } from 'lucide-react';
+ import { Badge } from '@/components/ui/badge';
++import { Button } from '@/components/ui/button';
+ import { demoNow } from '@/domain/clock';
+ import { currentStep, employerMetrics, hireStatus, stepsOf } from '@/domain/selectors';
+-import { cn } from '@/lib/cn';
+ import { formatDate } from '@/lib/format';
+ import { useAppState } from '@/store/provider';
+ import {
+@@ -38,7 +38,7 @@ import { EmployerScopePicker, useEmployerScope } from './scope';
+ export function EmployerOverview() {
+   const state = useAppState();
+   const { employerId, employer } = useEmployerScope();
+-  const { e, locale, record, t } = useEmployerCopy();
++  const { e, locale, record } = useEmployerCopy();
+   const router = useRouter();
+   const [adding, setAdding] = useState(false);
+   const now = demoNow(state);
+@@ -73,7 +73,7 @@ export function EmployerOverview() {
+     {
+       label: e('Documents', 'المستندات'),
+       keys: ['documents'],
+-      color: 'bg-[rgb(var(--brand-saffron))]',
++      color: 'bg-warning',
+       query: 'documents',
+     },
+     {
+@@ -95,12 +95,7 @@ export function EmployerOverview() {
+       color: 'bg-success',
+       query: 'housing',
+     },
+-    {
+-      label: e('Settled', 'مستقرون'),
+-      keys: [],
+-      color: 'bg-fg-secondary',
+-      query: 'settled',
+-    },
++    { label: e('Settled', 'مستقرون'), keys: [], color: 'bg-fg-secondary', query: 'settled' },
+   ];
+   return (
+     <>
+@@ -118,8 +113,8 @@ export function EmployerOverview() {
+           <div className="relative z-10 min-w-0 max-w-lg p-6 sm:p-8">
+             <Badge tone="accent" shape="pill">
+               {e('Employer workspace', 'مساحة صاحب العمل')} · {e('Demo', 'تجريبي')}
+-            </p>
+-            <h2 className="mt-3 max-w-md text-[1.875rem] font-medium leading-tight tracking-tight">
++            </Badge>
++            <h2 className="mt-4 text-[1.65rem] font-medium leading-tight tracking-tight text-fg">
+               {hires.length
+                 ? e(
+                     `${hires.length - metrics.settled} journeys underway.`,
+@@ -127,11 +122,11 @@ export function EmployerOverview() {
+                   )
+                 : e('Your next chapter starts here.', 'فصلك القادم يبدأ هنا.')}
+               <br />
+-              <span className="text-[rgb(var(--brand-seafoam))]">
++              <span className="text-accent">
+                 {e('One place to keep them moving.', 'مكان واحد لمتابعة تقدمها.')}
+               </span>
+             </h2>
+-            <p className="mt-3 max-w-md text-body leading-6 text-[rgb(var(--brand-sand)/0.82)]">
++            <p className="mt-3 max-w-sm text-body leading-6 text-fg-secondary">
+               {metrics.blocked
+                 ? e(
+                     `${metrics.blocked} hire needs your attention. A small next step can unlock the rest of their journey.`,
+@@ -142,18 +137,13 @@ export function EmployerOverview() {
+                     'اجمع فريقك ومهامه وتأسيس شركتك في مكان واحد.',
+                   )}
+             </p>
+-            <div className="mt-6 flex flex-wrap items-center gap-2">
+-              <button
+-                type="button"
+-                onClick={() => setAdding(true)}
+-                className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[rgb(var(--brand-sand))] px-4 text-label font-medium text-[rgb(var(--brand-ink))] transition-colors hover:bg-[rgb(var(--brand-sand)/0.88)] focus-visible:outline-[rgb(var(--brand-seafoam))]"
+-              >
+-                <Plus aria-hidden className="size-4" />
++            <div className="mt-5 flex flex-wrap items-center gap-2">
++              <Button size="lg" icon={<Plus />} onClick={() => setAdding(true)}>
+                 {e('Add a hire', 'إضافة موظف')}
+-              </button>
++              </Button>
+               <Link
+                 href="/employer/expansion"
+-                className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[rgb(var(--brand-sand)/0.35)] px-4 text-label font-medium text-[rgb(var(--brand-sand))] transition-colors hover:bg-[rgb(var(--brand-sand)/0.1)] focus-visible:outline-[rgb(var(--brand-seafoam))]"
++                className={`${linkClass} !min-h-10 border-accent/20 !bg-transparent`}
+               >
+                 {e('Company setup', 'تأسيس الشركة')}
+                 <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
+@@ -165,7 +155,7 @@ export function EmployerOverview() {
+           </div>
+         </section>
+ 
+-        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
++        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+           <Metric
+             title={e('People in motion', 'أشخاص في رحلة الانتقال')}
+             value={metrics.hires - metrics.settled}
+@@ -174,7 +164,6 @@ export function EmployerOverview() {
+               `${metrics.hires} موظفين إجمالاً · ${metrics.settled} مستقرين`,
+             )}
+             icon={Users}
+-            href="/employer/hires"
+           />
+           <Metric
+             title={e('Needs your attention', 'يحتاج إلى متابعتك')}
+@@ -182,7 +171,6 @@ export function EmployerOverview() {
+             detail={e('Blocked cases to help move forward', 'حالات متعثرة تحتاج إلى مساعدتك')}
+             icon={CircleAlert}
+             tone={metrics.blocked ? 'danger' : 'success'}
+-            href="/employer/hires?status=attention"
+           />
+           <Metric
+             title={e('Avg. days to settle', 'متوسط أيام الاستقرار')}
+@@ -199,7 +187,6 @@ export function EmployerOverview() {
+             )}
+             icon={ShieldCheck}
+             tone="warning"
+-            href={pending[0] ? `/employer/hires/${pending[0].hireId}` : '/employer/hires'}
+           />
+         </div>
+ 
+@@ -220,28 +207,15 @@ export function EmployerOverview() {
+             }
+           >
+             {attention.length ? (
+-              <ul className="divide-y divide-line overflow-hidden rounded-b-2xl">
++              <ul className="divide-y divide-line">
+                 {attention.slice(0, 4).map((hire) => {
+                   const steps = stepsOf(state, hire.id);
+                   const flagged =
+                     steps.find((step) => step.status === 'blocked') ??
+                     steps.find((step) => step.status === 'needs_approval');
+                   return (
+-                    <li
+-                      key={hire.id}
+-                      className={cn(
+-                        'flex flex-col gap-4 border-s-4 p-5 sm:flex-row sm:items-center',
+-                        flagged?.status === 'blocked' && 'border-s-danger-solid',
+-                      )}
+-                      style={
+-                        flagged?.status === 'blocked'
+-                          ? undefined
+-                          : {
+-                              borderInlineStartColor: 'rgb(var(--brand-saffron))',
+-                            }
+-                      }
+-                    >
+-                      <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
++                    <li key={hire.id} className="p-5">
++                      <div className="flex items-start gap-3">
+                         <Initials name={hire.fullName} />
+                         <div className="min-w-0 flex-1">
+                           <div className="flex flex-wrap items-center gap-2">
+@@ -254,11 +228,9 @@ export function EmployerOverview() {
+                             <HireStatusBadge status={hireStatus(steps)} />
+                           </div>
+                           <p className="mt-1 text-label text-fg-tertiary">
+-                            {hire.role}
+-                            {flagged && ` · ${t(`step.${flagged.key}.short`)}`} ·{' '}
+-                            {formatDate(hire.startDate, locale)}
++                            {hire.role} · {formatDate(hire.startDate, locale)}
+                           </p>
+-                          <p className="mt-2 text-body leading-6 text-fg-secondary">
++                          <p className="mt-3 text-body leading-6 text-fg-secondary">
+                             {flagged?.status === 'blocked'
+                               ? record(flagged.blockedReason ?? flagged.title)
+                               : record(
+@@ -271,12 +243,15 @@ export function EmployerOverview() {
+                                     e('A personal approval is pending.', 'موافقة شخصية معلقة.'),
+                                 )}
+                           </p>
++                          <Link
++                            href={`/employer/hires/${hire.id}`}
++                            className="mt-3 inline-flex min-h-8 items-center gap-1.5 text-label font-medium text-accent"
++                          >
++                            {e('Review next step', 'مراجعة الخطوة التالية')}
++                            <ArrowRight aria-hidden className="size-3.5 rtl:-scale-x-100" />
++                          </Link>
+                         </div>
+                       </div>
+-                      <Link href={`/employer/hires/${hire.id}`} className={`${linkClass} shrink-0`}>
+-                        {e('Review next step', 'مراجعة الخطوة التالية')}
+-                        <ArrowRight aria-hidden className="size-3.5 rtl:-scale-x-100" />
+-                      </Link>
+                     </li>
+                   );
+                 })}
+-- 
+2.51.0.windows.1
+

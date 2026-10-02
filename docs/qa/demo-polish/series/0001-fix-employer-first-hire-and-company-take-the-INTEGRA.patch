@@ -1,7 +1,7 @@
-From 85951a1b9621e3d1ad5ac0ddc7adc31dac1c537e Mon Sep 17 00:00:00 2001
+From 975e48d851ab2d188d42150364c64b8804fd8312 Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 12:50:39 +0400
-Subject: [PATCH 01/18] fix(employer): first hire and company take the
+Subject: [PATCH 01/20] fix(employer): first hire and company take the
  INTEGRATION.md fixture ids
 
 The add-hire and new-expansion forms always generated hire_<uuid> and company_<uuid>,
@@ -14,7 +14,7 @@ The first one of each now uses the fixture id; later ones stay unique.
  2 files changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/apps/web/src/components/employer/expansion.tsx b/apps/web/src/components/employer/expansion.tsx
-index 05c6f43..970d678 100644
+index 368d584..ecca19c 100644
 --- a/apps/web/src/components/employer/expansion.tsx
 +++ b/apps/web/src/components/employer/expansion.tsx
 @@ -1,5 +1,6 @@
@@ -24,7 +24,7 @@ index 05c6f43..970d678 100644
  import Link from 'next/link';
  import { useState, type FormEvent } from 'react';
  import {
-@@ -771,7 +772,9 @@ function CompanyDialog({
+@@ -778,7 +779,9 @@ function CompanyDialog({
    const [kind, setKind] = useState<JurisdictionKind>('adgm');
    async function submit(event: FormEvent<HTMLFormElement>) {
      event.preventDefault();

@@ -1,7 +1,7 @@
-From cfc629fcc16a206f46e74c94f3d2ad0cd35a13e2 Mon Sep 17 00:00:00 2001
+From d826333d65b2a2b3b5ae91b9f75a1b49c932b83b Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 15:00:36 +0400
-Subject: [PATCH 12/18] feat(web): demo hub, presenter guided tour and a motion
+Subject: [PATCH 12/20] feat(web): demo hub, presenter guided tour and a motion
  layer
 
 The hub at / gives every user a distinct link and starts the tour. The guide

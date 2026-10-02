@@ -1,0 +1,126 @@
+From 08cae0e0006b3ff37c793eaa89e548a314e84a3c Mon Sep 17 00:00:00 2001
+From: maalh <sometimes7799s@gmail.com>
+Date: Fri, 2 Oct 2026 15:21:08 +0400
+Subject: [PATCH 20/20] fix(employer): leave the hero files to the live tree;
+ keep the focus-return and fixture-id fixes
+
+common.tsx and expansion.tsx are being reworked live (bleed/cutout hero artwork). This
+branch now carries only two small, non-overlapping hunks in them: the Modal returns
+focus to its opener, and the first company takes the INTEGRATION.md fixture id.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+---
+ apps/web/src/components/employer/common.tsx   | 39 +++++--------------
+ .../web/src/components/employer/expansion.tsx |  2 +-
+ 2 files changed, 11 insertions(+), 30 deletions(-)
+
+diff --git a/apps/web/src/components/employer/common.tsx b/apps/web/src/components/employer/common.tsx
+index e8c73a9..55f2ccb 100644
+--- a/apps/web/src/components/employer/common.tsx
++++ b/apps/web/src/components/employer/common.tsx
+@@ -67,13 +67,13 @@ export function EmployerHeader({
+   actions?: ReactNode;
+ }) {
+   return (
+-    <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-5 py-5 sm:px-8">
++    <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-5 py-6 sm:px-8">
+       <div className="max-w-2xl">
+-        {eyebrow && <p className="mb-1.5 text-label font-medium text-accent">{eyebrow}</p>}
+-        <h1 className="text-[1.5rem] font-medium leading-tight tracking-tight text-fg sm:text-[1.75rem]">
++        {eyebrow && <p className="mb-2 text-label font-medium text-accent">{eyebrow}</p>}
++        <h1 className="text-[1.75rem] font-medium leading-tight tracking-tight text-fg sm:text-[2rem]">
+           {title}
+         </h1>
+-        <p className="mt-1.5 text-body leading-6 text-fg-secondary">{description}</p>
++        <p className="mt-2 text-body leading-6 text-fg-secondary">{description}</p>
+       </div>
+       {actions && <div className="flex flex-wrap items-center gap-2 pt-1">{actions}</div>}
+     </header>
+@@ -117,22 +117,20 @@ export function Metric({
+   detail,
+   icon: Icon,
+   tone = 'accent',
+-  href,
+ }: {
+   title: string;
+   value: ReactNode;
+   detail: string;
+   icon: LucideIcon;
+   tone?: 'accent' | 'warning' | 'success' | 'danger';
+-  href?: string;
+ }) {
+-  const body = (
+-    <>
++  return (
++    <div className="relative rounded-2xl border border-edge bg-surface p-5">
+       <div className="flex items-center justify-between gap-3">
+-        <p className="text-label font-medium text-fg-secondary">{title}</p>
++        <p className="text-label text-fg-secondary">{title}</p>
+         <span
+           className={cn(
+-            'hidden size-9 shrink-0 items-center justify-center rounded-lg sm:flex',
++            'flex size-9 items-center justify-center rounded-xl',
+             tone === 'warning'
+               ? 'bg-warning-soft text-warning'
+               : tone === 'danger'
+@@ -145,25 +143,11 @@ export function Metric({
+           <Icon aria-hidden className="size-4" />
+         </span>
+       </div>
+-      <p className="mt-3 text-[2rem] font-medium leading-none sm:mt-4 sm:text-[2.5rem] tracking-tight text-fg tabular-nums">
++      <p className="mt-3 text-[2rem] font-medium leading-none tracking-tight text-fg tabular-nums">
+         {value}
+       </p>
+       <p className="mt-3 text-caption leading-5 text-fg-tertiary">{detail}</p>
+-    </>
+-  );
+-  const shell = 'relative block min-w-0 rounded-2xl border border-edge bg-surface p-4 sm:p-5';
+-  return href ? (
+-    <Link
+-      href={href}
+-      className={cn(
+-        shell,
+-        'transition-colors motion-reduce:transition-none hover:border-line-strong hover:bg-subtle',
+-      )}
+-    >
+-      {body}
+-    </Link>
+-  ) : (
+-    <div className={shell}>{body}</div>
++    </div>
+   );
+ }
+ 
+@@ -489,16 +473,13 @@ export function ActivityList({
+ export function JourneyArt({
+   compact = false,
+   bleed = false,
+-  priority = false,
+ }: {
+   compact?: boolean;
+   bleed?: boolean;
+-  priority?: boolean;
+ }) {
+   return (
+     <Illustration
+       variant="welcoming-hire"
+-      priority={priority}
+       decorative
+       aspect="landscape"
+       fit="cover"
+diff --git a/apps/web/src/components/employer/expansion.tsx b/apps/web/src/components/employer/expansion.tsx
+index db49488..ecca19c 100644
+--- a/apps/web/src/components/employer/expansion.tsx
++++ b/apps/web/src/components/employer/expansion.tsx
+@@ -198,7 +198,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
+                     ? jurisdictionNames[company.recommendation.recommended]
+                     : e('Selected path', 'المسار المختار')}
+                 </Badge>
+-                <h2 className="mt-3 text-[1.5rem] font-medium leading-tight tracking-tight">
++                <h2 className="mt-4 text-[1.65rem] font-medium leading-tight tracking-tight">
+                   {company.name}
+                 </h2>
+                 <p className="mt-2 flex flex-wrap items-center gap-2 text-body text-fg-secondary">
+-- 
+2.51.0.windows.1
+

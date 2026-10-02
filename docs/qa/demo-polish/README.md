@@ -1,6 +1,6 @@
 # Demo UI hand-over (patches)
 
-Against the shared working tree of `devin/integrations` as it stood at 14:02 Dubai on 2 Oct 2026. Both
+Against the shared working tree of `devin/integrations` as it stood at 15:21 Dubai on 2 Oct 2026 (employer hero files, which are being reworked live, are deliberately not touched). Both
 patches pass `git apply --check` on it.
 
 ```bash

@@ -1,7 +1,7 @@
-From ed5df5e0f63ca45a8447dfcec28c12aff8cc93cd Mon Sep 17 00:00:00 2001
+From 2e2d7a978fe2ac5ae9d4120b600662d5316ef849 Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 12:52:21 +0400
-Subject: [PATCH 05/18] =?UTF-8?q?fix(web):=20newcomer=20tab=20title=20no?=
+Subject: [PATCH 05/20] =?UTF-8?q?fix(web):=20newcomer=20tab=20title=20no?=
  =?UTF-8?q?=20longer=20reads=20'Rasikh=20=C2=B7=20Rasikh';=20add=20app=20i?=
  =?UTF-8?q?con?=
 MIME-Version: 1.0

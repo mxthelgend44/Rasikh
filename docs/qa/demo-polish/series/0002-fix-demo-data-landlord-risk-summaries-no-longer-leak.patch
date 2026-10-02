@@ -1,7 +1,7 @@
-From ef308045b0dc53f92bfb0691c219b11ddb9628c2 Mon Sep 17 00:00:00 2001
+From 1c6225952e327fa4991ab67c9b1a84a640a5138c Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 12:51:27 +0400
-Subject: [PATCH 02/18] fix(demo-data): landlord risk summaries no longer leak
+Subject: [PATCH 02/20] fix(demo-data): landlord risk summaries no longer leak
  salary; Anders' draft carries reasoning
 
 Seeded landlord summaries said 'Rent is about 47% of estimated gross income'. With the rent

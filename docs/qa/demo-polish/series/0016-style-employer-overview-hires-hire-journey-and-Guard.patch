@@ -1,21 +1,21 @@
-From 33e15051ff4a9f6fb994522765decb134415e8fd Mon Sep 17 00:00:00 2001
+From 37e61e9364a43dcc23611523274458c0a2533191 Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 15:00:37 +0400
-Subject: [PATCH 16/18] style(employer): overview, hires, hire journey and
+Subject: [PATCH 16/20] style(employer): overview, hires, hire journey and
  Guard page hierarchy
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
 ---
- apps/web/src/components/employer/common.tsx   | 45 +++++++---
- .../web/src/components/employer/expansion.tsx |  8 +-
- apps/web/src/components/employer/guard.tsx    | 64 ++++++++------
- .../src/components/employer/hire-detail.tsx   | 23 +++--
- apps/web/src/components/employer/hires.tsx    | 13 ++-
- apps/web/src/components/employer/overview.tsx | 85 ++++++++++++-------
- 6 files changed, 157 insertions(+), 81 deletions(-)
+ apps/web/src/components/employer/common.tsx   | 37 ++++++---
+ .../web/src/components/employer/expansion.tsx |  2 +-
+ apps/web/src/components/employer/guard.tsx    | 64 +++++++++-------
+ .../src/components/employer/hire-detail.tsx   | 23 ++++--
+ apps/web/src/components/employer/hires.tsx    | 13 +++-
+ apps/web/src/components/employer/overview.tsx | 75 ++++++++++++-------
+ 6 files changed, 142 insertions(+), 72 deletions(-)
 
 diff --git a/apps/web/src/components/employer/common.tsx b/apps/web/src/components/employer/common.tsx
-index f9feb9c..b027669 100644
+index 55f2ccb..0383abc 100644
 --- a/apps/web/src/components/employer/common.tsx
 +++ b/apps/web/src/components/employer/common.tsx
 @@ -67,13 +67,13 @@ export function EmployerHeader({
@@ -91,48 +91,19 @@ index f9feb9c..b027669 100644
    );
  }
  
-@@ -470,10 +486,17 @@ export function ActivityList({
-   );
- }
- 
--export function JourneyArt({ compact = false }: { compact?: boolean }) {
-+export function JourneyArt({
-+  compact = false,
-+  priority = false,
-+}: {
-+  compact?: boolean;
-+  priority?: boolean;
-+}) {
+@@ -480,6 +496,7 @@ export function JourneyArt({
    return (
      <Illustration
        variant="welcoming-hire"
 +      priority={priority}
        decorative
        aspect="landscape"
-       fit="contain"
+       fit="cover"
 diff --git a/apps/web/src/components/employer/expansion.tsx b/apps/web/src/components/employer/expansion.tsx
-index 970d678..98796f1 100644
+index ecca19c..db49488 100644
 --- a/apps/web/src/components/employer/expansion.tsx
 +++ b/apps/web/src/components/employer/expansion.tsx
-@@ -159,7 +159,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
-           )}
-         </div>
-         {!company ? (
--          <section className="grid items-center gap-6 rounded-[1.5rem] border border-edge bg-accent-soft p-6 sm:p-8 md:grid-cols-2">
-+          <section className="grid items-center gap-6 rounded-2xl border border-edge bg-accent-soft p-5 sm:p-6 md:grid-cols-2">
-             <div>
-               <Badge tone="accent" shape="pill">
-                 {e('Company → people', 'الشركة ← الفريق')}
-@@ -186,7 +186,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
-           </section>
-         ) : (
-           <>
--            <section className="grid items-center gap-6 overflow-hidden rounded-[1.5rem] border border-accent/15 bg-accent-soft p-6 sm:p-8 lg:grid-cols-[1.2fr_1fr]">
-+            <section className="grid items-center gap-6 overflow-hidden rounded-2xl border border-accent/15 bg-accent-soft p-5 sm:p-6 lg:grid-cols-[1.2fr_1fr]">
-               <div>
-                 <Badge tone="accent" shape="pill">
-                   {e('Illustrative setup', 'تأسيس توضيحي')} ·{' '}
-@@ -194,7 +194,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
+@@ -198,7 +198,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
                      ? jurisdictionNames[company.recommendation.recommended]
                      : e('Selected path', 'المسار المختار')}
                  </Badge>
@@ -141,15 +112,6 @@ index 970d678..98796f1 100644
                    {company.name}
                  </h2>
                  <p className="mt-2 flex flex-wrap items-center gap-2 text-body text-fg-secondary">
-@@ -236,7 +236,7 @@ export function EmployerExpansion({ team = false }: { team?: boolean }) {
-                 decorative
-                 aspect="landscape"
-                 fit="contain"
--                className="mx-auto max-w-[430px] overflow-hidden rounded-2xl"
-+                className="mx-auto max-w-[340px] overflow-hidden rounded-2xl"
-               />
-             </section>
-             <div className="grid gap-4 sm:grid-cols-3">
 diff --git a/apps/web/src/components/employer/guard.tsx b/apps/web/src/components/employer/guard.tsx
 index 0367b8b..89062d5 100644
 --- a/apps/web/src/components/employer/guard.tsx
@@ -330,7 +292,7 @@ index 3475ef5..d31dadc 100644
                            <input
                              type="checkbox"
 diff --git a/apps/web/src/components/employer/overview.tsx b/apps/web/src/components/employer/overview.tsx
-index 25f7660..755218c 100644
+index 6631059..b79677d 100644
 --- a/apps/web/src/components/employer/overview.tsx
 +++ b/apps/web/src/components/employer/overview.tsx
 @@ -14,9 +14,9 @@ import {
@@ -376,16 +338,9 @@ index 25f7660..755218c 100644
    ];
    return (
      <>
-@@ -109,12 +114,12 @@ export function EmployerOverview() {
-         actions={<EmployerScopePicker />}
-       />
-       <div className="space-y-6 p-5 sm:p-8">
--        <section className="relative flex min-h-[240px] flex-col justify-between gap-4 overflow-hidden rounded-[1.5rem] border border-accent/15 bg-accent-soft px-6 py-6 md:flex-row md:items-center sm:px-8">
--          <div className="relative z-10 max-w-lg">
--            <Badge tone="accent" shape="pill">
-+        <section className="grid overflow-hidden rounded-2xl bg-[rgb(var(--brand-ink))] text-[rgb(var(--brand-sand))] xl:grid-cols-[1fr_auto]">
-+          <div className="flex flex-col justify-center p-6 sm:p-8">
-+            <p className="text-label font-medium text-[rgb(var(--brand-seafoam))]">
+@@ -113,8 +118,8 @@ export function EmployerOverview() {
+           <div className="relative z-10 min-w-0 max-w-lg p-6 sm:p-8">
+             <Badge tone="accent" shape="pill">
                {e('Employer workspace', 'مساحة صاحب العمل')} · {e('Demo', 'تجريبي')}
 -            </Badge>
 -            <h2 className="mt-4 text-[1.65rem] font-medium leading-tight tracking-tight text-fg">
@@ -408,7 +363,7 @@ index 25f7660..755218c 100644
                {metrics.blocked
                  ? e(
                      `${metrics.blocked} hire needs your attention. A small next step can unlock the rest of their journey.`,
-@@ -137,25 +142,30 @@ export function EmployerOverview() {
+@@ -137,13 +142,18 @@ export function EmployerOverview() {
                      'اجمع فريقك ومهامه وتأسيس شركتك في مكان واحد.',
                    )}
              </p>
@@ -431,13 +386,7 @@ index 25f7660..755218c 100644
                >
                  {e('Company setup', 'تأسيس الشركة')}
                  <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
-               </Link>
-             </div>
-           </div>
--          <div className="mx-auto flex w-full max-w-[300px] shrink-0 items-end justify-center md:mx-0 lg:max-w-[360px]">
--            <JourneyArt />
-+          <div className="hidden items-center p-4 xl:flex">
-+            <JourneyArt priority />
+@@ -155,7 +165,7 @@ export function EmployerOverview() {
            </div>
          </section>
  

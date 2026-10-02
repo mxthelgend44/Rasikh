@@ -1,7 +1,7 @@
-From a8fa32aa9020c96ddd3e73aa6892fb6296b551b6 Mon Sep 17 00:00:00 2001
+From d87055cfa300a6c2b18289d133f3d78a3953e7c3 Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 15:00:36 +0400
-Subject: [PATCH 14/18] feat(shell): rebalanced top bar, Demo hub link,
+Subject: [PATCH 14/20] feat(shell): rebalanced top bar, Demo hub link,
  animated sidebar indicator
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>

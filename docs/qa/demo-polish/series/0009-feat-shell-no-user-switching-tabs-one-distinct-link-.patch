@@ -1,7 +1,7 @@
-From 7fa8c9ac1455b4cdd723ab1597ac94b727113d8d Mon Sep 17 00:00:00 2001
+From b9f24318acd69e591f2aff66aab3d2b0d4f8fdef Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 14:03:37 +0400
-Subject: [PATCH 09/18] feat(shell): no user-switching tabs; one distinct link
+Subject: [PATCH 09/20] feat(shell): no user-switching tabs; one distinct link
  per user; mounts for guide, toasts, motion
 
 Removes the Employer/Landlord/Bank/Newcomer tab strip and the Viewing-as menu.

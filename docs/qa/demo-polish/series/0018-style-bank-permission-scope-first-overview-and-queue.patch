@@ -1,7 +1,7 @@
-From 6ea230ec2acc3e1883c4eb496c8e780567a9b8dc Mon Sep 17 00:00:00 2001
+From 0ebf9830c2891779fc8021de937baa4e7c9d3270 Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 15:00:37 +0400
-Subject: [PATCH 18/18] style(bank): permission scope first, overview and queue
+Subject: [PATCH 18/20] style(bank): permission scope first, overview and queue
  hierarchy
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>

@@ -1,7 +1,7 @@
-From 9198995a16dd7e79243e9ae22b08cfb623545c2b Mon Sep 17 00:00:00 2001
+From b7feda2766d595d746d42f2320a24bf19d8bf096 Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 14:43:52 +0400
-Subject: [PATCH 11/18] docs: README for judges: the idea, how it works,
+Subject: [PATCH 11/20] docs: README for judges: the idea, how it works,
  privacy evidence, what is real
 
 Replaces the developer-only README. Matches the platform as built: Vertex AI

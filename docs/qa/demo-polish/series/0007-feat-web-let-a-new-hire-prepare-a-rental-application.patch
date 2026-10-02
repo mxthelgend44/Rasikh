@@ -1,7 +1,7 @@
-From 2843e19d1e40dc60eaea8e658a1a53c36938e77a Mon Sep 17 00:00:00 2001
+From ccf3111ebf066eb66ead9ceb204c94a0d7bbca1e Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 12:55:28 +0400
-Subject: [PATCH 07/18] feat(web): let a new hire prepare a rental application
+Subject: [PATCH 07/20] feat(web): let a new hire prepare a rental application
  from the agent view
 
 A hire added during the demo reached the housing step with no way to get a

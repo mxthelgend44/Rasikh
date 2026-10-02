@@ -1,7 +1,7 @@
-From e3f490bca5767c06454f493a4bd6ff2ce3353e28 Mon Sep 17 00:00:00 2001
+From 7b0f2791f08abf3d28c35cba11846a7db65a794d Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 15:00:36 +0400
-Subject: [PATCH 13/18] feat(web): live toasts that disclose only what each
+Subject: [PATCH 13/20] feat(web): live toasts that disclose only what each
  screen may know
 
 A landlord or bank window hears only that an application reached it, an

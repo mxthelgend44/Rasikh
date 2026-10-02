@@ -1,7 +1,7 @@
-From 59e1477ab88e6ff89641c34141d257926fb7e419 Mon Sep 17 00:00:00 2001
+From 2dffaf028937e5882ca7218033803495b9de0a47 Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 15:00:36 +0400
-Subject: [PATCH 15/18] style(newcomer): progress ring, clearer approval card
+Subject: [PATCH 15/20] style(newcomer): progress ring, clearer approval card
  and trust passport
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>

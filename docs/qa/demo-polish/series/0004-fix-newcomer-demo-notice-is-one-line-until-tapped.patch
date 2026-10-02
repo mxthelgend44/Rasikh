@@ -1,7 +1,7 @@
-From 6639f7c27a246f4ffe6c022ccbbb1ad6e6504b79 Mon Sep 17 00:00:00 2001
+From a323101ef8c4a67b68999573ed4948c8c690167e Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 12:52:21 +0400
-Subject: [PATCH 04/18] fix(newcomer): demo notice is one line until tapped
+Subject: [PATCH 04/20] fix(newcomer): demo notice is one line until tapped
 
 It took three lines on every phone screen and pushed the next action below the fold.
 

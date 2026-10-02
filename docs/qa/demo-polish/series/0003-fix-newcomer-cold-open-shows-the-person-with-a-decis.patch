@@ -1,7 +1,7 @@
-From 03b527754c6b07281ed6f486b63247babbb9b775 Mon Sep 17 00:00:00 2001
+From 376128a40217492870ab94be83e4c54da7d88ea1 Mon Sep 17 00:00:00 2001
 From: maalh <sometimes7799s@gmail.com>
 Date: Fri, 2 Oct 2026 12:52:21 +0400
-Subject: [PATCH 03/18] fix(newcomer): cold open shows the person with a
+Subject: [PATCH 03/20] fix(newcomer): cold open shows the person with a
  decision waiting
 
 The newcomer app defaulted to the newest seed hire (Tomasz, 0 of 3 documents, empty feed
