@@ -6,6 +6,7 @@ import type { Audience } from "../../contract.js";
 import {
   type Application,
   type ApplicationRequest,
+  type ServiceMatch,
   type ServiceRequirements,
   type ServiceSummary,
   TAWTHEEQ_SERVICE_ID,
@@ -15,6 +16,7 @@ import {
 } from "../types.js";
 import { type Catalogue, type CatalogueService, loadCatalogue } from "./catalogue.js";
 import { type Progression, type TrackedApplication, advance, catchUp, submit } from "./stateMachine.js";
+import { SearchIndex } from "./search.js";
 import { checkTradeName } from "./tradeName.js";
 
 /** Dev-only controls behind `POST /dev/advance` and `POST /dev/reset` (demo mode). */
@@ -44,21 +46,33 @@ export class MockTammBackend implements TammBackend, DemoControls {
   private readonly now: () => number;
   private readonly applications = new Map<string, OwnedApplication>();
   private sequence = 0;
+  private readonly index: SearchIndex;
 
   constructor(options: MockTammBackendOptions) {
     this.catalogue = options.catalogue ?? loadCatalogue();
     this.progression = options.progression;
     this.now = options.now ?? Date.now;
+    this.index = new SearchIndex(
+      this.catalogue.services.map((service) => ({
+        id: service.service_id,
+        keywords: service.keywords,
+        name: service.name,
+        tags: service.tags,
+        entity: service.entity,
+      })),
+      this.catalogue.search_synonyms,
+    );
   }
 
-  async searchServices(query: string, audience: Audience): Promise<ServiceSummary[]> {
-    const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
-    return this.catalogue.services
-      .filter((service) => service.audience === audience)
-      .map((service) => ({ service, score: relevance(service, terms) }))
-      .filter(({ score }) => terms.length === 0 || score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map(({ service }) => toSummary(service));
+  async searchServices(query: string, audience: Audience): Promise<ServiceMatch[]> {
+    const inAudience = this.catalogue.services.filter((service) => service.audience === audience);
+    if (query.trim() === "") {
+      return inAudience.map((service) => ({ ...toSummary(service), score: 0 }));
+    }
+    const byId = new Map(inAudience.map((service) => [service.service_id, service]));
+    return this.index
+      .search(query, new Set(byId.keys()))
+      .map((hit) => ({ ...toSummary(byId.get(hit.id) as CatalogueService), score: hit.score }));
   }
 
   async getService(serviceId: string): Promise<ServiceSummary | undefined> {
@@ -139,16 +153,4 @@ export class MockTammBackend implements TammBackend, DemoControls {
 function toSummary(service: CatalogueService): ServiceSummary {
   const { service_id, name, entity, audience, tags } = service;
   return { service_id, name, entity, audience, tags: [...tags] };
-}
-
-/** Crude relevance: keyword and tag hits weigh more than name hits. */
-function relevance(service: CatalogueService, terms: readonly string[]): number {
-  const keywords = service.keywords.join(" ").toLowerCase();
-  const tags = service.tags.join(" ").toLowerCase();
-  const name = service.name.toLowerCase();
-  return terms.reduce(
-    (score, term) =>
-      score + (keywords.includes(term) ? 3 : 0) + (tags.includes(term) ? 2 : 0) + (name.includes(term) ? 1 : 0),
-    0,
-  );
 }

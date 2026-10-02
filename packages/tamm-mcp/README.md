@@ -5,7 +5,7 @@ in the style of TAMM. **There is no public TAMM API in use: everything is served
 tool response carries `"mock": true`, and every fee, duration and document carries `"illustrative": true`. None of it is
 an official statement of fees, durations or legal requirements.
 
-The contract is in the repo-root [`INTEGRATION.md`](../../INTEGRATION.md), section 4. This package implements v1.1.1.
+The contract is in the repo-root [`INTEGRATION.md`](../../INTEGRATION.md), section 4. This package implements v1.2.0.
 
 ## Tools
 
@@ -38,6 +38,18 @@ ID (the fixture convention from INTEGRATION.md 5, e.g. `doc_passport_hire_demo_0
 
 All data access goes through the `TammBackend` interface (`src/backend/types.ts`). `MockTammBackend` is the only
 implementation. A real backend can replace it in `src/index.ts` without touching tool code.
+
+## Search and planning (contract 1.2.0)
+
+- **`search_services`** ranks with BM25 (`src/backend/mock/search.ts`) over keywords (weight 3), name and tags (2), and
+  entity (1), and returns a `score`. Queries are expanded with the catalogue's `search_synonyms` (English, Arabic and
+  common transliterations, e.g. `iqama`, `إقامة`, `ijar`, `هوية`). Arabic is normalised: alef and ta marbuta variants,
+  diacritics, tatweel and the `ال` article. A word of five or more letters that is not in the vocabulary matches words
+  one edit away (optimal string alignment, so a swapped pair of letters counts as one edit).
+- **`get_service_requirements`** also returns `prerequisite_order` (every transitive prerequisite, depth-first
+  post-order, so each comes after its own prerequisites; cycles are refused at catalogue load) and, given optional
+  `documents_on_file` and `completed_services`, `missing_prerequisites`, `missing_documents` and `ready_to_apply`
+  (`src/planning.ts`, backend-agnostic).
 
 ## Application lifecycle (INTEGRATION.md 4.5)
 

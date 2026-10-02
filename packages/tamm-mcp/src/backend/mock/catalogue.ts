@@ -42,6 +42,7 @@ const catalogueSchema = z
     services: z.array(serviceSchema).min(1),
     taken_trade_names: z.array(z.string()),
     restricted_trade_name_terms: z.array(z.string()),
+    search_synonyms: z.array(z.object({ phrase: z.string().min(1), expands_to: z.string().min(1) })),
   })
   .superRefine((catalogue, ctx) => {
     const ids = new Set(catalogue.services.map((service) => service.service_id));
@@ -57,7 +58,40 @@ const catalogueSchema = z
         ctx.addIssue({ code: "custom", message: `${service.service_id} depends on unknown ${dependency}` });
       }
     }
+    const cycle = findCycle(catalogue.services);
+    if (cycle) {
+      ctx.addIssue({ code: "custom", message: `prerequisite cycle: ${cycle.join(" -> ")}` });
+    }
   });
+
+/** The first `depends_on` cycle found by depth-first search, or `undefined`. */
+function findCycle(services: readonly { service_id: string; depends_on: readonly string[] }[]): string[] | undefined {
+  const edges = new Map(services.map((service) => [service.service_id, service.depends_on]));
+  const done = new Set<string>();
+  const visit = (id: string, path: string[]): string[] | undefined => {
+    if (path.includes(id)) {
+      return [...path.slice(path.indexOf(id)), id];
+    }
+    if (done.has(id)) {
+      return undefined;
+    }
+    for (const next of edges.get(id) ?? []) {
+      const cycle = visit(next, [...path, id]);
+      if (cycle) {
+        return cycle;
+      }
+    }
+    done.add(id);
+    return undefined;
+  };
+  for (const id of edges.keys()) {
+    const cycle = visit(id, []);
+    if (cycle) {
+      return cycle;
+    }
+  }
+  return undefined;
+}
 
 export type CatalogueService = z.infer<typeof serviceSchema>;
 export type Catalogue = z.infer<typeof catalogueSchema>;

@@ -24,6 +24,11 @@ export interface ServiceSummary {
   tags: string[];
 }
 
+/** A search result: the summary plus its relevance (higher is better). */
+export interface ServiceMatch extends ServiceSummary {
+  score: number;
+}
+
 export interface RequiredDocument {
   label: DataLabel;
   description: string;
@@ -79,7 +84,7 @@ export interface TenancyRequest {
 
 export interface TammBackend {
   /** Services matching a free-text query for one audience, best match first. */
-  searchServices(query: string, audience: Audience): Promise<ServiceSummary[]>;
+  searchServices(query: string, audience: Audience): Promise<ServiceMatch[]>;
   /** One service by id, or `undefined` if it is not in the catalogue. */
   getService(serviceId: string): Promise<ServiceSummary | undefined>;
   /** Required documents, dependencies, fee and duration, or `undefined` if the service is unknown. */
