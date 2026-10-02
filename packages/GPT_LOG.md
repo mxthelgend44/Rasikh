@@ -185,3 +185,32 @@ analytical sensitivity and sponsorship/document gates. These are uncalibrated
 illustrative model results, not real-world customer outcomes or service SLAs.
 Reports retain the input case topology so custom team/sponsor/setup simulations
 can also be reproduced exactly.
+
+## 2026-10-02 — Phase 2 / section 6: Trust data and complete orchestration
+
+Generated strict aggregate Trust data with model/date/run counts, source hashes,
+target results and evidence scope. It preserves the 48% original Guard failures,
+10% injection control failures and one injection model error. It distinguishes
+25 unique/13 blocked attacks from 75 repeated/39 blocked checks, and 12 local
+external blocks from 42 actual HTTP injection blocks. No raw summaries, action
+bodies, prompt text, identifiers or credentials enter the Trust export.
+
+Missing/cache/custom/stale/incompatible evidence cannot become current live data.
+The judge source hash must match the latest primary. A run-start bound prevents
+old reports surviving a failed fresh attempt as current results. Default freshness
+is 24 hours. Simulation, same-model judge limits, unverified app prompt parity,
+evaluated 1.0.0 versus the recorded merged-main 1.1.0, and matrix-only Guard
+enforcement are explicit. Current Trust status is FAIL and complete is false,
+reflecting both unsafe authorizations and the one missing model response.
+
+The full one-command pipeline launches/reuses the sidecar, continues through
+failed targets to write all reports, preserves exit codes and cleans up only
+owned processes. The completed live component runs were not repeated merely
+to exercise the combined command; pipeline control/freshness is checked offline.
+The persistent evaluation sidecar was stopped after its exact owned PID/path
+were verified. Future live commands start/reuse it normally.
+
+**Handoff:** Devin owns the fresh-reference provenance and 405 conformance fixes.
+Claude owns live prompts/adapter routes and the Trust screen. The separate
+INTEGRATION-only 1.2.0 proposal supplies engine/simulator APIs, app metadata and
+the exact Trust wire schema without editing active service/shared sources.

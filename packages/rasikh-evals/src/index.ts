@@ -44,3 +44,6 @@ export type { JudgeOptions } from './judge/runner.ts';
 export type { JudgeReport, SemanticJudge } from './judge/types.ts';
 export { ModelSemanticJudge } from './judge/model.ts';
 export { writeSimulationEvidence, renderSimulation } from './simulation.ts';
+export { buildTrustData, writeTrustData } from './trust.ts';
+export type * from './trust-types.ts';
+export { runEvaluationPipeline } from './pipeline.ts';
