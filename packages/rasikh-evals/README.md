@@ -127,3 +127,20 @@ No malicious model proposals means conditional system leak rate is null.
 `evals/DEMO_INJECTION.md` reproduces the lease demonstration and labels the
 attempt as scripted when the live model resists. Interrupted initial evidence
 and the separate lease supplemental run are preserved with their own scopes.
+
+## Rendered documents
+
+```powershell
+npm --prefix packages/rasikh-evals run eval:documents
+```
+
+The vision corpus contains 20 clean images, 20 paired degraded images and eight
+Arabic/bilingual images. It covers the original passport/offer/degree/bank
+fixtures. Degradation includes rotation, blur, JPEG artifacts, phone lighting,
+stamps and cropped margins. All images visibly mark their data as synthetic.
+The manifest records image hashes, font identity and exact seeded recipes.
+Only actual image bytes and field names go to the model; expected values and
+source text stay local. `evals/DOCUMENTS.md/json` separates cohort accuracy,
+coverage and repeated-run variation. Missing cohorts or unexpected fields cannot
+produce a passing report. Renderer dependencies and reproduction instructions
+are recorded in DOCUMENTS.md; fonts are identified but not redistributed.

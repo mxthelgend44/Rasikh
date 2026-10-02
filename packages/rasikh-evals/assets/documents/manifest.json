@@ -1,0 +1,6476 @@
+{
+  "schema_version": "1.0.0",
+  "synthetic": true,
+  "dataset": "rasikh-rendered-documents-v1",
+  "seed": 7102026,
+  "generated_by": "scripts/render-documents.py",
+  "render_environment": {
+    "python": "3.12.14",
+    "pillow": "12.3.0",
+    "arabic_reshaper": "3.0.0",
+    "python_bidi": "0.6.7",
+    "font_file": "tahoma.ttf",
+    "font_sha256": "9af03d4ad44a3b413d92f7de48b94aa7cc8a1471a75d498406eae837f62ee1d1",
+    "arabic_layout": "arabic-reshaper + Unicode bidi; LRM-isolated ISO dates; Pillow BASIC layout"
+  },
+  "source_fixtures_sha256": "4cf6fdf21437ba363b9e353b9aead62bcdf8c6e138bbcc55abbd89c59b51a405",
+  "notice": "Entirely fake synthetic evaluation documents. No official crests, valid MRZ, biometric photo, real identity, valid passport/account identifier or signature. Rendering recipe preserves scored fields.",
+  "documents": [
+    {
+      "id": "doc_passport_hire_demo_001__clean",
+      "source_fixture_id": "doc_passport_hire_demo_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_passport_hire_demo_001.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "b40f77ae7046346d276e3abad2c2b35a9a6e5a6d4d290e8aecb31849a1598366",
+      "source_text": "SYNTHETIC PASSPORT — NOT VALID FOR TRAVEL\nFull name: Alex Demo\nPassport number: FAKE-P-001\nNationality: Exampleland\nDate of birth: 1994-02-03\nExpiry date: 2031-04-05",
+      "source_text_sha256": "f58a6fade48ddb9ad83616a8c7098d4259f675c438571943d7dcf25e7b2111ac",
+      "expected": {
+        "full_name": "Alex Demo",
+        "passport_number": "FAKE-P-001",
+        "nationality": "Exampleland",
+        "date_of_birth": "1994-02-03",
+        "expiry_date": "2031-04-05"
+      },
+      "render_recipe": {
+        "seed": 10711721331598098098,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC PASSPORT — NOT VALID FOR TRAVEL",
+          "bounds": [
+            88,
+            361,
+            818,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Full name: Alex Demo",
+          "bounds": [
+            88,
+            439,
+            399,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Passport number: FAKE-P-001",
+          "bounds": [
+            88,
+            518,
+            516,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality: Exampleland",
+          "bounds": [
+            88,
+            597,
+            438,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Date of birth: 1994-02-03",
+          "bounds": [
+            88,
+            676,
+            449,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Expiry date: 2031-04-05",
+          "bounds": [
+            88,
+            755,
+            429,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_hire_demo_001__degraded",
+      "source_fixture_id": "doc_passport_hire_demo_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_passport_hire_demo_001.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1182,
+      "height": 1569,
+      "sha256": "dabb6840feb77f8ef86183428fe4abe41a5b63bdd6264d3f518c8d98744b3d53",
+      "source_text": "SYNTHETIC PASSPORT — NOT VALID FOR TRAVEL\nFull name: Alex Demo\nPassport number: FAKE-P-001\nNationality: Exampleland\nDate of birth: 1994-02-03\nExpiry date: 2031-04-05",
+      "source_text_sha256": "f58a6fade48ddb9ad83616a8c7098d4259f675c438571943d7dcf25e7b2111ac",
+      "expected": {
+        "full_name": "Alex Demo",
+        "passport_number": "FAKE-P-001",
+        "nationality": "Exampleland",
+        "date_of_birth": "1994-02-03",
+        "expiry_date": "2031-04-05"
+      },
+      "render_recipe": {
+        "seed": 10711721331598098098,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": -2.54,
+        "blur_radius_px": 0.586,
+        "lighting": {
+          "gradient_strength": 0.222,
+          "vignette_strength": 0.133,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 0.998,
+        "crop_edges_px": [
+          5,
+          12,
+          13,
+          19
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            816,
+            1226
+          ],
+          "angle_degrees": -16.547,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 54,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC PASSPORT — NOT VALID FOR TRAVEL",
+          "bounds": [
+            88,
+            361,
+            818,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Full name: Alex Demo",
+          "bounds": [
+            88,
+            439,
+            399,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Passport number: FAKE-P-001",
+          "bounds": [
+            88,
+            518,
+            516,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality: Exampleland",
+          "bounds": [
+            88,
+            597,
+            438,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Date of birth: 1994-02-03",
+          "bounds": [
+            88,
+            676,
+            449,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Expiry date: 2031-04-05",
+          "bounds": [
+            88,
+            755,
+            429,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_hire_demo_002__clean",
+      "source_fixture_id": "doc_passport_hire_demo_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_passport_hire_demo_002.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "d9bffb2b16c2cf1422b86ea62febc9a48b41cad9f86448c2ee8beb316a913b03",
+      "source_text": "SYNTHETIC PASSPORT — NOT VALID\nSurname: Sample\nGiven names: Mira\nDocument No: FAKE-P-002\nNationality: Test Republic\nBirth: 1990-11-09\nExpires: 2030-08-17",
+      "source_text_sha256": "27692e540ae6c34e39077162db983b0d2368bffde9a37a4c0b40ebb72b2b2c62",
+      "expected": {
+        "full_name": "Mira Sample",
+        "passport_number": "FAKE-P-002",
+        "nationality": "Test Republic",
+        "date_of_birth": "1990-11-09",
+        "expiry_date": "2030-08-17"
+      },
+      "render_recipe": {
+        "seed": 3065276821742728379,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC PASSPORT — NOT VALID",
+          "bounds": [
+            88,
+            361,
+            627,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Surname: Sample",
+          "bounds": [
+            88,
+            439,
+            340,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Given names: Mira",
+          "bounds": [
+            88,
+            519,
+            352,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Document No: FAKE-P-002",
+          "bounds": [
+            88,
+            598,
+            468,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality: Test Republic",
+          "bounds": [
+            88,
+            676,
+            449,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Birth: 1990-11-09",
+          "bounds": [
+            88,
+            755,
+            336,
+            779
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Expires: 2030-08-17",
+          "bounds": [
+            88,
+            835,
+            371,
+            864
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_hire_demo_002__degraded",
+      "source_fixture_id": "doc_passport_hire_demo_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_passport_hire_demo_002.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1174,
+      "height": 1581,
+      "sha256": "37bdee0f526abbcfad807d1b2ba4fab2c329d1b433927ff7ac43e78c7699ae8b",
+      "source_text": "SYNTHETIC PASSPORT — NOT VALID\nSurname: Sample\nGiven names: Mira\nDocument No: FAKE-P-002\nNationality: Test Republic\nBirth: 1990-11-09\nExpires: 2030-08-17",
+      "source_text_sha256": "27692e540ae6c34e39077162db983b0d2368bffde9a37a4c0b40ebb72b2b2c62",
+      "expected": {
+        "full_name": "Mira Sample",
+        "passport_number": "FAKE-P-002",
+        "nationality": "Test Republic",
+        "date_of_birth": "1990-11-09",
+        "expiry_date": "2030-08-17"
+      },
+      "render_recipe": {
+        "seed": 3065276821742728379,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 2.569,
+        "blur_radius_px": 0.565,
+        "lighting": {
+          "gradient_strength": 0.238,
+          "vignette_strength": 0.134,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 0.983,
+        "crop_edges_px": [
+          16,
+          5,
+          10,
+          14
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            812,
+            1233
+          ],
+          "angle_degrees": -8.583,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 62,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC PASSPORT — NOT VALID",
+          "bounds": [
+            88,
+            361,
+            627,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Surname: Sample",
+          "bounds": [
+            88,
+            439,
+            340,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Given names: Mira",
+          "bounds": [
+            88,
+            519,
+            352,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Document No: FAKE-P-002",
+          "bounds": [
+            88,
+            598,
+            468,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality: Test Republic",
+          "bounds": [
+            88,
+            676,
+            449,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Birth: 1990-11-09",
+          "bounds": [
+            88,
+            755,
+            336,
+            779
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Expires: 2030-08-17",
+          "bounds": [
+            88,
+            835,
+            371,
+            864
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_hire_demo_003__clean",
+      "source_fixture_id": "doc_passport_hire_demo_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_passport_hire_demo_003.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "e65bace1611836108dabf09d2e6fa14f15d04771000fc1469c984f825348b86b",
+      "source_text": "FAKE PASSPORT TRAINING SAMPLE\nName | Noor Example\nNumber | FAKE-P-003\nNationality | Demo Islands\nDOB | 1988-06-20\nValid until | 2029-12-31",
+      "source_text_sha256": "9c7689abec103265a395b81a457853c3f43e0a3f0713908398c7c68a972ffde6",
+      "expected": {
+        "full_name": "Noor Example",
+        "passport_number": "FAKE-P-003",
+        "nationality": "Demo Islands",
+        "date_of_birth": "1988-06-20",
+        "expiry_date": "2029-12-31"
+      },
+      "render_recipe": {
+        "seed": 16635649722372772599,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE PASSPORT TRAINING SAMPLE",
+          "bounds": [
+            88,
+            361,
+            603,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name | Noor Example",
+          "bounds": [
+            88,
+            439,
+            399,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Number | FAKE-P-003",
+          "bounds": [
+            88,
+            518,
+            399,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality | Demo Islands",
+          "bounds": [
+            88,
+            597,
+            462,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "DOB | 1988-06-20",
+          "bounds": [
+            88,
+            676,
+            344,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Valid until | 2029-12-31",
+          "bounds": [
+            87,
+            755,
+            419,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_hire_demo_003__degraded",
+      "source_fixture_id": "doc_passport_hire_demo_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_passport_hire_demo_003.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1167,
+      "height": 1575,
+      "sha256": "1d86d831c91bf33c4236ca72c81113562e7e61bb0fd86efbbcb5861e3ea00424",
+      "source_text": "FAKE PASSPORT TRAINING SAMPLE\nName | Noor Example\nNumber | FAKE-P-003\nNationality | Demo Islands\nDOB | 1988-06-20\nValid until | 2029-12-31",
+      "source_text_sha256": "9c7689abec103265a395b81a457853c3f43e0a3f0713908398c7c68a972ffde6",
+      "expected": {
+        "full_name": "Noor Example",
+        "passport_number": "FAKE-P-003",
+        "nationality": "Demo Islands",
+        "date_of_birth": "1988-06-20",
+        "expiry_date": "2029-12-31"
+      },
+      "render_recipe": {
+        "seed": 16635649722372772599,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 2.646,
+        "blur_radius_px": 0.786,
+        "lighting": {
+          "gradient_strength": 0.174,
+          "vignette_strength": 0.13,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.589,
+        "crop_edges_px": [
+          14,
+          7,
+          19,
+          18
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            829,
+            1169
+          ],
+          "angle_degrees": -8.509,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 65,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE PASSPORT TRAINING SAMPLE",
+          "bounds": [
+            88,
+            361,
+            603,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name | Noor Example",
+          "bounds": [
+            88,
+            439,
+            399,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Number | FAKE-P-003",
+          "bounds": [
+            88,
+            518,
+            399,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality | Demo Islands",
+          "bounds": [
+            88,
+            597,
+            462,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "DOB | 1988-06-20",
+          "bounds": [
+            88,
+            676,
+            344,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Valid until | 2029-12-31",
+          "bounds": [
+            87,
+            755,
+            419,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_hire_demo_004__clean",
+      "source_fixture_id": "doc_passport_hire_demo_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_passport_hire_demo_004.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "b879b641f570705c859dec57ef23fab659ff626c52fd0ebb5442b73443d636d5",
+      "source_text": "SYNTHETIC PASSPORT\nName: Luca Fiction\nPassport: FAKE-P-004\nNationality: Fiction Federation\nDate of birth: [illegible]\nExpiration: 2032-01-10",
+      "source_text_sha256": "3c38400218236433e4fe01f8caad7c78cb1ceaded4e9727c326022e3a08e557c",
+      "expected": {
+        "full_name": "Luca Fiction",
+        "passport_number": "FAKE-P-004",
+        "nationality": "Fiction Federation",
+        "date_of_birth": null,
+        "expiry_date": "2032-01-10"
+      },
+      "render_recipe": {
+        "seed": 9986981618921041135,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC PASSPORT",
+          "bounds": [
+            88,
+            361,
+            417,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name: Luca Fiction",
+          "bounds": [
+            88,
+            440,
+            359,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Passport: FAKE-P-004",
+          "bounds": [
+            88,
+            519,
+            396,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality: Fiction Federation",
+          "bounds": [
+            88,
+            597,
+            511,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Date of birth: [illegible]",
+          "bounds": [
+            88,
+            676,
+            418,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Expiration: 2032-01-10",
+          "bounds": [
+            88,
+            756,
+            410,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_hire_demo_004__degraded",
+      "source_fixture_id": "doc_passport_hire_demo_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_passport_hire_demo_004.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1172,
+      "height": 1577,
+      "sha256": "7fd9ea60cf240cf9d60e438cd3a4cb002add3a1abfe439389a54899a559576f6",
+      "source_text": "SYNTHETIC PASSPORT\nName: Luca Fiction\nPassport: FAKE-P-004\nNationality: Fiction Federation\nDate of birth: [illegible]\nExpiration: 2032-01-10",
+      "source_text_sha256": "3c38400218236433e4fe01f8caad7c78cb1ceaded4e9727c326022e3a08e557c",
+      "expected": {
+        "full_name": "Luca Fiction",
+        "passport_number": "FAKE-P-004",
+        "nationality": "Fiction Federation",
+        "date_of_birth": null,
+        "expiry_date": "2032-01-10"
+      },
+      "render_recipe": {
+        "seed": 9986981618921041135,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 2.709,
+        "blur_radius_px": 0.712,
+        "lighting": {
+          "gradient_strength": 0.212,
+          "vignette_strength": 0.105,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.026,
+        "crop_edges_px": [
+          8,
+          10,
+          20,
+          13
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            844,
+            1164
+          ],
+          "angle_degrees": -12.393,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 63,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC PASSPORT",
+          "bounds": [
+            88,
+            361,
+            417,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name: Luca Fiction",
+          "bounds": [
+            88,
+            440,
+            359,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Passport: FAKE-P-004",
+          "bounds": [
+            88,
+            519,
+            396,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality: Fiction Federation",
+          "bounds": [
+            88,
+            597,
+            511,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Date of birth: [illegible]",
+          "bounds": [
+            88,
+            676,
+            418,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Expiration: 2032-01-10",
+          "bounds": [
+            88,
+            756,
+            410,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_eval_005__clean",
+      "source_fixture_id": "doc_passport_eval_005",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_passport_eval_005.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "4f5dab261f7b321afe11d3e6241abeb433dcd1b121415f3e34f9febc3d9f7c37",
+      "source_text": "SYNTHETIC — NOT AN ID\nExpiry: 2028-09-04\nNationality: Sample State\nPassport number: FAKE-P-005\nFull name: Rowan Test-Case\nDate of birth: 1998-03-15",
+      "source_text_sha256": "72fb972dbff4051ed8a29b347bdf2f759b65390ecdbdf69114982e60e811a551",
+      "expected": {
+        "full_name": "Rowan Test-Case",
+        "passport_number": "FAKE-P-005",
+        "nationality": "Sample State",
+        "date_of_birth": "1998-03-15",
+        "expiry_date": "2028-09-04"
+      },
+      "render_recipe": {
+        "seed": 10059785650069926298,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC — NOT AN ID",
+          "bounds": [
+            88,
+            361,
+            460,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Expiry: 2028-09-04",
+          "bounds": [
+            88,
+            440,
+            356,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality: Sample State",
+          "bounds": [
+            88,
+            518,
+            446,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Passport number: FAKE-P-005",
+          "bounds": [
+            88,
+            597,
+            516,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Full name: Rowan Test-Case",
+          "bounds": [
+            88,
+            676,
+            493,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Date of birth: 1998-03-15",
+          "bounds": [
+            88,
+            755,
+            449,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_passport_eval_005__degraded",
+      "source_fixture_id": "doc_passport_eval_005",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_passport_eval_005.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1184,
+      "height": 1587,
+      "sha256": "2a86fc37e214ee45c9769214fcdb123d1c561cd39c03b60ad54c1a157b6302f1",
+      "source_text": "SYNTHETIC — NOT AN ID\nExpiry: 2028-09-04\nNationality: Sample State\nPassport number: FAKE-P-005\nFull name: Rowan Test-Case\nDate of birth: 1998-03-15",
+      "source_text_sha256": "72fb972dbff4051ed8a29b347bdf2f759b65390ecdbdf69114982e60e811a551",
+      "expected": {
+        "full_name": "Rowan Test-Case",
+        "passport_number": "FAKE-P-005",
+        "nationality": "Sample State",
+        "date_of_birth": "1998-03-15",
+        "expiry_date": "2028-09-04"
+      },
+      "render_recipe": {
+        "seed": 10059785650069926298,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": -0.194,
+        "blur_radius_px": 0.895,
+        "lighting": {
+          "gradient_strength": 0.151,
+          "vignette_strength": 0.178,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.246,
+        "crop_edges_px": [
+          10,
+          7,
+          6,
+          6
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            796,
+            1222
+          ],
+          "angle_degrees": -13.976,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 69,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC — NOT AN ID",
+          "bounds": [
+            88,
+            361,
+            460,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Expiry: 2028-09-04",
+          "bounds": [
+            88,
+            440,
+            356,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Nationality: Sample State",
+          "bounds": [
+            88,
+            518,
+            446,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Passport number: FAKE-P-005",
+          "bounds": [
+            88,
+            597,
+            516,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Full name: Rowan Test-Case",
+          "bounds": [
+            88,
+            676,
+            493,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Date of birth: 1998-03-15",
+          "bounds": [
+            88,
+            755,
+            449,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_001__clean",
+      "source_fixture_id": "doc_offer_eval_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_offer_eval_001.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "909cdf20168eab8639120dcef623bef7cfdce4662215e6ec42a810f16d97aad0",
+      "source_text": "SYNTHETIC OFFER LETTER\nEmployee: Alex Demo\nEmployer: Northwind Demo Analytics\nRole: Software Engineer\nStart date: 2026-11-01\nMonthly base salary: AED 24,000",
+      "source_text_sha256": "d994527da4aa9a0cf7e5ff2c35adc5193f9e7103be075737a28a2545267e7a24",
+      "expected": {
+        "employee_name": "Alex Demo",
+        "employer": "Northwind Demo Analytics",
+        "role": "Software Engineer",
+        "start_date": "2026-11-01",
+        "monthly_salary_aed": 24000
+      },
+      "render_recipe": {
+        "seed": 2043656430724858427,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC OFFER LETTER",
+          "bounds": [
+            88,
+            361,
+            480,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employee: Alex Demo",
+          "bounds": [
+            88,
+            439,
+            398,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employer: Northwind Demo Analytics",
+          "bounds": [
+            88,
+            518,
+            614,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Role: Software Engineer",
+          "bounds": [
+            88,
+            597,
+            431,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Start date: 2026-11-01",
+          "bounds": [
+            88,
+            676,
+            411,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Monthly base salary: AED 24,000",
+          "bounds": [
+            88,
+            755,
+            554,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_001__degraded",
+      "source_fixture_id": "doc_offer_eval_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_offer_eval_001.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1168,
+      "height": 1581,
+      "sha256": "4577e717adb2f36cdfbeeac843de162c4bc2e6f5a1a067c98096b345f81bfd6c",
+      "source_text": "SYNTHETIC OFFER LETTER\nEmployee: Alex Demo\nEmployer: Northwind Demo Analytics\nRole: Software Engineer\nStart date: 2026-11-01\nMonthly base salary: AED 24,000",
+      "source_text_sha256": "d994527da4aa9a0cf7e5ff2c35adc5193f9e7103be075737a28a2545267e7a24",
+      "expected": {
+        "employee_name": "Alex Demo",
+        "employer": "Northwind Demo Analytics",
+        "role": "Software Engineer",
+        "start_date": "2026-11-01",
+        "monthly_salary_aed": 24000
+      },
+      "render_recipe": {
+        "seed": 2043656430724858427,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 1.404,
+        "blur_radius_px": 0.793,
+        "lighting": {
+          "gradient_strength": 0.236,
+          "vignette_strength": 0.18,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.333,
+        "crop_edges_px": [
+          18,
+          4,
+          14,
+          15
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            859,
+            1144
+          ],
+          "angle_degrees": -10.986,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 45,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC OFFER LETTER",
+          "bounds": [
+            88,
+            361,
+            480,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employee: Alex Demo",
+          "bounds": [
+            88,
+            439,
+            398,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employer: Northwind Demo Analytics",
+          "bounds": [
+            88,
+            518,
+            614,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Role: Software Engineer",
+          "bounds": [
+            88,
+            597,
+            431,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Start date: 2026-11-01",
+          "bounds": [
+            88,
+            676,
+            411,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Monthly base salary: AED 24,000",
+          "bounds": [
+            88,
+            755,
+            554,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_002__clean",
+      "source_fixture_id": "doc_offer_eval_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_offer_eval_002.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "ccaef3d871d136f19c4c882fe03e8a9b1808cd092a94da4be6a0b40ce3ccd601",
+      "source_text": "FAKE OFFER — EXAMPLE ONLY\nTo Mira Sample\nCompany: Fiction Labs\nPosition: Data Analyst\nCommencement: 2026-12-15\nAnnual salary: AED 180,000 paid in 12 equal monthly instalments",
+      "source_text_sha256": "2732711d0b92bf70f1b102b9d160395e1e5488458ce168ed4a53107a19b17192",
+      "expected": {
+        "employee_name": "Mira Sample",
+        "employer": "Fiction Labs",
+        "role": "Data Analyst",
+        "start_date": "2026-12-15",
+        "monthly_salary_aed": 15000
+      },
+      "render_recipe": {
+        "seed": 11817724261492993172,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE OFFER — EXAMPLE ONLY",
+          "bounds": [
+            88,
+            361,
+            537,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "To Mira Sample",
+          "bounds": [
+            87,
+            439,
+            309,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Company: Fiction Labs",
+          "bounds": [
+            88,
+            518,
+            408,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Position: Data Analyst",
+          "bounds": [
+            88,
+            597,
+            397,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Commencement: 2026-12-15",
+          "bounds": [
+            88,
+            677,
+            499,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Annual salary: AED 180,000 paid in 12 equal monthly instalments",
+          "bounds": [
+            87,
+            755,
+            1011,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_002__degraded",
+      "source_fixture_id": "doc_offer_eval_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_offer_eval_002.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1166,
+      "height": 1584,
+      "sha256": "6ec060a050f7c41598e8c62a9fee1065b82eeadc6df7a915e8480a09a7a4fd84",
+      "source_text": "FAKE OFFER — EXAMPLE ONLY\nTo Mira Sample\nCompany: Fiction Labs\nPosition: Data Analyst\nCommencement: 2026-12-15\nAnnual salary: AED 180,000 paid in 12 equal monthly instalments",
+      "source_text_sha256": "2732711d0b92bf70f1b102b9d160395e1e5488458ce168ed4a53107a19b17192",
+      "expected": {
+        "employee_name": "Mira Sample",
+        "employer": "Fiction Labs",
+        "role": "Data Analyst",
+        "start_date": "2026-12-15",
+        "monthly_salary_aed": 15000
+      },
+      "render_recipe": {
+        "seed": 11817724261492993172,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0.907,
+        "blur_radius_px": 0.658,
+        "lighting": {
+          "gradient_strength": 0.206,
+          "vignette_strength": 0.156,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 0.932,
+        "crop_edges_px": [
+          16,
+          8,
+          18,
+          8
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            948,
+            1177
+          ],
+          "angle_degrees": -15.818,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 62,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE OFFER — EXAMPLE ONLY",
+          "bounds": [
+            88,
+            361,
+            537,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "To Mira Sample",
+          "bounds": [
+            87,
+            439,
+            309,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Company: Fiction Labs",
+          "bounds": [
+            88,
+            518,
+            408,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Position: Data Analyst",
+          "bounds": [
+            88,
+            597,
+            397,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Commencement: 2026-12-15",
+          "bounds": [
+            88,
+            677,
+            499,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Annual salary: AED 180,000 paid in 12 equal monthly instalments",
+          "bounds": [
+            87,
+            755,
+            1011,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_003__clean",
+      "source_fixture_id": "doc_offer_eval_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_offer_eval_003.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "7464c7775a545a922951fca77f407c9b8a6761ba756980a43cf776aac356bf46",
+      "source_text": "SYNTHETIC OFFER\nCandidate: Noor Example\nEmployer: Sample Systems\nJob title: Product Designer\nJoining: 2027-01-05\nBase monthly compensation: AED 18,500\nOne-time relocation bonus: AED 10,000",
+      "source_text_sha256": "4870dabb03bd86b1a9101f08937049ab97de256ec219d0fc883fb6099cf7e8d2",
+      "expected": {
+        "employee_name": "Noor Example",
+        "employer": "Sample Systems",
+        "role": "Product Designer",
+        "start_date": "2027-01-05",
+        "monthly_salary_aed": 18500
+      },
+      "render_recipe": {
+        "seed": 14612941895358339276,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC OFFER",
+          "bounds": [
+            88,
+            361,
+            360,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Candidate: Noor Example",
+          "bounds": [
+            88,
+            439,
+            448,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employer: Sample Systems",
+          "bounds": [
+            88,
+            518,
+            472,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Job title: Product Designer",
+          "bounds": [
+            88,
+            597,
+            464,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Joining: 2027-01-05",
+          "bounds": [
+            88,
+            677,
+            367,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Base monthly compensation: AED 18,500",
+          "bounds": [
+            88,
+            755,
+            670,
+            785
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "One-time relocation bonus: AED 10,000",
+          "bounds": [
+            88,
+            834,
+            648,
+            864
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_003__degraded",
+      "source_fixture_id": "doc_offer_eval_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_offer_eval_003.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1175,
+      "height": 1567,
+      "sha256": "ad8d2bebf22022b2f14ac2eb5120f82e8aa8cc4683cccbfed23a58705538b6f6",
+      "source_text": "SYNTHETIC OFFER\nCandidate: Noor Example\nEmployer: Sample Systems\nJob title: Product Designer\nJoining: 2027-01-05\nBase monthly compensation: AED 18,500\nOne-time relocation bonus: AED 10,000",
+      "source_text_sha256": "4870dabb03bd86b1a9101f08937049ab97de256ec219d0fc883fb6099cf7e8d2",
+      "expected": {
+        "employee_name": "Noor Example",
+        "employer": "Sample Systems",
+        "role": "Product Designer",
+        "start_date": "2027-01-05",
+        "monthly_salary_aed": 18500
+      },
+      "render_recipe": {
+        "seed": 14612941895358339276,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": -0.626,
+        "blur_radius_px": 0.7,
+        "lighting": {
+          "gradient_strength": 0.246,
+          "vignette_strength": 0.183,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 0.979,
+        "crop_edges_px": [
+          10,
+          13,
+          15,
+          20
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            897,
+            1240
+          ],
+          "angle_degrees": -17.229,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 54,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC OFFER",
+          "bounds": [
+            88,
+            361,
+            360,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Candidate: Noor Example",
+          "bounds": [
+            88,
+            439,
+            448,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employer: Sample Systems",
+          "bounds": [
+            88,
+            518,
+            472,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Job title: Product Designer",
+          "bounds": [
+            88,
+            597,
+            464,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Joining: 2027-01-05",
+          "bounds": [
+            88,
+            677,
+            367,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Base monthly compensation: AED 18,500",
+          "bounds": [
+            88,
+            755,
+            670,
+            785
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "One-time relocation bonus: AED 10,000",
+          "bounds": [
+            88,
+            834,
+            648,
+            864
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_004__clean",
+      "source_fixture_id": "doc_offer_eval_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_offer_eval_004.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "148630feb4e5cc564a53e48ea5185b0404453775435e3c615a39e6125aeea5af",
+      "source_text": "FAKE EMPLOYMENT OFFER\nEmployee: Luca Fiction\nCompany: Demo Media\nTitle: Producer\nStart: to be agreed\nSalary: AED 13,000 per month",
+      "source_text_sha256": "b5f5c063505ca20fca6baa59dfce8f8b49304b189039fc271ea43cdc88882432",
+      "expected": {
+        "employee_name": "Luca Fiction",
+        "employer": "Demo Media",
+        "role": "Producer",
+        "start_date": null,
+        "monthly_salary_aed": 13000
+      },
+      "render_recipe": {
+        "seed": 1061607599757406716,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE EMPLOYMENT OFFER",
+          "bounds": [
+            88,
+            361,
+            478,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employee: Luca Fiction",
+          "bounds": [
+            88,
+            439,
+            414,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Company: Demo Media",
+          "bounds": [
+            88,
+            518,
+            418,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Title: Producer",
+          "bounds": [
+            87,
+            597,
+            297,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Start: to be agreed",
+          "bounds": [
+            88,
+            676,
+            360,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Salary: AED 13,000 per month",
+          "bounds": [
+            88,
+            755,
+            518,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_004__degraded",
+      "source_fixture_id": "doc_offer_eval_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_offer_eval_004.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1173,
+      "height": 1567,
+      "sha256": "8d56e8d17f1fddd6e9618690b36e134d5b6677d0d2074793696e26ef144078ee",
+      "source_text": "FAKE EMPLOYMENT OFFER\nEmployee: Luca Fiction\nCompany: Demo Media\nTitle: Producer\nStart: to be agreed\nSalary: AED 13,000 per month",
+      "source_text_sha256": "b5f5c063505ca20fca6baa59dfce8f8b49304b189039fc271ea43cdc88882432",
+      "expected": {
+        "employee_name": "Luca Fiction",
+        "employer": "Demo Media",
+        "role": "Producer",
+        "start_date": null,
+        "monthly_salary_aed": 13000
+      },
+      "render_recipe": {
+        "seed": 1061607599757406716,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0.55,
+        "blur_radius_px": 0.818,
+        "lighting": {
+          "gradient_strength": 0.128,
+          "vignette_strength": 0.136,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.202,
+        "crop_edges_px": [
+          9,
+          13,
+          18,
+          20
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            787,
+            1195
+          ],
+          "angle_degrees": -9.046,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 57,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE EMPLOYMENT OFFER",
+          "bounds": [
+            88,
+            361,
+            478,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employee: Luca Fiction",
+          "bounds": [
+            88,
+            439,
+            414,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Company: Demo Media",
+          "bounds": [
+            88,
+            518,
+            418,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Title: Producer",
+          "bounds": [
+            87,
+            597,
+            297,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Start: to be agreed",
+          "bounds": [
+            88,
+            676,
+            360,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Salary: AED 13,000 per month",
+          "bounds": [
+            88,
+            755,
+            518,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_005__clean",
+      "source_fixture_id": "doc_offer_eval_005",
+      "case_id": "company_demo_001",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_offer_eval_005.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "c493d2f08a380dc12330cb0c530a02750a26c4fa95e80916dd61d4312909ec1d",
+      "source_text": "SYNTHETIC LETTER\nEmployer: Northwind Demo Analytics\nEmployee: Rowan Test-Case\nRole: Research Engineer\nEffective date: 2026-10-20\nMonthly salary AED 22,000; annual salary AED 264,000",
+      "source_text_sha256": "599897003733791b7401dc1240feb42fb37d0778e16b1e04131665c78691aa48",
+      "expected": {
+        "employee_name": "Rowan Test-Case",
+        "employer": "Northwind Demo Analytics",
+        "role": "Research Engineer",
+        "start_date": "2026-10-20",
+        "monthly_salary_aed": 22000
+      },
+      "render_recipe": {
+        "seed": 16731109300037053283,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC LETTER",
+          "bounds": [
+            88,
+            361,
+            375,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employer: Northwind Demo Analytics",
+          "bounds": [
+            88,
+            439,
+            614,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employee: Rowan Test-Case",
+          "bounds": [
+            88,
+            518,
+            492,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Role: Research Engineer",
+          "bounds": [
+            88,
+            597,
+            435,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Effective date: 2026-10-20",
+          "bounds": [
+            88,
+            676,
+            463,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Monthly salary AED 22,000; annual salary AED 264,000",
+          "bounds": [
+            88,
+            755,
+            867,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_offer_eval_005__degraded",
+      "source_fixture_id": "doc_offer_eval_005",
+      "case_id": "company_demo_001",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_offer_eval_005.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1169,
+      "height": 1567,
+      "sha256": "19648bd9de681e77c1179f2b6f6e64591d413ccbe15d0ea0f416ccda1d752edc",
+      "source_text": "SYNTHETIC LETTER\nEmployer: Northwind Demo Analytics\nEmployee: Rowan Test-Case\nRole: Research Engineer\nEffective date: 2026-10-20\nMonthly salary AED 22,000; annual salary AED 264,000",
+      "source_text_sha256": "599897003733791b7401dc1240feb42fb37d0778e16b1e04131665c78691aa48",
+      "expected": {
+        "employee_name": "Rowan Test-Case",
+        "employer": "Northwind Demo Analytics",
+        "role": "Research Engineer",
+        "start_date": "2026-10-20",
+        "monthly_salary_aed": 22000
+      },
+      "render_recipe": {
+        "seed": 16731109300037053283,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 1.977,
+        "blur_radius_px": 0.774,
+        "lighting": {
+          "gradient_strength": 0.124,
+          "vignette_strength": 0.111,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.395,
+        "crop_edges_px": [
+          16,
+          13,
+          15,
+          20
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            820,
+            1142
+          ],
+          "angle_degrees": -11.94,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 63,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC LETTER",
+          "bounds": [
+            88,
+            361,
+            375,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employer: Northwind Demo Analytics",
+          "bounds": [
+            88,
+            439,
+            614,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Employee: Rowan Test-Case",
+          "bounds": [
+            88,
+            518,
+            492,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Role: Research Engineer",
+          "bounds": [
+            88,
+            597,
+            435,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Effective date: 2026-10-20",
+          "bounds": [
+            88,
+            676,
+            463,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Monthly salary AED 22,000; annual salary AED 264,000",
+          "bounds": [
+            88,
+            755,
+            867,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_001__clean",
+      "source_fixture_id": "doc_degree_eval_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_degree_eval_001.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "2ce40f4ef08b2a33bc41e074b337def0915834c8797d57e6f22d3696878d8f87",
+      "source_text": "SYNTHETIC DEGREE CERTIFICATE — NO ACADEMIC VALUE\nAwarded to: Alex Demo\nInstitution: Example University\nDegree: Bachelor of Science\nField: Computer Science\nAward date: 2016-06-30",
+      "source_text_sha256": "82f555149200969464ba45b54820188a1c4cab984141c1513e5509cdadb313a3",
+      "expected": {
+        "full_name": "Alex Demo",
+        "institution": "Example University",
+        "degree": "Bachelor of Science",
+        "field": "Computer Science",
+        "award_date": "2016-06-30"
+      },
+      "render_recipe": {
+        "seed": 15794696341204559979,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC DEGREE CERTIFICATE — NO ACADEMIC VALUE",
+          "bounds": [
+            88,
+            361,
+            942,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Awarded to: Alex Demo",
+          "bounds": [
+            87,
+            439,
+            424,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Institution: Example University",
+          "bounds": [
+            88,
+            518,
+            522,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Degree: Bachelor of Science",
+          "bounds": [
+            88,
+            597,
+            488,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Field: Computer Science",
+          "bounds": [
+            88,
+            676,
+            431,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Award date: 2016-06-30",
+          "bounds": [
+            87,
+            755,
+            432,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_001__degraded",
+      "source_fixture_id": "doc_degree_eval_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_degree_eval_001.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1179,
+      "height": 1580,
+      "sha256": "b6128fb57b85a6cd58ec11456cb301303e8dec7f013b20b861cf812ac68847a6",
+      "source_text": "SYNTHETIC DEGREE CERTIFICATE — NO ACADEMIC VALUE\nAwarded to: Alex Demo\nInstitution: Example University\nDegree: Bachelor of Science\nField: Computer Science\nAward date: 2016-06-30",
+      "source_text_sha256": "82f555149200969464ba45b54820188a1c4cab984141c1513e5509cdadb313a3",
+      "expected": {
+        "full_name": "Alex Demo",
+        "institution": "Example University",
+        "degree": "Bachelor of Science",
+        "field": "Computer Science",
+        "award_date": "2016-06-30"
+      },
+      "render_recipe": {
+        "seed": 15794696341204559979,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": -2.746,
+        "blur_radius_px": 0.524,
+        "lighting": {
+          "gradient_strength": 0.167,
+          "vignette_strength": 0.118,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.161,
+        "crop_edges_px": [
+          8,
+          4,
+          13,
+          16
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            877,
+            1153
+          ],
+          "angle_degrees": -14.806,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 48,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC DEGREE CERTIFICATE — NO ACADEMIC VALUE",
+          "bounds": [
+            88,
+            361,
+            942,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Awarded to: Alex Demo",
+          "bounds": [
+            87,
+            439,
+            424,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Institution: Example University",
+          "bounds": [
+            88,
+            518,
+            522,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Degree: Bachelor of Science",
+          "bounds": [
+            88,
+            597,
+            488,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Field: Computer Science",
+          "bounds": [
+            88,
+            676,
+            431,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Award date: 2016-06-30",
+          "bounds": [
+            87,
+            755,
+            432,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_002__clean",
+      "source_fixture_id": "doc_degree_eval_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_degree_eval_002.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "44e253e5c9d8957fdfdfd935ae30d5eeb14b4c74a57743904f45471cc2c90215",
+      "source_text": "FAKE CERTIFICATE\nGraduate: Mira Sample\nUniversity: Sample Institute\nQualification: Master of Science\nDiscipline: Statistics\nConferred: 2015-07-15",
+      "source_text_sha256": "811457ba438b898c99917eba80c2f627749fc444f79a5136abce2c45d09fc45c",
+      "expected": {
+        "full_name": "Mira Sample",
+        "institution": "Sample Institute",
+        "degree": "Master of Science",
+        "field": "Statistics",
+        "award_date": "2015-07-15"
+      },
+      "render_recipe": {
+        "seed": 16695933097135471947,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE CERTIFICATE",
+          "bounds": [
+            88,
+            361,
+            363,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Graduate: Mira Sample",
+          "bounds": [
+            88,
+            439,
+            415,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "University: Sample Institute",
+          "bounds": [
+            88,
+            518,
+            481,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Qualification: Master of Science",
+          "bounds": [
+            88,
+            597,
+            533,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Discipline: Statistics",
+          "bounds": [
+            88,
+            676,
+            366,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Conferred: 2015-07-15",
+          "bounds": [
+            88,
+            755,
+            409,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_002__degraded",
+      "source_fixture_id": "doc_degree_eval_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_degree_eval_002.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1172,
+      "height": 1582,
+      "sha256": "a089224cfc1785a62cc41cba18707679933fee467e563399c3c025062a1ad00c",
+      "source_text": "FAKE CERTIFICATE\nGraduate: Mira Sample\nUniversity: Sample Institute\nQualification: Master of Science\nDiscipline: Statistics\nConferred: 2015-07-15",
+      "source_text_sha256": "811457ba438b898c99917eba80c2f627749fc444f79a5136abce2c45d09fc45c",
+      "expected": {
+        "full_name": "Mira Sample",
+        "institution": "Sample Institute",
+        "degree": "Master of Science",
+        "field": "Statistics",
+        "award_date": "2015-07-15"
+      },
+      "render_recipe": {
+        "seed": 16695933097135471947,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 2.413,
+        "blur_radius_px": 0.648,
+        "lighting": {
+          "gradient_strength": 0.124,
+          "vignette_strength": 0.129,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.314,
+        "crop_edges_px": [
+          11,
+          11,
+          17,
+          7
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            883,
+            1190
+          ],
+          "angle_degrees": -17.51,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 67,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE CERTIFICATE",
+          "bounds": [
+            88,
+            361,
+            363,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Graduate: Mira Sample",
+          "bounds": [
+            88,
+            439,
+            415,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "University: Sample Institute",
+          "bounds": [
+            88,
+            518,
+            481,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Qualification: Master of Science",
+          "bounds": [
+            88,
+            597,
+            533,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Discipline: Statistics",
+          "bounds": [
+            88,
+            676,
+            366,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Conferred: 2015-07-15",
+          "bounds": [
+            88,
+            755,
+            409,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_003__clean",
+      "source_fixture_id": "doc_degree_eval_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_degree_eval_003.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "37f55fd0493bf94670c6d13e316b04582b440ddbf2ecf1052c04e2ef06a79dc6",
+      "source_text": "SYNTHETIC CERTIFICATE\nInstitution: Fiction School of Design\nRecipient: Noor Example\nDegree: Bachelor of Arts\nMajor: Design\nAwarded on: 2010-05-28",
+      "source_text_sha256": "50f7fe4a527443d8ced72876fb457cf0b3d5b5453c58098404a60821004de429",
+      "expected": {
+        "full_name": "Noor Example",
+        "institution": "Fiction School of Design",
+        "degree": "Bachelor of Arts",
+        "field": "Design",
+        "award_date": "2010-05-28"
+      },
+      "render_recipe": {
+        "seed": 10322976393045630488,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC CERTIFICATE",
+          "bounds": [
+            88,
+            361,
+            456,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Institution: Fiction School of Design",
+          "bounds": [
+            88,
+            439,
+            590,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Recipient: Noor Example",
+          "bounds": [
+            88,
+            518,
+            436,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Degree: Bachelor of Arts",
+          "bounds": [
+            88,
+            597,
+            437,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Major: Design",
+          "bounds": [
+            88,
+            677,
+            285,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Awarded on: 2010-05-28",
+          "bounds": [
+            87,
+            755,
+            439,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_003__degraded",
+      "source_fixture_id": "doc_degree_eval_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_degree_eval_003.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1182,
+      "height": 1581,
+      "sha256": "f261d5a8ae7044f9ee86738f829e4df0b09650a20e13d809f8e6f800705926b2",
+      "source_text": "SYNTHETIC CERTIFICATE\nInstitution: Fiction School of Design\nRecipient: Noor Example\nDegree: Bachelor of Arts\nMajor: Design\nAwarded on: 2010-05-28",
+      "source_text_sha256": "50f7fe4a527443d8ced72876fb457cf0b3d5b5453c58098404a60821004de429",
+      "expected": {
+        "full_name": "Noor Example",
+        "institution": "Fiction School of Design",
+        "degree": "Bachelor of Arts",
+        "field": "Design",
+        "award_date": "2010-05-28"
+      },
+      "render_recipe": {
+        "seed": 10322976393045630488,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": -2.165,
+        "blur_radius_px": 0.663,
+        "lighting": {
+          "gradient_strength": 0.227,
+          "vignette_strength": 0.112,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.579,
+        "crop_edges_px": [
+          9,
+          4,
+          9,
+          15
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            931,
+            1145
+          ],
+          "angle_degrees": -12.028,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 59,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC CERTIFICATE",
+          "bounds": [
+            88,
+            361,
+            456,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Institution: Fiction School of Design",
+          "bounds": [
+            88,
+            439,
+            590,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Recipient: Noor Example",
+          "bounds": [
+            88,
+            518,
+            436,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Degree: Bachelor of Arts",
+          "bounds": [
+            88,
+            597,
+            437,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Major: Design",
+          "bounds": [
+            88,
+            677,
+            285,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Awarded on: 2010-05-28",
+          "bounds": [
+            87,
+            755,
+            439,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_004__clean",
+      "source_fixture_id": "doc_degree_eval_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_degree_eval_004.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "2d697a3c5bca6e83497812461edc58b9d9f971ec41ca7311b9aaa798cd3c3404",
+      "source_text": "SYNTHETIC DIPLOMA\nName: Luca Fiction\nInstitution: Demo Academy\nQualification: Diploma\nSubject: Media Production\nAward date: not printed",
+      "source_text_sha256": "03557c4d22420c9c7148add6ef37a5871b33d2ab892176d9cd9a6f748afb418a",
+      "expected": {
+        "full_name": "Luca Fiction",
+        "institution": "Demo Academy",
+        "degree": "Diploma",
+        "field": "Media Production",
+        "award_date": null
+      },
+      "render_recipe": {
+        "seed": 17818195592490094575,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC DIPLOMA",
+          "bounds": [
+            88,
+            361,
+            400,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name: Luca Fiction",
+          "bounds": [
+            88,
+            440,
+            359,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Institution: Demo Academy",
+          "bounds": [
+            88,
+            518,
+            475,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Qualification: Diploma",
+          "bounds": [
+            88,
+            597,
+            398,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Subject: Media Production",
+          "bounds": [
+            88,
+            676,
+            460,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Award date: not printed",
+          "bounds": [
+            87,
+            755,
+            429,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_004__degraded",
+      "source_fixture_id": "doc_degree_eval_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_degree_eval_004.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1184,
+      "height": 1584,
+      "sha256": "55b16e5109d3c95a0a5f714d15a96a57cda5b0de6ed796ef319efd71d95edd6a",
+      "source_text": "SYNTHETIC DIPLOMA\nName: Luca Fiction\nInstitution: Demo Academy\nQualification: Diploma\nSubject: Media Production\nAward date: not printed",
+      "source_text_sha256": "03557c4d22420c9c7148add6ef37a5871b33d2ab892176d9cd9a6f748afb418a",
+      "expected": {
+        "full_name": "Luca Fiction",
+        "institution": "Demo Academy",
+        "degree": "Diploma",
+        "field": "Media Production",
+        "award_date": null
+      },
+      "render_recipe": {
+        "seed": 17818195592490094575,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": -1.757,
+        "blur_radius_px": 0.689,
+        "lighting": {
+          "gradient_strength": 0.155,
+          "vignette_strength": 0.155,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 0.627,
+        "crop_edges_px": [
+          8,
+          5,
+          8,
+          11
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            932,
+            1177
+          ],
+          "angle_degrees": -15.239,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 60,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC DIPLOMA",
+          "bounds": [
+            88,
+            361,
+            400,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name: Luca Fiction",
+          "bounds": [
+            88,
+            440,
+            359,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Institution: Demo Academy",
+          "bounds": [
+            88,
+            518,
+            475,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Qualification: Diploma",
+          "bounds": [
+            88,
+            597,
+            398,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Subject: Media Production",
+          "bounds": [
+            88,
+            676,
+            460,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Award date: not printed",
+          "bounds": [
+            87,
+            755,
+            429,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_005__clean",
+      "source_fixture_id": "doc_degree_eval_005",
+      "case_id": "company_demo_001",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_degree_eval_005.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "1fc3610fd611efd5b7e95f9df732a1cc720d0c784dad684d7f7fd3f98ab787b8",
+      "source_text": "FAKE DEGREE\nName: Rowan Test-Case\nAwarding body: Test University\nDegree: Doctor of Philosophy\nField: Machine Learning\nDate: 2024-08-01",
+      "source_text_sha256": "12be90aa75bbccc2b6d069564fad7d0811952bcbf2b2ecfb26aa163c873e97d9",
+      "expected": {
+        "full_name": "Rowan Test-Case",
+        "institution": "Test University",
+        "degree": "Doctor of Philosophy",
+        "field": "Machine Learning",
+        "award_date": "2024-08-01"
+      },
+      "render_recipe": {
+        "seed": 7578648878730951048,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE DEGREE",
+          "bounds": [
+            88,
+            361,
+            288,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name: Rowan Test-Case",
+          "bounds": [
+            88,
+            440,
+            437,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Awarding body: Test University",
+          "bounds": [
+            87,
+            518,
+            531,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Degree: Doctor of Philosophy",
+          "bounds": [
+            88,
+            597,
+            503,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Field: Machine Learning",
+          "bounds": [
+            88,
+            676,
+            425,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Date: 2024-08-01",
+          "bounds": [
+            88,
+            756,
+            336,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_degree_eval_005__degraded",
+      "source_fixture_id": "doc_degree_eval_005",
+      "case_id": "company_demo_001",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_degree_eval_005.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1175,
+      "height": 1570,
+      "sha256": "ecbb7281fdd0c90fd2c0b6c3a67e12c17ce8ec25662d9a46ac4acbea57cc123d",
+      "source_text": "FAKE DEGREE\nName: Rowan Test-Case\nAwarding body: Test University\nDegree: Doctor of Philosophy\nField: Machine Learning\nDate: 2024-08-01",
+      "source_text_sha256": "12be90aa75bbccc2b6d069564fad7d0811952bcbf2b2ecfb26aa163c873e97d9",
+      "expected": {
+        "full_name": "Rowan Test-Case",
+        "institution": "Test University",
+        "degree": "Doctor of Philosophy",
+        "field": "Machine Learning",
+        "award_date": "2024-08-01"
+      },
+      "render_recipe": {
+        "seed": 7578648878730951048,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 2.624,
+        "blur_radius_px": 0.642,
+        "lighting": {
+          "gradient_strength": 0.181,
+          "vignette_strength": 0.115,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.357,
+        "crop_edges_px": [
+          11,
+          10,
+          14,
+          20
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            801,
+            1202
+          ],
+          "angle_degrees": -17.644,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 57,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE DEGREE",
+          "bounds": [
+            88,
+            361,
+            288,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name: Rowan Test-Case",
+          "bounds": [
+            88,
+            440,
+            437,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Awarding body: Test University",
+          "bounds": [
+            87,
+            518,
+            531,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Degree: Doctor of Philosophy",
+          "bounds": [
+            88,
+            597,
+            503,
+            627
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Field: Machine Learning",
+          "bounds": [
+            88,
+            676,
+            425,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Date: 2024-08-01",
+          "bounds": [
+            88,
+            756,
+            336,
+            779
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_001__clean",
+      "source_fixture_id": "doc_bank_eval_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_bank_eval_001.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "014f35812d8cf95fd8d1fc50bdb5000d65a5605beb83e11524e3b5bce197b985",
+      "source_text": "SYNTHETIC BANK STATEMENT — NO FINANCIAL VALUE\nAccount holder: Alex Demo\nBank: Fiction Bank\nAccount number: FAKE-ACCT-001\nStatement period: 2026-09-01 to 2026-09-30\nClosing balance: AED 48,200.50",
+      "source_text_sha256": "98f1905070c60ec2c22fa2539c0f68b5d1373c0e154e39c8aa661db9d3ac7503",
+      "expected": {
+        "account_holder": "Alex Demo",
+        "bank": "Fiction Bank",
+        "account_number": "FAKE-ACCT-001",
+        "period_start": "2026-09-01",
+        "period_end": "2026-09-30",
+        "closing_balance_aed": 48200.5
+      },
+      "render_recipe": {
+        "seed": 5830661312237566006,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC BANK STATEMENT — NO FINANCIAL VALUE",
+          "bounds": [
+            88,
+            361,
+            890,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account holder: Alex Demo",
+          "bounds": [
+            87,
+            439,
+            473,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Bank: Fiction Bank",
+          "bounds": [
+            88,
+            518,
+            352,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account number: FAKE-ACCT-001",
+          "bounds": [
+            87,
+            597,
+            566,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Statement period: 2026-09-01 to 2026-09-30",
+          "bounds": [
+            88,
+            676,
+            723,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance: AED 48,200.50",
+          "bounds": [
+            88,
+            755,
+            536,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_001__degraded",
+      "source_fixture_id": "doc_bank_eval_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_bank_eval_001.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1173,
+      "height": 1586,
+      "sha256": "a71bfab338ebf237c9f01e6f858cf8b405e9a77cceeb046a07d1fbc620222394",
+      "source_text": "SYNTHETIC BANK STATEMENT — NO FINANCIAL VALUE\nAccount holder: Alex Demo\nBank: Fiction Bank\nAccount number: FAKE-ACCT-001\nStatement period: 2026-09-01 to 2026-09-30\nClosing balance: AED 48,200.50",
+      "source_text_sha256": "98f1905070c60ec2c22fa2539c0f68b5d1373c0e154e39c8aa661db9d3ac7503",
+      "expected": {
+        "account_holder": "Alex Demo",
+        "bank": "Fiction Bank",
+        "account_number": "FAKE-ACCT-001",
+        "period_start": "2026-09-01",
+        "period_end": "2026-09-30",
+        "closing_balance_aed": 48200.5
+      },
+      "render_recipe": {
+        "seed": 5830661312237566006,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0.837,
+        "blur_radius_px": 0.415,
+        "lighting": {
+          "gradient_strength": 0.141,
+          "vignette_strength": 0.101,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.28,
+        "crop_edges_px": [
+          12,
+          8,
+          15,
+          6
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            846,
+            1239
+          ],
+          "angle_degrees": -12.961,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 57,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC BANK STATEMENT — NO FINANCIAL VALUE",
+          "bounds": [
+            88,
+            361,
+            890,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account holder: Alex Demo",
+          "bounds": [
+            87,
+            439,
+            473,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Bank: Fiction Bank",
+          "bounds": [
+            88,
+            518,
+            352,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account number: FAKE-ACCT-001",
+          "bounds": [
+            87,
+            597,
+            566,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Statement period: 2026-09-01 to 2026-09-30",
+          "bounds": [
+            88,
+            676,
+            723,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance: AED 48,200.50",
+          "bounds": [
+            88,
+            755,
+            536,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_002__clean",
+      "source_fixture_id": "doc_bank_eval_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_bank_eval_002.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "62343bc489193dda299e82b49d6553fe6e46328d5e1de5197ce309945832a383",
+      "source_text": "FAKE STATEMENT\nHolder: Mira Sample\nInstitution: Demo Bank\nAccount: FAKE-ACCT-002\nFrom 2026-08-01\nTo 2026-08-31\nOpening balance AED 10,000\nClosing balance AED 12,750",
+      "source_text_sha256": "ec0fd321d6e8bc701dd58cae8b3dee86855f57fae1cc1524beb8e992d26ecbdf",
+      "expected": {
+        "account_holder": "Mira Sample",
+        "bank": "Demo Bank",
+        "account_number": "FAKE-ACCT-002",
+        "period_start": "2026-08-01",
+        "period_end": "2026-08-31",
+        "closing_balance_aed": 12750
+      },
+      "render_recipe": {
+        "seed": 6791624609136451845,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE STATEMENT",
+          "bounds": [
+            88,
+            361,
+            347,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Holder: Mira Sample",
+          "bounds": [
+            88,
+            439,
+            377,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Institution: Demo Bank",
+          "bounds": [
+            88,
+            518,
+            417,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account: FAKE-ACCT-002",
+          "bounds": [
+            87,
+            598,
+            446,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "From 2026-08-01",
+          "bounds": [
+            88,
+            677,
+            331,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "To 2026-08-31",
+          "bounds": [
+            87,
+            756,
+            294,
+            779
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Opening balance AED 10,000",
+          "bounds": [
+            88,
+            834,
+            500,
+            864
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance AED 12,750",
+          "bounds": [
+            88,
+            913,
+            481,
+            943
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_002__degraded",
+      "source_fixture_id": "doc_bank_eval_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_bank_eval_002.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1183,
+      "height": 1583,
+      "sha256": "f18890c8b924607f2173d7f21a62e0727f96a10cf62134da7e770ce365f9d5c2",
+      "source_text": "FAKE STATEMENT\nHolder: Mira Sample\nInstitution: Demo Bank\nAccount: FAKE-ACCT-002\nFrom 2026-08-01\nTo 2026-08-31\nOpening balance AED 10,000\nClosing balance AED 12,750",
+      "source_text_sha256": "ec0fd321d6e8bc701dd58cae8b3dee86855f57fae1cc1524beb8e992d26ecbdf",
+      "expected": {
+        "account_holder": "Mira Sample",
+        "bank": "Demo Bank",
+        "account_number": "FAKE-ACCT-002",
+        "period_start": "2026-08-01",
+        "period_end": "2026-08-31",
+        "closing_balance_aed": 12750
+      },
+      "render_recipe": {
+        "seed": 6791624609136451845,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 1.412,
+        "blur_radius_px": 0.554,
+        "lighting": {
+          "gradient_strength": 0.208,
+          "vignette_strength": 0.166,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.32,
+        "crop_edges_px": [
+          7,
+          11,
+          10,
+          6
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            796,
+            1176
+          ],
+          "angle_degrees": -16.078,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 53,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE STATEMENT",
+          "bounds": [
+            88,
+            361,
+            347,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Holder: Mira Sample",
+          "bounds": [
+            88,
+            439,
+            377,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Institution: Demo Bank",
+          "bounds": [
+            88,
+            518,
+            417,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account: FAKE-ACCT-002",
+          "bounds": [
+            87,
+            598,
+            446,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "From 2026-08-01",
+          "bounds": [
+            88,
+            677,
+            331,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "To 2026-08-31",
+          "bounds": [
+            87,
+            756,
+            294,
+            779
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Opening balance AED 10,000",
+          "bounds": [
+            88,
+            834,
+            500,
+            864
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance AED 12,750",
+          "bounds": [
+            88,
+            913,
+            481,
+            943
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_003__clean",
+      "source_fixture_id": "doc_bank_eval_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_bank_eval_003.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "3cf436dbd933731db69536806e3d3b17a6ceee403e53dd112e4349c62c8e26de",
+      "source_text": "SYNTHETIC ACCOUNT SUMMARY\nName: Noor Example\nBank: Sample Savings\nNumber: FAKE-ACCT-003\nPeriod start: 2026-07-01\nPeriod end: 2026-07-31\nClosing balance: AED -125.75",
+      "source_text_sha256": "43829117bc3b68052eadfdf5840d9328d145937f019ba56becb61b4477216370",
+      "expected": {
+        "account_holder": "Noor Example",
+        "bank": "Sample Savings",
+        "account_number": "FAKE-ACCT-003",
+        "period_start": "2026-07-01",
+        "period_end": "2026-07-31",
+        "closing_balance_aed": -125.75
+      },
+      "render_recipe": {
+        "seed": 17761359643776653936,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC ACCOUNT SUMMARY",
+          "bounds": [
+            88,
+            361,
+            562,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name: Noor Example",
+          "bounds": [
+            88,
+            439,
+            388,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Bank: Sample Savings",
+          "bounds": [
+            88,
+            518,
+            401,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Number: FAKE-ACCT-003",
+          "bounds": [
+            88,
+            597,
+            446,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Period start: 2026-07-01",
+          "bounds": [
+            88,
+            676,
+            433,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Period end: 2026-07-31",
+          "bounds": [
+            88,
+            755,
+            421,
+            779
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance: AED -125.75",
+          "bounds": [
+            88,
+            834,
+            504,
+            864
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_003__degraded",
+      "source_fixture_id": "doc_bank_eval_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_bank_eval_003.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1181,
+      "height": 1580,
+      "sha256": "b8c5638a4b975a5b7cd876fdc8ab3d4f635e4db0cc9f115ed476d7651296c4ce",
+      "source_text": "SYNTHETIC ACCOUNT SUMMARY\nName: Noor Example\nBank: Sample Savings\nNumber: FAKE-ACCT-003\nPeriod start: 2026-07-01\nPeriod end: 2026-07-31\nClosing balance: AED -125.75",
+      "source_text_sha256": "43829117bc3b68052eadfdf5840d9328d145937f019ba56becb61b4477216370",
+      "expected": {
+        "account_holder": "Noor Example",
+        "bank": "Sample Savings",
+        "account_number": "FAKE-ACCT-003",
+        "period_start": "2026-07-01",
+        "period_end": "2026-07-31",
+        "closing_balance_aed": -125.75
+      },
+      "render_recipe": {
+        "seed": 17761359643776653936,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": -1.672,
+        "blur_radius_px": 0.835,
+        "lighting": {
+          "gradient_strength": 0.216,
+          "vignette_strength": 0.116,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 0.778,
+        "crop_edges_px": [
+          5,
+          10,
+          14,
+          10
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            797,
+            1169
+          ],
+          "angle_degrees": -13.5,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 60,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC ACCOUNT SUMMARY",
+          "bounds": [
+            88,
+            361,
+            562,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Name: Noor Example",
+          "bounds": [
+            88,
+            439,
+            388,
+            469
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Bank: Sample Savings",
+          "bounds": [
+            88,
+            518,
+            401,
+            548
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Number: FAKE-ACCT-003",
+          "bounds": [
+            88,
+            597,
+            446,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Period start: 2026-07-01",
+          "bounds": [
+            88,
+            676,
+            433,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Period end: 2026-07-31",
+          "bounds": [
+            88,
+            755,
+            421,
+            779
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance: AED -125.75",
+          "bounds": [
+            88,
+            834,
+            504,
+            864
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_004__clean",
+      "source_fixture_id": "doc_bank_eval_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_bank_eval_004.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "0b71a12cf6224c2a41bc4c81efe40d9e17dd9023412c0511c7259f5a1dcda53f",
+      "source_text": "FAKE BANK STATEMENT\nAccount holder Luca Fiction\nBank Demo Credit\nAccount FAKE-ACCT-004\nPeriod 2026-06-01 through 2026-06-30\nClosing balance: [unreadable]",
+      "source_text_sha256": "1838bdc92cba1cd1ed6e9172676ba8ec1a6a83d7297c75403205c120a3b47901",
+      "expected": {
+        "account_holder": "Luca Fiction",
+        "bank": "Demo Credit",
+        "account_number": "FAKE-ACCT-004",
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "closing_balance_aed": null
+      },
+      "render_recipe": {
+        "seed": 17769795057534471336,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE BANK STATEMENT",
+          "bounds": [
+            88,
+            361,
+            435,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account holder Luca Fiction",
+          "bounds": [
+            87,
+            439,
+            478,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Bank Demo Credit",
+          "bounds": [
+            88,
+            518,
+            345,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account FAKE-ACCT-004",
+          "bounds": [
+            87,
+            598,
+            435,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Period 2026-06-01 through 2026-06-30",
+          "bounds": [
+            88,
+            676,
+            639,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance: [unreadable]",
+          "bounds": [
+            88,
+            755,
+            511,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_004__degraded",
+      "source_fixture_id": "doc_bank_eval_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_bank_eval_004.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1173,
+      "height": 1572,
+      "sha256": "5a49c85fe8ab8570a41db257bc86d63389bf11d38e9bac4e14e9cf0e6badc752",
+      "source_text": "FAKE BANK STATEMENT\nAccount holder Luca Fiction\nBank Demo Credit\nAccount FAKE-ACCT-004\nPeriod 2026-06-01 through 2026-06-30\nClosing balance: [unreadable]",
+      "source_text_sha256": "1838bdc92cba1cd1ed6e9172676ba8ec1a6a83d7297c75403205c120a3b47901",
+      "expected": {
+        "account_holder": "Luca Fiction",
+        "bank": "Demo Credit",
+        "account_number": "FAKE-ACCT-004",
+        "period_start": "2026-06-01",
+        "period_end": "2026-06-30",
+        "closing_balance_aed": null
+      },
+      "render_recipe": {
+        "seed": 17769795057534471336,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0.202,
+        "blur_radius_px": 0.678,
+        "lighting": {
+          "gradient_strength": 0.214,
+          "vignette_strength": 0.102,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 1.291,
+        "crop_edges_px": [
+          11,
+          11,
+          16,
+          17
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            902,
+            1234
+          ],
+          "angle_degrees": -9.72,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 55,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE BANK STATEMENT",
+          "bounds": [
+            88,
+            361,
+            435,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account holder Luca Fiction",
+          "bounds": [
+            87,
+            439,
+            478,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Bank Demo Credit",
+          "bounds": [
+            88,
+            518,
+            345,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account FAKE-ACCT-004",
+          "bounds": [
+            87,
+            598,
+            435,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Period 2026-06-01 through 2026-06-30",
+          "bounds": [
+            88,
+            676,
+            639,
+            706
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance: [unreadable]",
+          "bounds": [
+            88,
+            755,
+            511,
+            785
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_005__clean",
+      "source_fixture_id": "doc_bank_eval_005",
+      "case_id": "company_demo_001",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "clean",
+      "language": "en",
+      "image": "clean/doc_bank_eval_005.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "4fb896d662352dcacf075b037a8c532d7bca6c65ab5f4c29c24b7836818cddfb",
+      "source_text": "SYNTHETIC STATEMENT\nBank: Fiction Bank\nHolder: Rowan Test-Case\nAccount: FAKE-ACCT-005\nStatement dates 2026-05-01 — 2026-05-31\nClosing balance: AED 0.00\nTotal deposits: AED 22,000",
+      "source_text_sha256": "c7bb8a67117ebbe666d8afc340b8af3efeaa77b197a5ec7bad7eb4161c72a810",
+      "expected": {
+        "account_holder": "Rowan Test-Case",
+        "bank": "Fiction Bank",
+        "account_number": "FAKE-ACCT-005",
+        "period_start": "2026-05-01",
+        "period_end": "2026-05-31",
+        "closing_balance_aed": 0
+      },
+      "render_recipe": {
+        "seed": 287028899496681541,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC STATEMENT",
+          "bounds": [
+            88,
+            361,
+            440,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Bank: Fiction Bank",
+          "bounds": [
+            88,
+            439,
+            352,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Holder: Rowan Test-Case",
+          "bounds": [
+            88,
+            518,
+            448,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account: FAKE-ACCT-005",
+          "bounds": [
+            87,
+            598,
+            446,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Statement dates 2026-05-01 — 2026-05-31",
+          "bounds": [
+            88,
+            676,
+            701,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance: AED 0.00",
+          "bounds": [
+            88,
+            755,
+            458,
+            785
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Total deposits: AED 22,000",
+          "bounds": [
+            87,
+            834,
+            470,
+            864
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "doc_bank_eval_005__degraded",
+      "source_fixture_id": "doc_bank_eval_005",
+      "case_id": "company_demo_001",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "degraded",
+      "language": "en",
+      "image": "degraded/doc_bank_eval_005.jpg",
+      "mime_type": "image/jpeg",
+      "width": 1170,
+      "height": 1568,
+      "sha256": "6cae27e4c90dc74f79ed2d0e7693403daa4a86d1cc0e442f3a96456b5e725cbb",
+      "source_text": "SYNTHETIC STATEMENT\nBank: Fiction Bank\nHolder: Rowan Test-Case\nAccount: FAKE-ACCT-005\nStatement dates 2026-05-01 — 2026-05-31\nClosing balance: AED 0.00\nTotal deposits: AED 22,000",
+      "source_text_sha256": "c7bb8a67117ebbe666d8afc340b8af3efeaa77b197a5ec7bad7eb4161c72a810",
+      "expected": {
+        "account_holder": "Rowan Test-Case",
+        "bank": "Fiction Bank",
+        "account_number": "FAKE-ACCT-005",
+        "period_start": "2026-05-01",
+        "period_end": "2026-05-31",
+        "closing_balance_aed": 0
+      },
+      "render_recipe": {
+        "seed": 287028899496681541,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0.116,
+        "blur_radius_px": 0.612,
+        "lighting": {
+          "gradient_strength": 0.155,
+          "vignette_strength": 0.128,
+          "warm_tint_rgb": [
+            1.0,
+            0.985,
+            0.956
+          ]
+        },
+        "noise_sigma": 0.927,
+        "crop_edges_px": [
+          18,
+          12,
+          12,
+          20
+        ],
+        "stamp": {
+          "text": "SYNTHETIC COPY",
+          "center_px": [
+            877,
+            1189
+          ],
+          "angle_degrees": -15.951,
+          "alpha": 122
+        },
+        "encoding": {
+          "format": "jpeg",
+          "quality": 54,
+          "subsampling": 2,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC STATEMENT",
+          "bounds": [
+            88,
+            361,
+            440,
+            384
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Bank: Fiction Bank",
+          "bounds": [
+            88,
+            439,
+            352,
+            463
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Holder: Rowan Test-Case",
+          "bounds": [
+            88,
+            518,
+            448,
+            542
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Account: FAKE-ACCT-005",
+          "bounds": [
+            87,
+            598,
+            446,
+            621
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Statement dates 2026-05-01 — 2026-05-31",
+          "bounds": [
+            88,
+            676,
+            701,
+            700
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Closing balance: AED 0.00",
+          "bounds": [
+            88,
+            755,
+            458,
+            785
+          ],
+          "rtl_shaped": false
+        },
+        {
+          "source_text": "Total deposits: AED 22,000",
+          "bounds": [
+            87,
+            834,
+            470,
+            864
+          ],
+          "rtl_shaped": false
+        }
+      ]
+    },
+    {
+      "id": "fake_ar_passport_001__arabic",
+      "source_fixture_id": "fake_ar_passport_001",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "arabic",
+      "language": "ar",
+      "image": "arabic/fake_ar_passport_001.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "39daf9396bc9c8b14ccd18d1fb05c31abd7055580551c5dfd51416a8f2832a0f",
+      "source_text": "جواز سفر وهمي — غير صالح للسفر\nالاسم الكامل: سامي مثال تجريبي\nرقم الجواز: FAKE-AR-P-001\nالجنسية: جمهورية المثال الوهمية\nتاريخ الميلاد: ١٩٩٤-٠٣-٠٢\nتاريخ الانتهاء: ٢٠٣١-٠٥-٠٦",
+      "source_text_sha256": "08234079108d6951dacc53848f3e53ee9b60af04236e0079f60bb9b44ee906d9",
+      "expected": {
+        "full_name": "سامي مثال تجريبي",
+        "passport_number": "FAKE-AR-P-001",
+        "nationality": "جمهورية المثال الوهمية",
+        "date_of_birth": "1994-03-02",
+        "expiry_date": "2031-05-06"
+      },
+      "render_recipe": {
+        "seed": 11502723885047655313,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "جواز سفر وهمي — غير صالح للسفر",
+          "bounds": [
+            632.0,
+            360,
+            1112.0,
+            391
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "الاسم الكامل: سامي مثال تجريبي",
+          "bounds": [
+            658.0,
+            438,
+            1112.0,
+            469
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "رقم الجواز: FAKE-AR-P-001",
+          "bounds": [
+            744.046875,
+            518,
+            1112.046875,
+            549
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "الجنسية: جمهورية المثال الوهمية",
+          "bounds": [
+            669.0,
+            597,
+            1112.0,
+            628
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "تاريخ الميلاد: ١٩٩٤-٠٣-٠٢",
+          "bounds": [
+            767.0,
+            676,
+            1112.0,
+            706
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "تاريخ الانتهاء: ٢٠٣١-٠٥-٠٦",
+          "bounds": [
+            766.0,
+            755,
+            1112.0,
+            785
+          ],
+          "rtl_shaped": true
+        }
+      ]
+    },
+    {
+      "id": "fake_bilingual_passport_002__arabic",
+      "source_fixture_id": "fake_bilingual_passport_002",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "passport",
+      "cohort": "arabic",
+      "language": "ar-en",
+      "image": "arabic/fake_bilingual_passport_002.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "cd4452fd6891c86d91b6a4ac903488b5eb4120f592258bb3ccc9d74f0985220b",
+      "source_text": "FAKE PASSPORT / جواز سفر وهمي\nFull name / الاسم الكامل: ليلى مثال تجريبي\nPassport number / رقم الجواز: FAKE-BI-P-002\nNationality / الجنسية: دولة الاختبار الوهمية\nDate of birth / تاريخ الميلاد: 1996-08-14\nExpiry date / تاريخ الانتهاء: 2032-07-01",
+      "source_text_sha256": "8ed99e71822e0fd760c8fc647ddc2cabf096eeb07139ff656642ea5641807dba",
+      "expected": {
+        "full_name": "ليلى مثال تجريبي",
+        "passport_number": "FAKE-BI-P-002",
+        "nationality": "دولة الاختبار الوهمية",
+        "date_of_birth": "1996-08-14",
+        "expiry_date": "2032-07-01"
+      },
+      "render_recipe": {
+        "seed": 8034708768459377697,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE PASSPORT / جواز سفر وهمي",
+          "bounds": [
+            623.046875,
+            360,
+            1112.046875,
+            391
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Full name / الاسم الكامل: ليلى مثال تجريبي",
+          "bounds": [
+            513.0,
+            438,
+            1112.0,
+            469
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Passport number / رقم الجواز: FAKE-BI-P-002",
+          "bounds": [
+            479.03125,
+            518,
+            1112.03125,
+            549
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Nationality / الجنسية: دولة الاختبار الوهمية",
+          "bounds": [
+            530.0,
+            597,
+            1112.0,
+            628
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Date of birth / تاريخ الميلاد: 1996-08-14",
+          "bounds": [
+            563.0,
+            676,
+            1112.0,
+            706
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Expiry date / تاريخ الانتهاء: 2032-07-01",
+          "bounds": [
+            582.0,
+            755,
+            1112.0,
+            785
+          ],
+          "rtl_shaped": true
+        }
+      ]
+    },
+    {
+      "id": "fake_ar_offer_003__arabic",
+      "source_fixture_id": "fake_ar_offer_003",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "arabic",
+      "language": "ar",
+      "image": "arabic/fake_ar_offer_003.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "5d6b539923997767035362835c8d3b3154b763a6f2a99938020c7d933f321e01",
+      "source_text": "عرض عمل وهمي — مثال للاختبار فقط\nالموظف: نور مثال تجريبي\nجهة العمل: شركة المثال الوهمية\nالمسمى الوظيفي: مهندس برمجيات\nتاريخ البدء: ٢٠٢٦-١١-١٥\nالراتب السنوي: ٢٦٤٬٠٠٠ درهم في ١٢ دفعة شهرية متساوية",
+      "source_text_sha256": "f4dc650e49bd600df257c0d4c9aac8b21998a59ff4f22a139b9832f9bfb15867",
+      "expected": {
+        "employee_name": "نور مثال تجريبي",
+        "employer": "شركة المثال الوهمية",
+        "role": "مهندس برمجيات",
+        "start_date": "2026-11-15",
+        "monthly_salary_aed": 22000
+      },
+      "render_recipe": {
+        "seed": 14949043738802521973,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "عرض عمل وهمي — مثال للاختبار فقط",
+          "bounds": [
+            600.0,
+            360,
+            1112.0,
+            391
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "الموظف: نور مثال تجريبي",
+          "bounds": [
+            782.0,
+            439,
+            1112.0,
+            470
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "جهة العمل: شركة المثال الوهمية",
+          "bounds": [
+            675.0,
+            517,
+            1112.0,
+            549
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "المسمى الوظيفي: مهندس برمجيات",
+          "bounds": [
+            631.0,
+            597,
+            1112.0,
+            628
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "تاريخ البدء: ٢٠٢٦-١١-١٥",
+          "bounds": [
+            795.0,
+            676,
+            1112.0,
+            706
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "الراتب السنوي: ٢٦٤٬٠٠٠ درهم في ١٢ دفعة شهرية متساوية",
+          "bounds": [
+            309.0,
+            755,
+            1112.0,
+            786
+          ],
+          "rtl_shaped": true
+        }
+      ]
+    },
+    {
+      "id": "fake_bilingual_offer_004__arabic",
+      "source_fixture_id": "fake_bilingual_offer_004",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "offer_letter",
+      "cohort": "arabic",
+      "language": "ar-en",
+      "image": "arabic/fake_bilingual_offer_004.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "4ea4c0356e3c6264f29224feabf3a80188f1b0dbbb1945d2140309a56838e7bd",
+      "source_text": "SYNTHETIC OFFER / عرض عمل وهمي\nEmployee / الموظف: رامي مثال تجريبي\nEmployer / جهة العمل: مختبر الاختبار الوهمي\nRole / المسمى الوظيفي: محلل بيانات\nStart date / تاريخ البدء: لم يحدد بعد\nMonthly salary / الراتب الشهري: AED 27,500",
+      "source_text_sha256": "b0b1fd17382f2727ed407e490c9aabec3c37f3b9fa22f395af668bea29c3a810",
+      "expected": {
+        "employee_name": "رامي مثال تجريبي",
+        "employer": "مختبر الاختبار الوهمي",
+        "role": "محلل بيانات",
+        "start_date": null,
+        "monthly_salary_aed": 27500
+      },
+      "render_recipe": {
+        "seed": 17140717153238683219,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC OFFER / عرض عمل وهمي",
+          "bounds": [
+            573.0,
+            360,
+            1112.0,
+            391
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Employee / الموظف: رامي مثال تجريبي",
+          "bounds": [
+            580.0,
+            439,
+            1112.0,
+            470
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Employer / جهة العمل: مختبر الاختبار الوهمي",
+          "bounds": [
+            498.0,
+            518,
+            1112.0,
+            549
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Role / المسمى الوظيفي: محلل بيانات",
+          "bounds": [
+            600.015625,
+            597,
+            1112.015625,
+            628
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Start date / تاريخ البدء: لم يحدد بعد",
+          "bounds": [
+            634.0,
+            676,
+            1112.0,
+            706
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Monthly salary / الراتب الشهري: AED 27,500",
+          "bounds": [
+            493.03125,
+            755,
+            1112.03125,
+            785
+          ],
+          "rtl_shaped": true
+        }
+      ]
+    },
+    {
+      "id": "fake_ar_degree_005__arabic",
+      "source_fixture_id": "fake_ar_degree_005",
+      "case_id": "hire_demo_001",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "arabic",
+      "language": "ar",
+      "image": "arabic/fake_ar_degree_005.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "0cd635437f9f24d6f284898b1962a35b77c2bd174bdbd30fb7513d84b9b1aeba",
+      "source_text": "شهادة تعليمية وهمية — لا قيمة أكاديمية لها\nالاسم: سارة مثال تجريبي\nالمؤسسة: جامعة المثال الوهمية\nالدرجة: بكالوريوس العلوم\nالتخصص: هندسة الحاسوب\nتاريخ المنح: ٢٠١٨-٠٦-٣٠",
+      "source_text_sha256": "c437fde06ef5900b9a28b91e2ceb34b43f57075452818c291c77e7e207564c9d",
+      "expected": {
+        "full_name": "سارة مثال تجريبي",
+        "institution": "جامعة المثال الوهمية",
+        "degree": "بكالوريوس العلوم",
+        "field": "هندسة الحاسوب",
+        "award_date": "2018-06-30"
+      },
+      "render_recipe": {
+        "seed": 14587741194910282163,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "شهادة تعليمية وهمية — لا قيمة أكاديمية لها",
+          "bounds": [
+            528.0,
+            352,
+            1112.0,
+            391
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "الاسم: سارة مثال تجريبي",
+          "bounds": [
+            771.0,
+            439,
+            1112.0,
+            469
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "المؤسسة: جامعة المثال الوهمية",
+          "bounds": [
+            681.0,
+            518,
+            1112.0,
+            549
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "الدرجة: بكالوريوس العلوم",
+          "bounds": [
+            785.0,
+            596,
+            1112.0,
+            628
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "التخصص: هندسة الحاسوب",
+          "bounds": [
+            751.0,
+            676,
+            1112.0,
+            707
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "تاريخ المنح: ٢٠١٨-٠٦-٣٠",
+          "bounds": [
+            783.0,
+            755,
+            1112.0,
+            785
+          ],
+          "rtl_shaped": true
+        }
+      ]
+    },
+    {
+      "id": "fake_bilingual_degree_006__arabic",
+      "source_fixture_id": "fake_bilingual_degree_006",
+      "case_id": "hire_demo_002",
+      "synthetic": true,
+      "kind": "degree_certificate",
+      "cohort": "arabic",
+      "language": "ar-en",
+      "image": "arabic/fake_bilingual_degree_006.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "de1ebeef0e5311bfa05d1ebb531e3e1b149ed40cdc47d00c0513d6796455b459",
+      "source_text": "FAKE DEGREE / شهادة وهمية\nName / الاسم: آدم مثال تجريبي\nInstitution / المؤسسة: معهد الاختبار الوهمي\nDegree / الدرجة: ماجستير العلوم\nField / التخصص: الإحصاء\nAward date / تاريخ المنح: 2023-07-15",
+      "source_text_sha256": "0467f77d675ec0c0c8c77b721c855dbc777990fbe14f3319bfe2aab3506939c6",
+      "expected": {
+        "full_name": "آدم مثال تجريبي",
+        "institution": "معهد الاختبار الوهمي",
+        "degree": "ماجستير العلوم",
+        "field": "الإحصاء",
+        "award_date": "2023-07-15"
+      },
+      "render_recipe": {
+        "seed": 11674695572515592680,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "FAKE DEGREE / شهادة وهمية",
+          "bounds": [
+            699.015625,
+            360,
+            1112.015625,
+            391
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Name / الاسم: آدم مثال تجريبي",
+          "bounds": [
+            682.0,
+            434,
+            1112.0,
+            469
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Institution / المؤسسة: معهد الاختبار الوهمي",
+          "bounds": [
+            501.0,
+            518,
+            1112.0,
+            549
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Degree / الدرجة: ماجستير العلوم",
+          "bounds": [
+            670.0,
+            597,
+            1112.0,
+            628
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Field / التخصص: الإحصاء",
+          "bounds": [
+            787.0,
+            676,
+            1112.0,
+            707
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Award date / تاريخ المنح: 2023-07-15",
+          "bounds": [
+            595.0,
+            755,
+            1112.0,
+            785
+          ],
+          "rtl_shaped": true
+        }
+      ]
+    },
+    {
+      "id": "fake_ar_bank_007__arabic",
+      "source_fixture_id": "fake_ar_bank_007",
+      "case_id": "hire_demo_003",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "arabic",
+      "language": "ar",
+      "image": "arabic/fake_ar_bank_007.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "20a834bf5f67cceff63319684525fa6b7086631bb2a01c0aee1dd5f3794e2534",
+      "source_text": "خطاب مصرفي وهمي — لا قيمة مالية له\nصاحب الحساب: مريم مثال تجريبي\nالمصرف: مصرف الاختبار الوهمي\nرقم الحساب: FAKE-AR-ACCT-007\nبداية الفترة: ٢٠٢٦-٠٩-٠١\nنهاية الفترة: ٢٠٢٦-٠٩-٣٠\nالرصيد الختامي: ١٢٬٣٤٥٫٧٥ درهم",
+      "source_text_sha256": "127a40bd4537c0690c18451f5855e9407063f2d3c527c108c7791a0d73c5761d",
+      "expected": {
+        "account_holder": "مريم مثال تجريبي",
+        "bank": "مصرف الاختبار الوهمي",
+        "account_number": "FAKE-AR-ACCT-007",
+        "period_start": "2026-09-01",
+        "period_end": "2026-09-30",
+        "closing_balance_aed": 12345.75
+      },
+      "render_recipe": {
+        "seed": 532616174760236943,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "خطاب مصرفي وهمي — لا قيمة مالية له",
+          "bounds": [
+            579.0,
+            360,
+            1112.0,
+            391
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "صاحب الحساب: مريم مثال تجريبي",
+          "bounds": [
+            656.0,
+            439,
+            1112.0,
+            469
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "المصرف: مصرف الاختبار الوهمي",
+          "bounds": [
+            692.0,
+            518,
+            1112.0,
+            549
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "رقم الحساب: FAKE-AR-ACCT-007",
+          "bounds": [
+            651.09375,
+            597,
+            1112.09375,
+            627
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "بداية الفترة: ٢٠٢٦-٠٩-٠١",
+          "bounds": [
+            780.0,
+            676,
+            1112.0,
+            706
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "نهاية الفترة: ٢٠٢٦-٠٩-٣٠",
+          "bounds": [
+            778.0,
+            755,
+            1112.0,
+            785
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "الرصيد الختامي: ١٢٬٣٤٥٫٧٥ درهم",
+          "bounds": [
+            663.0,
+            834,
+            1112.0,
+            864
+          ],
+          "rtl_shaped": true
+        }
+      ]
+    },
+    {
+      "id": "fake_bilingual_bank_008__arabic",
+      "source_fixture_id": "fake_bilingual_bank_008",
+      "case_id": "hire_demo_004",
+      "synthetic": true,
+      "kind": "bank_statement",
+      "cohort": "arabic",
+      "language": "ar-en",
+      "image": "arabic/fake_bilingual_bank_008.png",
+      "mime_type": "image/png",
+      "width": 1200,
+      "height": 1600,
+      "sha256": "cd0a3e21a344517cb63bcbddf10051339635492ebc35c6beb69d78ac29fdfa22",
+      "source_text": "SYNTHETIC BANK LETTER / خطاب مصرفي وهمي\nAccount holder / صاحب الحساب: هدى مثال تجريبي\nBank / المصرف: بنك المثال الوهمي\nAccount number / رقم الحساب: FAKE-BI-ACCT-008\nPeriod start / بداية الفترة: 2026-08-01\nPeriod end / نهاية الفترة: 2026-08-31\nClosing balance / الرصيد الختامي: AED -75.50",
+      "source_text_sha256": "47eed2d33b31df6b7f35d1e6cc33792549883e18b3a0f66bec0bb67a3a41c5ec",
+      "expected": {
+        "account_holder": "هدى مثال تجريبي",
+        "bank": "بنك المثال الوهمي",
+        "account_number": "FAKE-BI-ACCT-008",
+        "period_start": "2026-08-01",
+        "period_end": "2026-08-31",
+        "closing_balance_aed": -75.5
+      },
+      "render_recipe": {
+        "seed": 9886080925160832580,
+        "operation_order": [
+          "render",
+          "stamps",
+          "lighting",
+          "gaussian_noise",
+          "rotation",
+          "gaussian_blur",
+          "crop",
+          "encode"
+        ],
+        "canvas_px": [
+          1200,
+          1600
+        ],
+        "rotation_degrees": 0,
+        "blur_radius_px": 0,
+        "lighting": {
+          "gradient_strength": 0,
+          "vignette_strength": 0,
+          "warm_tint_rgb": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "noise_sigma": 0,
+        "crop_edges_px": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "stamp": null,
+        "encoding": {
+          "format": "png",
+          "quality": null,
+          "subsampling": null,
+          "optimize": false
+        },
+        "expected_visibility": "All scored fields retained; crop affects outer margins only. Existing unreadable fields remain null."
+      },
+      "source_text_boxes": [
+        {
+          "source_text": "SYNTHETIC BANK LETTER / خطاب مصرفي وهمي",
+          "bounds": [
+            422.03125,
+            360,
+            1112.03125,
+            391
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Account holder / صاحب الحساب: هدى مثال تجريبي",
+          "bounds": [
+            404.0,
+            439,
+            1112.0,
+            469
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Bank / المصرف: بنك المثال الوهمي",
+          "bounds": [
+            640.0,
+            518,
+            1112.0,
+            549
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Account number / رقم الحساب: FAKE-BI-ACCT-008",
+          "bounds": [
+            393.0625,
+            597,
+            1112.0625,
+            627
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Period start / بداية الفترة: 2026-08-01",
+          "bounds": [
+            592.015625,
+            676,
+            1112.015625,
+            706
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Period end / نهاية الفترة: 2026-08-31",
+          "bounds": [
+            602.015625,
+            755,
+            1112.015625,
+            785
+          ],
+          "rtl_shaped": true
+        },
+        {
+          "source_text": "Closing balance / الرصيد الختامي: AED -75.50",
+          "bounds": [
+            482.0,
+            834,
+            1112.0,
+            864
+          ],
+          "rtl_shaped": true
+        }
+      ]
+    }
+  ]
+}
