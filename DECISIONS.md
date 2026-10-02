@@ -41,6 +41,25 @@ Every assumption and design or technical decision, with one line of reasoning. N
 - **Placeholder pages show a designed empty state with no button.** A call to action that goes nowhere is worse than none.
 - **The collapse state is stored in `localStorage` and applied after mount**, so server and client markup always agree.
 
+## Data model and live sync (Session 2)
+
+- **Sync is a server-authoritative in-memory store pushed over Server-Sent Events.** Clients never mutate local state: they POST an action, the server applies it with a pure reducer, bumps `rev`, and streams the new snapshot to every connected tab and device. Why not the alternatives: `BroadcastChannel` and `localStorage` only sync tabs in one browser, so a phone and a laptop would never agree; WebSockets need a custom server beside Next; polling is not instant. The agent loop also has to run server-side to keep `OPENAI_API_KEY` out of the browser, so the server must own the state anyway.
+- **Full snapshots, not patches.** The seed is about 60 KB of JSON. Pushing the whole state after each change is always consistent and has no ordering bugs. Revisit with patches only if state grows by an order of magnitude.
+- **A snapshot replaces the client copy only if its epoch is new or its revision is higher.** The epoch changes when the server restarts (the revision starts over), and the revision rule stops a slow response from rolling a screen back. Covered by tests.
+- **The store lives on `globalThis`.** Next bundles route handlers and server components separately in development, so a module-level singleton would give each bundle its own state.
+- **Every state change goes through one pure function, `applyAction(state, action)`.** It clones, mutates the clone, bumps `rev` and returns it. Tests pin the clock, and the same function can sit in front of a database later.
+- **The demo clock starts at 2026-10-10 09:30 +04:00 on every reset and then advances with real time.** Seed dates stay plausible relative to anything created during a demo, and match the timestamps in INTEGRATION.md.
+- **A hire's stage and status are derived from its steps, never stored.** They cannot drift out of step with the roadmap. Stage is the earliest unfinished step; status is blocked, waiting, on track or settled.
+- **A dependency can unlock on application, not only completion.** "Bank account unlocks after the Emirates ID application" is modelled as `unlockAfter: 'applied'`, so the account opens once the application is in.
+- **Roadmap reasoning is hedged.** "Banks usually ask for...", "Family sponsorship can depend on...": no step states a fee, duration or legal requirement as fact.
+- **The two demo paths use the contract's fixture ids.** The seed deliberately omits `hire_demo_001` and `company_demo_001`. The first hire added after a reset becomes `hire_demo_001`, the first company becomes `company_demo_001`, and the team move creates `hire_demo_002` to `hire_demo_004`. Later ids are generated.
+- **Completing a company's visa quota moves its team into the hire pipeline.** This is a reducer rule, so it works the same from the UI, the agent or a test. It is idempotent: completing the step again creates no duplicates.
+- **TAMM service ids on steps come from Devin's catalogue**: `svc_residency_visa`, `svc_emirates_id`, `svc_tawtheeq_register`, `svc_health_insurance`, `svc_school_registration`, `svc_trade_name`, `svc_economic_license`, `svc_adgm_setup`, `svc_kezad_setup`, `svc_masdar_setup`, `svc_twofour54_setup`, `svc_establishment_card`, `svc_visa_quota`. Hub71 and the entity bank account have no catalogue service and carry none.
+- **Money is named `est*`** (`estMonthlySalaryAed`, `estAnnualRentAed`): illustrative mock data by name, "est." in the UI.
+- **Seed organisations, people and properties are fictional**, and emails use the reserved `.example` domain.
+- **vitest is pinned to 3.2.4.** npm's peer resolver crashes on 4.1.11's optional `@vitest/browser-playwright@5.0.3` peer ("Cannot read properties of null (reading 'edgesOut')").
+- **`scripts/sync-check.mjs` is the acceptance test for live sync**: two real browser tabs, a change in one, a measured wait in the other.
+
 ## Scope update: Abu Dhabi and company expansion
 
 - **Abu Dhabi context is applied from the first seed file, not retrofitted.** Session 8 becomes an audit of that, not a rewrite. Retrofitting names, areas and flows across finished screens is more expensive and error-prone.

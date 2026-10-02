@@ -1,4 +1,5 @@
 import {
+  Activity,
   Building2,
   FileCheck,
   Gauge,
@@ -120,6 +121,12 @@ export const SURFACES: Record<SurfaceId, Surface> = {
             icon: LayoutGrid,
             match: 'prefix',
           },
+        ],
+      },
+      {
+        label: 'Tools',
+        items: [
+          { label: 'Live state', href: '/design-system/state', icon: Activity, match: 'prefix' },
         ],
       },
     ],

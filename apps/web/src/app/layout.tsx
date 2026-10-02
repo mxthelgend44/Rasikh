@@ -3,6 +3,11 @@ import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
 import './globals.css';
 import { THEME_BOOT } from '@/lib/theme-boot';
+import { getStore } from '@/server/store';
+import { StoreProvider } from '@/store/provider';
+
+/** The shared state is live, so no page may be prerendered or cached. */
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: { default: 'Rasikh', template: '%s · Rasikh' },
@@ -22,7 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <StoreProvider initial={getStore().snapshot()}>{children}</StoreProvider>
+      </body>
     </html>
   );
 }

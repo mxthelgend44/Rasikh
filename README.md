@@ -48,14 +48,15 @@ Demo mode runs the same flows with cached, realistic responses, so the demo neve
 
 ## Scripts
 
-| Command                                   | Does                                                 |
-| ----------------------------------------- | ---------------------------------------------------- |
-| `npm run dev`                             | Start the web app                                    |
-| `npm run build`                           | Production build                                     |
-| `npm run lint`                            | ESLint across workspaces                             |
-| `npm run typecheck`                       | TypeScript across workspaces                         |
-| `npm run format:check`                    | Prettier check                                       |
-| `node scripts/capture.mjs --path <route>` | Screenshot a route at reference size (see DESIGN.md) |
+| Command                                   | Does                                                          |
+| ----------------------------------------- | ------------------------------------------------------------- |
+| `npm run dev`                             | Start the web app                                             |
+| `npm run build`                           | Production build                                              |
+| `npm run lint`                            | ESLint across workspaces                                      |
+| `npm run typecheck`                       | TypeScript across workspaces                                  |
+| `npm run format:check`                    | Prettier check                                                |
+| `node scripts/capture.mjs --path <route>` | Screenshot a route at reference size (see DESIGN.md)          |
+| `node scripts/sync-check.mjs`             | Open two browser tabs, change a record in one, time the other |
 
 ## Troubleshooting
 

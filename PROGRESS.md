@@ -1,18 +1,23 @@
 # Progress
 
-Last updated: 2026-10-02, end of Session 1.
+Last updated: 2026-10-02, end of Session 2.
 
 ## Where things stand
 
-Session 1 is done: the base shell matches the OpenAI Platform references within 1 to 2 px on every edge, in light and dark, and passes an axe-core WCAG 2.1 AA audit. The scope update (Abu Dhabi positioning, company expansion, TAMM MCP and Rasikh Guard integrations) is applied to the plan, the repo structure and the contract. Session 2 (data model and live sync) is next.
+Sessions 1 and 2 are done.
+
+- **Session 1.** The base shell matches the OpenAI Platform references within 1 to 2 px on every edge, in light and dark, and passes an axe-core WCAG 2.1 AA audit. The scope update (Abu Dhabi positioning, company expansion, TAMM MCP and Rasikh Guard integrations) is applied to the plan, the repo structure and the contract.
+- **Session 2.** One domain model with an Abu Dhabi seed, pure reducers, and live sync over Server-Sent Events. A change made in one browser tab appears in another within about 15 to 40 ms (verified in two real browser tabs), and 55 tests pass.
+
+Session 3 (newcomer app) is next.
 
 ## Session plan
 
 | #   | Session                                                                               | Status  |
 | --- | ------------------------------------------------------------------------------------- | ------- |
 | 1   | Recon and design system, scaffold, base shell                                         | Done    |
-| 2   | Data model and live sync (Abu Dhabi seed data, Expansion and Guard entities included) | Next    |
-| 3   | Newcomer app                                                                          | Planned |
+| 2   | Data model and live sync (Abu Dhabi seed data, Expansion and Guard entities included) | Done    |
+| 3   | Newcomer app                                                                          | Next    |
 | 4   | Employer dashboard                                                                    | Planned |
 | 5   | Landlord and bank dashboards                                                          | Planned |
 | 6   | AI agent (extraction, roadmap, loop with tools, risk summaries, demo mode)            | Planned |
@@ -23,6 +28,25 @@ Session 1 is done: the base shell matches the OpenAI Platform references within 
 | 11  | Swap stubs for the real packages once they land, end-to-end test of both demo paths   | Planned |
 
 Note on Session 8: Abu Dhabi context is applied from the Session 2 seed onward, so Session 8 is an audit of names, areas, copy, currency and date formats, not a retrofit.
+
+## Done in Session 2
+
+- Domain model for every entity in the brief plus Company, SetupStep, TeamMember, Approval and GuardCheck (`apps/web/src/domain`).
+- Roadmap logic: nine step types with dependencies, including "bank account unlocks once the Emirates ID application is in" and "family sponsorship depends on the registered tenancy". Hire stage and status are derived from the steps, so they cannot drift.
+- Abu Dhabi seed: a technology employer with nine hires across seven profiles (blocked, waiting, on track, settled), three landlords and eight properties on Al Reem, Al Maryah, Khalifa City and Yas, a bank, nine applications with written risk reasoning, consents and Guard history. All money is `est*` illustrative data.
+- Pure `applyAction` reducers for hire creation, backing, step progress with cascade, approvals, landlord and bank decisions, consents, Guard records, company creation and setup progress. Completing a company's visa quota moves its team into the hire pipeline under the contract fixture ids (`hire_demo_002` to `004`).
+- Live sync: in-memory server store, `/api/events` Server-Sent Events, `/api/actions`, `/api/state`, `/api/reset`, and a client store that renders the server snapshot first and then streams.
+- `/design-system/state`, a developer view of the live data, and `scripts/sync-check.mjs`, which proves cross-tab sync in real headless browsers.
+- 55 tests: roadmap, reducers, seed referential integrity, route handlers with two concurrent subscribers, and snapshot ordering.
+
+**Sync check result** (two headless Edge tabs): removing backing in tab A reached tab B in 478 ms on a cold dev route and 41 ms warm; completing a step moved the stage in the other tab in 34 ms; a reset in one tab restored the other in 13 ms.
+
+**Honest gaps.**
+
+- State is in memory, so a server restart returns to the seed. That is intended for the demo, and noted in DECISIONS.md.
+- The org switcher is still a label; Session 4 scopes the employer pages by it.
+- Reducers trust the shape of the payload beyond the action type. They throw a `DomainError` for anything that does not resolve, but there is no schema validation yet. Add zod at the agent boundary in Session 6.
+- Seeded landlord and bank applications exist, but no surface shows them yet (Session 5).
 
 ## Done in Session 1
 
