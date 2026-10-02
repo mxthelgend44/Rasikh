@@ -1,6 +1,6 @@
 # INTEGRATION.md
 
-Contract version: **1.1.1**
+Contract version: **1.2.0**
 Status: active
 
 This file is the single source of truth for how the three parts of Rasikh talk to each other. Every agent working on this repo builds against it exactly.
@@ -11,6 +11,7 @@ This file is the single source of truth for how the three parts of Rasikh talk t
 | Shared types | `packages/shared` | Claude (Devin may propose changes) |
 | Rasikh Guard (OpenAPPA fork, sidecar) | `packages/rasikh-guard` | Devin |
 | TAMM MCP server | `packages/tamm-mcp` | Devin |
+| Firestore data layer (schema, converters, rules, indexes) | `packages/rasikh-data` | Devin |
 
 ## 0. Rules for changing this contract
 
@@ -25,6 +26,7 @@ apps/web                  Next.js app: newcomer, employer, expansion, landlord, 
 packages/shared           TypeScript types and enums used by everything below
 packages/rasikh-guard     OpenAPPA fork + Rasikh policies + HTTP sidecar
 packages/tamm-mcp         MCP server over a mocked TAMM service catalogue
+packages/rasikh-data      Firestore schema, typed converters, security rules and indexes
 ```
 
 ## 2. Shared types (`packages/shared`)
@@ -171,6 +173,17 @@ Response:
 }
 ```
 
+Additional response fields since 1.2.0 (example for the request above):
+```json
+{
+  "remedy": {
+    "steps": [{ "action": "grant_consent", "label": "passport", "destination": "landlord" }],
+    "verified": true
+  },
+  "allowed_destinations": ["tamm", "employer", "newcomer"]
+}
+```
+
 Field rules:
 - `reason` is plain language and is shown to users as is. No jargon, no rule ids in it.
 - `policy_rule` is the stable id of the matched rule, shown only in the Guard log.
@@ -178,6 +191,13 @@ Field rules:
 - `consent_request` is present only when `decision` is `needs_consent`.
 - Guard evaluates `data_labels` **plus** everything observed in the session that could flow into this call. Declaring fewer labels than were read does not make a leak pass.
 - A payload ref that was observed carries its observed labels and `derived` flag. A payload ref that was **never observed**, or a call with no payload refs, is treated as content the agent produced: everything observed in the session flows into it, and an unobserved `derived: true` is ignored. So the app must `POST /observe` every redacted ref and every derived signal it creates before the agent sends it.
+- `remedy` (added in 1.2.0, present only when `decision` is not `allow`): the smallest set of steps that would make this call allowed, or `null` if none exists. `verified: true` means Guard re-evaluated the call with every step applied and got `allow`. Step `action` is one of:
+  - `grant_consent` (`label`, `destination`): the newcomer grants consent. Only offered for `consent` cells.
+  - `send_derived_signal` (`label`): send an observed derived signal (e.g. affordability yes/no) instead of the raw data.
+  - `redact` (`label`): send an observed redacted ref without this label.
+  - `use_tool` (`label`, `tool`): this label may only go to this destination through `tool` (e.g. `extract_document`).
+  - `remove_label` (`label`): leave this data out. Always possible; offered when nothing better exists.
+- `allowed_destinations` (added in 1.2.0): every destination the same payload could be sent to as it stands, in section 2 order. Lets the agent pick a different route instead of stopping.
 - `service_tags` (optional, added in 1.1.0): tags of the TAMM service the call targets, for example `["health", "insurance"]`. TAMM MCP sends it on every `destination: "tamm"` check. Guard needs it for the "insurance services only" rule in 3.4; when it is absent, that rule denies.
 
 #### `POST /consent`
@@ -305,11 +325,13 @@ Output:
       "name": "Register a tenancy contract (Tawtheeq)",
       "entity": "Abu Dhabi Municipality",
       "audience": "individual",
-      "tags": ["housing"]
+      "tags": ["housing"],
+      "score": 7.42
     }
   ]
 }
 ```
+Since 1.2.0, results are ranked by relevance and each carries `score` (higher is better). Matching uses BM25 over service names, keywords and tags, with synonyms, common Arabic terms and transliterations (for example "iqama", "إقامة"), and tolerates one typo in words of five or more letters.
 
 #### `get_service_requirements`
 
@@ -317,6 +339,7 @@ Input:
 ```json
 { "service_id": "svc_tawtheeq_register", "uaepass_session": "uap_sim_7c3e" }
 ```
+Optional inputs since 1.2.0: `documents_on_file` (`PayloadRef[]`, what the newcomer already holds) and `completed_services` (service ids already approved).
 Output:
 ```json
 {
@@ -332,6 +355,19 @@ Output:
   "est_duration_days": { "value": 0, "illustrative": true }
 }
 ```
+Additional output fields since 1.2.0:
+```json
+{
+  "prerequisite_order": ["svc_residency_visa"],
+  "missing_prerequisites": ["svc_residency_visa"],
+  "missing_documents": [{ "label": "emirates_id", "description": "Tenant Emirates ID or application" }],
+  "ready_to_apply": false
+}
+```
+- `prerequisite_order`: every transitive prerequisite, ordered so that each service comes after its own prerequisites.
+- `missing_prerequisites`: the entries of `prerequisite_order` not in `completed_services`.
+- `missing_documents`: required documents whose label no ref in `documents_on_file` carries.
+- `ready_to_apply`: both lists are empty.
 
 #### `start_application`
 
@@ -487,6 +523,7 @@ All errors use `ErrorBody` from section 2.
 
 ## 8. Changelog
 
+- **1.2.0** Additive: `remedy` and `allowed_destinations` on `/check` responses; `score` on `search_services` results; optional `documents_on_file` and `completed_services` inputs, and prerequisite and gap fields, on `get_service_requirements`; `packages/rasikh-data` added to the layout.
 - **1.1.1** Clarification: how observed data flows into a check. Unobserved refs inherit the session, and redacted refs and derived signals must be observed before they are sent. Found by the independent Guard evaluation (12 of 25 attacks used a fresh unlabelled summary ref).
 - **1.1.0** Additive: optional `service_tags` on `POST /check`, so Guard can evaluate "insurance services only". Without it the rule can't be evaluated, because `/check` does not say which TAMM service a call targets.
 - **1.0.0** Initial contract: Guard sidecar with observe, check, consent and log; TAMM MCP tools; shared types; demo fixtures.
