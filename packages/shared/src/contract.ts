@@ -3,7 +3,7 @@
  * Adding a value is a minor contract version bump. Do not extend them here first.
  */
 
-export const CONTRACT_VERSION = '1.0.0';
+export const CONTRACT_VERSION = '1.1.1';
 
 export const DATA_LABELS = [
   'passport',

@@ -36,6 +36,8 @@ export interface GuardCheckRequest {
   destination: Destination;
   data_labels: DataLabel[];
   payload_refs: PayloadRef[];
+  /** Tags of the TAMM service the call targets (contract 1.1.0). Needed for "insurance services only". */
+  service_tags?: string[];
 }
 
 export interface GuardConsentRequestInfo {
