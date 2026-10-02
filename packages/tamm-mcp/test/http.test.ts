@@ -40,6 +40,28 @@ describe("HTTP in demo mode", () => {
   before(async () => ({ url, server } = await serve(true)));
   after(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
+  it("answers a malformed or oversized body with a plain JSON error and never a stack trace", async () => {
+    const bad = [
+      ["malformed JSON", "{not json", 400],
+      ["oversized body", JSON.stringify({ subject_ref: "x".repeat(300_000), audience: "individual" }), 413],
+    ] as const;
+    for (const [label, body, status] of bad) {
+      for (const path of ["/dev/uaepass/login", "/dev/advance", "/mcp"]) {
+        const response = await fetch(`${url}${path}`, {
+          method: "POST",
+          headers: { "content-type": "application/json", accept: "application/json, text/event-stream" },
+          body,
+        });
+        const text = await response.text();
+        assert.equal(response.status, status, `${label} on ${path}`);
+        assert.match(response.headers.get("content-type") ?? "", /application\/json/, `${label} on ${path}`);
+        const parsed = JSON.parse(text) as { error?: { code?: string } };
+        assert.equal(parsed.error?.code, "invalid_request", `${label} on ${path}`);
+        assert.doesNotMatch(text, /node_modules|\.ts:|\.js:|at \w+.*\(|SyntaxError|C:\|\/Users\//, `${label} on ${path} leaked internals`);
+      }
+    }
+  });
+
   it("GET /health reports ok, mock and the contract version", async () => {
     const body = await (await fetch(`${url}/health`)).json();
     assert.deepEqual(body, { contract_version: CONTRACT_VERSION, status: "ok", mock: true });

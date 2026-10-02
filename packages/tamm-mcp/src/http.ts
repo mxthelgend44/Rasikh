@@ -5,7 +5,7 @@
  */
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import type { Express, Response } from "express";
+import type { Express, NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import type { DemoControls } from "./backend/mock/mockBackend.js";
 import { CONTRACT_VERSION, type ErrorBody, type ErrorCode, audienceSchema } from "./contract.js";
@@ -103,6 +103,18 @@ export function createHttpApp(ctx: ToolContext, options: HttpAppOptions): Expres
   });
 
   app.use((_req, res) => sendError(res, 404, "invalid_request", "No such route."));
+
+  // Last in the chain: whatever the body parser or a route throws becomes a plain contract error.
+  // Never echo err.message or err.stack: Express's default handler would print the stack trace with
+  // absolute file paths on a malformed or oversized body.
+  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    if (res.headersSent) return;
+    const status = (err as { status?: unknown } | null)?.status;
+    if (status === 413) sendError(res, 413, "invalid_request", "The request body is too large.");
+    else if (typeof status === "number" && status >= 400 && status < 500)
+      sendError(res, 400, "invalid_request", "The request body could not be read as JSON.");
+    else sendError(res, 500, "internal", "The request could not be handled.");
+  });
 
   return app;
 }
